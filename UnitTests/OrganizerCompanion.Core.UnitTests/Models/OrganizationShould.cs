@@ -477,5 +477,271 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(jsonDoc, Is.Not.Null);
             });
         }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithValidParameters_ShouldCreateOrganizationCorrectly()
+        {
+            // Arrange
+            var id = 123;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?> { null };
+            var members = new List<IPerson?> { null };
+            var phoneNumbers = new List<IPhoneNumber?> { null };
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-2);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Members, Is.EqualTo(members));
+                Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullCollections_ShouldInitializeEmptyCollections()
+        {
+            // Arrange
+            var id = 1;
+            var organizationName = "Test Org";
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, null!, null!, null!, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+                Assert.That(organization.Addresses, Is.Not.Null);
+                Assert.That(organization.Addresses, Is.Empty);
+                Assert.That(organization.Members, Is.Not.Null);
+                Assert.That(organization.Members, Is.Empty);
+                Assert.That(organization.PhoneNumbers, Is.Not.Null);
+                Assert.That(organization.PhoneNumbers, Is.Empty);
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullOrganizationName_ShouldAcceptNull()
+        {
+            // Arrange
+            var id = 1;
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, null, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.Null);
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Members, Is.EqualTo(members));
+                Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNegativeId_ShouldThrowArgumentException()
+        {
+            // Arrange
+            var negativeId = -1;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => 
+                new Organization(negativeId, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified));
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.Message, Does.Contain("Error creating Organization object."));
+                Assert.That(ex.InnerException, Is.InstanceOf<ArgumentOutOfRangeException>());
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithZeroId_ShouldAcceptZero()
+        {
+            // Arrange
+            var id = 0;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Members, Is.EqualTo(members));
+                Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithMaxIntId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            var id = int.MaxValue;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullDateModified_ShouldAcceptNull()
+        {
+            // Arrange
+            var id = 1;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            DateTime? dateModified = null;
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Members, Is.EqualTo(members));
+                Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithEmptyCollections_ShouldPreserveEmptyCollections()
+        {
+            // Arrange
+            var id = 1;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Addresses, Is.SameAs(addresses));
+                Assert.That(organization.Members, Is.SameAs(members));
+                Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
+                Assert.That(organization.Addresses, Is.Empty);
+                Assert.That(organization.Members, Is.Empty);
+                Assert.That(organization.PhoneNumbers, Is.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithPopulatedCollections_ShouldPreserveCollectionContents()
+        {
+            // Arrange
+            var id = 1;
+            var organizationName = "Test Organization";
+            var addresses = new List<IAddress?> { null, null };
+            var members = new List<IPerson?> { null, null, null };
+            var phoneNumbers = new List<IPhoneNumber?> { null };
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Addresses, Is.SameAs(addresses));
+                Assert.That(organization.Members, Is.SameAs(members));
+                Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
+                Assert.That(organization.Addresses.Count, Is.EqualTo(2));
+                Assert.That(organization.Members.Count, Is.EqualTo(3));
+                Assert.That(organization.PhoneNumbers.Count, Is.EqualTo(1));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithEmptyStringOrganizationName_ShouldAcceptEmptyString()
+        {
+            // Arrange
+            var id = 1;
+            var organizationName = string.Empty;
+            var addresses = new List<IAddress?>();
+            var members = new List<IPerson?>();
+            var phoneNumbers = new List<IPhoneNumber?>();
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var organization = new Organization(id, organizationName, addresses, members, phoneNumbers, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization.Id, Is.EqualTo(id));
+                Assert.That(organization.OrganizationName, Is.EqualTo(string.Empty));
+                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
+            });
+        }
     }
 }

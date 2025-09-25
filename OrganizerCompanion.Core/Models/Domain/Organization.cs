@@ -84,6 +84,36 @@ namespace OrganizerCompanion.Core.Models.Domain
         public DateTime? DateModified { get; set; } = default(DateTime);
         #endregion
 
+        #region Constructors
+        public Organization() { }
+
+        [JsonConstructor]
+        public Organization(
+            int id,
+            string? organizationName,
+            List<IAddress?> addresses,
+            List<IPerson?> members,
+            List<IPhoneNumber?> phoneNumbers,
+            DateTime dateCreated,
+            DateTime? dateModified)
+        {
+            try
+            {
+                ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
+                _id = id;
+                _organizationName = organizationName;
+                _address = addresses ?? [];
+                _members = members ?? [];
+                _phoneNumbers = phoneNumbers ?? [];
+                _dateCreated = dateCreated;
+                DateModified = dateModified;
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Error creating Organization object.", ex);
+            }
+        }
+        #endregion
 
         #region Methods
         public IDomainEntity Cast<T>() => throw new NotImplementedException();

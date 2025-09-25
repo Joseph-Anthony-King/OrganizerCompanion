@@ -87,7 +87,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             _emailAddress = emailAddress;
             _type = type;
-            _dateCreated = DateTime.Now;
         }
         #endregion
 
