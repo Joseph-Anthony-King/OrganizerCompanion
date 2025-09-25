@@ -1,0 +1,10 @@
+﻿using OrganizerCompanion.Core.Enums;
+
+namespace OrganizerCompanion.Core.Interfaces.Type
+{
+    internal interface IEmail
+    {
+        string? EmailAddress { get; set; }
+        Types? Type { get; set; }
+    }
+}
