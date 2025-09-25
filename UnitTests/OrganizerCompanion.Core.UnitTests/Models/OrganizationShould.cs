@@ -713,9 +713,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(organization.Addresses, Is.SameAs(addresses));
                 Assert.That(organization.Members, Is.SameAs(members));
                 Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
-                Assert.That(organization.Addresses.Count, Is.EqualTo(2));
+                Assert.That(organization.Addresses, Has.Count.EqualTo(2));
                 Assert.That(organization.Members.Count, Is.EqualTo(3));
-                Assert.That(organization.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(organization.PhoneNumbers, Has.Count.EqualTo(1));
             });
         }
 
