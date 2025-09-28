@@ -1,7 +1,7 @@
-﻿using OrganizerCompanion.Core.Interfaces.Domain;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -16,8 +16,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _organizationName = null;
         private List<IAddress?> _address = [];
-        private List<IPerson?> _members = [];
         private List<IPhoneNumber?> _phoneNumbers = [];
+        private List<IPerson?> _members = [];
+        private List<IPerson?> _contacts = [];
+        private List<IAccount?> _accounts = [];
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -55,6 +57,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("phoneNumbers")]
+        public List<IPhoneNumber?> PhoneNumbers
+        {
+            get => _phoneNumbers;
+            set
+            {
+                _phoneNumbers = value ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("members")]
         public List<IPerson?> Members
         {
@@ -66,13 +79,24 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("phoneNumbers")]
-        public List<IPhoneNumber?> PhoneNumbers
+        [Required, JsonPropertyName("contacts")]
+        public List<IPerson?> Contacts
         {
-            get => _phoneNumbers;
+            get => _contacts;
             set
             {
-                _phoneNumbers = value ?? [];
+                _contacts = value ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("accounts")]
+        public List<IAccount?> Accounts
+        {
+            get => _accounts;
+            set
+            {
+                _accounts = value ?? [];
                 DateModified = DateTime.Now;
             }
         }
@@ -92,19 +116,26 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? organizationName,
             List<IAddress?> addresses,
-            List<IPerson?> members,
             List<IPhoneNumber?> phoneNumbers,
+            List<IPerson?> members,
+            List<IPerson?> contacts,
+            List<IAccount?> accounts,
             DateTime dateCreated,
             DateTime? dateModified)
         {
             try
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
+                ArgumentNullException.ThrowIfNull(organizationName, nameof(organizationName));
+                ArgumentNullException.ThrowIfNull(dateCreated, nameof(dateCreated));
+                
                 _id = id;
                 _organizationName = organizationName;
                 _address = addresses ?? [];
-                _members = members ?? [];
                 _phoneNumbers = phoneNumbers ?? [];
+                _members = members ?? [];
+                _contacts = contacts ?? [];
+                _accounts = accounts ?? [];
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
