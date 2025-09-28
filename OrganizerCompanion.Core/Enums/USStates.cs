@@ -1,6 +1,6 @@
 ﻿namespace OrganizerCompanion.Core.Enums
 {
-    internal enum States
+    internal enum USStates
     {
         Alabama,
         Alaska,

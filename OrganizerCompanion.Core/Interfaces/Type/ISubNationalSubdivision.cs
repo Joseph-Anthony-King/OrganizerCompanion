@@ -1,6 +1,6 @@
 ﻿namespace OrganizerCompanion.Core.Interfaces.Type
 {
-    internal interface IState : IType
+    internal interface ISubNationalSubdivision : IType
     {
         string? Name { get; set; }
         string? Abbreviation { get; set; }

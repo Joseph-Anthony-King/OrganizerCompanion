@@ -19,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _street1 = null;
         private string? _street2 = null;
         private string? _city = null;
-        private Interfaces.Type.IState? _state = null;
+        private Interfaces.Type.ISubNationalSubdivision? _state = null;
         private string? _zipCode = null;
         private string? _country = null;
         private Types? _type = null;
@@ -72,7 +72,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("state")]
-        public Interfaces.Type.IState? State 
+        public Interfaces.Type.ISubNationalSubdivision? State 
         { 
             get => _state; 
             set 
@@ -83,7 +83,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonIgnore]
-        public States? StateEnum
+        public USStates? StateEnum
         {
             get => null; // Cannot reverse-lookup from IState to enum
             set 
@@ -142,7 +142,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? street1, 
             string? street2, 
             string? city, 
-            Interfaces.Type.IState? state, 
+            Interfaces.Type.ISubNationalSubdivision? state, 
             string? zipCode, 
             string? country, 
             Types? type, 

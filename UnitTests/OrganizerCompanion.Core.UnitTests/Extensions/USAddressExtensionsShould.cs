@@ -20,7 +20,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 Id = 1,
                 Street1 = "123 Main St",
                 City = "Anytown",
-                State = States.California.ToStateModel(),
+                State = USStates.California.ToStateModel(),
                 ZipCode = "12345",
                 Type = Types.Home
             };
@@ -29,7 +29,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             {
                 Street1 = "456 Oak Ave",
                 City = "Springfield",
-                State = States.Texas.ToStateModel(),
+                State = USStates.Texas.ToStateModel(),
                 ZipCode = "54321",
                 Type = Types.Work
             };
@@ -86,7 +86,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             {
                 Street1 = "789 Pine St",
                 City = "Somewhere", 
-                State = States.NewYork.ToStateModel(),
+                State = USStates.NewYork.ToStateModel(),
                 ZipCode = "98765",
                 Type = Types.Work
             };
@@ -127,7 +127,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             {
                 Street1 = "321 Elm St",
                 City = "Elsewhere",
-                State = States.Florida.ToStateModel(),
+                State = USStates.Florida.ToStateModel(),
                 ZipCode = "11111",
                 Type = Types.Billing
             };
@@ -159,7 +159,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             { 
                 Street1 = "999 Cherry Lane", 
                 City = "Nowhere", 
-                State = States.Oregon.ToStateModel(),
+                State = USStates.Oregon.ToStateModel(),
                 ZipCode = "99999" 
             };
             var typeUSAddresses = new List<Interfaces.Type.IUSAddress?> { _typeUSAddress, typeUSAddress2 };
@@ -210,7 +210,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 Street1 = "123 Main St",
                 Street2 = "Apt 2B",
                 City = "Anytown",
-                State = States.California.ToStateModel(),
+                State = USStates.California.ToStateModel(),
                 ZipCode = "12345",
                 Country = "United States",
                 Type = Types.Home
@@ -242,7 +242,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 Street1 = "789 Oak Ave",
                 Street2 = "Suite 100",
                 City = "Springfield",
-                State = States.Texas.ToStateModel(),
+                State = USStates.Texas.ToStateModel(),
                 ZipCode = "54321",
                 Country = "USA",
                 Type = Types.Work
@@ -273,7 +273,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             {
                 Street1 = "123 First St",
                 City = "City1",
-                State = States.California.ToStateModel(),
+                State = USStates.California.ToStateModel(),
                 ZipCode = "11111",
                 Type = Types.Home
             };
@@ -282,7 +282,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 Street1 = "456 Second Ave",
                 Street2 = "Floor 5",
                 City = "City2",
-                State = States.NewYork.ToStateModel(),
+                State = USStates.NewYork.ToStateModel(),
                 ZipCode = "22222",
                 Type = Types.Work
             };
@@ -315,7 +315,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             public string? Street1 { get; set; }
             public string? Street2 { get; set; }
             public string? City { get; set; }
-            public Interfaces.Type.IState? State { get; set; }
+            public Interfaces.Type.ISubNationalSubdivision? State { get; set; }
             public string? ZipCode { get; set; }
             public string? Country { get; set; }
             public Types? Type { get; set; }

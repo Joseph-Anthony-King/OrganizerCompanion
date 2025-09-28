@@ -59,7 +59,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var street1 = "123 Main St";
             var street2 = "Apt 4B";
             var city = "Anytown";
-            var state = new State { Name = "California", Abbreviation = "CA" };
+            var state = new USState { Name = "California", Abbreviation = "CA" };
             var zipCode = "90210";
             var country = "United States";
             var type = Types.Home;
@@ -169,7 +169,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void State_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newState = new State { Name = "Texas", Abbreviation = "TX" };
+            var newState = new USState { Name = "Texas", Abbreviation = "TX" };
             var originalDateModified = _sut.DateModified;
             Thread.Sleep(10); // Ensure time difference
 
@@ -189,7 +189,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void StateEnum_WhenSet_ShouldUpdateStateAndDateModified()
         {
             // Arrange
-            var stateEnum = States.California;
+            var stateEnum = USStates.California;
             var originalDateModified = _sut.DateModified;
             Thread.Sleep(10); // Ensure time difference
 
@@ -211,7 +211,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void StateEnum_WhenSetToNull_ShouldSetStateToNullAndUpdateDateModified()
         {
             // Arrange
-            _sut.StateEnum = States.Florida; // Set initial value
+            _sut.StateEnum = USStates.Florida; // Set initial value
             var originalDateModified = _sut.DateModified;
             Thread.Sleep(10); // Ensure time difference
 
@@ -231,7 +231,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void StateEnum_Get_ShouldAlwaysReturnNull()
         {
             // Arrange
-            _sut.State = new State { Name = "New York", Abbreviation = "NY" };
+            _sut.State = new USState { Name = "New York", Abbreviation = "NY" };
 
             // Act
             var result = _sut.StateEnum;
@@ -308,7 +308,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Street1 = "123 Test St";
             _sut.Street2 = "Unit A";
             _sut.City = "Test City";
-            _sut.State = new State { Name = "Test State", Abbreviation = "TS" };
+            _sut.State = new USState { Name = "Test State", Abbreviation = "TS" };
             _sut.ZipCode = "12345";
             _sut.Country = "Test Country";
             _sut.Type = Types.Home;
@@ -337,7 +337,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.Street1 = "456 Oak Ave";
             _sut.City = "Springfield";
-            _sut.State = new State { Name = "Illinois", Abbreviation = "IL" };
+            _sut.State = new USState { Name = "Illinois", Abbreviation = "IL" };
             _sut.ZipCode = "62701";
 
             // Act
@@ -361,7 +361,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.Street1 = "456 Oak Ave";
             _sut.City = "Springfield";
-            _sut.State = new State { Name = "Illinois", Abbreviation = null };
+            _sut.State = new USState { Name = "Illinois", Abbreviation = null };
             _sut.ZipCode = "62701";
 
             // Act
@@ -395,7 +395,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.Street1 = "456 Oak Ave";
             _sut.City = "Springfield";
-            _sut.State = new State { Name = null, Abbreviation = null };
+            _sut.State = new USState { Name = null, Abbreviation = null };
             _sut.ZipCode = "62701";
 
             // Act
@@ -469,7 +469,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Street1 = "789 Pine St",
                 Street2 = "Floor 3",
                 City = "Metropolis",
-                State = new State { Name = "New York", Abbreviation = "NY" },
+                State = new USState { Name = "New York", Abbreviation = "NY" },
                 ZipCode = "10001",
                 Country = "USA",
                 Type = Types.Billing,
@@ -504,13 +504,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 // Test setting various states
-                _sut.StateEnum = States.California;
+                _sut.StateEnum = USStates.California;
                 Assert.That(_sut.State?.Abbreviation, Is.EqualTo("CA"));
 
-                _sut.StateEnum = States.Texas;
+                _sut.StateEnum = USStates.Texas;
                 Assert.That(_sut.State?.Abbreviation, Is.EqualTo("TX"));
 
-                _sut.StateEnum = States.Florida;
+                _sut.StateEnum = USStates.Florida;
                 Assert.That(_sut.State?.Abbreviation, Is.EqualTo("FL"));
 
                 // Test that get always returns null regardless of what was set
