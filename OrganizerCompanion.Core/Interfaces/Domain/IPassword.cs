@@ -5,6 +5,7 @@
         string? PasswordValue { get; set; }
         string? PasswordHint { get; set; }
         List<string> PreviousPasswords { get; }
+        DateTime? ExpirationDate { get; }
         int AccountId { get; set; }
         IAccount? Account { get; set; }
     }

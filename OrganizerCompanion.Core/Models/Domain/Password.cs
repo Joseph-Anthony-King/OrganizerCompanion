@@ -10,6 +10,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _passwordValue = null;
         private string? _passwordHint = null;
         private readonly List<string> _previousPasswords = [];
+        private DateTime? _expirationDate = null;
         private int _accountId = 0;
         private IAccount? _account = null;
         private readonly DateTime _dateCreated = DateTime.Now;
@@ -28,15 +29,36 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string? PasswordValue 
         { 
-            get => _passwordValue; 
-            set 
+            get
+            {
+                if (DateTime.Now <=_expirationDate)
+                {
+                    if (_previousPasswords.Count == 5)
+                    {
+                        _previousPasswords.RemoveAt(0);
+                    }
+                    _previousPasswords.Add(_passwordValue!);
+                    _passwordValue = null;
+                    DateModified = DateTime.Now;
+                    throw new InvalidOperationException("Cannot set a new password after the expiration date.");
+                }
+
+                return _passwordValue;
+            }
+            set
             {
                 if (_previousPasswords.Contains(value!))
                 {
-                    throw new ArgumentException("New password cannot be the same as any previous passwords.");
+                    throw new ArgumentException("New password cannot be the same as any previous 5 passwords.");
                 }
+                if (_previousPasswords.Count == 5)
+                {
+                    _previousPasswords.RemoveAt(0);
+                }
+                if (_passwordValue != null)
+                    _previousPasswords.Add(_passwordValue!);
                 _passwordValue = value;
-                _previousPasswords.Add(value!);
+                _expirationDate = DateTime.Now.AddMonths(3);
                 DateModified = DateTime.Now; 
             } 
         }
@@ -52,6 +74,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public List<string> PreviousPasswords => _previousPasswords!;
+
+        public DateTime? ExpirationDate => _expirationDate;
 
         public int AccountId 
         { 
