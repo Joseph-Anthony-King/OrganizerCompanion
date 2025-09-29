@@ -9,6 +9,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _passwordValue = null;
         private string? _passwordHint = null;
+        private readonly List<string> _previousPasswords = [];
         private int _accountId = 0;
         private IAccount? _account = null;
         private readonly DateTime _dateCreated = DateTime.Now;
@@ -29,8 +30,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         { 
             get => _passwordValue; 
             set 
-            { 
-                _passwordValue = value; 
+            {
+                if (_previousPasswords.Contains(value!))
+                {
+                    throw new ArgumentException("New password cannot be the same as any previous passwords.");
+                }
+                _passwordValue = value;
+                _previousPasswords.Add(value!);
                 DateModified = DateTime.Now; 
             } 
         }
@@ -42,8 +48,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             { 
                 _passwordHint = value; 
                 DateModified = DateTime.Now; 
-            } 
+            }
         }
+
+        public List<string> PreviousPasswords => _previousPasswords!;
 
         public int AccountId 
         { 
@@ -87,6 +95,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? passwordValue,
             string? passwordHint,
+            List<string>? previousPasswords,
             int accountId,
             IAccount? account,
             DateTime dateCreated,
@@ -98,6 +107,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _passwordValue = passwordValue;
             _passwordHint = passwordHint;
+            _previousPasswords = previousPasswords ?? [];
             _accountId = accountId;
             _account = account;
             _dateCreated = dateCreated;
