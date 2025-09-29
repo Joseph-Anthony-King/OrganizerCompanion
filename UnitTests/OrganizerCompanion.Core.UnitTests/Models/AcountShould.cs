@@ -462,31 +462,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_ThrowsException_WhenIdIsNegative()
-        {
-            // Arrange, Act & Assert
-            var ex = Assert.Throws<Exception>(() => new Account(
-                id: -1,
-                accountName: "testuser",
-                accountNumber: "ACC123",
-                linkedEntityId: 2,
-                linkedEntityType: "Person",
-                linkedEntity: _sut,
-                allowAnnonymousUsers: true,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
-            ));
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex.Message, Is.EqualTo("Error creating Account object"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException, Is.TypeOf<ArgumentOutOfRangeException>());
-                Assert.That(ex.InnerException!.Message, Does.Contain("id"));
-            });
-        }
-
-        [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromLinkedEntityId()
         {
             // Arrange

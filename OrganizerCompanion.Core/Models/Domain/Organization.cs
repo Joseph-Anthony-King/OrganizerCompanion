@@ -125,9 +125,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
-                ArgumentNullException.ThrowIfNull(dateCreated, nameof(dateCreated));
-                
                 _id = id;
                 _organizationName = organizationName;
                 _address = addresses ?? [];

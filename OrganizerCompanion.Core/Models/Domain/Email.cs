@@ -72,8 +72,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime dateCreated, 
             DateTime? dateModified)
         {
-            ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
-
             _id = id;
             _emailAddress = emailAddress;
             _type = type;

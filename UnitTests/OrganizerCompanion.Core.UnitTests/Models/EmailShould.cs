@@ -82,21 +82,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_WithNegativeId_ShouldThrowArgumentOutOfRangeException()
-        {
-            // Arrange
-            var id = -1;
-            var emailAddress = "test@example.com";
-            var type = Types.Work;
-            var dateCreated = DateTime.Now;
-            var dateModified = DateTime.Now;
-
-            // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-                new Email(id, emailAddress, type, dateCreated, dateModified));
-        }
-
-        [Test, Category("Models")]
         public void Id_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange

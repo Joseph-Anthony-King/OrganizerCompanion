@@ -47,8 +47,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
-
                 _id = id;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;

@@ -125,8 +125,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
-
                 _id = id;
                 _accountName = accountName;
                 _accountNumber = accountNumber;
