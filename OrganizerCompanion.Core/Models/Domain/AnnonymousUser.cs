@@ -15,7 +15,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         private int _id = 0;
         private int _accountId = 0;
-        private IAccount? _account = null;
+        private Account? _account = null;
         private bool _isCast = false;
         private int _castId = 0;
         private string? _castType = null;
@@ -23,6 +23,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
+        #region Explicit Interface Implementations
+        IAccount? IAnnonymousUser.Account
+        {
+            get => _account;
+            set
+            {
+                _account = (Account?)value;
+                DateModified = DateTime.Now;
+            }
+        }
+        #endregion
+
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
         public int Id
         {
@@ -46,7 +58,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public IAccount? Account
+        public Account? Account
         {
             get => _account;
             set
