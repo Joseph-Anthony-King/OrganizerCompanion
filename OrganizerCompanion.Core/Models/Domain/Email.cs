@@ -20,6 +20,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
         private string? _linkedEntityType = null;
+        private bool _isConfirmed = false;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -83,6 +84,17 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => _linkedEntityType;
 
+        [Required, JsonPropertyName("isConfirmed")]
+        public bool IsConfirmed
+        {
+            get => _isConfirmed;
+            set
+            {
+                _isConfirmed = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -110,6 +122,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             string? linkedEntityType,
+            bool isConfirmed,
             DateTime dateCreated,
             DateTime? dateModified)
         {
@@ -119,6 +132,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
             _linkedEntityType = linkedEntityType;
+            _isConfirmed = isConfirmed;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

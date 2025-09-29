@@ -32,9 +32,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.Null);
+                Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.IsConfirmed, Is.False);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -73,6 +75,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var linkedEntityId = 123;
             var linkedEntity = new MockDomainEntity();
             var linkedEntityType = "MockDomainEntity";
+            var isConfirmed = true;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now;
 
@@ -84,6 +87,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId,
                 linkedEntity,
                 linkedEntityType,
+                isConfirmed,
                 dateCreated, 
                 dateModified);
 
@@ -96,6 +100,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo(linkedEntityType));
+                Assert.That(_sut.IsConfirmed, Is.EqualTo(isConfirmed));
                 Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
             });
@@ -187,6 +192,92 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsConfirmed_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut = new Email();
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsConfirmed = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsConfirmed, Is.True);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsConfirmed_WhenSetToFalse_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut = new Email();
+            _sut.IsConfirmed = true; // Set to true first
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsConfirmed = false;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsConfirmed, Is.False);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsConfirmed_DefaultValue_ShouldBeFalse()
+        {
+            // Arrange & Act
+            _sut = new Email();
+
+            // Assert
+            Assert.That(_sut.IsConfirmed, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void IsConfirmed_WithSimpleConstructor_ShouldDefaultToFalse()
+        {
+            // Arrange & Act
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work);
+
+            // Assert
+            Assert.That(_sut.IsConfirmed, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void IsConfirmed_ToggleMultipleTimes_ShouldUpdateDateModifiedEachTime()
+        {
+            // Arrange
+            _sut = new Email();
+            var initialTime = DateTime.Now;
+
+            // Act & Assert - Test sequential IsConfirmed changes update DateModified
+            System.Threading.Thread.Sleep(1);
+            _sut.IsConfirmed = true;
+            var firstModified = _sut.DateModified;
+            Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
+            Assert.That(_sut.IsConfirmed, Is.True);
+
+            System.Threading.Thread.Sleep(1);
+            _sut.IsConfirmed = false;
+            var secondModified = _sut.DateModified;
+            Assert.That(secondModified, Is.GreaterThan(firstModified));
+            Assert.That(_sut.IsConfirmed, Is.False);
+
+            System.Threading.Thread.Sleep(1);
+            _sut.IsConfirmed = true;
+            var thirdModified = _sut.DateModified;
+            Assert.That(thirdModified, Is.GreaterThan(secondModified));
+            Assert.That(_sut.IsConfirmed, Is.True);
+        }
+
+        [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -218,6 +309,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                false,
                 specificDate, 
                 DateTime.Now);
 
@@ -350,6 +442,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                true,
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -388,6 +481,52 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":0"));
                 Assert.That(json, Does.Contain("\"emailAddress\":null"));
+                Assert.That(json, Does.Contain("\"isConfirmed\":false"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithIsConfirmedTrue_ShouldSerializeCorrectly()
+        {
+            // Arrange
+            _sut = new Email();
+            _sut.IsConfirmed = true;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"isConfirmed\":true"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithIsConfirmedFalse_ShouldSerializeCorrectly()
+        {
+            // Arrange
+            _sut = new Email();
+            _sut.IsConfirmed = false;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"isConfirmed\":false"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
         }
 
@@ -402,6 +541,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                false,
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -428,6 +568,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                true,
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -470,6 +611,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                false,
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -614,6 +756,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 0,
                 null,
                 null,
+                true,
                 DateTime.Now, 
                 DateTime.Now);
 
@@ -678,6 +821,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
+                isConfirmed: false,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: null);
 
@@ -822,6 +966,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 456,
                 mockEntity,
                 "MockDomainEntity",
+                false,
                 DateTime.Now.AddDays(-1),
                 DateTime.Now);
 
@@ -916,6 +1061,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 123,
                 linkedEntity: new MockDomainEntity(),
                 linkedEntityType: "CustomEntityType", // Different from actual type name
+                isConfirmed: true,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now);
 
@@ -993,6 +1139,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity();
             Assert.That(_sut.DateModified, Is.GreaterThan(linkedIdModified), "LinkedEntity setter should update DateModified");
+
+            var linkedEntityModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(1);
+            _sut.IsConfirmed = true;
+            Assert.That(_sut.DateModified, Is.GreaterThan(linkedEntityModified), "IsConfirmed setter should update DateModified");
         }
 
         [Test, Category("Models")]
@@ -1026,19 +1177,30 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
+            var isConfirmedProperty = type.GetProperty("IsConfirmed");
             var dateCreatedProperty = type.GetProperty("DateCreated");
             var dateModifiedProperty = type.GetProperty("DateModified");
 
             Assert.Multiple(() =>
             {
-                Assert.That(idProperty, Is.Not.Null);
-                Assert.That(emailProperty, Is.Not.Null);
-                Assert.That(typeProperty, Is.Not.Null);
-                Assert.That(linkedEntityIdProperty, Is.Not.Null);
-                Assert.That(linkedEntityProperty, Is.Not.Null);
-                Assert.That(linkedEntityTypeProperty, Is.Not.Null);
-                Assert.That(dateCreatedProperty, Is.Not.Null);
-                Assert.That(dateModifiedProperty, Is.Not.Null);
+                Assert.That(idProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "Id should have JsonPropertyName attribute");
+                Assert.That(emailProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "EmailAddress should have JsonPropertyName attribute");
+                Assert.That(typeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "Type should have JsonPropertyName attribute");
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityId should have JsonPropertyName attribute");
+                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntity should have JsonPropertyName attribute");
+                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityType should have JsonPropertyName attribute");
+                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "IsConfirmed should have JsonPropertyName attribute");
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "DateCreated should have JsonPropertyName attribute");
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "DateModified should have JsonPropertyName attribute");
             });
         }
 
@@ -1092,6 +1254,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
+            var isConfirmedProperty = type.GetProperty("IsConfirmed");
             var dateCreatedProperty = type.GetProperty("DateCreated");
             var dateModifiedProperty = type.GetProperty("DateModified");
 
@@ -1110,6 +1273,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "LinkedEntity should have Required attribute");
                 Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
                     Is.Not.Empty, "LinkedEntityType should have Required attribute");
+                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "IsConfirmed should have Required attribute");
                 Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
                     Is.Not.Empty, "DateCreated should have Required attribute");
                 Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 

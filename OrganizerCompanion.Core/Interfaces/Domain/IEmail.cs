@@ -5,5 +5,6 @@
         int LinkedEntityId { get; set; }
         IDomainEntity? LinkedEntity { get; set; }
         string? LinkedEntityType { get; }
+        bool IsConfirmed { get; set; }
     }
 }
