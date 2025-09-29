@@ -25,6 +25,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private INationalSubdivision? _state = null;
         private string? _country = Countries.Mexico.GetName();
         private Types? _type = null;
+        private int _linkedEntityId = 0;
+        private IDomainEntity? _linkedEntity = null;
+        private string? _linkedEntityType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -117,6 +120,32 @@ namespace OrganizerCompanion.Core.Models.Domain
                 DateModified = DateTime.Now;
             }
         }
+
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity ID must be a non-negative number")]
+        public int LinkedEntityId
+        {
+            get => _linkedEntityId;
+            set
+            {
+                _linkedEntityId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("linkedEntity")]
+        public IDomainEntity? LinkedEntity
+        {
+            get => _linkedEntity;
+            set
+            {
+                _linkedEntity = value;
+                _linkedEntityType = value?.GetType().Name;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => _linkedEntityType;
 
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }

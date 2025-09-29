@@ -66,7 +66,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 1,
-                linkedEntityType: "Person",
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -80,7 +79,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("testuser"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(1));
-                Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
+                Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(1));
@@ -188,25 +187,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.LinkedEntityId, Is.EqualTo(456));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityType_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.LinkedEntityType = "Organization";
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.LinkedEntityType, Is.EqualTo("Organization"));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -379,9 +359,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             account.AccountNumber = null;
             Assert.That(account.AccountNumber, Is.Null);
 
-            account.LinkedEntityType = null;
-            Assert.That(account.LinkedEntityType, Is.Null);
-
             account.LinkedEntity = null;
             Assert.That(account.LinkedEntity, Is.Null);
         }
@@ -416,7 +393,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
-                linkedEntityType: "Person",
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: specificDate,
@@ -496,7 +472,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
-                linkedEntityType: "Person",
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,

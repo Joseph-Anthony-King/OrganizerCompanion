@@ -80,17 +80,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType
-        {
-            get => _linkedEntityType;
-            set
-            {
-                _linkedEntityType = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -98,9 +87,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
+                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.Now;
             }
         }
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => _linkedEntityType;
+        
 
         [Required, JsonPropertyName("features")]
         public List<IAccountFeature> Features
@@ -138,7 +132,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             int linkedEntityId,
-            string? linkedEntityType,
             IDomainEntity? linkedEntity,
             List<IAccountFeature> features,
             DateTime dateCreated,
@@ -153,8 +146,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountName = accountName;
                 _accountNumber = accountNumber;
                 _linkedEntityId = linkedEntityId;
-                _linkedEntityType = linkedEntityType;
                 _linkedEntity = linkedEntity;
+                _linkedEntityType = linkedEntity?.GetType().Name;
                 _features = features;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;

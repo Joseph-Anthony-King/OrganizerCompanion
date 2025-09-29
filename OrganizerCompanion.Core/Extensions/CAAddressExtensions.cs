@@ -9,7 +9,7 @@ namespace OrganizerCompanion.Core.Extensions
         /// </summary>
         public static Interfaces.Type.ICAAddress AsTypeCAAddress(this ICAAddress domainCAAddress)
         {
-            return domainCAAddress; // Since Domain.ICAAddress inherits from Type.ICAAddress, this is a safe upcast
+            return (Interfaces.Type.ICAAddress)domainCAAddress; // Explicit cast since Domain.ICAAddress inherits from Type.ICAAddress
         }
 
         /// <summary>

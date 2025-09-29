@@ -9,7 +9,7 @@ namespace OrganizerCompanion.Core.Extensions
         /// </summary>
         public static Interfaces.Type.IUSAddress AsTypeUSAddress(this IUSAddress domainUSAddress)
         {
-            return domainUSAddress; // Since Domain.IUSAddress inherits from Type.IUSAddress, this is a safe upcast
+            return (Interfaces.Type.IUSAddress)domainUSAddress; // Explicit cast since Domain.IUSAddress inherits from Type.IUSAddress
         }
 
         /// <summary>
