@@ -42,7 +42,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var emailAddress = "test@example.com";
-            var type = Types.Work;
+            var type = OrganizerCompanion.Core.Enums.Types.Work;
             var beforeCreation = DateTime.Now;
 
             // Act
@@ -64,7 +64,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var emailAddress = "test@example.com";
-            var type = Types.Home;
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now;
 
@@ -129,7 +129,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void EmailAddress_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut = new Email("test@example.com", Types.Work)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
             {
                 EmailAddress = null
             };
@@ -143,7 +143,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email();
-            var newType = Types.Fax;
+            var newType = OrganizerCompanion.Core.Enums.Types.Fax;
             var beforeSet = DateTime.Now;
 
             // Act
@@ -163,7 +163,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange
-            _sut = new Email("test@example.com", Types.Work);
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work);
 
             // Act
             ((OrganizerCompanion.Core.Interfaces.Type.IEmail)_sut).Type = null;
@@ -200,7 +200,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1, 
                 "test@example.com", 
-                Types.Work, 
+                OrganizerCompanion.Core.Enums.Types.Work, 
                 specificDate, 
                 DateTime.Now);
 
@@ -239,7 +239,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1, 
                 "test@example.com", 
-                Types.Work, 
+                OrganizerCompanion.Core.Enums.Types.Work, 
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -285,7 +285,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 123, 
                 "test@example.com", 
-                Types.Home, 
+                OrganizerCompanion.Core.Enums.Types.Home, 
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -308,7 +308,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 456, 
                 null, 
-                Types.Work, 
+                OrganizerCompanion.Core.Enums.Types.Work, 
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -347,7 +347,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1, 
                 "test@example.com", 
-                Types.Cell, 
+                OrganizerCompanion.Core.Enums.Types.Cell, 
                 DateTime.Now.AddDays(-1), 
                 DateTime.Now);
 
@@ -372,7 +372,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonSerialization_WithAllTypesEnum_ShouldProduceValidJson()
         {
             // Test all enum values
-            var enumValues = new[] { Types.Home, Types.Work, Types.Cell, Types.Fax, Types.Billing, Types.Other };
+            var enumValues = new[] { OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Types.Work, OrganizerCompanion.Core.Enums.Types.Cell, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Types.Billing, OrganizerCompanion.Core.Enums.Types.Other };
 
             foreach (var enumValue in enumValues)
             {
@@ -402,7 +402,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_WithEmptyEmailAddress_ShouldBeAllowed()
         {
             // Arrange & Act
-            _sut = new Email(string.Empty, Types.Other);
+            _sut = new Email(string.Empty, OrganizerCompanion.Core.Enums.Types.Other);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(string.Empty));
@@ -415,7 +415,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var longEmail = new string('a', 1000) + "@example.com";
 
             // Act
-            _sut = new Email(longEmail, Types.Work);
+            _sut = new Email(longEmail, OrganizerCompanion.Core.Enums.Types.Work);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(longEmail));
@@ -440,7 +440,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
-            ((OrganizerCompanion.Core.Interfaces.Type.IEmail)_sut).Type = Types.Home;
+            ((OrganizerCompanion.Core.Interfaces.Type.IEmail)_sut).Type = OrganizerCompanion.Core.Enums.Types.Home;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
         }
@@ -478,7 +478,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1, 
                 "test@example.com", 
-                Types.Work, 
+                OrganizerCompanion.Core.Enums.Types.Work, 
                 DateTime.Now, 
                 DateTime.Now);
 

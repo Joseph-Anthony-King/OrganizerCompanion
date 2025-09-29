@@ -62,7 +62,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var city = "Ciudad de México";
             var state = new MXState { Name = "Ciudad de México", Abbreviation = "DF" };
             var country = "México";
-            var type = Types.Home;
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -229,7 +229,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newType = Types.Work;
+            var newType = OrganizerCompanion.Core.Enums.Types.Work;
             var originalDateModified = _sut.DateModified;
             Thread.Sleep(10); // Ensure time difference
 
@@ -256,7 +256,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.City = "Ciudad de Prueba";
             _sut.State = new MXState { Name = "Estado de Prueba", Abbreviation = "EP" };
             _sut.Country = "México";
-            _sut.Type = Types.Home;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
 
             // Act
             var json = _sut.ToJson();
@@ -417,7 +417,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 City = "Ciudad de México",
                 State = new MXState { Name = "Ciudad de México", Abbreviation = "DF" },
                 Country = "México",
-                Type = Types.Billing,
+                Type = OrganizerCompanion.Core.Enums.Types.Billing,
                 DateModified = DateTime.Now.AddMinutes(-30)
             };
 
@@ -453,7 +453,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var city = "Guadalajara";
             var state = MXStates.Jalisco.ToStateModel();
             var country = "México";
-            var type = Types.Work;
+            var type = OrganizerCompanion.Core.Enums.Types.Work;
             var dateCreated = DateTime.Now.AddDays(-2);
             var dateModified = DateTime.Now.AddHours(-1);
 
@@ -557,7 +557,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 { "City", () => _sut.City = "Test City" },
                 { "State", () => _sut.State = new MXState { Name = "Test", Abbreviation = "TS" } },
                 { "Country", () => _sut.Country = "Test Country" },
-                { "Type", () => _sut.Type = Types.Other }
+                { "Type", () => _sut.Type = OrganizerCompanion.Core.Enums.Types.Other }
             };
 
             // Act & Assert
@@ -588,7 +588,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 City = "Ciudad de México",
                 State = new MXState { Name = "Ciudad de México", Abbreviation = "DF" },
                 Country = "México",
-                Type = Types.Home
+                Type = OrganizerCompanion.Core.Enums.Types.Home
             };
 
             var json = originalAddress.ToJson();

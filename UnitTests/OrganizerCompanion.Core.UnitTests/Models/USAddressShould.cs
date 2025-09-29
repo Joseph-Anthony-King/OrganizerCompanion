@@ -63,7 +63,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var state = new USState { Name = "California", Abbreviation = "CA" };
             var zipCode = "90210";
             var country = "United States";
-            var type = Types.Home;
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -285,7 +285,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newType = Types.Work;
+            var newType = OrganizerCompanion.Core.Enums.Types.Work;
             var originalDateModified = _sut.DateModified;
             Thread.Sleep(10); // Ensure time difference
 
@@ -312,7 +312,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.State = new USState { Name = "Test State", Abbreviation = "TS" };
             _sut.ZipCode = "12345";
             _sut.Country = "Test Country";
-            _sut.Type = Types.Home;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
 
             // Act
             var json = _sut.ToJson();
@@ -473,7 +473,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 State = new USState { Name = "New York", Abbreviation = "NY" },
                 ZipCode = "10001",
                 Country = "USA",
-                Type = Types.Billing,
+                Type = OrganizerCompanion.Core.Enums.Types.Billing,
                 DateModified = DateTime.Now.AddMinutes(-30)
             };
 

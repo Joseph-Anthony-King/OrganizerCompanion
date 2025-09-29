@@ -22,7 +22,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "Anytown",
                 State = USStates.California.ToStateModel(),
                 ZipCode = "12345",
-                Type = Types.Home
+                Type = OrganizerCompanion.Core.Enums.Types.Home
             };
 
             _typeUSAddress = new MockTypeUSAddress
@@ -31,7 +31,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "Springfield",
                 State = USStates.Texas.ToStateModel(),
                 ZipCode = "54321",
-                Type = Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work
             };
         }
 
@@ -88,7 +88,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "Somewhere", 
                 State = USStates.NewYork.ToStateModel(),
                 ZipCode = "98765",
-                Type = Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work
             };
             var domainUSAddresses = new List<IUSAddress?> { _sut, domainUSAddress2, null };
 
@@ -129,7 +129,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "Elsewhere",
                 State = USStates.Florida.ToStateModel(),
                 ZipCode = "11111",
-                Type = Types.Billing
+                Type = OrganizerCompanion.Core.Enums.Types.Billing
             };
             var typeUSAddresses = new List<Interfaces.Type.IUSAddress?> 
             { 
@@ -213,7 +213,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 State = USStates.California.ToStateModel(),
                 ZipCode = "12345",
                 Country = "United States",
-                Type = Types.Home
+                Type = OrganizerCompanion.Core.Enums.Types.Home
             };
 
             // Act
@@ -245,7 +245,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 State = USStates.Texas.ToStateModel(),
                 ZipCode = "54321",
                 Country = "USA",
-                Type = Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work
             };
             Interfaces.Type.IUSAddress typeUSAddress = completeUSAddress;
 
@@ -275,7 +275,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "City1",
                 State = USStates.California.ToStateModel(),
                 ZipCode = "11111",
-                Type = Types.Home
+                Type = OrganizerCompanion.Core.Enums.Types.Home
             };
             var address2 = new USAddress()
             {
@@ -284,7 +284,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
                 City = "City2",
                 State = USStates.NewYork.ToStateModel(),
                 ZipCode = "22222",
-                Type = Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work
             };
             var domainUSAddresses = new List<IUSAddress?> { address1, address2 };
 
@@ -318,7 +318,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             public Interfaces.Type.ISubNationalSubdivision? State { get; set; }
             public string? ZipCode { get; set; }
             public string? Country { get; set; }
-            public Types? Type { get; set; }
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
         }
     }
 }

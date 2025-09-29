@@ -15,7 +15,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [SetUp]
         public void SetUp()
         {
-            _sut = new Email("test@example.com", Types.Work)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
             {
                 Id = 1
             };
@@ -23,7 +23,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             _typeEmail = new MockTypeEmail
             {
                 EmailAddress = "type@example.com",
-                Type = Types.Home
+                Type = OrganizerCompanion.Core.Enums.Types.Home
             };
         }
 
@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
-            Assert.That(result.Type, Is.EqualTo(Types.Work));
+            Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
         }
 
         [Test, Category("Extensions")]
@@ -97,7 +97,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypeEmails_WithListOfDomainEmails_ShouldConvertToTypeEmails()
         {
             // Arrange
-            var domainEmail2 = new Email("test2@example.com", Types.Home);
+            var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home);
             var domainEmails = new List<IEmail?> { _sut, domainEmail2, null };
 
             // Act
@@ -129,7 +129,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
         {
             // Arrange
-            var domainEmail2 = new Email("test2@example.com", Types.Cell);
+            var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Cell);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)
@@ -152,7 +152,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithOnlyPureTypeEmails_ShouldReturnEmptyList()
         {
             // Arrange
-            var typeEmail2 = new MockTypeEmail { EmailAddress = "type2@example.com", Type = Types.Billing };
+            var typeEmail2 = new MockTypeEmail { EmailAddress = "type2@example.com", Type = OrganizerCompanion.Core.Enums.Types.Billing };
             var typeEmails = new List<Interfaces.Type.IEmail?> { _typeEmail, typeEmail2 };
 
             // Act
@@ -195,7 +195,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         private class MockTypeEmail : Interfaces.Type.IEmail
         {
             public string? EmailAddress { get; set; }
-            public Types? Type { get; set; }
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
         }
     }
 }

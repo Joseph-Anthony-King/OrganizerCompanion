@@ -57,7 +57,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 123;
             var phone = "+1-555-123-4567";
-            var type = Types.Work;
+            var type = OrganizerCompanion.Core.Enums.Types.Work;
             var isCast = true;
             var castId = 456;
             var castType = "Organization";
@@ -150,7 +150,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newType = Types.Cell;
+            var newType = OrganizerCompanion.Core.Enums.Types.Cell;
             var beforeSet = DateTime.Now;
 
             // Act
@@ -169,7 +169,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSetToNull_ShouldUpdateDateModified()
         {
             // Arrange
-            _sut.Type = Types.Home;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
             var beforeSet = DateTime.Now;
 
             // Act
@@ -284,7 +284,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var phoneNumber = new PhoneNumber(1, "555-1234", Types.Home, specificDate, null);
+            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, specificDate, null);
 
             // Assert
             Assert.That(phoneNumber.DateCreated, Is.EqualTo(specificDate));
@@ -316,7 +316,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = Types.Work;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
 
             // Act
             var json = _sut.ToJson();
@@ -365,7 +365,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new PhoneNumber(
                 id: 123,
                 phone: "+1-555-123-4567",
-                type: Types.Work,
+                type: OrganizerCompanion.Core.Enums.Types.Work,
                 isCast: true,
                 castId: 456,
                 castType: "Organization",
@@ -396,7 +396,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new PhoneNumber(
                 id: 123,
                 phone: "+1-555-123-4567",
-                type: Types.Work,
+                type: OrganizerCompanion.Core.Enums.Types.Work,
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -476,7 +476,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void PhoneNumber_WithAllTypesEnumValues_ShouldBeAllowed()
         {
             // Test all enum values
-            foreach (Types type in Enum.GetValues<Types>())
+            foreach (OrganizerCompanion.Core.Enums.Types type in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
             {
                 // Act
                 _sut.Type = type;
@@ -527,7 +527,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.Type = Types.Work;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
@@ -636,7 +636,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
 
             // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
             Assert.DoesNotThrow(() =>
@@ -652,7 +652,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 42;
             _sut.Phone = "+1-555-TESTING";
-            _sut.Type = Types.Fax;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
             _sut.DateModified = DateTime.Now;
 
             // Act
@@ -724,12 +724,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Verify the Types enum values are as expected
             var expectedTypes = new[]
             {
-                (Types.Home, 0),
-                (Types.Work, 1),
-                (Types.Cell, 2),
-                (Types.Fax, 3),
-                (Types.Billing, 4),
-                (Types.Other, 5)
+                (OrganizerCompanion.Core.Enums.Types.Home, 0),
+                (OrganizerCompanion.Core.Enums.Types.Work, 1),
+                (OrganizerCompanion.Core.Enums.Types.Cell, 2),
+                (OrganizerCompanion.Core.Enums.Types.Fax, 3),
+                (OrganizerCompanion.Core.Enums.Types.Billing, 4),
+                (OrganizerCompanion.Core.Enums.Types.Other, 5)
             };
 
             foreach (var (type, expectedValue) in expectedTypes)
