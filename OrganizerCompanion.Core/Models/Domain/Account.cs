@@ -14,7 +14,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
         
         private int _id = 0;
-        private string? _userName = null;
+        private string? _accountName = null;
         private string? _accountNumber = null;
         private int _linkedEntityId = 0;
         private string? _linkedEntityType = null;
@@ -36,12 +36,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("userName")]
-        public string? UserName 
+        public string? AccountName 
         { 
-            get => _userName; 
+            get => _accountName; 
             set 
             { 
-                _userName = value; 
+                _accountName = value; 
                 DateModified = DateTime.Now; 
             } 
         }
@@ -114,7 +114,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public Account(
             int id,
-            string? userName,
+            string? accountName,
             string? accountNumber,
             int linkedEntityId,
             string? linkedEntityType,
@@ -128,7 +128,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
 
                 _id = id;
-                _userName = userName;
+                _accountName = accountName;
                 _accountNumber = accountNumber;
                 _linkedEntityId = linkedEntityId;
                 _linkedEntityType = linkedEntityType;
@@ -144,7 +144,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public Account(
-            string? userName,
+            string? accountName,
             string? accountNumber,
             IDomainEntity linkedEntity,
             bool allowAnnonymousUsers,
@@ -153,7 +153,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                _userName = userName;
+                _accountName = accountName;
                 _accountNumber = accountNumber;
                 _linkedEntityId = linkedEntity.Id;
                 _linkedEntityType = linkedEntity.GetType().Name;
@@ -174,7 +174,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id{0}.UserName{1}", _id, _userName);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.AccountName:{1}", _id, _accountName);
         #endregion
     }
 }

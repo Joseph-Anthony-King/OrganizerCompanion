@@ -38,7 +38,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Id, Is.EqualTo(0));
-                Assert.That(account.UserName, Is.Null);
+                Assert.That(account.AccountName, Is.Null);
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(account.LinkedEntityType, Is.Null);
@@ -56,7 +56,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             var account = new Account(
                 id: 1,
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 1,
                 linkedEntityType: "Person",
@@ -70,7 +70,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Id, Is.EqualTo(1));
-                Assert.That(account.UserName, Is.EqualTo("testuser"));
+                Assert.That(account.AccountName, Is.EqualTo("testuser"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(1));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
@@ -86,7 +86,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var account = new Account(
-                userName: "testuser2",
+                accountName: "testuser2",
                 accountNumber: "ACC456",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: false,
@@ -97,7 +97,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(account.UserName, Is.EqualTo("testuser2"));
+                Assert.That(account.AccountName, Is.EqualTo("testuser2"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(_sut.Id));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
@@ -135,12 +135,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var originalDateModified = account.DateModified;
 
             // Act
-            account.UserName = "newuser";
+            account.AccountName = "newuser";
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(account.UserName, Is.EqualTo("newuser"));
+                Assert.That(account.AccountName, Is.EqualTo("newuser"));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -257,7 +257,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account(
                 id: 1,
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
                 linkedEntityType: "Person",
@@ -292,7 +292,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account = new Account
             {
                 Id = 42,
-                UserName = "johndoe"
+                AccountName = "johndoe"
             };
 
             // Act
@@ -300,8 +300,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Does.Contain("Id42"));
-            Assert.That(result, Does.Contain("UserNamejohndoe"));
+            Assert.That(result, Does.Contain("Id:42"));
+            Assert.That(result, Does.Contain("AccountName:johndoe"));
             Assert.That(result, Does.Contain("OrganizerCompanion.Core.Models.Domain.Account"));
         }
 
@@ -309,17 +309,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_HandlesNullUserName()
         {
             // Arrange
-            var account = new Account();
-            account.Id = 42;
-            account.UserName = null;
+            var account = new Account
+            {
+                Id = 42,
+                AccountName = null
+            };
 
             // Act
             var result = account.ToString();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Does.Contain("Id42"));
-            Assert.That(result, Does.Contain("UserName"));
+            Assert.That(result, Does.Contain("Id:42"));
+            Assert.That(result, Does.Contain("AccountName"));
             Assert.That(result, Does.Contain("OrganizerCompanion.Core.Models.Domain.Account"));
         }
 
@@ -327,11 +329,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Properties_CanSetAndGetNullValues()
         {
             // Arrange
-            var account = new Account();
-
-            // Act & Assert
-            account.UserName = null;
-            Assert.That(account.UserName, Is.Null);
+            var account = new Account
+            {
+                // Act & Assert
+                AccountName = null
+            };
+            Assert.That(account.AccountName, Is.Null);
 
             account.AccountNumber = null;
             Assert.That(account.AccountNumber, Is.Null);
@@ -370,7 +373,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             var account = new Account(
                 id: 1,
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
                 linkedEntityType: "Person",
@@ -392,7 +395,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             var account = new Account(
-                userName: "testuser2",
+                accountName: "testuser2",
                 accountNumber: "ACC456",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: false,
@@ -423,7 +426,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntity: null!,
                 allowAnnonymousUsers: true,
@@ -447,7 +450,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // For demonstration, we'll test with valid parameters to ensure no exception is thrown
             Assert.DoesNotThrow(() => new Account(
                 id: 1,
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
                 linkedEntityType: "Person",
@@ -464,7 +467,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange, Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
                 id: -1,
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
                 linkedEntityType: "Person",
@@ -492,7 +495,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntity: mockEntity,
                 allowAnnonymousUsers: true,
@@ -510,7 +513,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange, Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
-                userName: "testuser",
+                accountName: "testuser",
                 accountNumber: "ACC123",
                 linkedEntity: null!,
                 allowAnnonymousUsers: true,
