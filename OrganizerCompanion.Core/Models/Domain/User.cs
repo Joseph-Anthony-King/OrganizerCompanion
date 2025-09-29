@@ -30,9 +30,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
         private bool? _isSuperUser = null;
-        private bool _isCast = false;
-        private int _castId = 0;
-        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -114,8 +111,10 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [Required, JsonPropertyName("fullName")]
         public string? FullName => _firstName == null && _middleName == null && _lastName == null ? null :
+            _firstName == null || _lastName == null ?
+                throw new ArgumentNullException("FirstName and/or LastName properties cannot be null") :
             _middleName == null ?
-                $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
+                    $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
 
         [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? UserName 
@@ -249,38 +248,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("isCast")]
-        public bool IsCast
-        {
-            get => _isCast;
-            set
-            {
-                _isCast = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int CastId
-        {
-            get => _castId;
-            set
-            {
-                _castId = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? CastType
-        {
-            get => _castType;
-            set
-            {
-                _castType = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
@@ -332,9 +307,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isDeceased = isDeceased;
             _isAdmin = isAdmin;
             _isSuperUser = isSuperUser;
-            _isCast = isCast != null && (bool)isCast;
-            _castId = castId != null ? (int)castId : 0;
-            _castType = castType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

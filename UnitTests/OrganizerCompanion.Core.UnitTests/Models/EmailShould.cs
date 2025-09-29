@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
-using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models

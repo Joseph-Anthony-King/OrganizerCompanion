@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
-using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -42,9 +41,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.Phone, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
-                Assert.That(_sut.IsCast, Is.False);
-                Assert.That(_sut.CastId, Is.EqualTo(0));
-                Assert.That(_sut.CastType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -58,9 +54,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
-            var isCast = true;
-            var castId = 456;
-            var castType = "Organization";
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -70,10 +63,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone, 
                 type, 
                 dateCreated, 
-                dateModified, 
-                isCast, 
-                castId, 
-                castType);
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -81,9 +71,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
-                Assert.That(phoneNumber.IsCast, Is.EqualTo(isCast));
-                Assert.That(phoneNumber.CastId, Is.EqualTo(castId));
-                Assert.That(phoneNumber.CastType, Is.EqualTo(castType));
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
             });
@@ -185,81 +172,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var originalDateModified = _sut.DateModified;
-
-            // Act
-            _sut.IsCast = true;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.IsCast, Is.True);
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newCastId = 789;
-            var originalDateModified = _sut.DateModified;
-
-            // Act
-            _sut.CastId = newCastId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastId, Is.EqualTo(newCastId));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newCastType = "Organization";
-            var originalDateModified = _sut.DateModified;
-
-            // Act
-            _sut.CastType = newCastType;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastType, Is.EqualTo(newCastType));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_WhenSetToNull_ShouldUpdateDateModified()
-        {
-            // Arrange
-            _sut.CastType = "Person";
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastType = null;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastType, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
-        }
-
-        [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -328,7 +240,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("phone").And.Contains("555-123-4567")); // Allow for Unicode escaping
                 Assert.That(json, Does.Contain("\"type\":1")); // Work enum value is 1
-                Assert.That(json, Does.Contain("\"isCast\":false"));
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
                 Assert.That(json, Does.Contain("\"dateModified\":"));
 
@@ -350,7 +261,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":0"));
                 Assert.That(json, Does.Contain("\"phone\":null"));
                 Assert.That(json, Does.Contain("\"type\":null"));
-                Assert.That(json, Does.Contain("\"isCast\":false"));
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
 
                 // Verify JSON is well-formed
@@ -366,9 +276,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
-                isCast: true,
-                castId: 456,
-                castType: "Organization",
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -380,9 +287,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"isCast\":true"));
-                Assert.That(json, Does.Contain("\"castId\":456"));
-                Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
 
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
@@ -397,9 +301,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -411,11 +312,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"isCast\":false"));
-                // CastId should be omitted when 0 due to JsonIgnore condition
-                Assert.That(json, Does.Not.Contain("\"castId\""));
-                // CastType should be omitted when null due to JsonIgnore condition
-                Assert.That(json, Does.Not.Contain("\"castType\""));
 
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
@@ -530,104 +426,98 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
-
-            System.Threading.Thread.Sleep(1);
-            _sut.IsCast = true;
-            var fourthModified = _sut.DateModified;
-            Assert.That(fourthModified, Is.GreaterThan(thirdModified));
-
-            System.Threading.Thread.Sleep(1);
-            _sut.CastId = 123;
-            var fifthModified = _sut.DateModified;
-            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
-
-            System.Threading.Thread.Sleep(1);
-            _sut.CastType = "Person";
-            var sixthModified = _sut.DateModified;
-            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithZeroId_ShouldBeAllowed()
+        public void IsCast_Getter_ThrowsNotImplementedException()
         {
-            // Act
-            _sut.Id = 0;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(0));
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithMaxIntId_ShouldBeAllowed()
+        public void IsCast_Setter_ThrowsNotImplementedException()
         {
-            // Act
-            _sut.Id = int.MaxValue;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithNegativeId_ShouldBeAllowed()
+        public void CastId_Getter_ThrowsNotImplementedException()
         {
-            // Act
-            _sut.Id = -1;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(-1));
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithInternationalFormats_ShouldBeAllowed()
+        public void CastId_Setter_ThrowsNotImplementedException()
         {
-            // Test various international phone formats
-            var phoneFormats = new[]
-            {
-                "+1-555-123-4567",      // US format
-                "+44 20 7946 0958",     // UK format
-                "+49 30 12345678",      // German format
-                "+81-3-1234-5678",      // Japanese format
-                "+86 138 0013 8000",    // Chinese format
-                "555-1234",             // Simple format
-                "(555) 123-4567",       // US with parentheses
-                "555.123.4567",         // Dot notation
-                "5551234567"            // No formatting
-            };
-
-            foreach (var phoneFormat in phoneFormats)
-            {
-                // Act
-                _sut.Phone = phoneFormat;
-
-                // Assert
-                Assert.That(_sut.Phone, Is.EqualTo(phoneFormat), $"Failed for phone format: {phoneFormat}");
-            }
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithSpecialCharacters_ShouldBeAllowed()
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithInvalidEnumValue_ShouldHandleGracefully()
         {
             // Arrange
-            var specialPhone = "+1-(555)-123-4567 ext. 1234";
+            _sut.Id = 1;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = (OrganizerCompanion.Core.Enums.Types)999; // Invalid enum value
 
             // Act
-            _sut.Phone = specialPhone;
+            var json = _sut.ToJson();
 
             // Assert
-            Assert.That(_sut.Phone, Is.EqualTo(specialPhone));
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"id\":1"));
+                Assert.That(json, Does.Contain("phone").And.Contains("555-123-4567")); // Allow for Unicode escaping
+                Assert.That(json, Does.Contain("\"type\":999")); // Invalid enum value
+
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
         }
 
         [Test, Category("Models")]
-        public void PhoneNumber_WithWhitespace_ShouldBeAllowed()
+        public void ToJson_WithAdditionalProperties_ShouldSerializeAllProperties()
         {
             // Arrange
-            var phoneWithSpaces = " +1 555 123 4567 ";
+            _sut.Id = 2;
+            _sut.Phone = "+1-555-765-4321";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
 
             // Act
-            _sut.Phone = phoneWithSpaces;
+            var json = _sut.ToJson();
 
             // Assert
-            Assert.That(_sut.Phone, Is.EqualTo(phoneWithSpaces));
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"id\":2"));
+                Assert.That(json, Does.Contain("phone").And.Contains("555-765-4321")); // Allow for Unicode escaping
+                Assert.That(json, Does.Contain("\"type\":3")); // Fax enum value is 3
+                Assert.That(json, Does.Contain("\"dateCreated\":"));
+                Assert.That(json, Does.Contain("\"dateModified\":"));
+
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
         }
 
         [Test, Category("Models")]
@@ -664,9 +554,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
 
                 // Check that all expected properties are present
-                var expectedProperties = new[] {
-                    "id", "phone", "type", "isCast", "dateCreated", "dateModified"
-                };
+                string[] expectedProperties = [
+                    "id", "phone", "type", "dateCreated", "dateModified"
+                ];
 
                 foreach (var property in expectedProperties)
                 {
@@ -739,48 +629,199 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void CastProperties_CanBeSetMultipleTimes()
+        public void Properties_WithNullValues_ShouldHandleCorrectly()
         {
-            // Arrange & Act - IsCast
-            _sut.IsCast = true;
-            Assert.That(_sut.IsCast, Is.True);
+            // Act & Assert
+            _sut.Phone = null;
+            Assert.That(_sut.Phone, Is.Null);
 
-            _sut.IsCast = false;
-            Assert.That(_sut.IsCast, Is.False);
+            _sut.Type = null;
+            Assert.That(_sut.Type, Is.Null);
 
-            // Act - CastId
-            _sut.CastId = 100;
-            Assert.That(_sut.CastId, Is.EqualTo(100));
-
-            _sut.CastId = 200;
-            Assert.That(_sut.CastId, Is.EqualTo(200));
-
-            // Act - CastType
-            _sut.CastType = "Organization";
-            Assert.That(_sut.CastType, Is.EqualTo("Organization"));
-
-            _sut.CastType = "Person";
-            Assert.That(_sut.CastType, Is.EqualTo("Person"));
+            _sut.DateModified = null;
+            Assert.That(_sut.DateModified, Is.Null);
         }
 
         [Test, Category("Models")]
-        public void CastId_WithNegativeValue_ShouldBeAllowed()
+        public void Properties_WithMaxIntValues_ShouldAcceptMaxValues()
         {
-            // Act
-            _sut.CastId = -1;
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
 
             // Assert
-            Assert.That(_sut.CastId, Is.EqualTo(-1));
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
         }
 
         [Test, Category("Models")]
-        public void CastId_WithMaxValue_ShouldBeAllowed()
+        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
         {
-            // Act
-            _sut.CastId = int.MaxValue;
+            // Arrange & Act
+            _sut.Id = int.MinValue;
 
             // Assert
-            Assert.That(_sut.CastId, Is.EqualTo(int.MaxValue));
+            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullProperties_ShouldHandleNullsCorrectly()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Phone = null;
+            _sut.Type = null;
+            _sut.DateModified = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+
+            var jsonDocument = JsonDocument.Parse(json);
+            var root = jsonDocument.RootElement;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
+                Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
+                
+                Assert.That(root.TryGetProperty("phone", out var phoneProperty), Is.True);
+                Assert.That(phoneProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                
+                Assert.That(root.TryGetProperty("type", out var typeProperty), Is.True);
+                Assert.That(typeProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                
+                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
+                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithInternationalFormats_ShouldBeAllowed()
+        {
+            // Test various international phone formats
+            var phoneFormats = new[]
+            {
+                "+1-555-123-4567",      // US format
+                "+44 20 7946 0958",     // UK format
+                "+49 30 12345678",      // German format
+                "+81-3-1234-5678",      // Japanese format
+                "+86 138 0013 8000",    // Chinese format
+                "555-1234",             // Simple format
+                "(555) 123-4567",       // US with parentheses
+                "555.123.4567",         // Dot notation
+                "5551234567"            // No formatting
+            };
+
+            foreach (var phoneFormat in phoneFormats)
+            {
+                // Act
+                _sut.Phone = phoneFormat;
+
+                // Assert
+                Assert.That(_sut.Phone, Is.EqualTo(phoneFormat), $"Failed for phone format: {phoneFormat}");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithSpecialCharacters_ShouldBeAllowed()
+        {
+            // Arrange
+            var specialPhone = "+1-(555)-123-4567 ext. 1234";
+
+            // Act
+            _sut.Phone = specialPhone;
+
+            // Assert
+            Assert.That(_sut.Phone, Is.EqualTo(specialPhone));
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithWhitespace_ShouldBeAllowed()
+        {
+            // Arrange
+            var phoneWithSpaces = " +1 555 123 4567 ";
+
+            // Act
+            _sut.Phone = phoneWithSpaces;
+
+            // Assert
+            Assert.That(_sut.Phone, Is.EqualTo(phoneWithSpaces));
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithZeroId_ShouldBeAllowed()
+        {
+            // Act
+            _sut.Id = 0;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithNegativeId_ShouldBeAllowed()
+        {
+            // Act
+            _sut.Id = -1;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(-1));
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullDateModified_ShouldAcceptNull()
+        {
+            // Arrange
+            var id = 1;
+            var phone = "+1-555-123-4567";
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var dateCreated = DateTime.Now.AddDays(-1);
+            DateTime? dateModified = null;
+
+            // Act
+            var phoneNumber = new PhoneNumber(id, phone, type, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithOptionalParameters_ShouldIgnoreOptionalParams()
+        {
+            // Arrange
+            var id = 1;
+            var phone = "+1-555-123-4567";
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+            
+            // Act - Test that optional parameters are accepted but don't affect the object
+            var phoneNumber = new PhoneNumber(id, phone, type, dateCreated, dateModified, true, 123, "TestType");
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
+                // Cast properties still throw exceptions despite constructor parameters
+                Assert.Throws<NotImplementedException>(() => { var _ = phoneNumber.IsCast; });
+            });
         }
     }
 }

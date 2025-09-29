@@ -51,9 +51,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.Null);
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(0));
-                Assert.That(account.IsCast, Is.False);
-                Assert.That(account.CastId, Is.EqualTo(0));
-                Assert.That(account.CastType, Is.Null);
                 Assert.That(account.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(account.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(account.DateModified, Is.EqualTo(default(DateTime)));
@@ -73,10 +70,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
-                dateModified: _testDateModified,
-                isCast: true,
-                castId: 2,
-                castType: "Organization"
+                dateModified: _testDateModified
             );
 
             // Assert
@@ -90,9 +84,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(1));
-                Assert.That(account.IsCast, Is.True);
-                Assert.That(account.CastId, Is.EqualTo(2));
-                Assert.That(account.CastType, Is.EqualTo("Organization"));
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -121,9 +112,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(1));
-                Assert.That(account.IsCast, Is.False);
-                Assert.That(account.CastId, Is.EqualTo(0));
-                Assert.That(account.CastType, Is.Null);
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -268,63 +256,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.IsCast = true;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.IsCast, Is.True);
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.CastId = 123;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.CastId, Is.EqualTo(123));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.CastType = "Organization";
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.CastType, Is.EqualTo("Organization"));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
         public void Cast_ThrowsNotImplementedException()
         {
             // Arrange
@@ -332,6 +263,66 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act & Assert
             Assert.Throws<NotImplementedException>(() => account.Cast<User>());
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = account.IsCast; });
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => account.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = account.CastId; });
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => account.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = account.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange
+            var account = new Account();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => account.CastType = "SomeType");
         }
 
         [Test, Category("Models")]
@@ -393,12 +384,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             account.LinkedEntity = null;
             Assert.That(account.LinkedEntity, Is.Null);
-
-            // Note: Features property cannot be set to null due to type casting issues
-            // account.Features = null; // This would cause casting issues
-
-            account.CastType = null;
-            Assert.That(account.CastType, Is.Null);
         }
 
         [Test, Category("Models")]

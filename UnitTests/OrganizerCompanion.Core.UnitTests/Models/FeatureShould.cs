@@ -39,9 +39,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.FeatureName, Is.Null);
                 Assert.That(_sut.IsEnabled, Is.False);
-                Assert.That(_sut.IsCast, Is.False);
-                Assert.That(_sut.CastId, Is.EqualTo(0));
-                Assert.That(_sut.CastType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -70,9 +67,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(id));
                 Assert.That(feature.FeatureName, Is.EqualTo(featureName));
                 Assert.That(feature.IsEnabled, Is.EqualTo(isEnabled));
-                Assert.That(feature.IsCast, Is.EqualTo(isCast));
-                Assert.That(feature.CastId, Is.EqualTo(castId));
-                Assert.That(feature.CastType, Is.EqualTo(castType));
                 Assert.That(feature.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(feature.DateModified, Is.EqualTo(dateModified));
             });
@@ -100,9 +94,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(id));
                 Assert.That(feature.FeatureName, Is.Null);
                 Assert.That(feature.IsEnabled, Is.False);
-                Assert.That(feature.IsCast, Is.False);
-                Assert.That(feature.CastId, Is.EqualTo(0));
-                Assert.That(feature.CastType, Is.Null);
                 Assert.That(feature.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(feature.DateModified, Is.Null);
             });
@@ -240,134 +231,45 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_WhenSetToTrue_ShouldUpdateDateModified()
+        public void IsCast_Getter_ThrowsNotImplementedException()
         {
-            // Arrange
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.IsCast = true;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.IsCast, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
         }
 
         [Test, Category("Models")]
-        public void IsCast_WhenSetToFalse_ShouldUpdateDateModified()
+        public void IsCast_Setter_ThrowsNotImplementedException()
         {
-            // Arrange
-            _sut.IsCast = true; // Set initial value
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.IsCast = false;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.IsCast, Is.False);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
         }
 
         [Test, Category("Models")]
-        public void CastId_WhenSet_ShouldUpdateDateModified()
+        public void CastId_Getter_ThrowsNotImplementedException()
         {
-            // Arrange
-            var newCastId = 456;
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastId = newCastId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastId, Is.EqualTo(newCastId));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
         }
 
         [Test, Category("Models")]
-        public void CastId_WhenSetToZero_ShouldUpdateDateModified()
+        public void CastId_Setter_ThrowsNotImplementedException()
         {
-            // Arrange
-            _sut.CastId = 123; // Set initial value
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastId = 0;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastId, Is.EqualTo(0));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 456);
         }
 
         [Test, Category("Models")]
-        public void CastType_WhenSet_ShouldUpdateDateModified()
+        public void CastType_Getter_ThrowsNotImplementedException()
         {
-            // Arrange
-            var newCastType = "UserAccount";
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastType = newCastType;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastType, Is.EqualTo(newCastType));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
         }
 
         [Test, Category("Models")]
-        public void CastType_WhenSetToNull_ShouldUpdateDateModified()
+        public void CastType_Setter_ThrowsNotImplementedException()
         {
-            // Arrange
-            _sut.CastType = "TestType"; // Set initial value
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastType = null;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastType, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_WhenSetToEmptyString_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.CastType = string.Empty;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.CastType, Is.EqualTo(string.Empty));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
-            });
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "UserAccount");
         }
 
         [Test, Category("Models")]
@@ -398,7 +300,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ShouldThrowNotImplementedException()
         {
             // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<IDomainEntity>());
+            Assert.Throws<NotImplementedException>(() => _sut.Cast<Feature>());
         }
 
         [Test, Category("Models")]
@@ -408,9 +310,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.FeatureName = "TestFeature";
             _sut.IsEnabled = true;
-            _sut.IsCast = false;
-            _sut.CastId = 0;
-            _sut.CastType = null;
 
             // Act
             var json = _sut.ToJson();
@@ -423,7 +322,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":123"));
                 Assert.That(json, Does.Contain("\"featureName\":\"TestFeature\""));
                 Assert.That(json, Does.Contain("\"isEnabled\":true"));
-                Assert.That(json, Does.Contain("\"isCast\":false"));
                 Assert.That(json, Does.Contain("\"dateCreated\""));
                 Assert.That(json, Does.Contain("\"dateModified\""));
             });
@@ -435,7 +333,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.FeatureName = null;
-            _sut.CastType = null;
 
             // Act
             var json = _sut.ToJson();
@@ -447,52 +344,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("\"featureName\":null"));
-                // CastType should be omitted due to JsonIgnore condition
+                // Cast properties should be omitted due to JsonIgnore
+                Assert.That(json, Does.Not.Contain("\"isCast\""));
+                Assert.That(json, Does.Not.Contain("\"castId\""));
                 Assert.That(json, Does.Not.Contain("\"castType\""));
             });
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithDefaultCastId_ShouldOmitCastId()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.CastId = 0; // Default value
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            // CastId should be omitted due to JsonIgnore condition for default values
-            Assert.That(json, Does.Not.Contain("\"castId\""));
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithNonDefaultCastId_ShouldIncludeCastId()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.CastId = 456;
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.That(json, Does.Contain("\"castId\":456"));
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithCastType_ShouldIncludeCastType()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.CastType = "UserAccount";
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.That(json, Does.Contain("\"castType\":\"UserAccount\""));
         }
 
         [Test, Category("Models")]
@@ -565,17 +421,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             var featureName = "TestFeature";
             var isEnabled = true;
-            var isCast = true;
-            var castId = 456;
-            var castType = "TestType";
 
             // Act
             _sut.Id = id;
             _sut.FeatureName = featureName;
             _sut.IsEnabled = isEnabled;
-            _sut.IsCast = isCast;
-            _sut.CastId = castId;
-            _sut.CastType = castType;
 
             // Assert
             Assert.Multiple(() =>
@@ -583,9 +433,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(id));
                 Assert.That(_sut.FeatureName, Is.EqualTo(featureName));
                 Assert.That(_sut.IsEnabled, Is.EqualTo(isEnabled));
-                Assert.That(_sut.IsCast, Is.EqualTo(isCast));
-                Assert.That(_sut.CastId, Is.EqualTo(castId));
-                Assert.That(_sut.CastType, Is.EqualTo(castType));
             });
         }
 
@@ -629,32 +476,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void CastId_WithNegativeValue_ShouldAcceptNegativeValue()
-        {
-            // Arrange
-            var negativeCastId = -123;
-
-            // Act
-            _sut.CastId = negativeCastId;
-
-            // Assert
-            Assert.That(_sut.CastId, Is.EqualTo(negativeCastId));
-        }
-
-        [Test, Category("Models")]
-        public void CastId_WithMaxValue_ShouldAcceptMaxValue()
-        {
-            // Arrange
-            var maxCastId = int.MaxValue;
-
-            // Act
-            _sut.CastId = maxCastId;
-
-            // Assert
-            Assert.That(_sut.CastId, Is.EqualTo(maxCastId));
-        }
-
-        [Test, Category("Models")]
         public void Id_WithNegativeValue_ShouldAcceptNegativeValue()
         {
             // Arrange
@@ -687,9 +508,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.FeatureName = "TestFeature";
             _sut.IsEnabled = true;
-            _sut.IsCast = true;
-            _sut.CastId = 456;
-            _sut.CastType = "TestType";
 
             // Act
             var json = _sut.ToJson();
@@ -702,9 +520,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(deserializedFeature!.Id, Is.EqualTo(_sut.Id));
                 Assert.That(deserializedFeature.FeatureName, Is.EqualTo(_sut.FeatureName));
                 Assert.That(deserializedFeature.IsEnabled, Is.EqualTo(_sut.IsEnabled));
-                Assert.That(deserializedFeature.IsCast, Is.EqualTo(_sut.IsCast));
-                Assert.That(deserializedFeature.CastId, Is.EqualTo(_sut.CastId));
-                Assert.That(deserializedFeature.CastType, Is.EqualTo(_sut.CastType));
                 Assert.That(deserializedFeature.DateCreated, Is.EqualTo(_sut.DateCreated));
             });
         }

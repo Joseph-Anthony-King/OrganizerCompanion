@@ -23,7 +23,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
         public int AccountId { get; set; } = 0;
 
-        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
+        [Required, JsonPropertyName("featureId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
         public int FeatureId { get; set; } = 0;
 
         [JsonIgnore]
@@ -35,12 +35,22 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonIgnore]
         public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
 
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = default(DateTime);
+        #endregion
+
+        #region Constructors
+        public AccountFeature() { }
+
+        [JsonConstructor]
+        public AccountFeature(int accountId, int featureId)
+        {
+            AccountId = accountId;
+            FeatureId = featureId;
+        }
         #endregion
 
         #region Methods

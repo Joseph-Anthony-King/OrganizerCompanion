@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Models.Domain
@@ -12,9 +11,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _passwordHint = null;
         private int _accountId = 0;
         private IAccount? _account = null;
-        private bool _isCast = false;
-        private int _castId = 0;
-        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -69,38 +65,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("isCast")]
-        public bool IsCast
-        {
-            get => _isCast;
-            set
-            {
-                _isCast = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int CastId
-        {
-            get => _castId;
-            set
-            {
-                _castId = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public string? CastType
-        {
-            get => _castType;
-            set
-            {
-                _castType = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        [JsonIgnore]
+        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public DateTime DateCreated { get => _dateCreated; }
 
@@ -128,9 +100,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _passwordHint = passwordHint;
             _accountId = accountId;
             _account = account;
-            _isCast = isCast != null && (bool)isCast;
-            _castId = castId != null ? (int)castId : 0;
-            _castType = castType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

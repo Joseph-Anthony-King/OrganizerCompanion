@@ -327,6 +327,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"city\":\"Test City\""));
                 Assert.That(json, Does.Contain("\"zipCode\":\"12345\""));
                 Assert.That(json, Does.Contain("\"country\":\"Test Country\""));
+                Assert.That(json, Does.Contain("\"type\":0")); // Assuming Types.Home is 0
+                Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
+                Assert.That(json, Does.Contain("\"dateCreated\""));
+                Assert.That(json, Does.Contain("\"dateModified\""));
                 Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
             });
         }
@@ -411,6 +415,48 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<USAddress>());
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
         }
 
         [Test, Category("Models")]
@@ -516,6 +562,190 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Test that get always returns null regardless of what was set
                 Assert.That(_sut.StateEnum, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithNullValues_ShouldHandleCorrectly()
+        {
+            // Act & Assert
+            _sut.Street1 = null;
+            Assert.That(_sut.Street1, Is.Null);
+
+            _sut.Street2 = null;
+            Assert.That(_sut.Street2, Is.Null);
+
+            _sut.City = null;
+            Assert.That(_sut.City, Is.Null);
+
+            _sut.State = null;
+            Assert.That(_sut.State, Is.Null);
+
+            _sut.ZipCode = null;
+            Assert.That(_sut.ZipCode, Is.Null);
+
+            _sut.Country = null;
+            Assert.That(_sut.Country, Is.Null);
+
+            _sut.Type = null;
+            Assert.That(_sut.Type, Is.Null);
+
+            _sut.DateModified = null;
+            Assert.That(_sut.DateModified, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithEmptyStrings_ShouldAcceptEmptyStrings()
+        {
+            // Act & Assert
+            _sut.Street1 = string.Empty;
+            Assert.That(_sut.Street1, Is.EqualTo(string.Empty));
+
+            _sut.Street2 = string.Empty;
+            Assert.That(_sut.Street2, Is.EqualTo(string.Empty));
+
+            _sut.City = string.Empty;
+            Assert.That(_sut.City, Is.EqualTo(string.Empty));
+
+            _sut.ZipCode = string.Empty;
+            Assert.That(_sut.ZipCode, Is.EqualTo(string.Empty));
+
+            _sut.Country = string.Empty;
+            Assert.That(_sut.Country, Is.EqualTo(string.Empty));
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMaxIntValues_ShouldAcceptMaxValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MinValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullProperties_ShouldHandleNullsCorrectly()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street1 = null;
+            _sut.Street2 = null;
+            _sut.City = null;
+            _sut.State = null;
+            _sut.ZipCode = null;
+            _sut.Country = null;
+            _sut.Type = null;
+            _sut.DateModified = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+
+            var jsonDocument = JsonDocument.Parse(json);
+            var root = jsonDocument.RootElement;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
+                Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
+                
+                Assert.That(root.TryGetProperty("street1", out var street1Property), Is.True);
+                Assert.That(street1Property.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                
+                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
+                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void USAddress_WithSpecialCharacters_ShouldHandleCorrectly()
+        {
+            // Arrange & Act
+            _sut.Street1 = "123 O'Connor St";
+            _sut.Street2 = "Apt #4B";
+            _sut.City = "New York";
+            _sut.ZipCode = "10001-1234";
+            _sut.Country = "United States";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Street1, Is.EqualTo("123 O'Connor St"));
+                Assert.That(_sut.Street2, Is.EqualTo("Apt #4B"));
+                Assert.That(_sut.City, Is.EqualTo("New York"));
+                Assert.That(_sut.ZipCode, Is.EqualTo("10001-1234"));
+                Assert.That(_sut.Country, Is.EqualTo("United States"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AllPropertiesUpdate_ShouldUpdateDateModifiedIndependently()
+        {
+            // Arrange
+            var properties = new Dictionary<string, Action>
+            {
+                { "Id", () => _sut.Id = 1 },
+                { "Street1", () => _sut.Street1 = "Test Street" },
+                { "Street2", () => _sut.Street2 = "Test Street2" },
+                { "City", () => _sut.City = "Test City" },
+                { "State", () => _sut.State = new USState { Name = "Test", Abbreviation = "TS" } },
+                { "ZipCode", () => _sut.ZipCode = "12345" },
+                { "Country", () => _sut.Country = "Test Country" },
+                { "Type", () => _sut.Type = OrganizerCompanion.Core.Enums.Types.Other },
+                { "StateEnum", () => _sut.StateEnum = USStates.California }
+            };
+
+            // Act & Assert
+            foreach (var property in properties)
+            {
+                var originalDateModified = _sut.DateModified;
+                Thread.Sleep(10); // Ensure time difference
+
+                property.Value.Invoke();
+
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified), 
+                    $"Property {property.Key} should update DateModified");
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
+                    $"Property {property.Key} should set DateModified to current time");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithSerializerOptions_HandlesCircularReferences()
+        {
+            // Arrange
+            _sut.Id = 100;
+            _sut.Street1 = "Test Circular Street";
+            _sut.City = "Test City";
+            _sut.State = USStates.California.ToStateModel();
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert - Should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
             });
         }
     }

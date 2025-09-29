@@ -358,6 +358,48 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsCast_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
+        }
+
+        [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
         {
             // Arrange
@@ -606,6 +648,137 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"postalCode\":\"03100\""));
                 Assert.That(json, Does.Contain("\"city\":\"Ciudad de M\\u00E9xico\""));
                 Assert.That(json, Does.Contain("\"country\":\"M\\u00E9xico\""));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithNullValues_ShouldHandleCorrectly()
+        {
+            // Act & Assert
+            _sut.Street = null;
+            Assert.That(_sut.Street, Is.Null);
+
+            _sut.Neighborhood = null;
+            Assert.That(_sut.Neighborhood, Is.Null);
+
+            _sut.PostalCode = null;
+            Assert.That(_sut.PostalCode, Is.Null);
+
+            _sut.City = null;
+            Assert.That(_sut.City, Is.Null);
+
+            _sut.State = null;
+            Assert.That(_sut.State, Is.Null);
+
+            _sut.Country = null;
+            Assert.That(_sut.Country, Is.Null);
+
+            _sut.Type = null;
+            Assert.That(_sut.Type, Is.Null);
+
+            _sut.DateModified = null;
+            Assert.That(_sut.DateModified, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullProperties_ShouldHandleNullsCorrectly()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street = null;
+            _sut.Neighborhood = null;
+            _sut.PostalCode = null;
+            _sut.City = null;
+            _sut.State = null;
+            _sut.Country = null;
+            _sut.Type = null;
+            _sut.DateModified = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+
+            var jsonDocument = JsonDocument.Parse(json);
+            var root = jsonDocument.RootElement;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
+                Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
+                
+                Assert.That(root.TryGetProperty("street", out var streetProperty), Is.True);
+                Assert.That(streetProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                
+                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
+                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMaxIntValues_ShouldAcceptMaxValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MinValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithEmptyStrings_ShouldAcceptEmptyStrings()
+        {
+            // Act & Assert
+            _sut.Street = string.Empty;
+            Assert.That(_sut.Street, Is.EqualTo(string.Empty));
+
+            _sut.Neighborhood = string.Empty;
+            Assert.That(_sut.Neighborhood, Is.EqualTo(string.Empty));
+
+            _sut.PostalCode = string.Empty;
+            Assert.That(_sut.PostalCode, Is.EqualTo(string.Empty));
+
+            _sut.City = string.Empty;
+            Assert.That(_sut.City, Is.EqualTo(string.Empty));
+
+            _sut.Country = string.Empty;
+            Assert.That(_sut.Country, Is.EqualTo(string.Empty));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithSerializerOptions_HandlesCircularReferences()
+        {
+            // Arrange
+            _sut.Id = 100;
+            _sut.Street = "Test Circular Street";
+            _sut.City = "Test City";
+            _sut.State = MXStates.Jalisco.ToStateModel();
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert - Should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
             });
         }
     }

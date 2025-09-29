@@ -283,10 +283,45 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ToJson_ShouldThrowNotImplementedException()
+        public void IsCast_Getter_ThrowsNotImplementedException()
         {
             // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
         }
 
         [Test, Category("Models")]

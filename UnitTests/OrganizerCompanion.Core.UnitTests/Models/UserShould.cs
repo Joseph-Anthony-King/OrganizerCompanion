@@ -342,16 +342,63 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void FullName_WithOnlyMiddleName_ShouldReturnFormattedName()
+        public void FullName_WithOnlyFirstName_ShouldThrowArgumentNullException()
         {
             // Arrange
+            _sut.FirstName = "John";
+            _sut.MiddleName = null;
+            _sut.LastName = null;
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithOnlyLastName_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = null;
+            _sut.MiddleName = null;
+            _sut.LastName = "Doe";
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithOnlyMiddleName_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = null;
             _sut.MiddleName = "Michael";
+            _sut.LastName = null;
 
-            // Act
-            var fullName = _sut.FullName;
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+        }
 
-            // Assert
-            Assert.That(fullName, Is.EqualTo(" Michael "));
+        [Test, Category("Models")]
+        public void FullName_WithFirstAndMiddleNameOnly_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = null;
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithMiddleAndLastNameOnly_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = null;
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "Doe";
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
         }
 
         [Test, Category("Models")]
@@ -594,6 +641,48 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<User>());
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Getter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_ThrowsNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
         }
 
         [Test, Category("Models")]
@@ -1336,6 +1425,275 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"userName\":\"\""));
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullCollections_ShouldInitializeEmptyCollections()
+        {
+            // Act
+            var person = new User(1, "John", null, "Doe", null, null, null, null, null,
+                null!, null!, null!, null, null, null, null, DateTime.Now, null);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(person.Emails, Is.Not.Null.And.Empty);
+                Assert.That(person.PhoneNumbers, Is.Not.Null.And.Empty);
+                Assert.That(person.Addresses, Is.Not.Null.And.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithNullValues_ShouldHandleCorrectly()
+        {
+            // Act & Assert
+            _sut.FirstName = null;
+            Assert.That(_sut.FirstName, Is.Null);
+
+            _sut.MiddleName = null;
+            Assert.That(_sut.MiddleName, Is.Null);
+
+            _sut.LastName = null;
+            Assert.That(_sut.LastName, Is.Null);
+
+            _sut.UserName = null;
+            Assert.That(_sut.UserName, Is.Null);
+
+            _sut.Pronouns = null;
+            Assert.That(_sut.Pronouns, Is.Null);
+
+            _sut.BirthDate = null;
+            Assert.That(_sut.BirthDate, Is.Null);
+
+            _sut.DeceasedDate = null;
+            Assert.That(_sut.DeceasedDate, Is.Null);
+
+            _sut.JoinedDate = null;
+            Assert.That(_sut.JoinedDate, Is.Null);
+
+            _sut.IsActive = null;
+            Assert.That(_sut.IsActive, Is.Null);
+
+            _sut.IsDeceased = null;
+            Assert.That(_sut.IsDeceased, Is.Null);
+
+            _sut.IsAdmin = null;
+            Assert.That(_sut.IsAdmin, Is.Null);
+
+            _sut.IsSuperUser = null;
+            Assert.That(_sut.IsSuperUser, Is.Null);
+
+            _sut.DateModified = null;
+            Assert.That(_sut.DateModified, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMaxIntValues_ShouldAcceptMaxValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
+        {
+            // Arrange & Act
+            _sut.Id = int.MinValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Models")]
+        public void AllPropertiesUpdate_ShouldUpdateDateModifiedIndependently()
+        {
+            // Arrange
+            var properties = new Dictionary<string, Action>
+            {
+                { "Id", () => _sut.Id = 1 },
+                { "FirstName", () => _sut.FirstName = "Test" },
+                { "MiddleName", () => _sut.MiddleName = "Test" },
+                { "LastName", () => _sut.LastName = "Test" },
+                { "UserName", () => _sut.UserName = "Test" },
+                { "Pronouns", () => _sut.Pronouns = Pronouns.TheyThem },
+                { "BirthDate", () => _sut.BirthDate = DateTime.Now.AddYears(-20) },
+                { "DeceasedDate", () => _sut.DeceasedDate = DateTime.Now.AddYears(-1) },
+                { "JoinedDate", () => _sut.JoinedDate = DateTime.Now.AddMonths(-6) },
+                { "Emails", () => _sut.Emails = new List<IEmail?> { null } },
+                { "PhoneNumbers", () => _sut.PhoneNumbers = new List<IPhoneNumber?> { null } },
+                { "Addresses", () => _sut.Addresses = new List<IAddress?> { null } },
+                { "IsActive", () => _sut.IsActive = true },
+                { "IsDeceased", () => _sut.IsDeceased = false },
+                { "IsAdmin", () => _sut.IsAdmin = true },
+                { "IsSuperUser", () => _sut.IsSuperUser = false }
+            };
+
+            // Act & Assert
+            foreach (var property in properties)
+            {
+                var originalDateModified = _sut.DateModified;
+                System.Threading.Thread.Sleep(1); // Ensure time difference
+
+                property.Value.Invoke();
+
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified), 
+                    $"Property {property.Key} should update DateModified");
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
+                    $"Property {property.Key} should set DateModified to current time");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void FullName_EdgeCases_ShouldFormatCorrectly()
+        {
+            // Test case: Only first name - should throw ArgumentNullException because LastName is null
+            _sut.FirstName = "John";
+            _sut.MiddleName = null;
+            _sut.LastName = null;
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+
+            // Test case: Only last name - should throw ArgumentNullException because FirstName is null
+            _sut.FirstName = null;
+            _sut.MiddleName = null;
+            _sut.LastName = "Doe";
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+
+            // Test case: First and middle name only - should throw ArgumentNullException because LastName is null
+            _sut.FirstName = "John";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = null;
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+
+            // Test case: Middle and last name only - should throw ArgumentNullException because FirstName is null
+            _sut.FirstName = null;
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "Doe";
+            Assert.Throws<ArgumentNullException>(() => { var _ = _sut.FullName; });
+
+            // Test case: Valid combinations that should work
+            // First and last name only (no middle name)
+            _sut.FirstName = "John";
+            _sut.MiddleName = null;
+            _sut.LastName = "Doe";
+            Assert.That(_sut.FullName, Is.EqualTo("John Doe"));
+
+            // All three names provided
+            _sut.FirstName = "John";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "Doe";
+            Assert.That(_sut.FullName, Is.EqualTo("John Michael Doe"));
+
+            // Empty strings for first and last name (should work since they're not null)
+            _sut.FirstName = "";
+            _sut.MiddleName = null;
+            _sut.LastName = "";
+            Assert.That(_sut.FullName, Is.EqualTo(" "));
+
+            // Empty strings with middle name
+            _sut.FirstName = "";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "";
+            Assert.That(_sut.FullName, Is.EqualTo(" Michael "));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithAllNullProperties_ShouldHandleNullsCorrectly()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = null;
+            _sut.MiddleName = null;
+            _sut.LastName = null;
+            _sut.UserName = null;
+            _sut.Pronouns = null;
+            _sut.BirthDate = null;
+            _sut.DeceasedDate = null;
+            _sut.JoinedDate = null;
+            _sut.IsActive = null;
+            _sut.IsDeceased = null;
+            _sut.IsAdmin = null;
+            _sut.IsSuperUser = null;
+            _sut.DateModified = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+
+            var jsonDocument = JsonDocument.Parse(json);
+            var root = jsonDocument.RootElement;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
+                Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
+                
+                Assert.That(root.TryGetProperty("firstName", out var firstNameProperty), Is.True);
+                Assert.That(firstNameProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                
+                // Properties with JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull) should not appear
+                Assert.That(root.TryGetProperty("userName", out _), Is.False);
+                Assert.That(root.TryGetProperty("deceasedDate", out _), Is.False);
+                Assert.That(root.TryGetProperty("isSuperUser", out _), Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithSerializerOptions_HandlesCircularReferences()
+        {
+            // Arrange
+            _sut.Id = 100;
+            _sut.FirstName = "Test";
+            _sut.LastName = "User";
+            _sut.IsActive = true;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert - Should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithOptionalParameters_ShouldIgnoreOptionalParams()
+        {
+            // Arrange
+            var id = 1;
+            var firstName = "John";
+            var lastName = "Doe";
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var dateModified = DateTime.Now.AddHours(-1);
+            
+            // Act - Test that optional cast parameters are accepted but don't affect the object
+            var user = new User(id, firstName, null, lastName, null, null, null, null, null,
+                [], [], [], null, null, null, null, dateCreated, dateModified, 
+                true, 123, "TestType"); // Optional cast parameters
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(user.Id, Is.EqualTo(id));
+                Assert.That(user.FirstName, Is.EqualTo(firstName));
+                Assert.That(user.LastName, Is.EqualTo(lastName));
+                Assert.That(user.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(user.DateModified, Is.EqualTo(dateModified));
+                // Cast properties still throw exceptions despite constructor parameters
+                Assert.Throws<NotImplementedException>(() => { var _ = user.IsCast; });
             });
         }
     }
