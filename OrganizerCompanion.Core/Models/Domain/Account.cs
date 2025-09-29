@@ -35,7 +35,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             } 
         }
 
-        [Required, JsonPropertyName("userName")]
+        [Required, JsonPropertyName("accountName")]
         public string? AccountName 
         { 
             get => _accountName; 

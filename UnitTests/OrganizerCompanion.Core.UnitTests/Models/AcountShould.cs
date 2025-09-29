@@ -257,7 +257,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account(
                 id: 1,
-                accountName: "testuser",
+                accountName: "testaccount",
                 accountNumber: "ACC123",
                 linkedEntityId: 2,
                 linkedEntityType: "Person",
@@ -280,7 +280,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains expected properties
             Assert.That(json, Does.Contain("\"id\":1"));
-            Assert.That(json, Does.Contain("\"userName\":\"testuser\""));
+            Assert.That(json, Does.Contain("\"accountName\":\"testaccount\""));
             Assert.That(json, Does.Contain("\"accountNumber\":\"ACC123\""));
             Assert.That(json, Does.Contain("\"allowAnnonymousUsers\":true"));
         }
