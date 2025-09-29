@@ -7,6 +7,6 @@
         int LinkedEntityId { get; set; }
         string? LinkedEntityType { get; set; }
         IDomainEntity? LinkedEntity { get; set; }
-        bool AllowAnnonymousUsers { get; set; }
+        List<IAccountFeature> Features { get; set; }
     }
 }

@@ -19,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _linkedEntityId = 0;
         private string? _linkedEntityType = null;
         private IDomainEntity? _linkedEntity = null;
-        private bool _allowAnnonymousUsers = false;
+        private List<IAccountFeature> _features = [];
         private bool _isCast = false;
         private int _castId = 0;
         private string? _castType = null;
@@ -27,6 +27,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
+        #region Explicit Interface Implementations
+        List<IAccountFeature> IAccount.Features
+        {
+            get => _features;
+            set
+            {
+                _features = value;
+                DateModified = DateTime.Now;
+            }
+        }
+        #endregion
+
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
         public int Id
         {
@@ -93,13 +105,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("allowAnnonymousUsers")]
-        public bool AllowAnnonymousUsers
+        [Required, JsonPropertyName("features")]
+        public List<IAccountFeature> Features
         {
-            get => _allowAnnonymousUsers;
+            get => _features;
             set
             {
-                _allowAnnonymousUsers = value;
+                _features = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -155,7 +167,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int linkedEntityId,
             string? linkedEntityType,
             IDomainEntity? linkedEntity,
-            bool allowAnnonymousUsers,
+            List<IAccountFeature> features,
             DateTime dateCreated,
             DateTime? dateModified,
             bool? isCast = null,
@@ -170,7 +182,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _linkedEntityId = linkedEntityId;
                 _linkedEntityType = linkedEntityType;
                 _linkedEntity = linkedEntity;
-                _allowAnnonymousUsers = allowAnnonymousUsers;
+                _features = features;
                 _isCast = isCast != null && (bool)isCast;
                 _castId = castId != null ? (int)castId : 0;
                 _castType = castType;
@@ -187,7 +199,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             IDomainEntity linkedEntity,
-            bool allowAnnonymousUsers,
+            List<IAccountFeature> features,
             DateTime dateCreated,
             DateTime? dateModified)
         {
@@ -198,7 +210,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _linkedEntityId = linkedEntity.Id;
                 _linkedEntityType = linkedEntity.GetType().Name;
                 _linkedEntity = linkedEntity;
-                _allowAnnonymousUsers = allowAnnonymousUsers;
+                _features = features;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
