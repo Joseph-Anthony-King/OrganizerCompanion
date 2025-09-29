@@ -23,9 +23,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private DateTime? _birthDate = null;
         private DateTime? _deceasedDate = null;
         private DateTime? _joinedDate = null;
-        private List<IEmail?> _emails = [];
-        private List<IPhoneNumber?> _phoneNumbers = [];
-        private List<IAddress?> _addresses = [];
+        private List<Email> _emails = [];
+        private List<PhoneNumber> _phoneNumbers = [];
+        private List<IAddress> _addresses = [];
         private bool? _isActive = null;
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
@@ -35,32 +35,32 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Properties
-        List<Interfaces.Type.IEmail?> Interfaces.Type.IPerson.Emails 
-        { 
-            get => [.. _emails.Cast<Interfaces.Type.IEmail?>()]; 
-            set 
-            { 
-                _emails = value?.OfType<IEmail>().Cast<IEmail?>().ToList() ?? [];
+        List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
+        {
+            get => _emails.ConvertAll(email => (Interfaces.Type.IEmail)email);
+            set
+            {
+                _emails = value.ConvertAll(email => (Email)email) ?? [];
                 DateModified = DateTime.Now;
             }
         }
 
-        List<Interfaces.Type.IPhoneNumber?> Interfaces.Type.IPerson.PhoneNumbers 
-        { 
-            get => [.. _phoneNumbers.Cast<Interfaces.Type.IPhoneNumber?>()]; 
-            set 
-            { 
-                _phoneNumbers = value?.OfType<IPhoneNumber>().Cast<IPhoneNumber?>().ToList() ?? [];
+        List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
+        {
+            get => _phoneNumbers.ConvertAll(phone => (Interfaces.Type.IPhoneNumber)phone);
+            set
+            {
+                _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
                 DateModified = DateTime.Now;
             }
         }
 
-        List<Interfaces.Type.IAddress?> Interfaces.Type.IPerson.Addresses 
+        List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses 
         { 
             get => [.. _addresses.Cast<Interfaces.Type.IAddress?>()]; 
             set 
-            { 
-                _addresses = value?.OfType<IAddress>().Cast<IAddress?>().ToList() ?? [];
+            {
+                _addresses = value.ConvertAll(address => (IAddress)address);
                 DateModified = DateTime.Now;
             }
         }
@@ -172,7 +172,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("emails")]
-        public List<IEmail?> Emails 
+        public List<Email> Emails 
         { 
             get => _emails; 
             set 
@@ -183,7 +183,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("phoneNumbers")]
-        public List<IPhoneNumber?> PhoneNumbers 
+        public List<PhoneNumber> PhoneNumbers 
         { 
             get => _phoneNumbers; 
             set 
@@ -194,7 +194,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("addresses")]
-        public List<IAddress?> Addresses 
+        public List<IAddress> Addresses 
         { 
             get => _addresses; 
             set 
@@ -278,9 +278,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime? birthDate,
             DateTime? deceasedDate,
             DateTime? joinedDate,
-            List<IEmail?> emails,
-            List<IPhoneNumber?> phoneNumbers,
-            List<IAddress?> addresses,
+            List<Email> emails,
+            List<PhoneNumber> phoneNumbers,
+            List<IAddress> addresses,
             bool? isActive,
             bool? isDeceased,
             bool? isAdmin,
@@ -319,9 +319,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             Pronouns? pronouns,
             DateTime? birthDate,
             DateTime? joinedDate,
-            List<IEmail?> emails,
-            List<IPhoneNumber?> phoneNumbers,
-            List<IAddress?> addresses,
+            List<Email> emails,
+            List<PhoneNumber> phoneNumbers,
+            List<IAddress> addresses,
             bool? isActive,
             bool? isDeceased,
             bool? isAdmin,

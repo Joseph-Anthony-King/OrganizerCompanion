@@ -1244,7 +1244,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public int LinkedEntityId { get; set; }
             public string? LinkedEntityType { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
-            public List<IAccountFeature> Features { get; set; } = new();
+            public List<IAccountFeature> Features { get; set; } = [];
             public DateTime DateCreated { get; set; }
             public DateTime? DateModified { get; set; }
             public bool IsCast { get; set; }

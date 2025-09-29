@@ -15,15 +15,68 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         private int _id = 0;
         private string? _organizationName = null;
-        private List<IAddress?> _address = [];
-        private List<IPhoneNumber?> _phoneNumbers = [];
-        private List<IPerson?> _members = [];
-        private List<IPerson?> _contacts = [];
-        private List<IAccount?> _accounts = [];
+        private List<Email> _emails = [];
+        private List<PhoneNumber> _phoneNumbers = [];
+        private List<IAddress> _address = [];
+        private List<Contact> _members = [];
+        private List<Contact> _contacts = [];
+        private List<Account> _accounts = [];
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
+        #region Explicit Interface Implementations
+        List<IEmail> IOrganization.Emails
+        {
+            get => _emails.ConvertAll(email => (IEmail)email);
+            set
+            {
+                _emails = value.ConvertAll(email => (Email)email) ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        List<IPhoneNumber> IOrganization.PhoneNumbers
+        {
+            get => _phoneNumbers.ConvertAll(phone => (IPhoneNumber)phone!);
+            set
+            {
+                _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        List<IPerson> IOrganization.Members
+        {
+            get => _members.ConvertAll(member => (IPerson)member);
+            set
+            {
+                _members = value.ConvertAll(member => (Contact)member) ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        List<IPerson> IOrganization.Contacts
+        {
+            get => _contacts.ConvertAll(contact => (IPerson)contact);
+            set
+            {
+                _contacts = value.ConvertAll(contact => (Contact)contact) ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        List<IAccount> IOrganization.Accounts
+        {
+            get => _accounts.ConvertAll(account => (IAccount)account);
+            set
+            {
+                _accounts = value.ConvertAll(account => (Account)account) ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+        #endregion
+
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
         public int Id
         {
@@ -46,8 +99,19 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("emails")]
+        public List<Email> Emails
+        {
+            get => _emails;
+            set
+            {
+                _emails = value ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("addresses")]
-        public List<IAddress?> Addresses
+        public List<IAddress> Addresses
         {
             get => _address;
             set
@@ -58,7 +122,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("phoneNumbers")]
-        public List<IPhoneNumber?> PhoneNumbers
+        public List<PhoneNumber> PhoneNumbers
         {
             get => _phoneNumbers;
             set
@@ -69,7 +133,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("members")]
-        public List<IPerson?> Members
+        public List<Contact> Members
         {
             get => _members;
             set
@@ -80,7 +144,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("contacts")]
-        public List<IPerson?> Contacts
+        public List<Contact> Contacts
         {
             get => _contacts;
             set
@@ -91,7 +155,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("accounts")]
-        public List<IAccount?> Accounts
+        public List<Account> Accounts
         {
             get => _accounts;
             set
@@ -124,11 +188,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         public Organization(
             int id,
             string? organizationName,
-            List<IAddress?> addresses,
-            List<IPhoneNumber?> phoneNumbers,
-            List<IPerson?> members,
-            List<IPerson?> contacts,
-            List<IAccount?> accounts,
+            List<Email> emails,
+            List<PhoneNumber> phoneNumbers,
+            List<IAddress> addresses,
+            List<Contact> members,
+            List<Contact> contacts,
+            List<Account> accounts,
             DateTime dateCreated,
             DateTime? dateModified,
             bool? isCast = null,
@@ -139,6 +204,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _id = id;
                 _organizationName = organizationName;
+                _emails = emails ?? [];
                 _address = addresses ?? [];
                 _phoneNumbers = phoneNumbers ?? [];
                 _members = members ?? [];

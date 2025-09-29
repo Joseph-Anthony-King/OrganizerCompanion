@@ -105,7 +105,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Addresses_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var addresses = new List<IAddress?> { null }; // Using null as we don't have concrete implementation
+            var addresses = new List<IAddress> { new USAddress() }; // Using null as we don't have concrete implementation
             var beforeSet = DateTime.Now;
 
             // Act
@@ -138,7 +138,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void PhoneNumbers_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var phoneNumbers = new List<IPhoneNumber?> { null }; // Using null as we don't have concrete implementation
+            var phoneNumbers = new List<PhoneNumber> { new() }; // Using null as we don't have concrete implementation
             var beforeSet = DateTime.Now;
 
             // Act
@@ -171,7 +171,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Members_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var members = new List<IPerson?> { null }; // Using null as we don't have concrete implementation
+            var members = new List<Contact> { new() }; // Using null as we don't have concrete implementation
             var beforeSet = DateTime.Now;
 
             // Act
@@ -204,7 +204,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Contacts_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var contacts = new List<IPerson?> { null }; // Using null as we don't have concrete implementation
+            var contacts = new List<Contact> { new() }; // Using null as we don't have concrete implementation
             var beforeSet = DateTime.Now;
 
             // Act
@@ -237,7 +237,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Accounts_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var accounts = new List<IAccount?> { null }; // Using null as we don't have concrete implementation
+            var accounts = new List<Account> { new() }; // Using null as we don't have concrete implementation
             var beforeSet = DateTime.Now;
 
             // Act
@@ -558,23 +558,26 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var org2 = new Organization();
 
             // Act
-            org1.Addresses.Add(null);
-            org1.PhoneNumbers.Add(null);
-            org1.Members.Add(null);
-            org1.Contacts.Add(null);
-            org1.Accounts.Add(null);
+            org1.Emails.Add(new Email());
+            org1.PhoneNumbers.Add(new PhoneNumber());
+            org1.Addresses.Add(new USAddress());
+            org1.Members.Add(new Contact());
+            org1.Contacts.Add(new Contact());
+            org1.Accounts.Add(new Account());
 
             // Assert - Ensure lists are independent instances
             Assert.Multiple(() =>
             {
-                Assert.That(org2.Addresses, Is.Empty);
+                Assert.That(org2.Emails, Is.Empty);
                 Assert.That(org2.PhoneNumbers, Is.Empty);
+                Assert.That(org2.Addresses, Is.Empty);
                 Assert.That(org2.Members, Is.Empty);
                 Assert.That(org2.Contacts, Is.Empty);
                 Assert.That(org2.Accounts, Is.Empty);
 
-                Assert.That(org1.Addresses, Has.Count.EqualTo(1));
+                Assert.That(org1.Emails, Has.Count.EqualTo(1));
                 Assert.That(org1.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(org1.Addresses, Has.Count.EqualTo(1));
                 Assert.That(org1.Members, Has.Count.EqualTo(1));
                 Assert.That(org1.Contacts, Has.Count.EqualTo(1));
                 Assert.That(org1.Accounts, Has.Count.EqualTo(1));
@@ -617,11 +620,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 123;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?> { null };
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var members = new List<IPerson?> { null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -629,8 +633,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses,
+                emails,
                 phoneNumbers,
+                addresses,
                 members,
                 contacts,
                 accounts,
@@ -642,8 +647,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(organization.Id, Is.EqualTo(id));
                 Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
-                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Emails, Is.EqualTo(emails));
                 Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
                 Assert.That(organization.Members, Is.EqualTo(members));
                 Assert.That(organization.Contacts, Is.EqualTo(contacts));
                 Assert.That(organization.Accounts, Is.EqualTo(accounts));
@@ -658,11 +664,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var organizationName = "Test Org";
-            List<IAddress?>? addresses = null;
-            List<IPhoneNumber?>? phoneNumbers = null;
-            List<IPerson?>? members = null;
-            List<IPerson?>? contacts = null;
-            List<IAccount?>? accounts = null;
+            List<Email> emails = [];
+            List<PhoneNumber> phoneNumbers = [];
+            List<IAddress> addresses = [];
+            List<Contact> members = [];
+            List<Contact> contacts = [];
+            List<Account> accounts = [];
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
@@ -670,11 +677,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses!,
-                phoneNumbers!,
-                members!,
-                contacts!,
-                accounts!,
+                emails,
+                phoneNumbers,
+                addresses,
+                members,
+                contacts,
+                accounts,
                 dateCreated,
                 dateModified);
 
@@ -683,10 +691,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(organization.Id, Is.EqualTo(id));
                 Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
-                Assert.That(organization.Addresses, Is.Not.Null);
-                Assert.That(organization.Addresses, Is.Empty);
+                Assert.That(organization.Emails, Is.Not.Null);
+                Assert.That(organization.Emails, Is.Empty);
                 Assert.That(organization.PhoneNumbers, Is.Not.Null);
                 Assert.That(organization.PhoneNumbers, Is.Empty);
+                Assert.That(organization.Addresses, Is.Not.Null);
+                Assert.That(organization.Addresses, Is.Empty);
                 Assert.That(organization.Members, Is.Not.Null);
                 Assert.That(organization.Members, Is.Empty);
                 Assert.That(organization.Contacts, Is.Not.Null);
@@ -704,11 +714,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 0;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?>();
-            var members = new List<IPerson?> { null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
@@ -716,8 +727,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses,
+                emails,
                 phoneNumbers,
+                addresses,
                 members,
                 contacts,
                 accounts,
@@ -745,11 +757,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = int.MaxValue;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var members = new List<IPerson?> { null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
@@ -757,8 +770,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses,
+                emails,
                 phoneNumbers,
+                addresses,
                 members,
                 contacts,
                 accounts,
@@ -770,8 +784,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(organization.Id, Is.EqualTo(id));
                 Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
-                Assert.That(organization.Addresses, Is.EqualTo(addresses));
+                Assert.That(organization.Emails, Is.EqualTo(emails));
                 Assert.That(organization.PhoneNumbers, Is.EqualTo(phoneNumbers));
+                Assert.That(organization.Addresses, Is.EqualTo(addresses));
                 Assert.That(organization.Members, Is.EqualTo(members));
                 Assert.That(organization.Contacts, Is.EqualTo(contacts));
                 Assert.That(organization.Accounts, Is.EqualTo(accounts));
@@ -786,11 +801,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?>();
-            var members = new List<IPerson?> { null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             DateTime? dateModified = null;
 
@@ -798,8 +814,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses,
+                emails,
                 phoneNumbers,
+                addresses,
                 members,
                 contacts,
                 accounts,
@@ -827,16 +844,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?>();
-            var members = new List<IPerson?>();
-            var contacts = new List<IPerson?>();
-            var accounts = new List<IAccount?>();
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
             // Act
-            var organization = new Organization(id, organizationName, addresses, phoneNumbers, members, contacts, accounts, dateCreated, dateModified);
+            var organization = new Organization(
+                id,
+                organizationName,
+                emails,
+                phoneNumbers,
+                addresses,
+                members,
+                contacts,
+                accounts,
+                dateCreated,
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -860,26 +888,43 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var organizationName = "Test Organization";
-            var addresses = new List<IAddress?> { null, null };
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var members = new List<IPerson?> { null, null, null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
+            var emails = new List<Email> { new(), new() };
+            var phoneNumbers = new List<PhoneNumber> { new() };
+            var addresses = new List<IAddress> { new USAddress(), new USAddress(), new USAddress() };
+            var members = new List<Contact> { new(), new(), new() };
+            var contacts = new List<Contact> { new(), new() };
+            var accounts = new List<Account> { new() };
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
             // Act
-            var organization = new Organization(id, organizationName, addresses, phoneNumbers, members, contacts, accounts, dateCreated, dateModified);
+            var organization = new Organization(
+                id,
+                organizationName,
+                emails,
+                phoneNumbers,
+                addresses,
+                members,
+                contacts,
+                accounts,
+                dateCreated,
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
             {
+                Assert.That(organization.Emails, Is.SameAs(emails));
+                Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
                 Assert.That(organization.Addresses, Is.SameAs(addresses));
                 Assert.That(organization.Members, Is.SameAs(members));
-                Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
-                Assert.That(organization.Addresses, Has.Count.EqualTo(2));
-                Assert.That(organization.Members.Count, Is.EqualTo(3));
+                Assert.That(organization.Contacts, Is.SameAs(contacts));
+                Assert.That(organization.Accounts, Is.SameAs(accounts));
+                Assert.That(organization.Emails, Has.Count.EqualTo(2));
                 Assert.That(organization.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(organization.Addresses, Has.Count.EqualTo(3));
+                Assert.That(organization.Members, Has.Count.EqualTo(3));
+                Assert.That(organization.Contacts, Has.Count.EqualTo(2));
+                Assert.That(organization.Accounts, Has.Count.EqualTo(1));
             });
         }
 
@@ -889,11 +934,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 1;
             var organizationName = string.Empty;
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?>();
-            var members = new List<IPerson?>();
-            var contacts = new List<IPerson?>();
-            var accounts = new List<IAccount?>();
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
+            var members = new List<Contact>();
+            var contacts = new List<Contact>();
+            var accounts = new List<Account>();
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
 
@@ -901,8 +947,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization = new Organization(
                 id,
                 organizationName,
-                addresses,
+                emails,
                 phoneNumbers,
+                addresses,
                 members,
                 contacts,
                 accounts,
@@ -914,57 +961,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(organization.Id, Is.EqualTo(id));
                 Assert.That(organization.OrganizationName, Is.EqualTo(string.Empty));
-                Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(organization.DateModified, Is.EqualTo(dateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void JsonConstructor_WithCollectionsContainingNullElements_ShouldPreserveNullElements()
-        {
-            // Arrange
-            var id = 1;
-            var organizationName = "Test Organization";
-            var addresses = new List<IAddress?> { null };
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var members = new List<IPerson?> { null };
-            var contacts = new List<IPerson?> { null };
-            var accounts = new List<IAccount?> { null };
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-1);
-
-            // Act
-            var organization = new Organization(
-                id,
-                organizationName,
-                addresses,
-                phoneNumbers,
-                members,
-                contacts,
-                accounts,
-                dateCreated,
-                dateModified);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(organization.Id, Is.EqualTo(id));
-                Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
-                Assert.That(organization.Addresses, Is.SameAs(addresses));
-                Assert.That(organization.PhoneNumbers, Is.SameAs(phoneNumbers));
-                Assert.That(organization.Members, Is.SameAs(members));
-                Assert.That(organization.Contacts, Is.SameAs(contacts));
-                Assert.That(organization.Accounts, Is.SameAs(accounts));
-                Assert.That(organization.Addresses, Has.Count.EqualTo(1));
-                Assert.That(organization.PhoneNumbers, Has.Count.EqualTo(1));
-                Assert.That(organization.Members, Has.Count.EqualTo(1));
-                Assert.That(organization.Contacts, Has.Count.EqualTo(1));
-                Assert.That(organization.Accounts, Has.Count.EqualTo(1));
-                Assert.That(organization.Addresses[0], Is.Null);
-                Assert.That(organization.PhoneNumbers[0], Is.Null);
-                Assert.That(organization.Members[0], Is.Null);
-                Assert.That(organization.Contacts[0], Is.Null);
-                Assert.That(organization.Accounts[0], Is.Null);
                 Assert.That(organization.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(organization.DateModified, Is.EqualTo(dateModified));
             });

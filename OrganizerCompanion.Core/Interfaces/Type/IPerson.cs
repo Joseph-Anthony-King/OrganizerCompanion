@@ -12,8 +12,8 @@ namespace OrganizerCompanion.Core.Interfaces.Type
         DateTime? BirthDate { get; set; }
         DateTime? DeceasedDate { get; set; }
         DateTime? JoinedDate { get; set; }
-        List<IEmail?> Emails { get; set; }
-        List<IPhoneNumber?> PhoneNumbers { get; set; }
-        List<IAddress?> Addresses { get; set; }
+        List<IEmail> Emails { get; set; }
+        List<IPhoneNumber> PhoneNumbers { get; set; }
+        List<IAddress> Addresses { get; set; }
     }
 }

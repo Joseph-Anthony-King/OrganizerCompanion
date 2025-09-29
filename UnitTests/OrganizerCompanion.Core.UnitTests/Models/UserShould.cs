@@ -72,9 +72,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var birthDate = DateTime.Now.AddYears(-30);
             var deceasedDate = DateTime.Now.AddYears(-1);
             var joinDate = DateTime.Now.AddMonths(-6);
-            var emails = new List<IEmail?> { null };
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var addresses = new List<IAddress?> { null };
+            var emails = new List<Email>();
+            var phoneNumbers = new List<PhoneNumber>();
+            var addresses = new List<IAddress>();
             var isActive = true;
             var isDeceased = false;
             var isAdmin = true;
@@ -137,9 +137,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var pronouns = Pronouns.SheHer;
             var birthDate = DateTime.Now.AddYears(-25);
             var joinDate = DateTime.Now.AddMonths(-3);
-            var emails = new List<IEmail?> { null };
-            var phoneNumbers = new List<IPhoneNumber?> { null };
-            var addresses = new List<IAddress?> { null };
+            var emails = new List<Email> { new() };
+            var phoneNumbers = new List<PhoneNumber> { new() };
+            var addresses = new List<IAddress> { new USAddress() };
             var isActive = true;
             var isDeceased = false;
             var isAdmin = false;
@@ -462,7 +462,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Emails_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newEmails = new List<IEmail?> { null };
+            var newEmails = new List<Email> { new() };
             var beforeSet = DateTime.Now;
 
             // Act
@@ -481,7 +481,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void PhoneNumbers_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newPhoneNumbers = new List<IPhoneNumber?> { null };
+            var newPhoneNumbers = new List<PhoneNumber> { new() };
             var beforeSet = DateTime.Now;
 
             // Act
@@ -500,7 +500,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Addresses_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newAddresses = new List<IAddress?> { null };
+            var newAddresses = new List<IAddress> { new USAddress() };
             var beforeSet = DateTime.Now;
 
             // Act
@@ -1013,10 +1013,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
-            var typeEmails = new List<OrganizerCompanion.Core.Interfaces.Type.IEmail?> { null };
+            var typeEmails = new List<Email> { new Email() };
 
             // Act
-            typePerson.Emails = typeEmails;
+            typePerson.Emails = typeEmails.ConvertAll(email => (Interfaces.Type.IEmail)email);
 
             // Assert
             Assert.That(typePerson.Emails, Is.Not.Null);
@@ -1027,7 +1027,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
-            var typePhoneNumbers = new List<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber?> { null };
+            var typePhoneNumbers = new List<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber> { new PhoneNumber() };
 
             // Act
             typePerson.PhoneNumbers = typePhoneNumbers;
@@ -1041,33 +1041,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
-            var typeAddresses = new List<OrganizerCompanion.Core.Interfaces.Type.IAddress?> { null };
+            var typeAddresses = new List<OrganizerCompanion.Core.Interfaces.Type.IAddress> { new USAddress() };
 
             // Act
             typePerson.Addresses = typeAddresses;
 
             // Assert
             Assert.That(typePerson.Addresses, Is.Not.Null);
-        }
-
-        [Test, Category("Models")]
-        public void ExplicitInterfaceProperties_WithNullValues_ShouldInitializeEmptyLists()
-        {
-            // Arrange
-            var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
-
-            // Act
-            typePerson.Emails = null!;
-            typePerson.PhoneNumbers = null!;
-            typePerson.Addresses = null!;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(typePerson.Emails, Is.Not.Null.And.Empty);
-                Assert.That(typePerson.PhoneNumbers, Is.Not.Null.And.Empty);
-                Assert.That(typePerson.Addresses, Is.Not.Null.And.Empty);
-            });
         }
 
         [Test, Category("Models")]
@@ -1523,9 +1503,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 { "BirthDate", () => _sut.BirthDate = DateTime.Now.AddYears(-20) },
                 { "DeceasedDate", () => _sut.DeceasedDate = DateTime.Now.AddYears(-1) },
                 { "JoinedDate", () => _sut.JoinedDate = DateTime.Now.AddMonths(-6) },
-                { "Emails", () => _sut.Emails = new List<IEmail?> { null } },
-                { "PhoneNumbers", () => _sut.PhoneNumbers = new List<IPhoneNumber?> { null } },
-                { "Addresses", () => _sut.Addresses = new List<IAddress?> { null } },
+                { "Emails", () => _sut.Emails = [new()] },
+                { "PhoneNumbers", () => _sut.PhoneNumbers = [new()] },
+                { "Addresses", () => _sut.Addresses = [new USAddress()] },
                 { "IsActive", () => _sut.IsActive = true },
                 { "IsDeceased", () => _sut.IsDeceased = false },
                 { "IsAdmin", () => _sut.IsAdmin = true },

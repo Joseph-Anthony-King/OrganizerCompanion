@@ -139,6 +139,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         [],
                         [],
                         [],
+                        [],
                         dateCreated: this.DateCreated,
                         dateModified: this.DateModified
                     );
