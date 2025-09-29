@@ -4,10 +4,12 @@ using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.Type;
+using IMXAddress = OrganizerCompanion.Core.Interfaces.Domain.IMXAddress;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class CAAddress : ICAAddress
+    internal class MXAddress : IMXAddress
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -16,15 +18,16 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
-        private string? _street1 = null;
-        private string? _street2 = null;
+        private string? _street = null;
+        private string? _neighborhood = null;
+        private string? _postalCode = null;
         private string? _city = null;
-        private Interfaces.Type.ISubNationalSubdivision? _province = null;
-        private string? _zipCode = null;
-        private string? _country = Countries.Canada.GetName();
+        private ISubNationalSubdivision? _state = null;
+        private string? _country = Countries.Mexico.GetName();
         private Types? _type = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
+
 
         #region Properties
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
@@ -38,24 +41,36 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("street1")]
-        public string? Street1
+        [Required, JsonPropertyName("street")]
+        public string? Street
         {
-            get => _street1;
+            get => _street;
             set
             {
-                _street1 = value;
+                _street = value;
+                DateModified = DateTime.Now;
+            }
+
+        }
+
+        [Required, JsonPropertyName("neighborhood")]
+        public string? Neighborhood
+        {
+            get => _neighborhood;
+            set
+            {
+                _neighborhood = value;
                 DateModified = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("street2")]
-        public string? Street2
+        [Required, JsonPropertyName("postalCode")]
+        public string? PostalCode
         {
-            get => _street2;
+            get => _postalCode;
             set
             {
-                _street2 = value;
+                _postalCode = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -71,24 +86,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("province")]
-        public Interfaces.Type.ISubNationalSubdivision? Province
+        [Required, JsonPropertyName("state")]
+        public Interfaces.Type.ISubNationalSubdivision? State
         {
-            get => _province;
+            get => _state;
             set
             {
-                _province = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("zipCode")]
-        public string? ZipCode
-        {
-            get => _zipCode;
-            set
-            {
-                _zipCode = value;
+                _state = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -123,27 +127,27 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Constructors
-        public CAAddress() { }
+        public MXAddress () { }
 
         [JsonConstructor]
-        public CAAddress(
+        public MXAddress (
             int id, 
-            string street1, 
-            string street2, 
+            string street, 
+            string neighborhood, 
+            string postalCode, 
             string city, 
-            Interfaces.Type.ISubNationalSubdivision province, 
-            string zipCode, 
+            ISubNationalSubdivision state, 
             string country, 
             Types type, 
             DateTime dateCreated, 
             DateTime? dateModified)
         {
             _id = id;
-            _street1 = street1;
-            _street2 = street2;
+            _street = street;
+            _neighborhood = neighborhood;
+            _postalCode = postalCode;
             _city = city;
-            _province = province;
-            _zipCode = zipCode;
+            _state = state;
             _country = country;
             _type = type;
             _dateCreated = dateCreated;
@@ -157,9 +161,9 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public override string ToString()
         {
-            var provinceDisplay = _province?.Abbreviation ?? _province?.Name ?? "Unknown";
-            return string.Format(base.ToString() + ".Id:{0}.Street1:{1}.City:{2}.Province:{3}.Zip:{4}",
-                _id, _street1, _city, provinceDisplay, _zipCode);
+            var stateDisplay = _state?.Abbreviation ?? _state?.Name ?? "Unknown";
+            return string.Format(base.ToString() + ".Id:{0}.Street1:{1}.City:{2}.State:{3}.Zip:{4}",
+                _id, _street, _city, stateDisplay, _postalCode);
         }
         #endregion
     }

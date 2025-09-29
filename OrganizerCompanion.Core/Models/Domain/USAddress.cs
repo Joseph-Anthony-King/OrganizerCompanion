@@ -21,7 +21,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _city = null;
         private Interfaces.Type.ISubNationalSubdivision? _state = null;
         private string? _zipCode = null;
-        private string? _country = null;
+        private string? _country = Countries.UnitedStates.GetName();
         private Types? _type = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion

@@ -1,0 +1,38 @@
+﻿namespace OrganizerCompanion.Core.Enums
+{
+    internal enum MXStates
+    {
+        Aguascalientes,
+        BajaCalifornia,
+        BajaCaliforniaSur,
+        Campeche,
+        Chiapas,
+        Chihhuahua,
+        CoahuilaDeZaragoza,
+        Colima,
+        Durango,
+        Guanajuato,
+        Guerrero,
+        Hidalgo,
+        Jalisco,
+        México,
+        CiudadDeMéxico,
+        MichoacánDeOcampo,
+        Morelos,
+        Nayarit,
+        NuevoLeón,
+        Oaxaca,
+        Puebla,
+        Querétaro,
+        QuintanaRoo,
+        SanLuisPotosí,
+        Sinaloa,
+        Sonora,
+        Tabasco,
+        Tamaulipas,
+        Tlaxcala,
+        VeracruzDeIgnacioDeLaLlave,
+        Yucatán,
+        Zacatecas
+    }
+}

@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.Type;
 
@@ -43,7 +44,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.State, Is.Null);
                 Assert.That(_sut.StateEnum, Is.Null);
                 Assert.That(_sut.ZipCode, Is.Null);
-                Assert.That(_sut.Country, Is.Null);
+                Assert.That(_sut.Country, Is.EqualTo(Countries.UnitedStates.GetName()));
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
