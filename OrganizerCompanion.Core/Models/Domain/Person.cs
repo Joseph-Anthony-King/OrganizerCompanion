@@ -30,6 +30,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
         private bool? _isSuperUser = null;
+        private bool _isCast = false;
+        private int _castId = 0;
+        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -243,7 +246,40 @@ namespace OrganizerCompanion.Core.Models.Domain
             { 
                 _isSuperUser = value; 
                 DateModified = DateTime.Now; 
-            } 
+            }
+        }
+
+        [Required, JsonPropertyName("isCast")]
+        public bool IsCast
+        {
+            get => _isCast;
+            set
+            {
+                _isCast = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int CastId
+        {
+            get => _castId;
+            set
+            {
+                _castId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? CastType
+        {
+            get => _castType;
+            set
+            {
+                _castType = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("dateCreated")]
@@ -275,7 +311,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool? isAdmin,
             bool? isSuperUser,
             DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime? dateModified,
+            bool? isCast = null,
+            int? castId = null,
+            string? castType = null)
         {
             _id = id;
             _firstName = firstName;
@@ -293,6 +332,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isDeceased = isDeceased;
             _isAdmin = isAdmin;
             _isSuperUser = isSuperUser;
+            _isCast = isCast != null && (bool)isCast;
+            _castId = castId != null ? (int)castId : 0;
+            _castType = castType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

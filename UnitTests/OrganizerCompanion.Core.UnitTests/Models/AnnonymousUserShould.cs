@@ -34,6 +34,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.IsCast, Is.False);
+                Assert.That(_sut.CastId, Is.EqualTo(0));
+                Assert.That(_sut.CastType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -47,6 +50,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             _sut = new AnnonymousUser(
                 id: 123,
+                isCast: true,
+                castId: 456,
+                castType: "Organization",
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -55,6 +61,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(123));
+                Assert.That(_sut.IsCast, Is.True);
+                Assert.That(_sut.CastId, Is.EqualTo(456));
+                Assert.That(_sut.CastType, Is.EqualTo("Organization"));
                 Assert.That(_sut.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -71,6 +80,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // For demonstration purposes, we test with valid parameters to ensure no exception is thrown
             Assert.DoesNotThrow(() => new AnnonymousUser(
                 id: 1,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
@@ -109,6 +121,133 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
+        public void IsCast_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            Assert.That(_sut.IsCast, Is.False);
+        }
+
+        [Test]
+        [Category("Models")]
+        public void IsCast_Setter_UpdatesValueAndDateModified()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.IsCast = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsCast, Is.True);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastId_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            Assert.That(_sut.CastId, Is.EqualTo(0));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastId_Setter_UpdatesValueAndDateModified()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.CastId = 789;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.CastId, Is.EqualTo(789));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastId_Setter_CanSetToZero()
+        {
+            // Arrange
+            _sut = new AnnonymousUser
+            {
+                CastId = 123
+            };
+
+            // Act
+            _sut.CastId = 0;
+
+            // Assert
+            Assert.That(_sut.CastId, Is.EqualTo(0));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastType_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            Assert.That(_sut.CastType, Is.Null);
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastType_Setter_UpdatesValueAndDateModified()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.CastType = "Organization";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.CastType, Is.EqualTo("Organization"));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastType_Setter_CanSetToNull()
+        {
+            // Arrange
+            _sut = new AnnonymousUser
+            {
+                CastType = "Person"
+            };
+
+            // Act
+            _sut.CastType = null;
+
+            // Assert
+            Assert.That(_sut.CastType, Is.Null);
+        }
+
+        [Test]
+        [Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -136,6 +275,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             _sut = new AnnonymousUser(
                 id: 123,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: specificDate,
                 dateModified: _testDateModified
             );
@@ -180,6 +322,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 789,
+                isCast: true,
+                castId: 456,
+                castType: "Organization",
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -199,6 +344,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"id\":789"));
             Assert.That(json, Does.Contain("\"dateCreated\""));
             Assert.That(json, Does.Contain("\"dateModified\""));
+            Assert.That(json, Does.Contain("\"isCast\":true"));
+            Assert.That(json, Does.Contain("\"castId\":456"));
+            Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
         }
 
         [Test]
@@ -221,6 +369,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains expected properties with default values
             Assert.That(json, Does.Contain("\"id\":0"));
+            Assert.That(json, Does.Contain("\"isCast\":false"));
             Assert.That(json, Does.Contain("\"dateCreated\""));
             Assert.That(json, Does.Contain("\"dateModified\""));
         }
@@ -232,6 +381,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 100,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: null
             );
@@ -255,6 +407,68 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
+        public void ToJson_WithCastProperties_IncludesConvertedFields()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 100,
+                isCast: true,
+                castId: 456,
+                castType: "Organization",
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.That(json, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
+            });
+
+            // Verify JSON contains cast properties
+            Assert.That(json, Does.Contain("\"isCast\":true"));
+            Assert.That(json, Does.Contain("\"castId\":456"));
+            Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void ToJson_WithNullCastProperties_HandlesCorrectly()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 100,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.That(json, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
+            });
+
+            // Verify JSON handles null cast properties correctly (should be omitted due to JsonIgnore condition)
+            Assert.That(json, Does.Contain("\"isCast\":false"));
+            Assert.That(json, Does.Not.Contain("\"castId\""));
+            Assert.That(json, Does.Not.Contain("\"castType\""));
+        }
+
+        [Test]
+        [Category("Models")]
         public void Properties_CanBeSetMultipleTimes()
         {
             // Arrange
@@ -268,6 +482,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             _sut.Id = 200;
             Assert.That(_sut.Id, Is.EqualTo(200));
+
+            // Act & Assert - IsCast
+            _sut.IsCast = true;
+            Assert.That(_sut.IsCast, Is.True);
+
+            _sut.IsCast = false;
+            Assert.That(_sut.IsCast, Is.False);
+
+            // Act & Assert - CastId
+            _sut.CastId = 300;
+            Assert.That(_sut.CastId, Is.EqualTo(300));
+
+            _sut.CastId = 400;
+            Assert.That(_sut.CastId, Is.EqualTo(400));
+
+            // Act & Assert - CastType
+            _sut.CastType = "Organization";
+            Assert.That(_sut.CastType, Is.EqualTo("Organization"));
+
+            _sut.CastType = "Person";
+            Assert.That(_sut.CastType, Is.EqualTo("Person"));
 
             // Act & Assert - DateModified (DateCreated is read-only)
             _sut.DateModified = firstDate;
@@ -306,11 +541,86 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
+        public void IsCast_Setter_UpdatesDateModified_OnEachCall()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert - First update
+            var originalDateModified = _sut.DateModified;
+            _sut.IsCast = true;
+            var firstUpdateTime = _sut.DateModified;
+
+            Assert.That(firstUpdateTime, Is.GreaterThan(originalDateModified));
+
+            // Small delay to ensure different timestamps
+            System.Threading.Thread.Sleep(1);
+
+            // Act & Assert - Second update
+            _sut.IsCast = false;
+            var secondUpdateTime = _sut.DateModified;
+
+            Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastId_Setter_UpdatesDateModified_OnEachCall()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert - First update
+            var originalDateModified = _sut.DateModified;
+            _sut.CastId = 100;
+            var firstUpdateTime = _sut.DateModified;
+
+            Assert.That(firstUpdateTime, Is.GreaterThan(originalDateModified));
+
+            // Small delay to ensure different timestamps
+            System.Threading.Thread.Sleep(1);
+
+            // Act & Assert - Second update
+            _sut.CastId = 200;
+            var secondUpdateTime = _sut.DateModified;
+
+            Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void CastType_Setter_UpdatesDateModified_OnEachCall()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert - First update
+            var originalDateModified = _sut.DateModified;
+            _sut.CastType = "Organization";
+            var firstUpdateTime = _sut.DateModified;
+
+            Assert.That(firstUpdateTime, Is.GreaterThan(originalDateModified));
+
+            // Small delay to ensure different timestamps
+            System.Threading.Thread.Sleep(1);
+
+            // Act & Assert - Second update
+            _sut.CastType = "Person";
+            var secondUpdateTime = _sut.DateModified;
+
+            Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
+        }
+
+        [Test]
+        [Category("Models")]
         public void JsonConstructor_HandlesMinAndMaxDateTimeValues()
         {
             // Arrange & Act
             _sut = new AnnonymousUser(
                 id: int.MaxValue,
+                isCast: true,
+                castId: int.MaxValue,
+                castType: "MaxValue",
                 dateCreated: DateTime.MinValue,
                 dateModified: DateTime.MaxValue
             );
@@ -331,6 +641,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 123,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -362,11 +675,40 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
+        public void Cast_ToOrganization_UpdatesCastProperties()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 123,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var organization = _sut.Cast<Organization>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsCast, Is.True);
+                Assert.That(_sut.CastId, Is.EqualTo(organization.Id));
+                Assert.That(_sut.CastType, Is.EqualTo("Organization"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
         public void Cast_ToPerson_ReturnsPersonWithCorrectProperties()
         {
             // Arrange
             _sut = new AnnonymousUser(
                 id: 456,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -400,6 +742,32 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.IsSuperUser, Is.Null);
                 Assert.That(person.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(person.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToPerson_UpdatesCastProperties()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 456,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var person = _sut.Cast<Person>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsCast, Is.True);
+                Assert.That(_sut.CastId, Is.EqualTo(person.Id));
+                Assert.That(_sut.CastType, Is.EqualTo("Person"));
             });
         }
 
@@ -454,16 +822,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 789,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: null
             );
+
+            _sut.Id += 1; // Trigger DateModified update
 
             // Act & Assert - Organization
             var organization = _sut.Cast<Organization>();
             Assert.Multiple(() =>
             {
                 Assert.That(organization, Is.Not.Null);
-                Assert.That(organization.DateModified, Is.Null);
+                Assert.That(organization.DateCreated, Is.EqualTo(_sut.DateCreated));
             });
 
             // Act & Assert - Person
@@ -471,7 +844,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(person, Is.Not.Null);
-                Assert.That(person.DateModified, Is.Null);
+                Assert.That(person.DateCreated, Is.EqualTo(_sut.DateCreated));
             });
         }
 
@@ -482,6 +855,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 123,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -522,6 +898,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 999,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );

@@ -44,6 +44,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntityType, Is.Null);
                 Assert.That(account.LinkedEntity, Is.Null);
                 Assert.That(account.AllowAnnonymousUsers, Is.False);
+                Assert.That(account.IsCast, Is.False);
+                Assert.That(account.CastId, Is.EqualTo(0));
+                Assert.That(account.CastType, Is.Null);
                 Assert.That(account.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(account.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(account.DateModified, Is.EqualTo(default(DateTime)));
@@ -62,6 +65,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityType: "Person",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: true,
+                isCast: true,
+                castId: 2,
+                castType: "Organization",
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -76,6 +82,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.AllowAnnonymousUsers, Is.True);
+                Assert.That(account.IsCast, Is.True);
+                Assert.That(account.CastId, Is.EqualTo(2));
+                Assert.That(account.CastType, Is.EqualTo("Organization"));
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -103,6 +112,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.AllowAnnonymousUsers, Is.False);
+                Assert.That(account.IsCast, Is.False);
+                Assert.That(account.CastId, Is.EqualTo(0));
+                Assert.That(account.CastType, Is.Null);
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -242,6 +254,63 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsCast_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.IsCast = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.IsCast, Is.True);
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.CastId = 123;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.CastId, Is.EqualTo(123));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.CastType = "Organization";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.CastType, Is.EqualTo("Organization"));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
         public void Cast_ThrowsNotImplementedException()
         {
             // Arrange
@@ -263,6 +332,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityType: "Person",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: true,
+                isCast: true,
+                castId: 3,
+                castType: "Organization",
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -283,6 +355,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"accountName\":\"testaccount\""));
             Assert.That(json, Does.Contain("\"accountNumber\":\"ACC123\""));
             Assert.That(json, Does.Contain("\"allowAnnonymousUsers\":true"));
+            Assert.That(json, Does.Contain("\"isCast\":true"));
+            Assert.That(json, Does.Contain("\"castId\":3"));
+            Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
         }
 
         [Test, Category("Models")]
@@ -344,6 +419,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             account.LinkedEntity = null;
             Assert.That(account.LinkedEntity, Is.Null);
+
+            account.CastType = null;
+            Assert.That(account.CastType, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -379,6 +457,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityType: "Person",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: specificDate,
                 dateModified: _testDateModified
             );
@@ -456,6 +537,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityType: "Person",
                 linkedEntity: _sut,
                 allowAnnonymousUsers: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
@@ -510,8 +594,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             get => throw new Exception("Mock exception from Id property");
             set => throw new Exception("Mock exception from Id property setter");
         }
+        public bool IsCast { get; set; }
+        public int CastId { get; set; }
+        public string? CastType { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
+
         public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
         public string ToJson() => throw new NotImplementedException();
     }
@@ -519,6 +607,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     internal class ThrowingGetTypeMockEntity : IDomainEntity
     {
         public int Id { get; set; } = 1;
+        public bool IsCast { get; set; } = false;
+        public int CastId { get; set; } = 0;
+        public string? CastType { get; set; } = null;
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
 

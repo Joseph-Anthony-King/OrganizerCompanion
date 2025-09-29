@@ -23,6 +23,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _zipCode = null;
         private string? _country = Countries.UnitedStates.GetName();
         private Types? _type = null;
+        private bool _isCast = false;
+        private int _castId = 0;
+        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -123,7 +126,40 @@ namespace OrganizerCompanion.Core.Models.Domain
             { 
                 _type = value; 
                 DateModified = DateTime.Now; 
-            } 
+            }
+        }
+
+        [Required, JsonPropertyName("isCast")]
+        public bool IsCast
+        {
+            get => _isCast;
+            set
+            {
+                _isCast = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int CastId
+        {
+            get => _castId;
+            set
+            {
+                _castId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? CastType
+        {
+            get => _castType;
+            set
+            {
+                _castType = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("dateCreated")]
@@ -145,9 +181,12 @@ namespace OrganizerCompanion.Core.Models.Domain
             Interfaces.Type.ISubNationalSubdivision? state, 
             string? zipCode, 
             string? country, 
-            Types? type, 
+            Types? type,
             DateTime dateCreated, 
-            DateTime? dateModified)
+            DateTime? dateModified,
+            bool? isCast = null,
+            int? castId = null,
+            string? castType = null)
         {
             _id = id;
             _street1 = street1;
@@ -157,6 +196,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             _zipCode = zipCode;
             _country = country;
             _type = type;
+            _isCast = isCast != null && (bool)isCast;
+            _castId = castId != null ? (int)castId : 0;
+            _castType = castType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

@@ -13,45 +13,81 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
-        
+
         private int _id = 0;
         private string? _emailAddress = null;
         private Types? _type = null;
+        private bool _isCast = false;
+        private int _castId = 0;
+        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
-        public int Id 
-        { 
-            get => _id; 
-            set 
-            { 
-                _id = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("emailAddress")]
-        public string? EmailAddress 
-        { 
-            get => _emailAddress; 
-            set 
-            { 
-                _emailAddress = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? EmailAddress
+        {
+            get => _emailAddress;
+            set
+            {
+                _emailAddress = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("type")]
-        Types? Interfaces.Type.IEmail.Type 
-        { 
-            get => _type; 
-            set 
-            { 
-                _type = value; 
-                DateModified = DateTime.Now; 
-            } 
+        Types? Interfaces.Type.IEmail.Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("isCast")]
+        public bool IsCast
+        {
+            get => _isCast;
+            set
+            {
+                _isCast = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int CastId
+        {
+            get => _castId;
+            set
+            {
+                _castId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? CastType
+        {
+            get => _castType;
+            set
+            {
+                _castType = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("dateCreated")]
@@ -66,15 +102,21 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public Email(
-            int id, 
-            string? emailAddress, 
-            Types? type, 
-            DateTime dateCreated, 
-            DateTime? dateModified)
+            int id,
+            string? emailAddress,
+            Types? type,
+            DateTime dateCreated,
+            DateTime? dateModified,
+            bool? isCast = null,
+            int? castId = null,
+            string? castType = null)
         {
             _id = id;
             _emailAddress = emailAddress;
             _type = type;
+            _isCast = isCast != null && (bool)isCast;
+            _castId = castId != null ? (int)castId : 0;
+            _castType = castType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

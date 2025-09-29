@@ -69,7 +69,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now;
 
             // Act
-            _sut = new Email(id, emailAddress, type, dateCreated, dateModified);
+            _sut = new Email(
+                id, 
+                emailAddress, 
+                type, 
+                dateCreated, 
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -192,7 +197,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-5);
 
             // Act
-            _sut = new Email(1, "test@example.com", Types.Work, specificDate, DateTime.Now);
+            _sut = new Email(
+                1, 
+                "test@example.com", 
+                Types.Work, 
+                specificDate, 
+                DateTime.Now);
 
             // Assert
             Assert.That(_sut.DateCreated, Is.EqualTo(specificDate));
@@ -226,7 +236,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToJson_ShouldReturnValidJsonString()
         {
             // Arrange
-            _sut = new Email(1, "test@example.com", Types.Work, DateTime.Now.AddDays(-1), DateTime.Now);
+            _sut = new Email(
+                1, 
+                "test@example.com", 
+                Types.Work, 
+                DateTime.Now.AddDays(-1), 
+                DateTime.Now);
 
             // Act
             var json = _sut.ToJson();
@@ -267,7 +282,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_ShouldReturnFormattedString()
         {
             // Arrange
-            _sut = new Email(123, "test@example.com", Types.Home, DateTime.Now.AddDays(-1), DateTime.Now);
+            _sut = new Email(
+                123, 
+                "test@example.com", 
+                Types.Home, 
+                DateTime.Now.AddDays(-1), 
+                DateTime.Now);
 
             // Act
             var result = _sut.ToString();
@@ -285,7 +305,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_WithNullEmailAddress_ShouldHandleNullValues()
         {
             // Arrange
-            _sut = new Email(456, null, Types.Work, DateTime.Now.AddDays(-1), DateTime.Now);
+            _sut = new Email(
+                456, 
+                null, 
+                Types.Work, 
+                DateTime.Now.AddDays(-1), 
+                DateTime.Now);
 
             // Act
             var result = _sut.ToString();
@@ -319,7 +344,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonSerialization_ShouldProduceValidJsonFormat()
         {
             // Arrange
-            _sut = new Email(1, "test@example.com", Types.Cell, DateTime.Now.AddDays(-1), DateTime.Now);
+            _sut = new Email(
+                1, 
+                "test@example.com", 
+                Types.Cell, 
+                DateTime.Now.AddDays(-1), 
+                DateTime.Now);
 
             // Act
             var json = _sut.ToJson();
@@ -445,7 +475,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_SerializerOptions_ShouldHandleCyclicalReferences()
         {
             // Arrange
-            _sut = new Email(1, "test@example.com", Types.Work, DateTime.Now, DateTime.Now);
+            _sut = new Email(
+                1, 
+                "test@example.com", 
+                Types.Work, 
+                DateTime.Now, 
+                DateTime.Now);
 
             // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
             Assert.DoesNotThrow(() =>

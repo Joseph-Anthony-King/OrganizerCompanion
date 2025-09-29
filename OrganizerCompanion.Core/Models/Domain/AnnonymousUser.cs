@@ -14,6 +14,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
+        private bool _isCast = false;
+        private int _castId = 0;
+        private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -25,6 +28,39 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _id = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("isCast")]
+        public bool IsCast
+        {
+            get => _isCast;
+            set
+            {
+                _isCast = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int CastId
+        {
+            get => _castId;
+            set
+            {
+                _castId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? CastType
+        {
+            get => _castType;
+            set
+            {
+                _castType = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -41,13 +77,19 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public AnnonymousUser(
-            int id, 
-            DateTime dateCreated, 
-            DateTime? dateModified)
+            int id,
+            DateTime dateCreated,
+            DateTime? dateModified,
+            bool? isCast = null,
+            int? castId = null,
+            string? castType = null)
         {
             try
             {
                 _id = id;
+                _isCast = isCast != null && (bool)isCast;
+                _castId = castId != null ? (int)castId : 0;
+                _castType = castType;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
@@ -64,7 +106,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             try
             {
                 if (typeof(T) == typeof(Organization))
-                    return (T)(IDomainEntity)new Organization(
+                {
+                    var result = (T)(IDomainEntity)new Organization(
                         0,
                         null,
                         [],
@@ -75,8 +118,16 @@ namespace OrganizerCompanion.Core.Models.Domain
                         dateCreated: this.DateCreated,
                         dateModified: this.DateModified
                     );
+
+                    IsCast = true;
+                    CastId = result.Id;
+                    CastType = nameof(Organization);
+
+                    return result;
+                }
                 else if (typeof(T) == typeof(Person))
-                    return (T)(IDomainEntity)new Person(
+                {
+                    var result = (T)(IDomainEntity)new Person(
                         0,
                         null,
                         null,
@@ -96,6 +147,13 @@ namespace OrganizerCompanion.Core.Models.Domain
                         this.DateCreated,
                         this.DateModified
                     );
+
+                    IsCast = true;
+                    CastId = result.Id;
+                    CastType = nameof(Person);
+
+                    return result;
+                }
                 else throw new Exception($"Conversion from AnnonymousUser to {typeof(T).Name} is not supported.");
             }
             catch (Exception ex)
