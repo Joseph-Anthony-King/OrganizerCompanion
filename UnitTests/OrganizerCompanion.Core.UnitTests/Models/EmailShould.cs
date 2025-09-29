@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -30,6 +31,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.Null);
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -80,6 +84,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Id, Is.EqualTo(id));
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
             });
@@ -232,6 +239,96 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newLinkedEntityId = 456;
+            var originalDateModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(10); // Ensure time difference
+
+            // Act
+            _sut.LinkedEntityId = newLinkedEntityId;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity();
+            var originalDateModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(10); // Ensure time difference
+
+            // Act
+            _sut.LinkedEntity = mockEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_WhenLinkedEntityIsNull_ShouldReturnNull()
+        {
+            // Arrange
+            _sut.LinkedEntity = null;
+
+            // Act
+            var result = _sut.LinkedEntityType;
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_WhenLinkedEntityIsSet_ShouldReturnTypeName()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity();
+            _sut.LinkedEntity = mockEntity;
+
+            // Act
+            var result = _sut.LinkedEntityType;
+
+            // Assert
+            Assert.That(result, Is.EqualTo("MockDomainEntity"));
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_WhenLinkedEntityChanges_ShouldUpdateTypeName()
+        {
+            // Arrange
+            var mockEntity1 = new MockDomainEntity();
+            var mockEntity2 = new AnotherMockEntity();
+            
+            _sut.LinkedEntity = mockEntity1;
+            var firstType = _sut.LinkedEntityType;
+
+            // Act
+            _sut.LinkedEntity = mockEntity2;
+            var secondType = _sut.LinkedEntityType;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(firstType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(secondType, Is.EqualTo("AnotherMockEntity"));
+                Assert.That(firstType, Is.Not.EqualTo(secondType));
+            });
+        }
+
+        [Test, Category("Models")]
         public void ToJson_ShouldReturnValidJsonString()
         {
             // Arrange
@@ -251,6 +348,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("\"emailAddress\":\"test@example.com\""));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntity\":null"));
+                Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
                 Assert.That(json, Does.Contain("\"dateModified\":"));
 
@@ -442,6 +542,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((OrganizerCompanion.Core.Interfaces.Type.IEmail)_sut).Type = OrganizerCompanion.Core.Enums.Types.Home;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntityId = 123;
+            var fourthModified = _sut.DateModified;
+            Assert.That(fourthModified, Is.GreaterThan(thirdModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = new MockDomainEntity();
+            var fifthModified = _sut.DateModified;
+            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
         }
 
         [Test, Category("Models")]
@@ -487,6 +597,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 var json = _sut.ToJson();
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
             });
+        }
+
+        // Helper mock class for testing IDomainEntity
+        private class MockDomainEntity : IDomainEntity
+        {
+            public int Id { get; set; } = 1;
+            public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        // Another helper mock class for testing LinkedEntityType changes
+        private class AnotherMockEntity : IDomainEntity
+        {
+            public int Id { get; set; } = 2;
+            public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
         }
     }
 }
