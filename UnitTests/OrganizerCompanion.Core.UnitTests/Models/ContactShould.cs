@@ -1,0 +1,1075 @@
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
+using NUnit.Framework;
+using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.Domain;
+
+namespace OrganizerCompanion.Core.UnitTests.Models
+{
+    [TestFixture]
+    internal class ContactShould
+    {
+        private Contact _sut;
+        private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
+        private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+        private List<Email?> _testEmails;
+        private List<PhoneNumber?> _testPhoneNumbers;
+        private List<IAddress?> _testAddresses;
+        private User _linkedUser;
+
+        [SetUp]
+        public void SetUp()
+        {
+            _linkedUser = new User
+            {
+                Id = 1,
+                FirstName = "Linked",
+                LastName = "User"
+            };
+
+            _testEmails =
+            [
+                new Email
+                {
+                    Id = 1,
+                    EmailAddress = "test@example.com",
+                    Type = OrganizerCompanion.Core.Enums.Types.Home
+                }
+            ];
+
+            _testPhoneNumbers =
+            [
+                new PhoneNumber
+                {
+                    Id = 1,
+                    Phone = "555-123-4567",
+                    Type = OrganizerCompanion.Core.Enums.Types.Home
+                }
+            ];
+
+            _testAddresses =
+            [
+                new USAddress
+                {
+                    Id = 1,
+                    Street1 = "123 Main St",
+                    City = "Anytown",
+                    State = new OrganizerCompanion.Core.Models.Type.USState { Name = "California", Abbreviation = "CA" },
+                    ZipCode = "12345",
+                    Type = OrganizerCompanion.Core.Enums.Types.Home
+                }
+            ];
+
+            _sut = new Contact();
+        }
+
+        #region Constructor Tests
+
+        [Test, Category("Models")]
+        public void DefaultConstructor_SetsDefaultValues()
+        {
+            // Arrange
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var contact = new Contact();
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(0));
+                Assert.That(contact.FirstName, Is.Null);
+                Assert.That(contact.MiddleName, Is.Null);
+                Assert.That(contact.LastName, Is.Null);
+                Assert.That(contact.UserName, Is.Null);
+                Assert.That(contact.Pronouns, Is.Null);
+                Assert.That(contact.BirthDate, Is.Null);
+                Assert.That(contact.DeceasedDate, Is.Null);
+                Assert.That(contact.JoinedDate, Is.Null);
+                Assert.That(contact.Emails, Is.Not.Null);
+                Assert.That(contact.Emails.Count, Is.EqualTo(0));
+                Assert.That(contact.PhoneNumbers, Is.Not.Null);
+                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(contact.Addresses, Is.Not.Null);
+                Assert.That(contact.Addresses.Count, Is.EqualTo(0));
+                Assert.That(contact.IsActive, Is.Null);
+                Assert.That(contact.IsDeceased, Is.Null);
+                Assert.That(contact.IsAdmin, Is.Null);
+                Assert.That(contact.IsSuperUser, Is.Null);
+                Assert.That(contact.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(contact.LinkedEntity, Is.Null);
+                Assert.That(contact.LinkedEntityType, Is.Null);
+                Assert.That(contact.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(contact.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(contact.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_SetsAllPropertiesCorrectly()
+        {
+            // Arrange & Act
+            var contact = new Contact(
+                id: 1,
+                firstName: "John",
+                middleName: "Michael",
+                lastName: "Doe",
+                userName: "johndoe",
+                pronouns: Pronouns.HeHim,
+                birthDate: new DateTime(1990, 1, 1),
+                deceasedDate: null,
+                joinedDate: new DateTime(2023, 1, 1),
+                emails: _testEmails,
+                phoneNumbers: _testPhoneNumbers,
+                addresses: _testAddresses,
+                isActive: true,
+                isDeceased: false,
+                isAdmin: false,
+                isSuperUser: false,
+                linkedEntityId: 1,
+                linkedEntity: _linkedUser,
+                linkedEntityType: "User",
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(1));
+                Assert.That(contact.FirstName, Is.EqualTo("John"));
+                Assert.That(contact.MiddleName, Is.EqualTo("Michael"));
+                Assert.That(contact.LastName, Is.EqualTo("Doe"));
+                Assert.That(contact.UserName, Is.EqualTo("johndoe"));
+                Assert.That(contact.Pronouns, Is.EqualTo(Pronouns.HeHim));
+                Assert.That(contact.BirthDate, Is.EqualTo(new DateTime(1990, 1, 1)));
+                Assert.That(contact.DeceasedDate, Is.Null);
+                Assert.That(contact.JoinedDate, Is.EqualTo(new DateTime(2023, 1, 1)));
+                Assert.That(contact.Emails.Count, Is.EqualTo(1));
+                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(contact.Addresses.Count, Is.EqualTo(1));
+                Assert.That(contact.IsActive, Is.True);
+                Assert.That(contact.IsDeceased, Is.False);
+                Assert.That(contact.IsAdmin, Is.False);
+                Assert.That(contact.IsSuperUser, Is.False);
+                Assert.That(contact.LinkedEntityId, Is.EqualTo(1));
+                Assert.That(contact.LinkedEntity, Is.EqualTo(_linkedUser));
+                Assert.That(contact.LinkedEntityType, Is.EqualTo("User"));
+                Assert.That(contact.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(contact.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullCollections_InitializesEmptyLists()
+        {
+            // Arrange & Act
+            var contact = new Contact(
+                id: 1,
+                firstName: "John",
+                middleName: null,
+                lastName: "Doe",
+                userName: null,
+                pronouns: Pronouns.HeHim,
+                birthDate: new DateTime(1990, 1, 1),
+                deceasedDate: null,
+                joinedDate: new DateTime(2023, 1, 1),
+                emails: [],
+                phoneNumbers: [],
+                addresses: [],
+                isActive: true,
+                isDeceased: false,
+                isAdmin: false,
+                isSuperUser: null,
+                linkedEntityId: 0,
+                linkedEntity: null,
+                linkedEntityType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Emails, Is.Not.Null);
+                Assert.That(contact.Emails.Count, Is.EqualTo(0));
+                Assert.That(contact.PhoneNumbers, Is.Not.Null);
+                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(contact.Addresses, Is.Not.Null);
+                Assert.That(contact.Addresses.Count, Is.EqualTo(0));
+            });
+        }
+
+        #endregion
+
+        #region Property Tests
+
+        [Test, Category("Models")]
+        public void Id_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Id = 123;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(123));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FirstName_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.FirstName = "Jane";
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.FirstName, Is.EqualTo("Jane"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void MiddleName_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.MiddleName = "Marie";
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.MiddleName, Is.EqualTo("Marie"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LastName_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LastName = "Smith";
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LastName, Is.EqualTo("Smith"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void UserName_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.UserName = "janesmith";
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.UserName, Is.EqualTo("janesmith"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Pronouns_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Pronouns = Pronouns.SheHer;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Pronouns, Is.EqualTo(Pronouns.SheHer));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void BirthDate_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var birthDate = new DateTime(1985, 5, 15);
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.BirthDate = birthDate;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.BirthDate, Is.EqualTo(birthDate));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var deceasedDate = new DateTime(2023, 12, 25);
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.DeceasedDate = deceasedDate;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DeceasedDate, Is.EqualTo(deceasedDate));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JoinedDate_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var joinedDate = new DateTime(2023, 1, 15);
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.JoinedDate = joinedDate;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.JoinedDate, Is.EqualTo(joinedDate));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Emails_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Emails = _testEmails.ConvertAll(e => (Email?)e);
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Emails.Count, Is.EqualTo(1));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumbers_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.PhoneNumbers = _testPhoneNumbers.ConvertAll(p => (PhoneNumber?)p);
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Addresses_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Addresses = _testAddresses;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Addresses.Count, Is.EqualTo(1));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsActive_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsActive = true;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsActive, Is.True);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsDeceased_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsDeceased = false;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsDeceased, Is.False);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsAdmin_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsAdmin = true;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsAdmin, Is.True);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsSuperUser_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsSuperUser = true;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsSuperUser, Is.True);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_Set_UpdatesDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntityId = 42;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(42));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Set_UpdatesDateModifiedAndLinkedEntityType()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntity = _linkedUser;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(_linkedUser));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("User"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_SetToNull_UpdatesDateModifiedAndLinkedEntityType()
+        {
+            // Arrange
+            _sut.LinkedEntity = _linkedUser;
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntity = null;
+            var afterSet = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            });
+        }
+
+        #endregion
+
+        #region FullName Property Tests
+
+        [Test, Category("Models")]
+        public void FullName_WithFirstAndLastName_ReturnsFormattedName()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+
+            // Act
+            var result = _sut.FullName;
+
+            // Assert
+            Assert.That(result, Is.EqualTo("John Doe"));
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithFirstMiddleAndLastName_ReturnsFormattedName()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "Doe";
+
+            // Act
+            var result = _sut.FullName;
+
+            // Assert
+            Assert.That(result, Is.EqualTo("John Michael Doe"));
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithAllNamesNull_ReturnsNull()
+        {
+            // Arrange
+            _sut.FirstName = null;
+            _sut.MiddleName = null;
+            _sut.LastName = null;
+
+            // Act
+            var result = _sut.FullName;
+
+            // Assert
+            Assert.That(result, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithFirstNameNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = null;
+            _sut.LastName = "Doe";
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => _ = _sut.FullName);
+        }
+
+        [Test, Category("Models")]
+        public void FullName_WithLastNameNull_ThrowsArgumentNullException()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.LastName = null;
+
+            // Act & Assert
+            Assert.Throws<ArgumentNullException>(() => _ = _sut.FullName);
+        }
+
+        #endregion
+
+        #region Explicit Interface Implementation Tests
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonEmails_Get_ReturnsTypeInterfaceEmails()
+        {
+            // Arrange
+            _sut.Emails = _testEmails.ConvertAll(e => (Email?)e);
+
+            // Act
+            var result = ((Interfaces.Type.IPerson)_sut).Emails;
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IEmail>());
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonEmails_Set_UpdatesEmails()
+        {
+            // Arrange
+            var typeEmails = _testEmails.Cast<Interfaces.Type.IEmail?>().ToList();
+
+            // Act
+            ((Interfaces.Type.IPerson)_sut).Emails = typeEmails;
+
+            // Assert
+            Assert.That(_sut.Emails.Count, Is.EqualTo(1));
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonEmails_SetNull_InitializesEmptyList()
+        {
+            // Arrange & Act
+            ((Interfaces.Type.IPerson)_sut).Emails = [];
+
+            // Assert
+            Assert.That(_sut.Emails.Count, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonPhoneNumbers_Get_ReturnsTypeInterfacePhoneNumbers()
+        {
+            // Arrange
+            _sut.PhoneNumbers = _testPhoneNumbers.ConvertAll(p => (PhoneNumber?)p);
+
+            // Act
+            var result = ((Interfaces.Type.IPerson)_sut).PhoneNumbers;
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IPhoneNumber>());
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonPhoneNumbers_Set_UpdatesPhoneNumbers()
+        {
+            // Arrange
+            var typePhoneNumbers = _testPhoneNumbers.Cast<Interfaces.Type.IPhoneNumber?>().ToList();
+
+            // Act
+            ((Interfaces.Type.IPerson)_sut).PhoneNumbers = typePhoneNumbers;
+
+            // Assert
+            Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(1));
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonPhoneNumbers_SetNull_InitializesEmptyList()
+        {
+            // Arrange & Act
+            ((Interfaces.Type.IPerson)_sut).PhoneNumbers = [];
+
+            // Assert
+            Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonAddresses_Get_ReturnsTypeInterfaceAddresses()
+        {
+            // Arrange
+            _sut.Addresses = _testAddresses;
+
+            // Act
+            var result = ((Interfaces.Type.IPerson)_sut).Addresses;
+
+            // Assert
+            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IAddress>());
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonAddresses_Set_UpdatesAddresses()
+        {
+            // Arrange
+            var typeAddresses = _testAddresses.Cast<Interfaces.Type.IAddress?>().ToList();
+
+            // Act
+            ((Interfaces.Type.IPerson)_sut).Addresses = typeAddresses;
+
+            // Assert
+            Assert.That(_sut.Addresses.Count, Is.EqualTo(1));
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitIPersonAddresses_SetNull_InitializesEmptyList()
+        {
+            // Arrange & Act
+            ((Interfaces.Type.IPerson)_sut).Addresses = [];
+
+            // Assert
+            Assert.That(_sut.Addresses.Count, Is.EqualTo(0));
+        }
+
+        #endregion
+
+        #region IDomainEntity Not Implemented Properties Tests
+
+        [Test, Category("Models")]
+        public void IsCast_Get_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _ = _sut.IsCast);
+        }
+
+        [Test, Category("Models")]
+        public void IsCast_Set_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Get_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _ = _sut.CastId);
+        }
+
+        [Test, Category("Models")]
+        public void CastId_Set_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Get_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _ = _sut.CastType);
+        }
+
+        [Test, Category("Models")]
+        public void CastType_Set_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.CastType = "TestType");
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ThrowsNotImplementedException()
+        {
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.Cast<User>());
+        }
+
+        #endregion
+
+        #region JSON Serialization Tests
+
+        [Test, Category("Models")]
+        public void ToJson_ReturnsValidJsonString()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.Pronouns = Pronouns.HeHim;
+            _sut.BirthDate = new DateTime(1990, 1, 1);
+            _sut.JoinedDate = new DateTime(2023, 1, 1);
+            _sut.IsActive = true;
+            _sut.IsDeceased = false;
+            _sut.IsAdmin = false;
+            _sut.LinkedEntityId = 0;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+
+            // Verify JSON contains expected properties
+            var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("id", out _), Is.True);
+                Assert.That(root.TryGetProperty("firstName", out _), Is.True);
+                Assert.That(root.TryGetProperty("lastName", out _), Is.True);
+                Assert.That(root.TryGetProperty("fullName", out _), Is.True);
+                Assert.That(root.TryGetProperty("pronouns", out _), Is.True);
+                Assert.That(root.TryGetProperty("birthDate", out _), Is.True);
+                Assert.That(root.TryGetProperty("joinDate", out _), Is.True);
+                Assert.That(root.TryGetProperty("emails", out _), Is.True);
+                Assert.That(root.TryGetProperty("phoneNumbers", out _), Is.True);
+                Assert.That(root.TryGetProperty("addresses", out _), Is.True);
+                Assert.That(root.TryGetProperty("isActive", out _), Is.True);
+                Assert.That(root.TryGetProperty("isDeceased", out _), Is.True);
+                Assert.That(root.TryGetProperty("isAdmin", out _), Is.True);
+                Assert.That(root.TryGetProperty("linkedEntityId", out _), Is.True);
+                Assert.That(root.TryGetProperty("linkedEntity", out _), Is.True);
+                Assert.That(root.TryGetProperty("linkedEntityType", out _), Is.True);
+                Assert.That(root.TryGetProperty("dateCreated", out _), Is.True);
+                Assert.That(root.TryGetProperty("dateModified", out _), Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullValues_HandlesJsonIgnoreConditions()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.UserName = null; // Should be ignored when null
+            _sut.DeceasedDate = null; // Should be ignored when null
+            _sut.IsSuperUser = null; // Should be ignored when null
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+            Assert.Multiple(() =>
+            {
+                Assert.That(root.TryGetProperty("userName", out _), Is.False);
+                Assert.That(root.TryGetProperty("deceasedDate", out _), Is.False);
+                Assert.That(root.TryGetProperty("isSuperUser", out _), Is.False);
+            });
+        }
+
+        #endregion
+
+        #region ToString Tests
+
+        [Test, Category("Models")]
+        public void ToString_ReturnsFormattedString()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.That(result, Contains.Substring("Contact"));
+            Assert.That(result, Contains.Substring("Id123"));
+            Assert.That(result, Contains.Substring("FullNameJohn Doe"));
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithNullFullName_HandlesGracefully()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.FirstName = null;
+            _sut.LastName = null;
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.That(result, Contains.Substring("Contact"));
+            Assert.That(result, Contains.Substring("Id456"));
+            Assert.That(result, Contains.Substring("FullName"));
+        }
+
+        #endregion
+
+        #region Data Annotations Tests
+
+        [Test, Category("Models")]
+        public void ValidationAttributes_IdProperty_HasRequiredAndRangeAttributes()
+        {
+            // Arrange
+            var property = typeof(Contact).GetProperty(nameof(Contact.Id));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false).FirstOrDefault() as RequiredAttribute;
+            var rangeAttribute = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false).FirstOrDefault() as System.ComponentModel.DataAnnotations.RangeAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(requiredAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(1));
+                Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ValidationAttributes_LinkedEntityIdProperty_HasRequiredAndRangeAttributes()
+        {
+            // Arrange
+            var property = typeof(Contact).GetProperty(nameof(Contact.LinkedEntityId));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false).FirstOrDefault() as RequiredAttribute;
+            var rangeAttribute = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false).FirstOrDefault() as System.ComponentModel.DataAnnotations.RangeAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(requiredAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
+                Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ValidationAttributes_RequiredProperties_HaveRequiredAttribute()
+        {
+            // Arrange
+            var requiredProperties = new[]
+            {
+                nameof(Contact.FirstName),
+                nameof(Contact.MiddleName),
+                nameof(Contact.LastName),
+                nameof(Contact.FullName),
+                nameof(Contact.Pronouns),
+                nameof(Contact.BirthDate),
+                nameof(Contact.JoinedDate),
+                nameof(Contact.Emails),
+                nameof(Contact.PhoneNumbers),
+                nameof(Contact.Addresses),
+                nameof(Contact.IsActive),
+                nameof(Contact.IsDeceased),
+                nameof(Contact.IsAdmin),
+                nameof(Contact.LinkedEntity),
+                nameof(Contact.LinkedEntityType),
+                nameof(Contact.DateCreated),
+                nameof(Contact.DateModified)
+            };
+
+            // Act & Assert
+            foreach (var propertyName in requiredProperties)
+            {
+                var property = typeof(Contact).GetProperty(propertyName);
+                var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false).FirstOrDefault() as RequiredAttribute;
+                Assert.That(requiredAttribute, Is.Not.Null, $"Property {propertyName} should have Required attribute");
+            }
+        }
+
+        #endregion
+
+        #region Edge Cases and Error Conditions
+
+        [Test, Category("Models")]
+        public void DateCreated_IsReadOnly_CannotBeSet()
+        {
+            // Arrange
+            var property = typeof(Contact).GetProperty(nameof(Contact.DateCreated));
+
+            // Act & Assert
+            Assert.That(property?.CanWrite, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_IsReadOnly_CannotBeSet()
+        {
+            // Arrange
+            var property = typeof(Contact).GetProperty(nameof(Contact.LinkedEntityType));
+
+            // Act & Assert
+            Assert.That(property?.CanWrite, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void FullName_IsReadOnly_CannotBeSet()
+        {
+            // Arrange
+            var property = typeof(Contact).GetProperty(nameof(Contact.FullName));
+
+            // Act & Assert
+            Assert.That(property?.CanWrite, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void Contact_ImplementsIContactInterface()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<IContact>());
+        }
+
+        [Test, Category("Models")]
+        public void Contact_ImplementsIPersonInterface()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<Interfaces.Domain.IPerson>());
+        }
+
+        [Test, Category("Models")]
+        public void Contact_ImplementsIDomainEntityInterface()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<IDomainEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void Contact_ImplementsTypeIPersonInterface()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<Interfaces.Type.IPerson>());
+        }
+
+        #endregion
+    }
+}
