@@ -195,6 +195,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Methods
         public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
         public override string ToString()

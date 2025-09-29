@@ -12,7 +12,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
-        
+
         private int _id = 0;
         private string? _accountName = null;
         private string? _accountNumber = null;
@@ -28,78 +28,78 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
-        public int Id 
-        { 
-            get => _id; 
-            set 
-            { 
-                _id = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("accountName")]
-        public string? AccountName 
-        { 
-            get => _accountName; 
-            set 
-            { 
-                _accountName = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? AccountName
+        {
+            get => _accountName;
+            set
+            {
+                _accountName = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("accountNumber")]
-        public string? AccountNumber 
-        { 
-            get => _accountNumber; 
-            set 
-            { 
-                _accountNumber = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? AccountNumber
+        {
+            get => _accountNumber;
+            set
+            {
+                _accountNumber = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("linkedEntityId"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
-        public int LinkedEntityId 
-        { 
-            get => _linkedEntityId; 
-            set 
-            { 
-                _linkedEntityId = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public int LinkedEntityId
+        {
+            get => _linkedEntityId;
+            set
+            {
+                _linkedEntityId = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType 
-        { 
-            get => _linkedEntityType; 
-            set 
-            { 
-                _linkedEntityType = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? LinkedEntityType
+        {
+            get => _linkedEntityType;
+            set
+            {
+                _linkedEntityType = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("linkedEntity")]
-        public IDomainEntity? LinkedEntity 
-        { 
-            get => _linkedEntity; 
-            set 
-            { 
-                _linkedEntity = value; 
-                DateModified = DateTime.Now; 
+        public IDomainEntity? LinkedEntity
+        {
+            get => _linkedEntity;
+            set
+            {
+                _linkedEntity = value;
+                DateModified = DateTime.Now;
             }
         }
 
         [Required, JsonPropertyName("allowAnnonymousUsers")]
         public bool AllowAnnonymousUsers
         {
-            get => _allowAnnonymousUsers; 
-            set 
-            { 
-                _allowAnnonymousUsers = value; 
+            get => _allowAnnonymousUsers;
+            set
+            {
+                _allowAnnonymousUsers = value;
                 DateModified = DateTime.Now;
             }
         }

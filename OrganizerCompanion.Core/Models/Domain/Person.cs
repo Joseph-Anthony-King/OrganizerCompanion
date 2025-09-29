@@ -239,13 +239,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonPropertyName("isSuperUser"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public bool? IsSuperUser 
-        { 
-            get => _isSuperUser; 
-            set 
-            { 
-                _isSuperUser = value; 
-                DateModified = DateTime.Now; 
+        public bool? IsSuperUser
+        {
+            get => _isSuperUser;
+            set
+            {
+                _isSuperUser = value;
+                DateModified = DateTime.Now;
             }
         }
 
