@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
+using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -10,6 +12,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private PhoneNumber _sut;
         private DateTime _testDateCreated;
         private DateTime _testDateModified;
+
+        // Mock class for testing LinkedEntity
+        private class MockDomainEntity : IDomainEntity
+        {
+            public int Id { get; set; }
+            public bool IsCast { get; set; }
+            public int CastId { get; set; }
+            public string? CastType { get; set; }
+            public DateTime DateCreated { get; set; }
+            public DateTime? DateModified { get; set; }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
 
         [SetUp]
         public void SetUp()
@@ -54,6 +70,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
+            var linkedEntityId = 456;
+            var linkedEntity = new MockDomainEntity { Id = 456 };
+            var linkedEntityType = "MockDomainEntity";
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -62,6 +81,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id, 
                 phone, 
                 type, 
+                linkedEntityId,
+                linkedEntity,
+                linkedEntityType,
                 dateCreated, 
                 dateModified);
 
@@ -71,6 +93,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
             });
@@ -196,7 +221,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, specificDate, null);
+            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, 0, null, null, specificDate, null);
 
             // Assert
             Assert.That(phoneNumber.DateCreated, Is.EqualTo(specificDate));
@@ -276,6 +301,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                linkedEntityId: 456,
+                linkedEntity: null,
+                linkedEntityType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -301,6 +329,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                linkedEntityId: 789,
+                linkedEntity: null,
+                linkedEntityType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -781,11 +812,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var linkedEntityId = 0;
             var dateCreated = DateTime.Now.AddDays(-1);
             DateTime? dateModified = null;
 
             // Act
-            var phoneNumber = new PhoneNumber(id, phone, type, dateCreated, dateModified);
+            var phoneNumber = new PhoneNumber(id, phone, type, linkedEntityId, null, null, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -793,6 +825,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(phoneNumber.LinkedEntity, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityType, Is.Null);
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.Null);
             });
@@ -805,11 +840,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var linkedEntityId = 123;
+            var mockEntity = new MockDomainEntity { Id = 123 };
+            var linkedEntityType = "TestType";
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
             
-            // Act - Test that optional parameters are accepted but don't affect the object
-            var phoneNumber = new PhoneNumber(id, phone, type, dateCreated, dateModified, true, 123, "TestType");
+            // Act - Test constructor with all parameters
+            var phoneNumber = new PhoneNumber(id, phone, type, linkedEntityId, mockEntity, linkedEntityType, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -817,10 +855,496 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(mockEntity));
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
                 // Cast properties still throw exceptions despite constructor parameters
                 Assert.Throws<NotImplementedException>(() => { var _ = phoneNumber.IsCast; });
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newLinkedEntityId = 999;
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntityId = newLinkedEntityId;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_WhenSet_ShouldUpdateLinkedEntityTypeAndDateModified()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity { Id = 123 };
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntity = mockEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_WhenSetToNull_ShouldUpdateLinkedEntityTypeToNullAndDateModified()
+        {
+            // Arrange
+            _sut.LinkedEntity = new MockDomainEntity { Id = 123 };
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.LinkedEntity = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_IsReadOnly_ReflectsLinkedEntityType()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity { Id = 456 };
+
+            // Act
+            _sut.LinkedEntity = mockEntity;
+
+            // Assert
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_WithNegativeValue_ShouldBeAllowed()
+        {
+            // Act
+            _sut.LinkedEntityId = -1;
+
+            // Assert
+            Assert.That(_sut.LinkedEntityId, Is.EqualTo(-1));
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_WithMaxValue_ShouldBeAllowed()
+        {
+            // Act
+            _sut.LinkedEntityId = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_WithMinValue_ShouldBeAllowed()
+        {
+            // Act
+            _sut.LinkedEntityId = int.MinValue;
+
+            // Assert
+            Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerialization_WithLinkedEntityProperties_ShouldIncludeAllFields()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity { Id = 789 };
+            _sut.Id = 1;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.LinkedEntityId = 789;
+            _sut.LinkedEntity = mockEntity;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"linkedEntityId\":789"));
+                Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerialization_WithNullLinkedEntity_ShouldHandleCorrectly()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.LinkedEntityId = 0;
+            _sut.LinkedEntity = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntity\":null"));
+                Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DataAnnotation_RequiredAttributes_ShouldBePresent()
+        {
+            // Arrange & Act - Verify that Required attributes are correctly applied
+            var type = typeof(PhoneNumber);
+            
+            // Assert - Check that properties have Required attributes where expected
+            var idProperty = type.GetProperty("Id");
+            var phoneProperty = type.GetProperty("Phone");
+            var typeProperty = type.GetProperty("Type");
+            var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
+            var linkedEntityProperty = type.GetProperty("LinkedEntity");
+            var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
+            var dateCreatedProperty = type.GetProperty("DateCreated");
+            var dateModifiedProperty = type.GetProperty("DateModified");
+
+            Assert.Multiple(() =>
+            {
+                // Verify Required attributes exist on appropriate properties
+                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "Id should have Required attribute");
+                Assert.That(phoneProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "Phone should have Required attribute");
+                Assert.That(typeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "Type should have Required attribute");
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityId should have Required attribute");
+                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "LinkedEntity should have Required attribute");
+                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityType should have Required attribute");
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "DateCreated should have Required attribute");
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                    Is.Not.Empty, "DateModified should have Required attribute");
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DataAnnotation_RangeAttributes_ShouldBePresent()
+        {
+            // Arrange & Act - Verify that Range attributes are correctly applied
+            var type = typeof(PhoneNumber);
+            
+            // Assert - Check that properties have Range attributes where expected
+            var idProperty = type.GetProperty("Id");
+            var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
+
+            Assert.Multiple(() =>
+            {
+                // Verify Range attributes exist on appropriate properties
+                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false), 
+                    Is.Not.Empty, "Id should have Range attribute");
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityId should have Range attribute");
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonPropertyName_Attributes_ShouldBePresent()
+        {
+            // Arrange & Act - Verify that JsonPropertyName attributes are correctly applied
+            var type = typeof(PhoneNumber);
+            
+            // Assert - Check that properties have JsonPropertyName attributes where expected
+            var idProperty = type.GetProperty("Id");
+            var phoneProperty = type.GetProperty("Phone");
+            var typeProperty = type.GetProperty("Type");
+            var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
+            var linkedEntityProperty = type.GetProperty("LinkedEntity");
+            var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
+            var dateCreatedProperty = type.GetProperty("DateCreated");
+            var dateModifiedProperty = type.GetProperty("DateModified");
+
+            Assert.Multiple(() =>
+            {
+                // Verify JsonPropertyName attributes exist on appropriate properties
+                Assert.That(idProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "Id should have JsonPropertyName attribute");
+                Assert.That(phoneProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "Phone should have JsonPropertyName attribute");
+                Assert.That(typeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "Type should have JsonPropertyName attribute");
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityId should have JsonPropertyName attribute");
+                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntity should have JsonPropertyName attribute");
+                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "LinkedEntityType should have JsonPropertyName attribute");
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "DateCreated should have JsonPropertyName attribute");
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                    Is.Not.Empty, "DateModified should have JsonPropertyName attribute");
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonIgnore_Attributes_ShouldBePresent()
+        {
+            // Arrange & Act - Verify that JsonIgnore attributes are correctly applied to Cast properties
+            var type = typeof(PhoneNumber);
+            
+            // Assert - Check that Cast properties have JsonIgnore attributes
+            var isCastProperty = type.GetProperty("IsCast");
+            var castIdProperty = type.GetProperty("CastId");
+            var castTypeProperty = type.GetProperty("CastType");
+
+            Assert.Multiple(() =>
+            {
+                // Verify JsonIgnore attributes exist on Cast properties
+                Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
+                    Is.Not.Empty, "IsCast should have JsonIgnore attribute");
+                Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
+                    Is.Not.Empty, "CastId should have JsonIgnore attribute");
+                Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
+                    Is.Not.Empty, "CastType should have JsonIgnore attribute");
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullParameters_ShouldHandleCorrectly()
+        {
+            // Arrange & Act
+            var phoneNumber = new PhoneNumber(
+                id: 0,
+                phone: null,
+                type: null,
+                linkedEntityId: 0,
+                linkedEntity: null,
+                linkedEntityType: null,
+                dateCreated: DateTime.Now,
+                dateModified: null
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(0));
+                Assert.That(phoneNumber.Phone, Is.Null);
+                Assert.That(phoneNumber.Type, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(phoneNumber.LinkedEntity, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityType, Is.Null);
+                Assert.That(phoneNumber.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithEmptyStringValues_ShouldHandleCorrectly()
+        {
+            // Arrange & Act
+            var phoneNumber = new PhoneNumber(
+                id: 1,
+                phone: string.Empty,
+                type: OrganizerCompanion.Core.Enums.Types.Other,
+                linkedEntityId: 0,
+                linkedEntity: null,
+                linkedEntityType: string.Empty,
+                dateCreated: DateTime.Now,
+                dateModified: DateTime.Now
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(1));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(string.Empty));
+                Assert.That(phoneNumber.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(phoneNumber.LinkedEntity, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(string.Empty));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_WithComplexMockEntity_ShouldUpdateLinkedEntityTypeCorrectly()
+        {
+            // Arrange
+            var complexMockEntity = new MockDomainEntity 
+            { 
+                Id = 999, 
+                IsCast = true, 
+                CastId = 123, 
+                CastType = "TestCast",
+                DateCreated = DateTime.Now.AddDays(-1),
+                DateModified = DateTime.Now.AddHours(-1)
+            };
+
+            // Act
+            _sut.LinkedEntity = complexMockEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(complexMockEntity));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(_sut.LinkedEntity.Id, Is.EqualTo(999));
+                Assert.That(_sut.LinkedEntity.IsCast, Is.True);
+                Assert.That(_sut.LinkedEntity.CastId, Is.EqualTo(123));
+                Assert.That(_sut.LinkedEntity.CastType, Is.EqualTo("TestCast"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_AllPropertyChanges_ShouldUpdateDateModifiedSequentially()
+        {
+            // Arrange
+            var initialTime = DateTime.Now;
+            System.Threading.Thread.Sleep(1);
+
+            // Act & Assert - Test sequential property changes update DateModified
+            _sut.Id = 1;
+            var firstModified = _sut.DateModified;
+            Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.Phone = "+1-555-123-4567";
+            var secondModified = _sut.DateModified;
+            Assert.That(secondModified, Is.GreaterThan(firstModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            var thirdModified = _sut.DateModified;
+            Assert.That(thirdModified, Is.GreaterThan(secondModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntityId = 456;
+            var fourthModified = _sut.DateModified;
+            Assert.That(fourthModified, Is.GreaterThan(thirdModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
+            var fifthModified = _sut.DateModified;
+            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithCompletePhoneNumberData_ShouldSerializeAllProperties()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity { Id = 999 };
+            _sut.Id = 42;
+            _sut.Phone = "+1-800-CALL-NOW";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            _sut.LinkedEntityId = 999;
+            _sut.LinkedEntity = mockEntity;
+            _sut.DateModified = DateTime.Now;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+
+                // Check that all expected properties are present
+                string[] expectedProperties = [
+                    "id", "phone", "type", "linkedEntityId", "linkedEntity", "linkedEntityType", "dateCreated", "dateModified"
+                ];
+
+                foreach (var property in expectedProperties)
+                {
+                    Assert.That(json, Does.Contain($"\"{property}\":"), $"Property '{property}' not found in JSON");
+                }
+
+                // Check specific values
+                Assert.That(json, Does.Contain("\"id\":42"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":999"));
+                Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
+                Assert.That(json, Does.Contain("\"type\":4")); // Billing enum value is 4
+
+                // Verify JSON is well-formed
+                var jsonDoc = JsonDocument.Parse(json);
+                Assert.That(jsonDoc, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_WithExtremeValues_ShouldHandleEdgeCases()
+        {
+            // Test extreme integer values
+            Assert.Multiple(() =>
+            {
+                // Test max values
+                _sut.Id = int.MaxValue;
+                Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+
+                _sut.LinkedEntityId = int.MaxValue;
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MaxValue));
+
+                // Test min values
+                _sut.Id = int.MinValue;
+                Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+
+                _sut.LinkedEntityId = int.MinValue;
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MinValue));
+
+                // Test zero values
+                _sut.Id = 0;
+                Assert.That(_sut.Id, Is.EqualTo(0));
+
+                _sut.LinkedEntityId = 0;
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_SerializerOptions_ShouldUseIgnoreCycles()
+        {
+            // Arrange - Create a phone number with mock entity that could potentially cause cycles
+            var mockEntity = new MockDomainEntity { Id = 123 };
+            _sut.Id = 1;
+            _sut.Phone = "+1-555-CYCLE-TEST";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.LinkedEntity = mockEntity;
+
+            // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.DoesNotThrow(() =>
+            {
+                var json = _sut.ToJson();
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                
+                // Verify we can parse it back
+                var jsonDoc = JsonDocument.Parse(json);
+                Assert.That(jsonDoc, Is.Not.Null);
             });
         }
     }

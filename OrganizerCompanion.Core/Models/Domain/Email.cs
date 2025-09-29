@@ -107,15 +107,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? emailAddress,
             Types? type,
+            int linkedEntityId,
+            IDomainEntity? linkedEntity,
+            string? linkedEntityType,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _emailAddress = emailAddress;
             _type = type;
+            _linkedEntityId = linkedEntityId;
+            _linkedEntity = linkedEntity;
+            _linkedEntityType = linkedEntityType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

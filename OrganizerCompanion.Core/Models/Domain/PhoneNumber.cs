@@ -17,6 +17,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _phone = null;
         private Types? _type = null;
+        private int _linkedEntityId = 0;
+        private IDomainEntity? _linkedEntity = null;
+        private string? _linkedEntityType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -54,6 +57,32 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity ID must be a non-negative number")]
+        public int LinkedEntityId
+        {
+            get => _linkedEntityId;
+            set
+            {
+                _linkedEntityId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("linkedEntity")]
+        public IDomainEntity? LinkedEntity
+        {
+            get => _linkedEntity;
+            set
+            {
+                _linkedEntity = value;
+                _linkedEntityType = value?.GetType().Name;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => _linkedEntityType;
+
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -78,15 +107,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? phone,
             Types? type,
+            int linkedEntityId,
+            IDomainEntity? linkedEntity,
+            string? linkedEntityType,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _phone = phone;
             _type = type;
+            _linkedEntityId = linkedEntityId;
+            _linkedEntity = linkedEntity;
+            _linkedEntityType = linkedEntityType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

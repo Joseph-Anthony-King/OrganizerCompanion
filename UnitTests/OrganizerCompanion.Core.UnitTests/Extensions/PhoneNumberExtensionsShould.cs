@@ -14,7 +14,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [SetUp]
         public void SetUp()
         {
-            _domainPhoneNumber = new PhoneNumber(1, "+1-555-123-4567", OrganizerCompanion.Core.Enums.Types.Work, DateTime.Now, DateTime.Now);
+            _domainPhoneNumber = new PhoneNumber(1, "+1-555-123-4567", OrganizerCompanion.Core.Enums.Types.Work, 0, null, null, DateTime.Now, DateTime.Now);
 
             _typePhoneNumber = new MockTypePhoneNumber
             {
@@ -67,7 +67,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypePhoneNumbers_WithListOfDomainPhoneNumbers_ShouldConvertToTypePhoneNumbers()
         {
             // Arrange
-            var domainPhoneNumber2 = new PhoneNumber(2, "+1-555-111-2222", OrganizerCompanion.Core.Enums.Types.Home, DateTime.Now, DateTime.Now);
+            var domainPhoneNumber2 = new PhoneNumber(2, "+1-555-111-2222", OrganizerCompanion.Core.Enums.Types.Home, 0, null, null, DateTime.Now, DateTime.Now);
             var domainPhoneNumbers = new List<IPhoneNumber?> { _domainPhoneNumber, domainPhoneNumber2, null };
 
             // Act
@@ -99,7 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainPhoneNumbers_WithListContainingDomainPhoneNumbers_ShouldReturnOnlyDomainPhoneNumbers()
         {
             // Arrange
-            var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Cell, DateTime.Now, DateTime.Now);
+            var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Cell, 0, null, null, DateTime.Now, DateTime.Now);
             var typePhoneNumbers = new List<Interfaces.Type.IPhoneNumber?> 
             { 
                 _domainPhoneNumber,         // This is a domain phone number (should be included)
@@ -165,7 +165,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypePhoneNumber_WithNullPhone_ShouldReturnTypePhoneNumber()
         {
             // Arrange
-            var domainPhoneWithNull = new PhoneNumber(4, null, OrganizerCompanion.Core.Enums.Types.Other, DateTime.Now, DateTime.Now);
+            var domainPhoneWithNull = new PhoneNumber(4, null, OrganizerCompanion.Core.Enums.Types.Other, 0, null, null, DateTime.Now, DateTime.Now);
 
             // Act
             var result = domainPhoneWithNull.AsTypePhoneNumber();
@@ -180,7 +180,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypePhoneNumbers_WithNullPhones_ShouldHandleNullValues()
         {
             // Arrange
-            var domainPhoneWithNull = new PhoneNumber(5, null, OrganizerCompanion.Core.Enums.Types.Fax, DateTime.Now, DateTime.Now);
+            var domainPhoneWithNull = new PhoneNumber(5, null, OrganizerCompanion.Core.Enums.Types.Fax, 0, null, null, DateTime.Now, DateTime.Now);
             var domainPhoneNumbers = new List<IPhoneNumber?> { _domainPhoneNumber, domainPhoneWithNull, null };
 
             // Act
