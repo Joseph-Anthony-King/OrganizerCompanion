@@ -23,9 +23,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private DateTime? _birthDate = null;
         private DateTime? _deceasedDate = null;
         private DateTime? _joinedDate = null;
-        private List<Email?> _emails = [];
-        private List<PhoneNumber?> _phoneNumbers = [];
-        private List<IAddress?> _addresses = [];
+        private List<Email> _emails = [];
+        private List<PhoneNumber> _phoneNumbers = [];
+        private List<IAddress> _addresses = [];
         private bool? _isActive = null;
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
@@ -38,32 +38,32 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Properties
-        List<Interfaces.Type.IEmail?> Interfaces.Type.IPerson.Emails
+        List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
         {
             get => [.. _emails];
             set
             {
-                _emails = value?.ConvertAll(email => (Email?)email) ?? [];
+                _emails = value?.ConvertAll(email => (Email)email) ?? [];
                 DateModified = DateTime.Now;
             }
         }
 
-        List<Interfaces.Type.IPhoneNumber?> Interfaces.Type.IPerson.PhoneNumbers
+        List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
         {
             get => [.. _phoneNumbers];
             set
             {
-                _phoneNumbers = value?.ConvertAll(phone => (PhoneNumber?)phone) ?? [];
+                _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
                 DateModified = DateTime.Now;
             }
         }
 
-        List<Interfaces.Type.IAddress?> Interfaces.Type.IPerson.Addresses
+        List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
         {
             get => [.. _addresses.Cast<Interfaces.Type.IAddress?>()];
             set
             {
-                _addresses = value?.ConvertAll(address => (IAddress?)address) ?? [];
+                _addresses = value.ConvertAll(address => (IAddress)address) ?? [];
                 DateModified = DateTime.Now;
             }
         }
@@ -176,9 +176,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("emails")]
-        public List<Email?> Emails
+        public List<Email> Emails
         {
-            get => _emails.ConvertAll(email => (Email)email!)!;
+            get => _emails;
             set
             {
                 _emails = value;
@@ -187,9 +187,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("phoneNumbers")]
-        public List<PhoneNumber?> PhoneNumbers
+        public List<PhoneNumber> PhoneNumbers
         {
-            get => _phoneNumbers.ConvertAll(phone => (PhoneNumber)phone!)!;
+            get => _phoneNumbers;
             set
             {
                 _phoneNumbers = value;
@@ -198,7 +198,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("addresses")]
-        public List<IAddress?> Addresses
+        public List<IAddress> Addresses
         {
             get => _addresses;
             set
@@ -308,9 +308,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime? birthDate,
             DateTime? deceasedDate,
             DateTime? joinedDate,
-            List<Email?> emails,
-            List<PhoneNumber?> phoneNumbers,
-            List<IAddress?> addresses,
+            List<Email> emails,
+            List<PhoneNumber> phoneNumbers,
+            List<IAddress> addresses,
             bool? isActive,
             bool? isDeceased,
             bool? isAdmin,
