@@ -14,6 +14,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
+        private int _accountId = 0;
+        private IAccount? _account = null;
         private bool _isCast = false;
         private int _castId = 0;
         private string? _castType = null;
@@ -28,6 +30,28 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _id = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("accountId"), Range(1, int.MaxValue, ErrorMessage = "Account ID must be a positive number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int AccountId
+        {
+            get => _accountId;
+            set
+            {
+                _accountId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IAccount? Account
+        {
+            get => _account;
+            set
+            {
+                _account = value;
                 DateModified = DateTime.Now;
             }
         }

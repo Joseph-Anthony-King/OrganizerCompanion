@@ -34,6 +34,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.AccountId, Is.EqualTo(0));
+                Assert.That(_sut.Account, Is.Null);
                 Assert.That(_sut.IsCast, Is.False);
                 Assert.That(_sut.CastId, Is.EqualTo(0));
                 Assert.That(_sut.CastType, Is.Null);
