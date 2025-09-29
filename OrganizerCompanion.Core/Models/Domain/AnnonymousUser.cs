@@ -61,7 +61,51 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(Organization))
+                    return (T)(IDomainEntity)new Organization(
+                        0,
+                        null,
+                        [],
+                        [],
+                        [],
+                        [],
+                        [],
+                        dateCreated: this.DateCreated,
+                        dateModified: this.DateModified
+                    );
+                else if (typeof(T) == typeof(Person))
+                    return (T)(IDomainEntity)new Person(
+                        0,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        [],
+                        [],
+                        [],
+                        null,
+                        null,
+                        null,
+                        null,
+                        this.DateCreated,
+                        this.DateModified
+                    );
+                else throw new Exception($"Conversion from AnnonymousUser to {typeof(T).Name} is not supported.");
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException($"Error converting AnnonymousUser to {typeof(T).Name}.", ex);
+            }
+        }
+
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
         #endregion
     }

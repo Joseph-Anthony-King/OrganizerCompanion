@@ -45,7 +45,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Pronouns, Is.Null);
                 Assert.That(_sut.BirthDate, Is.Null);
                 Assert.That(_sut.DeceasedDate, Is.Null);
-                Assert.That(_sut.JoinDate, Is.Null);
+                Assert.That(_sut.JoinedDate, Is.Null);
                 Assert.That(_sut.Emails, Is.Not.Null.And.Empty);
                 Assert.That(_sut.PhoneNumbers, Is.Not.Null.And.Empty);
                 Assert.That(_sut.Addresses, Is.Not.Null.And.Empty);
@@ -67,6 +67,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var firstName = "John";
             var middleName = "Michael";
             var lastName = "Doe";
+            var userName = "johndoe";
             var pronouns = Pronouns.HeHim;
             var birthDate = DateTime.Now.AddYears(-30);
             var deceasedDate = DateTime.Now.AddYears(-1);
@@ -82,7 +83,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var person = new Person(id, firstName, middleName, lastName, pronouns, birthDate, deceasedDate, joinDate,
+            var person = new Person(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, dateCreated, dateModified);
 
             // Assert
@@ -96,7 +97,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
                 Assert.That(person.DeceasedDate, Is.EqualTo(deceasedDate));
-                Assert.That(person.JoinDate, Is.EqualTo(joinDate));
+                Assert.That(person.JoinedDate, Is.EqualTo(joinDate));
                 Assert.That(person.Emails, Is.EqualTo(emails));
                 Assert.That(person.PhoneNumbers, Is.EqualTo(phoneNumbers));
                 Assert.That(person.Addresses, Is.EqualTo(addresses));
@@ -113,7 +114,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithNullLists_ShouldInitializeEmptyLists()
         {
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert
@@ -132,6 +133,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var firstName = "Jane";
             var middleName = "Elizabeth";
             var lastName = "Smith";
+            var userName = "johndoe";
             var pronouns = Pronouns.SheHer;
             var birthDate = DateTime.Now.AddYears(-25);
             var joinDate = DateTime.Now.AddMonths(-3);
@@ -144,7 +146,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateCreated = DateTime.Now.AddDays(-1);
 
             // Act
-            var person = new Person(firstName, middleName, lastName, pronouns, birthDate, joinDate,
+            var person = new Person(firstName, middleName, lastName, userName, pronouns, birthDate, joinDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, dateCreated);
 
             // Assert
@@ -155,7 +157,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.LastName, Is.EqualTo(lastName));
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
-                Assert.That(person.JoinDate, Is.EqualTo(joinDate));
+                Assert.That(person.JoinedDate, Is.EqualTo(joinDate));
                 Assert.That(person.Emails, Is.EqualTo(emails));
                 Assert.That(person.PhoneNumbers, Is.EqualTo(phoneNumbers));
                 Assert.That(person.Addresses, Is.EqualTo(addresses));
@@ -398,12 +400,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var beforeSet = DateTime.Now;
 
             // Act
-            _sut.JoinDate = newJoinDate;
+            _sut.JoinedDate = newJoinDate;
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.JoinDate, Is.EqualTo(newJoinDate));
+                Assert.That(_sut.JoinedDate, Is.EqualTo(newJoinDate));
                 Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
                 Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
             });
@@ -567,7 +569,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, specificDate, null);
 
             // Assert
@@ -909,11 +911,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 _sut.BirthDate = maxDate;
                 Assert.That(_sut.BirthDate, Is.EqualTo(maxDate));
 
-                _sut.JoinDate = minDate;
-                Assert.That(_sut.JoinDate, Is.EqualTo(minDate));
+                _sut.JoinedDate = minDate;
+                Assert.That(_sut.JoinedDate, Is.EqualTo(minDate));
 
-                _sut.JoinDate = maxDate;
-                Assert.That(_sut.JoinDate, Is.EqualTo(maxDate));
+                _sut.JoinedDate = maxDate;
+                Assert.That(_sut.JoinedDate, Is.EqualTo(maxDate));
             });
         }
 
@@ -1042,7 +1044,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var deceasedDate = DateTime.Now.AddYears(-2);
 
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, deceasedDate, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, deceasedDate, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert
@@ -1053,7 +1055,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithNullDeceasedDate_ShouldSetNull()
         {
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert

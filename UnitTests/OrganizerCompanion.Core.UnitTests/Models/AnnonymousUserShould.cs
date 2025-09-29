@@ -175,17 +175,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
-        public void Cast_ThrowsNotImplementedException()
-        {
-            // Arrange
-            _sut = new AnnonymousUser();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<AnnonymousUser>());
-        }
-
-        [Test]
-        [Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
@@ -332,6 +321,226 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
                 Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
                 Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToOrganization_ReturnsOrganizationWithCorrectProperties()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 123,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var organization = _sut.Cast<Organization>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization, Is.Not.Null);
+                Assert.That(organization, Is.InstanceOf<Organization>());
+                Assert.That(organization.Id, Is.EqualTo(0)); // Cast creates new Organization with Id = 0
+                Assert.That(organization.OrganizationName, Is.Null);
+                Assert.That(organization.Addresses, Is.Not.Null);
+                Assert.That(organization.Addresses, Is.Empty);
+                Assert.That(organization.PhoneNumbers, Is.Not.Null);
+                Assert.That(organization.PhoneNumbers, Is.Empty);
+                Assert.That(organization.Members, Is.Not.Null);
+                Assert.That(organization.Members, Is.Empty);
+                Assert.That(organization.Contacts, Is.Not.Null);
+                Assert.That(organization.Contacts, Is.Empty);
+                Assert.That(organization.Accounts, Is.Not.Null);
+                Assert.That(organization.Accounts, Is.Empty);
+                Assert.That(organization.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(organization.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToPerson_ReturnsPersonWithCorrectProperties()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 456,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var person = _sut.Cast<Person>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(person, Is.Not.Null);
+                Assert.That(person, Is.InstanceOf<Person>());
+                Assert.That(person.Id, Is.EqualTo(0)); // Cast creates new Person with Id = 0
+                Assert.That(person.FirstName, Is.Null);
+                Assert.That(person.MiddleName, Is.Null);
+                Assert.That(person.LastName, Is.Null);
+                Assert.That(person.UserName, Is.Null);
+                Assert.That(person.Pronouns, Is.Null);
+                Assert.That(person.BirthDate, Is.Null);
+                Assert.That(person.DeceasedDate, Is.Null);
+                Assert.That(person.JoinedDate, Is.Null);
+                Assert.That(person.Emails, Is.Not.Null);
+                Assert.That(person.Emails, Is.Empty);
+                Assert.That(person.PhoneNumbers, Is.Not.Null);
+                Assert.That(person.PhoneNumbers, Is.Empty);
+                Assert.That(person.Addresses, Is.Not.Null);
+                Assert.That(person.Addresses, Is.Empty);
+                Assert.That(person.IsActive, Is.Null);
+                Assert.That(person.IsDeceased, Is.Null);
+                Assert.That(person.IsAdmin, Is.Null);
+                Assert.That(person.IsSuperUser, Is.Null);
+                Assert.That(person.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(person.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithDefaultConstructor_ToOrganization_PreservesDateCreated()
+        {
+            // Arrange
+            var beforeCreation = DateTime.Now;
+            _sut = new AnnonymousUser();
+            var afterCreation = DateTime.Now;
+
+            // Act
+            var organization = _sut.Cast<Organization>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization, Is.Not.Null);
+                Assert.That(organization.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(organization.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(organization.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithDefaultConstructor_ToPerson_PreservesDateCreated()
+        {
+            // Arrange
+            var beforeCreation = DateTime.Now;
+            _sut = new AnnonymousUser();
+            var afterCreation = DateTime.Now;
+
+            // Act
+            var person = _sut.Cast<Person>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(person, Is.Not.Null);
+                Assert.That(person.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(person.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(person.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithNullDateModified_HandlesCorrectly()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 789,
+                dateCreated: _testDateCreated,
+                dateModified: null
+            );
+
+            // Act & Assert - Organization
+            var organization = _sut.Cast<Organization>();
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization, Is.Not.Null);
+                Assert.That(organization.DateModified, Is.Null);
+            });
+
+            // Act & Assert - Person
+            var person = _sut.Cast<Person>();
+            Assert.Multiple(() =>
+            {
+                Assert.That(person, Is.Not.Null);
+                Assert.That(person.DateModified, Is.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToUnsupportedType_ThrowsArgumentException()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 123,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<Account>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to Account"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException!.Message, Does.Contain("Conversion from AnnonymousUser to Account is not supported"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnotherUnsupportedType_ThrowsArgumentException()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert - Testing with a different unsupported type to ensure the generic error handling works
+            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUser>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to AnnonymousUser"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException!.Message, Does.Contain("Conversion from AnnonymousUser to AnnonymousUser is not supported"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ReturnsNewInstanceEachTime()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 999,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var organization1 = _sut.Cast<Organization>();
+            var organization2 = _sut.Cast<Organization>();
+            var person1 = _sut.Cast<Person>();
+            var person2 = _sut.Cast<Person>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(organization1, Is.Not.SameAs(organization2));
+                Assert.That(person1, Is.Not.SameAs(person2));
+                
+                // Verify they have the same property values but are different instances
+                Assert.That(organization1.DateCreated, Is.EqualTo(organization2.DateCreated));
+                Assert.That(person1.DateCreated, Is.EqualTo(person2.DateCreated));
             });
         }
     }

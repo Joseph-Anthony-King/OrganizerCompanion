@@ -22,7 +22,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private Pronouns? _pronouns = null;
         private DateTime? _birthDate = null;
         private DateTime? _deceasedDate = null;
-        private DateTime? _joinDate = null;
+        private DateTime? _joinedDate = null;
         private List<IEmail?> _emails = [];
         private List<IPhoneNumber?> _phoneNumbers = [];
         private List<IAddress?> _addresses = [];
@@ -159,12 +159,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("joinDate")]
-        public DateTime? JoinDate 
+        public DateTime? JoinedDate 
         { 
-            get => _joinDate; 
+            get => _joinedDate; 
             set 
             { 
-                _joinDate = value; 
+                _joinedDate = value; 
                 DateModified = DateTime.Now; 
             } 
         }
@@ -262,10 +262,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? firstName,
             string? middleName,
             string? lastName,
+            string? userName,
             Pronouns? pronouns,
             DateTime? birthDate,
             DateTime? deceasedDate,
-            DateTime? joinDate,
+            DateTime? joinedDate,
             List<IEmail?> emails,
             List<IPhoneNumber?> phoneNumbers,
             List<IAddress?> addresses,
@@ -280,10 +281,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             _firstName = firstName;
             _middleName = middleName;
             _lastName = lastName;
+            _userName = userName;
             _pronouns = pronouns;
             _birthDate = birthDate;
             _deceasedDate = deceasedDate;
-            _joinDate = joinDate;
+            _joinedDate = joinedDate;
             _emails = emails ?? [];
             _phoneNumbers = phoneNumbers ?? [];
             _addresses = addresses ?? [];
@@ -299,9 +301,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? firstName,
             string? middleName,
             string? lastName,
+            string? userName,
             Pronouns? pronouns,
             DateTime? birthDate,
-            DateTime? joinDate,
+            DateTime? joinedDate,
             List<IEmail?> emails,
             List<IPhoneNumber?> phoneNumbers,
             List<IAddress?> addresses,
@@ -313,9 +316,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             _firstName = firstName;
             _middleName = middleName;
             _lastName = lastName;
+            _userName = userName;
             _pronouns = pronouns;
             _birthDate = birthDate;
-            _joinDate = joinDate;
+            _joinedDate = joinedDate;
             _emails = emails ?? [];
             _phoneNumbers = phoneNumbers ?? [];
             _addresses = addresses ?? [];
@@ -327,7 +331,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 

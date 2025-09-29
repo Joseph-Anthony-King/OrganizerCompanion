@@ -6,6 +6,6 @@
         DateTime DateCreated { get; }
         DateTime? DateModified { get; set; }
         string ToJson();
-        IDomainEntity Cast<T>();
+        T Cast<T>() where T : IDomainEntity;
     }
 }

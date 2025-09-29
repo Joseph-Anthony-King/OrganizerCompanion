@@ -657,41 +657,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_WithNullOrganizationName_ShouldThrowArgumentException()
-        {
-            // Arrange
-            var id = 1;
-            var addresses = new List<IAddress?>();
-            var phoneNumbers = new List<IPhoneNumber?>();
-            var members = new List<IPerson?>();
-            var contacts = new List<IPerson?>();
-            var accounts = new List<IAccount?>();
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-1);
-
-            // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() =>
-                new Organization(
-                    id,
-                    null,
-                    addresses,
-                    phoneNumbers,
-                    members,
-                    contacts,
-                    accounts,
-                    dateCreated,
-                    dateModified));
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex.Message, Does.Contain("Error creating Organization object."));
-                Assert.That(ex.InnerException, Is.InstanceOf<ArgumentNullException>());
-                var innerEx = ex.InnerException as ArgumentNullException;
-                Assert.That(innerEx!.ParamName, Is.EqualTo("organizationName"));
-            });
-        }
-
-        [Test, Category("Models")]
         public void JsonConstructor_WithNegativeId_ShouldThrowArgumentException()
         {
             // Arrange

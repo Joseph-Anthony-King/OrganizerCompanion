@@ -152,7 +152,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
         public override string ToString()

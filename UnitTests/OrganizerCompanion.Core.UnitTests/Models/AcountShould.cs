@@ -537,8 +537,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
-
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
         public string ToJson() => throw new NotImplementedException();
     }
 
@@ -549,8 +548,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public DateTime? DateModified { get; set; }
 
         public new Type GetType() => throw new Exception("Mock exception from GetType method");
-
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
         public string ToJson() => throw new NotImplementedException();
     }
 }

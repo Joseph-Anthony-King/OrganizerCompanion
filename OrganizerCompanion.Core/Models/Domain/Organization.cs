@@ -126,7 +126,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             try
             {
                 ArgumentOutOfRangeException.ThrowIfNegative(id, nameof(id));
-                ArgumentNullException.ThrowIfNull(organizationName, nameof(organizationName));
                 ArgumentNullException.ThrowIfNull(dateCreated, nameof(dateCreated));
                 
                 _id = id;
@@ -147,7 +146,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public IDomainEntity Cast<T>() => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
