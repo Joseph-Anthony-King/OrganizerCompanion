@@ -1,7 +1,5 @@
-﻿using System;
-using System.Text.Json;
+﻿using System.Text.Json;
 using NUnit.Framework;
-using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models

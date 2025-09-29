@@ -19,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _linkedEntityId = 0;
         private string? _linkedEntityType = null;
         private IDomainEntity? _linkedEntity = null;
-        private List<IAccountFeature> _features = [];
+        private List<AccountFeature> _features = [];
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -27,10 +27,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Explicit Interface Implementations
         List<IAccountFeature> IAccount.Features
         {
-            get => _features;
+            get => _features.ConvertAll(feature => (Interfaces.Domain.IAccountFeature)feature);
             set
             {
-                _features = value;
+                _features = value.ConvertAll(feature => (AccountFeature)feature);
                 DateModified = DateTime.Now;
             }
         }
@@ -97,7 +97,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         
 
         [Required, JsonPropertyName("features")]
-        public List<IAccountFeature> Features
+        public List<AccountFeature> Features
         {
             get => _features;
             set
@@ -133,7 +133,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountNumber,
             int linkedEntityId,
             IDomainEntity? linkedEntity,
-            List<IAccountFeature> features,
+            List<AccountFeature> features,
             DateTime dateCreated,
             DateTime? dateModified,
             bool? isCast = null,
@@ -162,7 +162,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             IDomainEntity linkedEntity,
-            List<IAccountFeature> features,
+            List<AccountFeature> features,
             DateTime dateCreated,
             DateTime? dateModified)
         {

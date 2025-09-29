@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
 
@@ -11,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private User _sut;
         private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
-        private List<IAccountFeature> _testFeatures;
+        private List<AccountFeature> _testFeatures;
 
         [SetUp]
         public void SetUp()
@@ -217,9 +216,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account();
             var originalDateModified = account.DateModified;
-            var newFeatures = new List<IAccountFeature>
+            var newFeatures = new List<AccountFeature>
             {
-                new AccountFeature { Id = 2, AccountId = 1, FeatureId = 2 }
+                new() { Id = 2, AccountId = 1, FeatureId = 2 }
             };
 
             // Act
