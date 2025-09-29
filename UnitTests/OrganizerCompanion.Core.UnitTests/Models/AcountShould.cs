@@ -8,14 +8,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     [TestFixture]
     internal class AccountShould
     {
-        private Person _sut;
+        private User _sut;
         private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
 
         [SetUp]
         public void SetUp()
         {
-            _sut = new Person
+            _sut = new User
             {
                 // Set required properties on Person to make it valid
                 Id = 1,
@@ -109,7 +109,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("testuser2"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(_sut.Id));
-                Assert.That(account.LinkedEntityType, Is.EqualTo("Person"));
+                Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.AllowAnnonymousUsers, Is.False);
                 Assert.That(account.IsCast, Is.False);
@@ -317,7 +317,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account = new Account();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => account.Cast<Person>());
+            Assert.Throws<NotImplementedException>(() => account.Cast<User>());
         }
 
         [Test, Category("Models")]

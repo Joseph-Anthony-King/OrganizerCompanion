@@ -714,13 +714,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             );
 
             // Act
-            var person = _sut.Cast<Person>();
+            var person = _sut.Cast<User>();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(person, Is.Not.Null);
-                Assert.That(person, Is.InstanceOf<Person>());
+                Assert.That(person, Is.InstanceOf<User>());
                 Assert.That(person.Id, Is.EqualTo(0)); // Cast creates new Person with Id = 0
                 Assert.That(person.FirstName, Is.Null);
                 Assert.That(person.MiddleName, Is.Null);
@@ -747,7 +747,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
-        public void Cast_ToPerson_UpdatesCastProperties()
+        public void Cast_ToUser_UpdatesCastProperties()
         {
             // Arrange
             _sut = new AnnonymousUser(
@@ -760,14 +760,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             );
 
             // Act
-            var person = _sut.Cast<Person>();
+            var user = _sut.Cast<User>();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsCast, Is.True);
-                Assert.That(_sut.CastId, Is.EqualTo(person.Id));
-                Assert.That(_sut.CastType, Is.EqualTo("Person"));
+                Assert.That(_sut.CastId, Is.EqualTo(user.Id));
+                Assert.That(_sut.CastType, Is.EqualTo("User"));
             });
         }
 
@@ -803,7 +803,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var afterCreation = DateTime.Now;
 
             // Act
-            var person = _sut.Cast<Person>();
+            var person = _sut.Cast<User>();
 
             // Assert
             Assert.Multiple(() =>
@@ -840,7 +840,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
 
             // Act & Assert - Person
-            var person = _sut.Cast<Person>();
+            var person = _sut.Cast<User>();
             Assert.Multiple(() =>
             {
                 Assert.That(person, Is.Not.Null);
@@ -908,8 +908,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             var organization1 = _sut.Cast<Organization>();
             var organization2 = _sut.Cast<Organization>();
-            var person1 = _sut.Cast<Person>();
-            var person2 = _sut.Cast<Person>();
+            var person1 = _sut.Cast<User>();
+            var person2 = _sut.Cast<User>();
 
             // Assert
             Assert.Multiple(() =>

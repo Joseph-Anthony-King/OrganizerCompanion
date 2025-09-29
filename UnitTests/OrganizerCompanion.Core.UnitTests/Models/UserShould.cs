@@ -7,14 +7,14 @@ using OrganizerCompanion.Core.Models.Domain;
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
     [TestFixture]
-    internal class PersonShould
+    internal class UserShould
     {
-        private Person _sut;
+        private User _sut;
 
         [SetUp]
         public void SetUp()
         {
-            _sut = new Person();
+            _sut = new User();
         }
 
         [TearDown]
@@ -30,7 +30,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var beforeCreation = DateTime.Now;
 
             // Act
-            _sut = new Person();
+            _sut = new User();
             var afterCreation = DateTime.Now;
 
             // Assert
@@ -83,7 +83,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var person = new Person(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinDate,
+            var person = new User(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, dateCreated, dateModified);
 
             // Assert
@@ -114,7 +114,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithNullLists_ShouldInitializeEmptyLists()
         {
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
+            var person = new User(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert
@@ -146,7 +146,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateCreated = DateTime.Now.AddDays(-1);
 
             // Act
-            var person = new Person(firstName, middleName, lastName, userName, pronouns, birthDate, joinDate,
+            var person = new User(firstName, middleName, lastName, userName, pronouns, birthDate, joinDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, dateCreated);
 
             // Assert
@@ -551,7 +551,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var beforeCreation = DateTime.Now;
 
             // Act
-            var person = new Person();
+            var person = new User();
             var afterCreation = DateTime.Now;
 
             // Assert
@@ -569,7 +569,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
+            var person = new User(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, specificDate, null);
 
             // Assert
@@ -593,7 +593,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ShouldThrowNotImplementedException()
         {
             // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<Person>());
+            Assert.Throws<NotImplementedException>(() => _sut.Cast<User>());
         }
 
         [Test, Category("Models")]
@@ -1044,7 +1044,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var deceasedDate = DateTime.Now.AddYears(-2);
 
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, deceasedDate, null,
+            var person = new User(1, "John", null, "Doe", null, null, null, deceasedDate, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert
@@ -1055,7 +1055,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithNullDeceasedDate_ShouldSetNull()
         {
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null, null, null,
+            var person = new User(1, "John", null, "Doe", null, null, null, null, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert

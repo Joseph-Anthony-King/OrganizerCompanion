@@ -6,7 +6,7 @@ using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class Person : IPerson
+    internal class User : IPerson
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -290,10 +290,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Constructors
-        public Person() { }
+        public User() { }
 
         [JsonConstructor]
-        public Person(
+        public User(
             int id,
             string? firstName,
             string? middleName,
@@ -339,7 +339,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateModified = dateModified;
         }
 
-        public Person(
+        public User(
             string? firstName,
             string? middleName,
             string? lastName,

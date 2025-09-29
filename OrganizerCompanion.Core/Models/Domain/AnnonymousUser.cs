@@ -125,9 +125,9 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     return result;
                 }
-                else if (typeof(T) == typeof(Person))
+                else if (typeof(T) == typeof(User))
                 {
-                    var result = (T)(IDomainEntity)new Person(
+                    var result = (T)(IDomainEntity)new User(
                         0,
                         null,
                         null,
@@ -150,7 +150,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     IsCast = true;
                     CastId = result.Id;
-                    CastType = nameof(Person);
+                    CastType = nameof(User);
 
                     return result;
                 }
