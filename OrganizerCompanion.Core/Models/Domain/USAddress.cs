@@ -19,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _street1 = null;
         private string? _street2 = null;
         private string? _city = null;
-        private Interfaces.Type.ISubNationalSubdivision? _state = null;
+        private Interfaces.Type.INationalSubdivision? _state = null;
         private string? _zipCode = null;
         private string? _country = Countries.UnitedStates.GetName();
         private Types? _type = null;
@@ -75,7 +75,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("state")]
-        public Interfaces.Type.ISubNationalSubdivision? State 
+        public Interfaces.Type.INationalSubdivision? State 
         { 
             get => _state; 
             set 
@@ -178,7 +178,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? street1, 
             string? street2, 
             string? city, 
-            Interfaces.Type.ISubNationalSubdivision? state, 
+            Interfaces.Type.INationalSubdivision? state, 
             string? zipCode, 
             string? country, 
             Types? type,

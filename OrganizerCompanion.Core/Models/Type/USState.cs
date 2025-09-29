@@ -2,7 +2,7 @@
 
 namespace OrganizerCompanion.Core.Models.Type
 {
-    internal class USState : ISubNationalSubdivision
+    internal class USState : INationalSubdivision
     {
         public string? Name { get; set; } = null;
         public string? Abbreviation { get; set; } = null;

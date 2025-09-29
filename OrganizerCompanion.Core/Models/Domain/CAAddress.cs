@@ -19,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _street1 = null;
         private string? _street2 = null;
         private string? _city = null;
-        private Interfaces.Type.ISubNationalSubdivision? _province = null;
+        private Interfaces.Type.INationalSubdivision? _province = null;
         private string? _zipCode = null;
         private string? _country = Countries.Canada.GetName();
         private Types? _type = null;
@@ -75,7 +75,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("province")]
-        public Interfaces.Type.ISubNationalSubdivision? Province
+        public Interfaces.Type.INationalSubdivision? Province
         {
             get => _province;
             set
@@ -167,7 +167,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string street1, 
             string street2, 
             string city, 
-            Interfaces.Type.ISubNationalSubdivision province, 
+            Interfaces.Type.INationalSubdivision province, 
             string zipCode, 
             string country, 
             Types type,

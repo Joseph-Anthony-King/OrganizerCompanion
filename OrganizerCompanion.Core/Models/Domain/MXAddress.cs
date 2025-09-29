@@ -22,7 +22,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _neighborhood = null;
         private string? _postalCode = null;
         private string? _city = null;
-        private ISubNationalSubdivision? _state = null;
+        private INationalSubdivision? _state = null;
         private string? _country = Countries.Mexico.GetName();
         private Types? _type = null;
         private bool _isCast = false;
@@ -90,7 +90,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("state")]
-        public Interfaces.Type.ISubNationalSubdivision? State
+        public Interfaces.Type.INationalSubdivision? State
         {
             get => _state;
             set
@@ -172,7 +172,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string neighborhood, 
             string postalCode, 
             string city, 
-            ISubNationalSubdivision state, 
+            INationalSubdivision state, 
             string country, 
             Types type,
             DateTime dateCreated, 

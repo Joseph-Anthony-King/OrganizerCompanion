@@ -315,7 +315,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             public string? Street1 { get; set; }
             public string? Street2 { get; set; }
             public string? City { get; set; }
-            public Interfaces.Type.ISubNationalSubdivision? State { get; set; }
+            public Interfaces.Type.INationalSubdivision? State { get; set; }
             public string? ZipCode { get; set; }
             public string? Country { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }

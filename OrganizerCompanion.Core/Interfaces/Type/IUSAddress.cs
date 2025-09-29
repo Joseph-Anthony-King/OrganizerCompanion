@@ -5,7 +5,7 @@
         string? Street1 { get; set; }
         string? Street2 { get; set; }
         string? City { get; set; }
-        ISubNationalSubdivision? State { get; set; }
+        INationalSubdivision? State { get; set; }
         string? ZipCode { get; set; }
         string? Country { get; set; }
     }

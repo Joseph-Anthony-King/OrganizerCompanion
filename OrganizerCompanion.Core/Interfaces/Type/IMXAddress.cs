@@ -6,7 +6,7 @@
         string? Neighborhood { get; set; }
         string? PostalCode { get; set; }
         string? City { get; set; }
-        ISubNationalSubdivision? State { get; set; }
+        INationalSubdivision? State { get; set; }
         string? Country { get; set; }
     }
 }
