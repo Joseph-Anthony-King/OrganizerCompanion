@@ -41,8 +41,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.MiddleName, Is.Null);
                 Assert.That(_sut.LastName, Is.Null);
                 Assert.That(_sut.FullName, Is.Null);
+                Assert.That(_sut.UserName, Is.Null);
                 Assert.That(_sut.Pronouns, Is.Null);
                 Assert.That(_sut.BirthDate, Is.Null);
+                Assert.That(_sut.DeceasedDate, Is.Null);
                 Assert.That(_sut.JoinDate, Is.Null);
                 Assert.That(_sut.Emails, Is.Not.Null.And.Empty);
                 Assert.That(_sut.PhoneNumbers, Is.Not.Null.And.Empty);
@@ -67,6 +69,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var lastName = "Doe";
             var pronouns = Pronouns.HeHim;
             var birthDate = DateTime.Now.AddYears(-30);
+            var deceasedDate = DateTime.Now.AddYears(-1);
             var joinDate = DateTime.Now.AddMonths(-6);
             var emails = new List<IEmail?> { null };
             var phoneNumbers = new List<IPhoneNumber?> { null };
@@ -79,7 +82,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var person = new Person(id, firstName, middleName, lastName, pronouns, birthDate, joinDate,
+            var person = new Person(id, firstName, middleName, lastName, pronouns, birthDate, deceasedDate, joinDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, dateCreated, dateModified);
 
             // Assert
@@ -92,6 +95,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.FullName, Is.EqualTo($"{firstName} {middleName} {lastName}"));
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
+                Assert.That(person.DeceasedDate, Is.EqualTo(deceasedDate));
                 Assert.That(person.JoinDate, Is.EqualTo(joinDate));
                 Assert.That(person.Emails, Is.EqualTo(emails));
                 Assert.That(person.PhoneNumbers, Is.EqualTo(phoneNumbers));
@@ -109,7 +113,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithNullLists_ShouldInitializeEmptyLists()
         {
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, null,
                 [], [], [], null, null, null, null, DateTime.Now, null);
 
             // Assert
@@ -563,7 +567,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var person = new Person(1, "John", null, "Doe", null, null, null,
+            var person = new Person(1, "John", null, "Doe", null, null, null, null,
                 [], [], [], null, null, null, null, specificDate, null);
 
             // Assert
@@ -771,9 +775,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.IsActive = true;
+            _sut.DeceasedDate = DateTime.Now.AddYears(-1);
             var fifthModified = _sut.DateModified;
             Assert.That(fifthModified, Is.GreaterThan(fourthModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.IsActive = true;
+            var sixthModified = _sut.DateModified;
+            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
         }
 
         [Test, Category("Models")]
@@ -967,6 +976,364 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(typePerson.Emails, Is.Not.Null.And.Empty);
                 Assert.That(typePerson.PhoneNumbers, Is.Not.Null.And.Empty);
                 Assert.That(typePerson.Addresses, Is.Not.Null.And.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newDeceasedDate = DateTime.Now.AddYears(-1);
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.DeceasedDate = newDeceasedDate;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DeceasedDate, Is.EqualTo(newDeceasedDate));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_WhenSetToNull_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut.DeceasedDate = DateTime.Now.AddYears(-1);
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.DeceasedDate = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DeceasedDate, Is.Null);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_WithMinMaxValues_ShouldBeAllowed()
+        {
+            // Arrange
+            var minDate = DateTime.MinValue;
+            var maxDate = DateTime.MaxValue;
+
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+            {
+                _sut.DeceasedDate = minDate;
+                Assert.That(_sut.DeceasedDate, Is.EqualTo(minDate));
+
+                _sut.DeceasedDate = maxDate;
+                Assert.That(_sut.DeceasedDate, Is.EqualTo(maxDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithDeceasedDate_ShouldSetValue()
+        {
+            // Arrange
+            var deceasedDate = DateTime.Now.AddYears(-2);
+
+            // Act
+            var person = new Person(1, "John", null, "Doe", null, null, deceasedDate, null,
+                [], [], [], null, null, null, null, DateTime.Now, null);
+
+            // Assert
+            Assert.That(person.DeceasedDate, Is.EqualTo(deceasedDate));
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullDeceasedDate_ShouldSetNull()
+        {
+            // Act
+            var person = new Person(1, "John", null, "Doe", null, null, null, null,
+                [], [], [], null, null, null, null, DateTime.Now, null);
+
+            // Assert
+            Assert.That(person.DeceasedDate, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithDeceasedDate_ShouldIncludeInJson()
+        {
+            // Arrange
+            var deceasedDate = DateTime.Now.AddYears(-1);
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.DeceasedDate = deceasedDate;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"deceasedDate\""));
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullDeceasedDate_ShouldNotIncludeInJson()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.DeceasedDate = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                // Due to JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), null DeceasedDate should not appear in JSON
+                Assert.That(json, Does.Not.Contain("\"deceasedDate\""));
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_MultipleChanges_ShouldUpdateDateModifiedEachTime()
+        {
+            // Arrange
+            var firstDate = DateTime.Now.AddYears(-3);
+            var secondDate = DateTime.Now.AddYears(-2);
+            var thirdDate = DateTime.Now.AddYears(-1);
+
+            // Act & Assert
+            System.Threading.Thread.Sleep(1);
+            _sut.DeceasedDate = firstDate;
+            var firstModified = _sut.DateModified;
+
+            System.Threading.Thread.Sleep(1);
+            _sut.DeceasedDate = secondDate;
+            var secondModified = _sut.DateModified;
+            Assert.That(secondModified, Is.GreaterThan(firstModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.DeceasedDate = thirdDate;
+            var thirdModified = _sut.DateModified;
+            Assert.That(thirdModified, Is.GreaterThan(secondModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.DeceasedDate = null;
+            var fourthModified = _sut.DateModified;
+            Assert.That(fourthModified, Is.GreaterThan(thirdModified));
+        }
+
+        [Test, Category("Models")]
+        public void DeceasedDate_WithSpecificDateScenarios_ShouldHandleCorrectly()
+        {
+            // Test various date scenarios
+            var scenarios = new[]
+            {
+                DateTime.Today, // Today
+                DateTime.Now.AddDays(-1), // Yesterday
+                DateTime.Now.AddMonths(-1), // Last month
+                DateTime.Now.AddYears(-1), // Last year
+                new DateTime(2000, 1, 1), // Specific date
+                new DateTime(1950, 12, 31) // Older date
+            };
+
+            foreach (var date in scenarios)
+            {
+                // Act
+                _sut.DeceasedDate = date;
+
+                // Assert
+                Assert.That(_sut.DeceasedDate, Is.EqualTo(date), 
+                    $"Failed to set DeceasedDate to {date}");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void UserName_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newUserName = "johndoe123";
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.UserName = newUserName;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.UserName, Is.EqualTo(newUserName));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void UserName_WhenSetToNull_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut.UserName = "initialUser";
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.UserName = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.UserName, Is.Null);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void UserName_WhenSetToEmptyString_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.UserName = string.Empty;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void UserName_WithSpecialCharacters_ShouldBeAllowed()
+        {
+            // Arrange
+            var specialUserName = "user@domain.com";
+
+            // Act
+            _sut.UserName = specialUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(specialUserName));
+        }
+
+        [Test, Category("Models")]
+        public void UserName_WithVeryLongString_ShouldBeAllowed()
+        {
+            // Arrange
+            var longUserName = new string('u', 500);
+
+            // Act
+            _sut.UserName = longUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(longUserName));
+        }
+
+        [Test, Category("Models")]
+        public void UserName_MultipleChanges_ShouldUpdateDateModifiedEachTime()
+        {
+            // Arrange
+            var initialTime = DateTime.Now;
+
+            // Act & Assert
+            System.Threading.Thread.Sleep(1);
+            _sut.UserName = "user1";
+            var firstModified = _sut.DateModified;
+            Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.UserName = "user2";
+            var secondModified = _sut.DateModified;
+            Assert.That(secondModified, Is.GreaterThan(firstModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.UserName = null;
+            var thirdModified = _sut.DateModified;
+            Assert.That(thirdModified, Is.GreaterThan(secondModified));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithUserName_ShouldIncludeInJson()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.UserName = "johndoe";
+            _sut.IsActive = true;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"id\":1"));
+                Assert.That(json, Does.Contain("\"firstName\":\"John\""));
+                Assert.That(json, Does.Contain("\"lastName\":\"Doe\""));
+                Assert.That(json, Does.Contain("\"userName\":\"johndoe\""));
+                Assert.That(json, Does.Contain("\"isActive\":true"));
+                Assert.That(json, Does.Contain("\"emails\":[]"));
+                Assert.That(json, Does.Contain("\"phoneNumbers\":[]"));
+                Assert.That(json, Does.Contain("\"addresses\":[]"));
+
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullUserName_ShouldNotIncludeInJson()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.UserName = null;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                // Due to JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), null UserName should not appear in JSON
+                Assert.That(json, Does.Not.Contain("\"userName\""));
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithEmptyUserName_ShouldIncludeInJson()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.UserName = string.Empty;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"userName\":\"\""));
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
         }
     }

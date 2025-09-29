@@ -11,7 +11,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _passwordHint = null;
         private int _accountId = 0;
         private IAccount? _account = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties

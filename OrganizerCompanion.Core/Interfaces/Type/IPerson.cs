@@ -10,6 +10,7 @@ namespace OrganizerCompanion.Core.Interfaces.Type
         string? FullName { get; }
         Pronouns? Pronouns { get; set; }
         DateTime? BirthDate { get; set; }
+        DateTime? DeceasedDate { get; set; }
         DateTime? JoinDate { get; set; }
         List<IEmail?> Emails { get; set; }
         List<IPhoneNumber?> PhoneNumbers { get; set; }

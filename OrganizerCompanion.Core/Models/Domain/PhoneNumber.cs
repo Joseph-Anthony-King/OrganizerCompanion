@@ -17,7 +17,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _phone = null;
         private Types? _type = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties

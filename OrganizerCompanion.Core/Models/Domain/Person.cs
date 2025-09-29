@@ -18,8 +18,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _firstName = null;
         private string? _middleName = null;
         private string? _lastName = null;
+        private string? _userName = null;
         private Pronouns? _pronouns = null;
         private DateTime? _birthDate = null;
+        private DateTime? _deceasedDate = null;
         private DateTime? _joinDate = null;
         private List<IEmail?> _emails = [];
         private List<IPhoneNumber?> _phoneNumbers = [];
@@ -28,7 +30,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
         private bool? _isSuperUser = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
@@ -104,13 +106,24 @@ namespace OrganizerCompanion.Core.Models.Domain
             { 
                 _lastName = value; 
                 DateModified = DateTime.Now; 
-            } 
+            }
         }
 
         [Required, JsonPropertyName("fullName")]
         public string? FullName => _firstName == null && _middleName == null && _lastName == null ? null :
-            _middleName == null ? 
+            _middleName == null ?
                 $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
+
+        [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? UserName 
+        {
+            get => _userName;
+            set
+            {
+                _userName = value;
+                DateModified = DateTime.Now;
+            }
+        }
 
         [Required, JsonPropertyName("pronouns")]
         public Pronouns? Pronouns 
@@ -132,6 +145,17 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _birthDate = value; 
                 DateModified = DateTime.Now; 
             } 
+        }
+
+        [JsonPropertyName("deceasedDate"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public DateTime? DeceasedDate 
+        { 
+            get => _deceasedDate; 
+            set 
+            { 
+                _deceasedDate = value; 
+                DateModified = DateTime.Now; 
+            }
         }
 
         [Required, JsonPropertyName("joinDate")]
@@ -240,6 +264,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? lastName,
             Pronouns? pronouns,
             DateTime? birthDate,
+            DateTime? deceasedDate,
             DateTime? joinDate,
             List<IEmail?> emails,
             List<IPhoneNumber?> phoneNumbers,
@@ -257,6 +282,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _lastName = lastName;
             _pronouns = pronouns;
             _birthDate = birthDate;
+            _deceasedDate = deceasedDate;
             _joinDate = joinDate;
             _emails = emails ?? [];
             _phoneNumbers = phoneNumbers ?? [];
