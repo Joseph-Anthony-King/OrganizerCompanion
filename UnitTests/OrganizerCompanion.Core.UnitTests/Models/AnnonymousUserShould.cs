@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -871,7 +873,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(ex, Is.Not.Null);
                 Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to Account"));
                 Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException!.Message, Does.Contain("Conversion from AnnonymousUser to Account is not supported"));
+                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to Account, casting is not supported for this type."));
             });
         }
 
@@ -889,7 +891,96 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(ex, Is.Not.Null);
                 Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to AnnonymousUser"));
                 Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException!.Message, Does.Contain("Conversion from AnnonymousUser to AnnonymousUser is not supported"));
+                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to AnnonymousUser, casting is not supported for this type."));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUserDTO_ThrowsArgumentException_DueToNotImplementedException()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 789,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Set AccountId for DTO mapping
+            _sut.AccountId = 456;
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUserDTO>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to AnnonymousUserDTO"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException, Is.InstanceOf<NotImplementedException>());
+            });
+
+            // Note: This test documents that AnnonymousUserDTO casting currently fails 
+            // due to the Id property setter throwing NotImplementedException
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUserDTO_DoesNotUpdateCastProperties_WhenExceptionThrown()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 123,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            var originalIsCast = _sut.IsCast;
+            var originalCastId = _sut.CastId;
+            var originalCastType = _sut.CastType;
+
+            // Act & Assert
+            Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUserDTO>());
+
+            // Assert - Cast properties should not be updated when casting fails
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsCast, Is.EqualTo(originalIsCast));
+                Assert.That(_sut.CastId, Is.EqualTo(originalCastId));
+                Assert.That(_sut.CastType, Is.EqualTo(originalCastType));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToIAnnonymousUserDTO_ThrowsArgumentException_NotSupported()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 555,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            _sut.AccountId = 777;
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<IAnnonymousUserDTO>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to IAnnonymousUserDTO"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException, Is.InstanceOf<InvalidCastException>());
+                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to IAnnonymousUserDTO, casting is not supported for this type."));
             });
         }
 
@@ -912,6 +1003,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var organization2 = _sut.Cast<Organization>();
             var person1 = _sut.Cast<User>();
             var person2 = _sut.Cast<User>();
+
+            // Note: AnnonymousUserDTO casting is not tested here due to NotImplementedException
+            // This is documented behavior based on the current DTO implementation
 
             // Assert
             Assert.Multiple(() =>

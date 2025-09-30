@@ -2,7 +2,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -57,7 +59,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses 
         { 
-            get => [.. _addresses.Cast<Interfaces.Type.IAddress?>()]; 
+            get => _addresses.ConvertAll(address => (Interfaces.Type.IAddress)address);
             set 
             {
                 _addresses = value.ConvertAll(address => (IAddress)address);
@@ -345,7 +347,53 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(UserDTO) || typeof(T) == typeof(IUserDTO))
+                {
+                    object dto = new UserDTO
+                    {
+                        Id = this.Id,
+                        FirstName = this.FirstName,
+                        MiddleName = this.MiddleName,
+                        LastName = this.LastName,
+                        UserName = this.UserName,
+                        Pronouns = this.Pronouns,
+                        BirthDate = this.BirthDate,
+                        DeceasedDate = this.DeceasedDate,
+                        JoinedDate = this.JoinedDate,
+                        Emails = this.Emails.ConvertAll(email => email.Cast<EmailDTO>()),
+                        PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => phone.Cast<PhoneNumberDTO>()),
+                        Addresses = this.Addresses.ConvertAll(address => (IAddressDTO)CastAddressByType(address)),
+                        IsActive = this.IsActive,
+                        IsDeceased = this.IsDeceased,
+                        IsAdmin = this.IsAdmin,
+                        IsSuperUser = this.IsSuperUser,
+                        CreatedAt = this.DateCreated,
+                        DateModified = this.DateModified
+                    };
+                    return (T)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast Email to type {typeof(T).Name} is not supported");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Error casting Email to type {typeof(T).Name}: {ex.Message}", ex);
+            }
+        }
+
+        private static IDomainEntity CastAddressByType(IAddress address)
+        {
+            return address switch
+            {
+                CAAddress caAddress => caAddress.Cast<CAAddressDTO>(),
+                MXAddress mxAddress => mxAddress.Cast<MXAddressDTO>(),
+                USAddress usAddress => usAddress.Cast<USAddressDTO>(),
+                _ => throw new InvalidOperationException($"Unknown address type: {address.GetType().Name}")
+            };
+        }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 

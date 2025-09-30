@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -173,13 +175,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<AccountFeature>());
         }
 
         [Test, Category("Models")]
@@ -364,6 +359,302 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null);
                 Assert.That(json, Is.Not.Empty);
                 Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToFeatureDTO_WithValidFeature_ReturnsFeatureDTOWithCorrectProperties()
+        {
+            // Arrange
+            var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(123, 456)
+            {
+                Id = 789,
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto, Is.InstanceOf<FeatureDTO>());
+                Assert.That(dto.Id, Is.EqualTo(789));
+                Assert.That(dto.FeatureName, Is.EqualTo("Test Feature"));
+                Assert.That(dto.IsEnabled, Is.True);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToIFeatureDTO_WithValidFeature_ReturnsFeatureDTOWithCorrectProperties()
+        {
+            // Arrange
+            var feature = new Feature(2, "Another Feature", false, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(999, 888)
+            {
+                Id = 777,
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<IFeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto, Is.InstanceOf<IFeatureDTO>());
+                Assert.That(dto, Is.InstanceOf<FeatureDTO>());
+                Assert.That(dto.Id, Is.EqualTo(777));
+                Assert.That(dto.FeatureName, Is.EqualTo("Another Feature"));
+                Assert.That(dto.IsEnabled, Is.False);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
+        {
+            // Arrange
+            _sut = new AccountFeature(123, 456)
+            {
+                Id = 789,
+                Feature = null
+            };
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<FeatureDTO>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error Feature Email to type FeatureDTO"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException, Is.InstanceOf<NullReferenceException>());
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToIFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
+        {
+            // Arrange
+            _sut = new AccountFeature(100, 200)
+            {
+                Id = 300,
+                Feature = null
+            };
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<IFeatureDTO>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Error Feature Email to type IFeatureDTO"));
+                Assert.That(ex.InnerException, Is.Not.Null);
+                Assert.That(ex.InnerException, Is.InstanceOf<NullReferenceException>());
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToFeatureDTO_WithFeatureHavingNullProperties_HandlesCorrectly()
+        {
+            // Arrange
+            var feature = new Feature
+            {
+                Id = 5,
+                FeatureName = null,
+                IsEnabled = true
+            };
+            _sut = new AccountFeature(555, 666)
+            {
+                Id = 777,
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(777));
+                Assert.That(dto.FeatureName, Is.Null);
+                Assert.That(dto.IsEnabled, Is.True);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToUnsupportedType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(123, 456)
+            {
+                Id = 789,
+                Feature = feature
+            };
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<Account>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type Account, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnotherUnsupportedType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(123, 456)
+            {
+                Id = 789,
+                Feature = feature
+            };
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<User>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type User, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ReturnsNewInstanceEachTime()
+        {
+            // Arrange
+            var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(123, 456)
+            {
+                Id = 789,
+                Feature = feature
+            };
+
+            // Act
+            var dto1 = _sut.Cast<FeatureDTO>();
+            var dto2 = _sut.Cast<FeatureDTO>();
+            var idto1 = _sut.Cast<IFeatureDTO>();
+            var idto2 = _sut.Cast<IFeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto1, Is.Not.SameAs(dto2));
+                Assert.That(idto1, Is.Not.SameAs(idto2));
+                Assert.That(dto1, Is.Not.SameAs(idto1));
+                
+                // Verify they have the same property values but are different instances
+                Assert.That(dto1.Id, Is.EqualTo(dto2.Id));
+                Assert.That(dto1.FeatureName, Is.EqualTo(dto2.FeatureName));
+                Assert.That(dto1.IsEnabled, Is.EqualTo(dto2.IsEnabled));
+                
+                Assert.That(idto1.Id, Is.EqualTo(idto2.Id));
+                Assert.That(idto1.FeatureName, Is.EqualTo(idto2.FeatureName));
+                Assert.That(idto1.IsEnabled, Is.EqualTo(idto2.IsEnabled));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithDifferentFeatureProperties_ReturnsDifferentDTOValues()
+        {
+            // Arrange
+            var feature1 = new Feature(10, "Feature One", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature2 = new Feature(20, "Feature Two", false, false, 0, null, DateTime.Now, DateTime.Now);
+            
+            var accountFeature1 = new AccountFeature(100, 200)
+            {
+                Id = 1000,
+                Feature = feature1
+            };
+            
+            var accountFeature2 = new AccountFeature(300, 400)
+            {
+                Id = 2000,
+                Feature = feature2
+            };
+
+            // Act
+            var dto1 = accountFeature1.Cast<FeatureDTO>();
+            var dto2 = accountFeature2.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto1.Id, Is.EqualTo(1000));
+                Assert.That(dto1.FeatureName, Is.EqualTo("Feature One"));
+                Assert.That(dto1.IsEnabled, Is.True);
+                
+                Assert.That(dto2.Id, Is.EqualTo(2000));
+                Assert.That(dto2.FeatureName, Is.EqualTo("Feature Two"));
+                Assert.That(dto2.IsEnabled, Is.False);
+                
+                Assert.That(dto1.Id, Is.Not.EqualTo(dto2.Id));
+                Assert.That(dto1.FeatureName, Is.Not.EqualTo(dto2.FeatureName));
+                Assert.That(dto1.IsEnabled, Is.Not.EqualTo(dto2.IsEnabled));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithZeroId_ReturnsCorrectDTO()
+        {
+            // Arrange
+            var feature = new Feature(1, "Zero ID Test", false, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(0, 0)
+            {
+                Id = 0,
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(0));
+                Assert.That(dto.FeatureName, Is.EqualTo("Zero ID Test"));
+                Assert.That(dto.IsEnabled, Is.False);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_WithMaxIntId_ReturnsCorrectDTO()
+        {
+            // Arrange
+            var feature = new Feature(1, "Max ID Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(int.MaxValue, int.MaxValue)
+            {
+                Id = int.MaxValue,
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(dto.FeatureName, Is.EqualTo("Max ID Test"));
+                Assert.That(dto.IsEnabled, Is.True);
             });
         }
     }

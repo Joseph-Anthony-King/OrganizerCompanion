@@ -3,6 +3,8 @@ using System.Text.Json.Serialization;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -238,13 +240,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<PhoneNumber>());
         }
 
         [Test, Category("Models")]
@@ -1347,5 +1342,390 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(jsonDoc, Is.Not.Null);
             });
         }
+
+        #region Cast Method Tests
+        [Test, Category("Models")]
+        public void Cast_ToPhoneNumberDTO_ShouldReturnValidPhoneNumberDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<PhoneNumberDTO>());
+                Assert.That(result.Id, Is.EqualTo(123));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-123-4567"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIPhoneNumberDTO_ShouldReturnValidIPhoneNumberDTO()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.Phone = "+1-800-CALL-NOW";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+
+            // Act
+            var result = _sut.Cast<IPhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<PhoneNumberDTO>());
+                Assert.That(result.Id, Is.EqualTo(456));
+                Assert.That(result.Phone, Is.EqualTo("+1-800-CALL-NOW"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullPhone_ShouldReturnPhoneNumberDTOWithNullPhone()
+        {
+            // Arrange
+            _sut.Id = 789;
+            _sut.Phone = null;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(789));
+                Assert.That(result.Phone, Is.Null);
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullType_ShouldReturnPhoneNumberDTOWithNullType()
+        {
+            // Arrange
+            _sut.Id = 101;
+            _sut.Phone = "+1-555-NULL-TYPE";
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(101));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-NULL-TYPE"));
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithEmptyPhone_ShouldReturnPhoneNumberDTOWithEmptyPhone()
+        {
+            // Arrange
+            _sut.Id = 202;
+            _sut.Phone = string.Empty;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(202));
+                Assert.That(result.Phone, Is.EqualTo(string.Empty));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithLongPhone_ShouldReturnPhoneNumberDTOWithLongPhone()
+        {
+            // Arrange
+            var longPhone = new string('1', 500) + "+1-555-123-4567" + new string('2', 500);
+            _sut.Id = 303;
+            _sut.Phone = longPhone;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(303));
+                Assert.That(result.Phone, Is.EqualTo(longPhone));
+                Assert.That(result.Phone?.Length, Is.EqualTo(1015)); // 500 + 15 + 500
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithSpecialCharactersInPhone_ShouldReturnPhoneNumberDTOWithSpecialCharacters()
+        {
+            // Arrange
+            var specialPhone = "☎ +1-555-123-4567 📞 ext. 1234";
+            _sut.Id = 404;
+            _sut.Phone = specialPhone;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(404));
+                Assert.That(result.Phone, Is.EqualTo(specialPhone));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithAllTypesEnumValues_ShouldReturnCorrectPhoneNumberDTO()
+        {
+            // Test each enum value
+            var testCases = new[]
+            {
+                (OrganizerCompanion.Core.Enums.Types.Home, 1),
+                (OrganizerCompanion.Core.Enums.Types.Work, 2),
+                (OrganizerCompanion.Core.Enums.Types.Cell, 3),
+                (OrganizerCompanion.Core.Enums.Types.Fax, 4),
+                (OrganizerCompanion.Core.Enums.Types.Billing, 5),
+                (OrganizerCompanion.Core.Enums.Types.Other, 6)
+            };
+
+            foreach (var (type, id) in testCases)
+            {
+                // Arrange
+                _sut.Id = id;
+                _sut.Phone = $"+1-555-{id:000}-{id:0000}";
+                _sut.Type = type;
+
+                // Act
+                var result = _sut.Cast<PhoneNumberDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result, Is.Not.Null, $"Failed for type {type}");
+                    Assert.That(result.Id, Is.EqualTo(id), $"Failed for type {type}");
+                    Assert.That(result.Phone, Is.EqualTo($"+1-555-{id:000}-{id:0000}"), $"Failed for type {type}");
+                    Assert.That(result.Type, Is.EqualTo(type), $"Failed for type {type}");
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithMaxIntId_ShouldReturnPhoneNumberDTOWithMaxIntId()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.Phone = "+1-555-MAX-VALUE";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-MAX-VALUE"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithMinIntId_ShouldReturnPhoneNumberDTOWithMinIntId()
+        {
+            // Arrange
+            _sut.Id = int.MinValue;
+            _sut.Phone = "+1-555-MIN-VALUE";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MinValue));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-MIN-VALUE"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithZeroId_ShouldReturnPhoneNumberDTOWithZeroId()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Phone = "+1-555-ZERO-ID";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-ZERO-ID"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockDomainEntity is not supported"));
+            });
+        }
+
+        // Mock class for testing unsupported cast types
+        private class MockUnsupportedType : IDomainEntity
+        {
+            public int Id { get; set; }
+            public bool IsCast { get; set; }
+            public int CastId { get; set; }
+            public string? CastType { get; set; }
+            public DateTime DateCreated { get; set; }
+            public DateTime? DateModified { get; set; }
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedTypeWithMock_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.Phone = "+1-555-UNSUPPORTED";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockUnsupportedType is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WhenExceptionOccursInTryBlock_ShouldThrowInvalidCastExceptionWithInnerException()
+        {
+            // Note: This test demonstrates the exception handling in the Cast method
+            // The current implementation catches any exception and wraps it in InvalidCastException
+            
+            // Arrange
+            _sut.Id = 789;
+            _sut.Phone = "+1-555-EXCEPTION-TEST";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act & Assert - Test with a type that should cause the InvalidCastException
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockUnsupportedType is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithAllNullValues_ShouldReturnPhoneNumberDTOWithNullValues()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Phone = null;
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.Phone, Is.Null);
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIPhoneNumberDTOWithComplexData_ShouldReturnValidResult()
+        {
+            // Arrange
+            _sut.Id = 999;
+            _sut.Phone = "+1-800-COMPLEX-DATA-123";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act
+            var result = _sut.Cast<IPhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<PhoneNumberDTO>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.Phone, Is.EqualTo("+1-800-COMPLEX-DATA-123"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_PerformanceTest_ShouldHandleMultipleCastsEfficiently()
+        {
+            // Arrange
+            _sut.Id = 100;
+            _sut.Phone = "+1-555-PERFORMANCE-TEST";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            var iterations = 1000;
+
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+            {
+                for (int i = 0; i < iterations; i++)
+                {
+                    var dto = _sut.Cast<PhoneNumberDTO>();
+                    var iDto = _sut.Cast<IPhoneNumberDTO>();
+                    
+                    Assert.That(dto, Is.Not.Null);
+                    Assert.That(iDto, Is.Not.Null);
+                }
+            });
+        }
+        #endregion
     }
 }

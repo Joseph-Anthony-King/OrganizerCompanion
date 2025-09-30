@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
 
@@ -301,7 +302,33 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ShouldThrowNotImplementedException()
         {
             // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<Organization>());
+            Assert.Throws<InvalidCastException>(() => _sut.Cast<Organization>());
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToOrganizationDTO_ReturnsValidDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.OrganizationName = "Test Organization";
+
+            // Act
+            var dto = _sut.Cast<OrganizationDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto, Is.InstanceOf<OrganizationDTO>());
+                Assert.That(dto.Id, Is.EqualTo(123));
+                Assert.That(dto.OrganizationName, Is.EqualTo("Test Organization"));
+                Assert.That(dto.Emails, Is.Not.Null);
+                Assert.That(dto.PhoneNumbers, Is.Not.Null);
+                Assert.That(dto.Addresses, Is.Not.Null);
+                Assert.That(dto.Members, Is.Not.Null);
+                Assert.That(dto.Contacts, Is.Not.Null);
+                Assert.That(dto.Accounts, Is.Not.Null);
+            });
         }
 
         [Test, Category("Models")]

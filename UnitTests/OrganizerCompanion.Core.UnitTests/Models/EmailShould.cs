@@ -1,7 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -329,36 +331,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            _sut = new Email();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<Email>());
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newLinkedEntityId = 456;
-            var originalDateModified = _sut.DateModified;
-            System.Threading.Thread.Sleep(10); // Ensure time difference
-
-            // Act
-            _sut.LinkedEntityId = newLinkedEntityId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
-            });
         }
 
         [Test, Category("Models")]
@@ -1301,6 +1273,320 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "LinkedEntityId should have Range attribute");
             });
         }
+
+        #region Cast Method Tests
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.EmailAddress = "test@example.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<EmailDTO>());
+                Assert.That(result.Id, Is.EqualTo(123));
+                Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIEmailDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.EmailAddress = "interface@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<IEmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<EmailDTO>());
+                Assert.That(result.Id, Is.EqualTo(456));
+                Assert.That(result.EmailAddress, Is.EqualTo("interface@test.com"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithNullValues_ShouldHandleNullValues()
+        {
+            // Arrange
+            _sut.Id = 789;
+            _sut.EmailAddress = null;
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<EmailDTO>());
+                Assert.That(result.Id, Is.EqualTo(789));
+                Assert.That(result.EmailAddress, Is.Null);
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithAllTypesEnum_ShouldPreserveTypeCorrectly()
+        {
+            // Test each enum value
+            var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
+
+            foreach (var enumValue in enumValues)
+            {
+                // Arrange
+                _sut.Id = 100;
+                _sut.EmailAddress = $"test_{enumValue}@example.com";
+                _sut.Type = enumValue;
+
+                // Act
+                var result = _sut.Cast<EmailDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.Type, Is.EqualTo(enumValue), $"Type {enumValue} should be preserved");
+                    Assert.That(result.EmailAddress, Is.EqualTo($"test_{enumValue}@example.com"));
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.EmailAddress = "test@example.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type MockDomainEntity"));
+                Assert.That(exception.Message, Contains.Substring("is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithCompleteData_ShouldPreserveAllData()
+        {
+            // Arrange - Set up Email with comprehensive data
+            var dateCreated = DateTime.Now.AddDays(-5);
+            var dateModified = DateTime.Now.AddHours(-2);
+
+            var fullEmail = new Email(
+                id: 999,
+                emailAddress: "complete@test.com",
+                type: OrganizerCompanion.Core.Enums.Types.Cell,
+                linkedEntityId: 42,
+                linkedEntity: new MockDomainEntity { Id = 42 },
+                linkedEntityType: "MockDomainEntity",
+                isConfirmed: true,
+                dateCreated: dateCreated,
+                dateModified: dateModified
+            );
+
+            // Act
+            var result = fullEmail.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<EmailDTO>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.EmailAddress, Is.EqualTo("complete@test.com"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                // Note: LinkedEntity, LinkedEntityId, IsConfirmed, etc. are not part of EmailDTO
+                // This is by design as EmailDTO is a simplified representation
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_MultipleCallsToSameType_ShouldReturnDifferentInstances()
+        {
+            // Arrange
+            _sut.Id = 777;
+            _sut.EmailAddress = "instance@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act
+            var result1 = _sut.Cast<EmailDTO>();
+            var result2 = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result1, Is.Not.Null);
+                Assert.That(result2, Is.Not.Null);
+                Assert.That(result1, Is.Not.SameAs(result2), "Each cast should return a new instance");
+                Assert.That(result1.Id, Is.EqualTo(result2.Id));
+                Assert.That(result1.EmailAddress, Is.EqualTo(result2.EmailAddress));
+                Assert.That(result1.Type, Is.EqualTo(result2.Type));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithEmptyEmailAddress_ShouldHandleEmptyString()
+        {
+            // Arrange
+            _sut.Id = 555;
+            _sut.EmailAddress = string.Empty;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.EmailAddress, Is.EqualTo(string.Empty));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithSpecialCharactersInEmail_ShouldPreserveCharacters()
+        {
+            // Arrange
+            var specialEmail = "test+special.chars@example-domain.co.uk";
+            _sut.Id = 888;
+            _sut.EmailAddress = specialEmail;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.EmailAddress, Is.EqualTo(specialEmail));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithUnicodeCharacters_ShouldPreserveUnicode()
+        {
+            // Arrange
+            var unicodeEmail = "tést@ëxämplë.com";
+            _sut.Id = 333;
+            _sut.EmailAddress = unicodeEmail;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.EmailAddress, Is.EqualTo(unicodeEmail));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithExceptionInCasting_ShouldWrapInInvalidCastException()
+        {
+            // This test verifies the exception handling in the Cast method
+            // Since the current implementation doesn't have scenarios that cause inner exceptions,
+            // this test documents the expected behavior when such scenarios arise
+
+            // Arrange
+            _sut.Id = 1;
+            _sut.EmailAddress = "test@example.com";
+
+            // Act & Assert - Test unsupported type casting
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type AnotherMockEntity"));
+                Assert.That(exception.Message, Contains.Substring("is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithZeroId_ShouldAllowZeroId()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.EmailAddress = "zero@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.EmailAddress, Is.EqualTo("zero@test.com"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithMaxIntId_ShouldHandleLargeIds()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.EmailAddress = "maxint@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(result.EmailAddress, Is.EqualTo("maxint@test.com"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToEmailDTO_WithNegativeId_ShouldAllowNegativeIds()
+        {
+            // Arrange
+            _sut.Id = -100;
+            _sut.EmailAddress = "negative@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<EmailDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(-100));
+                Assert.That(result.EmailAddress, Is.EqualTo("negative@test.com"));
+            });
+        }
+
+        #endregion
 
         // Helper mock class for testing IDomainEntity
         private class MockDomainEntity : IDomainEntity

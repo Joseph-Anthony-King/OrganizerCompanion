@@ -3,7 +3,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -204,7 +206,32 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(USAddressDTO) || typeof(T) == typeof(IUSAddressDTO))
+                {
+                    object dto = new USAddressDTO
+                    {
+                        Id = this.Id,
+                        Street1 = this.Street1,
+                        Street2 = this.Street2,
+                        City = this.City,
+                        State = this.State,
+                        ZipCode = this.ZipCode,
+                        Country = this.Country,
+                        Type = this.Type,
+                    };
+                    return (T)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast Email to type {typeof(T).Name} is not supported");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Error casting Email to type {typeof(T).Name}: {ex.Message}", ex);
+            }
+        }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
         

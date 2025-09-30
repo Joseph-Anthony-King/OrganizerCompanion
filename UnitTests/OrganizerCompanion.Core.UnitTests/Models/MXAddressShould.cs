@@ -2,7 +2,9 @@
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.Type;
 
@@ -395,13 +397,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(result, Does.Contain(".State:Unknown"));
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ShouldThrowNotImplementedException()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<MXAddress>());
         }
 
         [Test, Category("Models")]
@@ -886,6 +881,446 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(firstType, Is.Not.EqualTo(secondType));
             });
         }
+
+        #region Cast Method Tests
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.Street = "Calle Principal 456";
+            _sut.Neighborhood = "Centro";
+            _sut.PostalCode = "01000";
+            _sut.City = "Ciudad de México";
+            _sut.State = new MXState { Name = "Ciudad de México", Abbreviation = "DF" };
+            _sut.Country = "México";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(123));
+                Assert.That(result.Street, Is.EqualTo("Calle Principal 456"));
+                Assert.That(result.Neighborhood, Is.EqualTo("Centro"));
+                Assert.That(result.PostalCode, Is.EqualTo("01000"));
+                Assert.That(result.City, Is.EqualTo("Ciudad de México"));
+                Assert.That(result.State, Is.EqualTo(_sut.State));
+                Assert.That(result.Country, Is.EqualTo("México"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIMXAddressDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.Street = "Avenida Reforma 789";
+            _sut.Neighborhood = "Juárez";
+            _sut.PostalCode = "06600";
+            _sut.City = "Ciudad de México";
+            _sut.State = MXStates.Jalisco.ToStateModel();
+            _sut.Country = "México";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<IMXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(456));
+                Assert.That(result.Street, Is.EqualTo("Avenida Reforma 789"));
+                Assert.That(result.Neighborhood, Is.EqualTo("Juárez"));
+                Assert.That(result.PostalCode, Is.EqualTo("06600"));
+                Assert.That(result.City, Is.EqualTo("Ciudad de México"));
+                Assert.That(result.State?.Name, Is.EqualTo("Jalisco"));
+                Assert.That(result.State?.Abbreviation, Is.EqualTo("JA"));
+                Assert.That(result.Country, Is.EqualTo("México"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithNullValues_ShouldHandleNullValues()
+        {
+            // Arrange
+            _sut.Id = 789;
+            _sut.Street = null;
+            _sut.Neighborhood = null;
+            _sut.PostalCode = null;
+            _sut.City = null;
+            _sut.State = null;
+            _sut.Country = null;
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(789));
+                Assert.That(result.Street, Is.Null);
+                Assert.That(result.Neighborhood, Is.Null);
+                Assert.That(result.PostalCode, Is.Null);
+                Assert.That(result.City, Is.Null);
+                Assert.That(result.State, Is.Null);
+                Assert.That(result.Country, Is.Null);
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithEmptyStrings_ShouldHandleEmptyStrings()
+        {
+            // Arrange
+            _sut.Id = 101;
+            _sut.Street = string.Empty;
+            _sut.Neighborhood = string.Empty;
+            _sut.PostalCode = string.Empty;
+            _sut.City = string.Empty;
+            _sut.Country = string.Empty;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Street, Is.EqualTo(string.Empty));
+                Assert.That(result.Neighborhood, Is.EqualTo(string.Empty));
+                Assert.That(result.PostalCode, Is.EqualTo(string.Empty));
+                Assert.That(result.City, Is.EqualTo(string.Empty));
+                Assert.That(result.Country, Is.EqualTo(string.Empty));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street = "Test Street";
+            _sut.City = "Test City";
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type MockDomainEntity"));
+                Assert.That(exception.Message, Contains.Substring("is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithCompleteData_ShouldPreserveAllData()
+        {
+            // Arrange - Set up MXAddress with comprehensive data
+            var dateCreated = DateTime.Now.AddDays(-7);
+            var dateModified = DateTime.Now.AddHours(-2);
+
+            var fullAddress = new MXAddress(
+                id: 999,
+                street: "Paseo de la Reforma 1234",
+                neighborhood: "Polanco",
+                postalCode: "11560",
+                city: "Ciudad de México",
+                state: MXStates.CiudadDeMéxico.ToStateModel(),
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Billing,
+                dateCreated: dateCreated,
+                dateModified: dateModified
+            );
+
+            // Act
+            var result = fullAddress.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.Street, Is.EqualTo("Paseo de la Reforma 1234"));
+                Assert.That(result.Neighborhood, Is.EqualTo("Polanco"));
+                Assert.That(result.PostalCode, Is.EqualTo("11560"));
+                Assert.That(result.City, Is.EqualTo("Ciudad de México"));
+                Assert.That(result.State?.Name, Is.EqualTo("Ciudad de México"));
+                Assert.That(result.State?.Abbreviation, Is.EqualTo("DF"));
+                Assert.That(result.Country, Is.EqualTo("México"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                // Note: LinkedEntity, LinkedEntityId, etc. are not part of MXAddressDTO
+                // This is by design as MXAddressDTO is a simplified representation
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_MultipleCallsToSameType_ShouldReturnDifferentInstances()
+        {
+            // Arrange
+            _sut.Id = 777;
+            _sut.Street = "Calle Independencia 321";
+            _sut.City = "Guadalajara";
+            _sut.State = MXStates.Jalisco.ToStateModel();
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result1 = _sut.Cast<MXAddressDTO>();
+            var result2 = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result1, Is.Not.Null);
+                Assert.That(result2, Is.Not.Null);
+                Assert.That(result1, Is.Not.SameAs(result2), "Each cast should return a new instance");
+                Assert.That(result1.Id, Is.EqualTo(result2.Id));
+                Assert.That(result1.Street, Is.EqualTo(result2.Street));
+                Assert.That(result1.City, Is.EqualTo(result2.City));
+                Assert.That(result1.State?.Name, Is.EqualTo(result2.State?.Name));
+                Assert.That(result1.Type, Is.EqualTo(result2.Type));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithSpecialCharacters_ShouldPreserveCharacters()
+        {
+            // Arrange
+            var specialStreet = "Calle José María Morelos y Pavón #123";
+            var specialNeighborhood = "Colonia Américas Unidas";
+            var specialCity = "Mérida";
+            _sut.Id = 888;
+            _sut.Street = specialStreet;
+            _sut.Neighborhood = specialNeighborhood;
+            _sut.City = specialCity;
+            _sut.State = MXStates.Yucatán.ToStateModel();
+            _sut.Country = "México";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Street, Is.EqualTo(specialStreet));
+                Assert.That(result.Neighborhood, Is.EqualTo(specialNeighborhood));
+                Assert.That(result.City, Is.EqualTo(specialCity));
+                Assert.That(result.State?.Name, Is.EqualTo("Yucatán"));
+                Assert.That(result.Country, Is.EqualTo("México"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithAllTypesEnum_ShouldPreserveTypeCorrectly()
+        {
+            // Test each enum value
+            var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
+
+            foreach (var enumValue in enumValues)
+            {
+                // Arrange
+                _sut.Id = 100;
+                _sut.Street = $"Calle {enumValue} 123";
+                _sut.City = "Puebla";
+                _sut.State = MXStates.Puebla.ToStateModel();
+                _sut.Type = enumValue;
+
+                // Act
+                var result = _sut.Cast<MXAddressDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.Type, Is.EqualTo(enumValue), $"Type {enumValue} should be preserved");
+                    Assert.That(result.Street, Is.EqualTo($"Calle {enumValue} 123"));
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithExceptionInCasting_ShouldWrapInInvalidCastException()
+        {
+            // This test verifies the exception handling in the Cast method
+            // Since the current implementation doesn't have scenarios that cause inner exceptions,
+            // this test documents the expected behavior when such scenarios arise
+
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street = "Test Street";
+
+            // Act & Assert - Test unsupported type casting
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type AnotherMockEntity"));
+                Assert.That(exception.Message, Contains.Substring("is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithZeroId_ShouldAllowZeroId()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Street = "Calle Zero";
+            _sut.City = "Test City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.Street, Is.EqualTo("Calle Zero"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithMaxIntId_ShouldHandleLargeIds()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.Street = "Calle MaxInt";
+            _sut.City = "Large City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(result.Street, Is.EqualTo("Calle MaxInt"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithNegativeId_ShouldAllowNegativeIds()
+        {
+            // Arrange
+            _sut.Id = -100;
+            _sut.Street = "Calle Negative";
+            _sut.City = "Negative City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(-100));
+                Assert.That(result.Street, Is.EqualTo("Calle Negative"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithLongStrings_ShouldHandleLongStrings()
+        {
+            // Arrange
+            var longStreet = new string('A', 500) + " Muy Larga";
+            var longNeighborhood = new string('B', 300) + " Colonia";
+            _sut.Id = 555;
+            _sut.Street = longStreet;
+            _sut.Neighborhood = longNeighborhood;
+            _sut.City = "Test City";
+
+            // Act
+            var result = _sut.Cast<MXAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Street, Is.EqualTo(longStreet));
+                Assert.That(result.Neighborhood, Is.EqualTo(longNeighborhood));
+                Assert.That(result.Street!.Length, Is.EqualTo(510)); // 500 + " Muy Larga".Length (10)
+                Assert.That(result.Neighborhood!.Length, Is.EqualTo(308)); // 300 + " Colonia".Length (8)
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithAllMXStates_ShouldPreserveStateCorrectly()
+        {
+            // Test several Mexican states
+            var testStates = new[]
+            {
+                MXStates.Jalisco.ToStateModel(),
+                MXStates.CiudadDeMéxico.ToStateModel(),
+                MXStates.Yucatán.ToStateModel(),
+                MXStates.NuevoLeón.ToStateModel(),
+                MXStates.Querétaro.ToStateModel()
+            };
+
+            foreach (var state in testStates)
+            {
+                // Arrange
+                _sut.Id = 200;
+                _sut.Street = $"Calle {state.Name} 123";
+                _sut.City = "Test City";
+                _sut.State = state;
+                _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+                // Act
+                var result = _sut.Cast<MXAddressDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result.State, Is.Not.Null);
+                    Assert.That(result.State!.Name, Is.EqualTo(state.Name), $"State name {state.Name} should be preserved");
+                    Assert.That(result.State!.Abbreviation, Is.EqualTo(state.Abbreviation), $"State abbreviation {state.Abbreviation} should be preserved");
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMXAddressDTO_WithPostalCodeFormats_ShouldHandleVariousFormats()
+        {
+            // Test different postal code formats that are valid in Mexico
+            var postalCodes = new[] { "01000", "12345", "99999", "00001", "77500" };
+
+            foreach (var postalCode in postalCodes)
+            {
+                // Arrange
+                _sut.Id = 300;
+                _sut.Street = "Test Street";
+                _sut.PostalCode = postalCode;
+                _sut.City = "Test City";
+
+                // Act
+                var result = _sut.Cast<MXAddressDTO>();
+
+                // Assert
+                Assert.That(result.PostalCode, Is.EqualTo(postalCode), $"Postal code {postalCode} should be preserved");
+            }
+        }
+
+        #endregion
 
         // Helper mock class for testing IDomainEntity
         private class MockDomainEntity : IDomainEntity

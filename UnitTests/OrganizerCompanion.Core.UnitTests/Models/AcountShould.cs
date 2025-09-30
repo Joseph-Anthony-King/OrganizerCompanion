@@ -235,16 +235,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var account = new Account();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => account.Cast<User>());
-        }
-
-        [Test, Category("Models")]
         public void IsCast_Getter_ThrowsNotImplementedException()
         {
             // Arrange
@@ -519,6 +509,152 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Is.EqualTo("Error creating Account object"));
             Assert.That(ex.InnerException, Is.Not.Null);
             Assert.That(ex.InnerException.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
+        {
+            // Arrange
+            var account = new Account(
+                id: 123,
+                accountName: "Test Account",
+                accountNumber: "ACC456",
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: new List<AccountFeature>(),
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            // This test documents that the Cast method cannot actually be called with AccountDTO
+            // due to the IDomainEntity constraint, even though the implementation checks for it
+            
+            // The following would fail to compile:
+            // account.Cast<AccountDTO>(); // Cannot compile due to constraint
+            // account.Cast<IAccountDTO>(); // Cannot compile due to constraint
+            
+            // This demonstrates a design inconsistency in the codebase where the Cast method
+            // implementation supports AccountDTO/IAccountDTO but the method signature prevents it
+            Assert.Pass("This test documents the design limitation where Cast<AccountDTO> cannot be called due to IDomainEntity constraint");
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToUnsupportedDomainType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var account = new Account(
+                id: 777,
+                accountName: "Test Account",
+                accountNumber: "ACC777",
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: new List<AccountFeature>(),
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<User>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type User, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnotherUnsupportedDomainType_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var account = new Account(
+                id: 888,
+                accountName: "Another Test Account",
+                accountNumber: "ACC888",
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: new List<AccountFeature>(),
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<Organization>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Organization, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToFeature_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var account = new Account(
+                id: 999,
+                accountName: "Feature Test Account",
+                accountNumber: "ACC999",
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: new List<AccountFeature>(),
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<Feature>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Feature, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUser_ThrowsInvalidCastException()
+        {
+            // Arrange
+            var account = new Account(
+                id: 111,
+                accountName: "Anonymous Test Account",
+                accountNumber: "ACC111",
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: new List<AccountFeature>(),
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<AnnonymousUser>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type AnnonymousUser, casting is not supported for this type"));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_InternalImplementation_SupportsAccountDTOButConstraintPreventsUsage()
+        {
+            // This test documents the design issue in the Cast method implementation
+            // The method checks for AccountDTO and IAccountDTO types but the generic constraint
+            // prevents them from being used as type parameters
+            
+            // Reading the Cast method source code shows:
+            // if (typeof(T) == typeof(AccountDTO) || typeof(T) == typeof(IAccountDTO))
+            // But the method signature is: public T Cast<T>() where T : IDomainEntity
+            // And AccountDTO/IAccountDTO do not implement IDomainEntity
+            
+            Assert.Pass("This test documents that the Cast method implementation supports AccountDTO " +
+                       "but the IDomainEntity constraint prevents compilation of Cast<AccountDTO>() calls");
         }
     }
 

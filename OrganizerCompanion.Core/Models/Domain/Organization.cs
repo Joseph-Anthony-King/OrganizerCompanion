@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -221,7 +223,108 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(OrganizationDTO) || typeof(T) == typeof(IOrganizationDTO))
+                {
+                    List<IAddressDTO> addressesDto = new();
+                    foreach (var item in this.Addresses)
+                    {
+                        if (!string.IsNullOrEmpty(item.LinkedEntityType))
+                        {
+                            System.Type? type = System.Type.GetType(item.LinkedEntityType);
+                            if (type != null)
+                            {
+                                if (Activator.CreateInstance(type) is IAddressDTO addressDto)
+                                {
+                                    if (item is CAAddress caAddress && addressDto is CAAddressDTO caAddressDto)
+                                    {
+                                        caAddressDto.Id = caAddress.Id;
+                                        caAddressDto.Street1 = caAddress.Street1;
+                                        caAddressDto.Street2 = caAddress.Street2;
+                                        caAddressDto.City = caAddress.City;
+                                        caAddressDto.Province = caAddress.Province;
+                                        caAddressDto.ZipCode = caAddress.ZipCode;
+                                        caAddressDto.Country = caAddress.Country;
+                                        caAddressDto.Type = caAddress.Type;
+                                    }
+                                    else if (item is MXAddress mxAddress && addressDto is MXAddressDTO mxAddressDto)
+                                    {
+                                        mxAddressDto.Id = mxAddress.Id;
+                                        mxAddressDto.Street = mxAddress.Street;
+                                        mxAddressDto.Neighborhood = mxAddress.Neighborhood;
+                                        mxAddressDto.PostalCode = mxAddress.PostalCode;
+                                        mxAddressDto.City = mxAddress.City;
+                                        mxAddressDto.State = mxAddress.State;
+                                        mxAddressDto.Country = mxAddress.Country;
+                                        mxAddressDto.Type = mxAddress.Type;
+                                    }
+                                    else if (item is USAddress usAddress && addressDto is USAddressDTO usAddressDto)
+                                    {
+                                        usAddressDto.Id = usAddress.Id;
+                                        usAddressDto.Street1 = usAddress.Street1;
+                                        usAddressDto.Street2 = usAddress.Street2;
+                                        usAddressDto.City = usAddress.City;
+                                        usAddressDto.State = usAddress.State;
+                                        usAddressDto.ZipCode = usAddress.ZipCode;
+                                        usAddressDto.Country = usAddress.Country;
+                                        usAddressDto.Type = usAddress.Type;
+                                    }
+                                    addressesDto.Add(addressDto);
+                                }
+                            }
+                        }
+                    }
+                    var dto = new OrganizationDTO
+                    {
+                        Id = this.Id,
+                        OrganizationName = this.OrganizationName,
+                        Emails = this.Emails.ConvertAll(email => new EmailDTO
+                        {
+                            Id = email.Id,
+                            EmailAddress = email.EmailAddress,
+                            Type = email.Type
+                        }),
+                        PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => new PhoneNumberDTO
+                        {
+                            Id = phone.Id,
+                            Phone = phone.Phone,
+                            Type = phone.Type
+                        }),
+                        Addresses = addressesDto,
+                        Members = this.Members.ConvertAll(member => new ContactDTO
+                        {
+                            Id = member.Id,
+                            FirstName = member.FirstName,
+                            LastName = member.LastName,
+                            MiddleName = member.MiddleName
+                        }),
+                        Contacts = this.Contacts.ConvertAll(contact => new ContactDTO
+                        {
+                            Id = contact.Id,
+                            FirstName = contact.FirstName,
+                            LastName = contact.LastName,
+                            MiddleName = contact.MiddleName
+                        }),
+                        Accounts = this.Accounts.ConvertAll(account => new AccountDTO
+                        {
+                            Id = account.Id,
+                            AccountName = account.AccountName,
+                            AccountNumber = account.AccountNumber,
+                            Features = []
+                        })
+                    };
+                    return (T)(IDomainEntity)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast Organization to type {typeof(T).Name}, casting is not supported for this type");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Error casting Organization to type {typeof(T).Name}: {ex.Message}", ex);
+            }
+        }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 

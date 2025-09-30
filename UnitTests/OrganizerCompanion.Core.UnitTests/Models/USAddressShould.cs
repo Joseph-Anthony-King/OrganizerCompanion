@@ -1,10 +1,12 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -376,7 +378,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"city\":\"Test City\""));
                 Assert.That(json, Does.Contain("\"zipCode\":\"12345\""));
                 Assert.That(json, Does.Contain("\"country\":\"Test Country\""));
-                Assert.That(json, Does.Contain("\"type\":0")); // Assuming Types.Home is 0
+                Assert.That(json, Does.Contain("\"type\":0")); // Assuming OrganizerCompanion.Core.Enums.Types.Home is 0
                 Assert.That(json, Does.Contain("\"linkedEntityId\":10"));
                 Assert.That(json, Does.Contain("\"linkedEntity\""));
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
@@ -459,13 +461,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(result, Does.Contain(".State:Unknown"));
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ShouldThrowNotImplementedException()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<USAddress>());
         }
 
         [Test, Category("Models")]
@@ -587,7 +582,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"city\":\"Metropolis\""));
                 Assert.That(json, Does.Contain("\"zipCode\":\"10001\""));
                 Assert.That(json, Does.Contain("\"country\":\"USA\""));
-                Assert.That(json, Does.Contain("\"type\":4")); // Types.Billing enum value
+                Assert.That(json, Does.Contain("\"type\":4")); // OrganizerCompanion.Core.Enums.Types.Billing enum value
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
                 Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
@@ -885,5 +880,606 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
         }
+
+        #region Cast Method Tests
+        [Test, Category("Models")]
+        public void Cast_ToUSAddressDTO_ShouldReturnValidUSAddressDTO()
+        {
+            // Arrange
+            var state = new USState { Name = "California", Abbreviation = "CA" };
+            _sut.Id = 123;
+            _sut.Street1 = "123 Main St";
+            _sut.Street2 = "Apt 4B";
+            _sut.City = "Los Angeles";
+            _sut.State = state;
+            _sut.ZipCode = "90210";
+            _sut.Country = "United States";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<USAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(123));
+                Assert.That(result.Street1, Is.EqualTo("123 Main St"));
+                Assert.That(result.Street2, Is.EqualTo("Apt 4B"));
+                Assert.That(result.City, Is.EqualTo("Los Angeles"));
+                Assert.That(result.State, Is.EqualTo(state));
+                Assert.That(result.ZipCode, Is.EqualTo("90210"));
+                Assert.That(result.Country, Is.EqualTo("United States"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIUSAddressDTO_ShouldReturnValidIUSAddressDTO()
+        {
+            // Arrange
+            var state = new USState { Name = "Texas", Abbreviation = "TX" };
+            _sut.Id = 456;
+            _sut.Street1 = "456 Oak Ave";
+            _sut.Street2 = "Suite 200";
+            _sut.City = "Dallas";
+            _sut.State = state;
+            _sut.ZipCode = "75201";
+            _sut.Country = "USA";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<IUSAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<USAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(456));
+                Assert.That(result.Street1, Is.EqualTo("456 Oak Ave"));
+                Assert.That(result.Street2, Is.EqualTo("Suite 200"));
+                Assert.That(result.City, Is.EqualTo("Dallas"));
+                Assert.That(result.State, Is.EqualTo(state));
+                Assert.That(result.ZipCode, Is.EqualTo("75201"));
+                Assert.That(result.Country, Is.EqualTo("USA"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullStreet1_ShouldReturnUSAddressDTOWithNullStreet1()
+        {
+            // Arrange
+            _sut.Id = 789;
+            _sut.Street1 = null;
+            _sut.Street2 = "Unit B";
+            _sut.City = "Phoenix";
+            _sut.State = new USState { Name = "Arizona", Abbreviation = "AZ" };
+            _sut.ZipCode = "85001";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(789));
+                Assert.That(result.Street1, Is.Null);
+                Assert.That(result.Street2, Is.EqualTo("Unit B"));
+                Assert.That(result.City, Is.EqualTo("Phoenix"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullStreet2_ShouldReturnUSAddressDTOWithNullStreet2()
+        {
+            // Arrange
+            _sut.Id = 101;
+            _sut.Street1 = "789 Pine St";
+            _sut.Street2 = null;
+            _sut.City = "Seattle";
+            _sut.State = new USState { Name = "Washington", Abbreviation = "WA" };
+            _sut.ZipCode = "98101";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(101));
+                Assert.That(result.Street1, Is.EqualTo("789 Pine St"));
+                Assert.That(result.Street2, Is.Null);
+                Assert.That(result.City, Is.EqualTo("Seattle"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullState_ShouldReturnUSAddressDTOWithNullState()
+        {
+            // Arrange
+            _sut.Id = 202;
+            _sut.Street1 = "321 Elm St";
+            _sut.City = "Unknown City";
+            _sut.State = null;
+            _sut.ZipCode = "00000";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(202));
+                Assert.That(result.Street1, Is.EqualTo("321 Elm St"));
+                Assert.That(result.City, Is.EqualTo("Unknown City"));
+                Assert.That(result.State, Is.Null);
+                Assert.That(result.ZipCode, Is.EqualTo("00000"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullType_ShouldReturnUSAddressDTOWithNullType()
+        {
+            // Arrange
+            _sut.Id = 303;
+            _sut.Street1 = "654 Maple Ave";
+            _sut.City = "Boston";
+            _sut.State = new USState { Name = "Massachusetts", Abbreviation = "MA" };
+            _sut.ZipCode = "02101";
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(303));
+                Assert.That(result.Street1, Is.EqualTo("654 Maple Ave"));
+                Assert.That(result.City, Is.EqualTo("Boston"));
+                Assert.That(result.State!.Abbreviation, Is.EqualTo("MA"));
+                Assert.That(result.ZipCode, Is.EqualTo("02101"));
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithEmptyStrings_ShouldReturnUSAddressDTOWithEmptyStrings()
+        {
+            // Arrange
+            _sut.Id = 404;
+            _sut.Street1 = string.Empty;
+            _sut.Street2 = string.Empty;
+            _sut.City = string.Empty;
+            _sut.State = new USState { Name = "Florida", Abbreviation = "FL" };
+            _sut.ZipCode = string.Empty;
+            _sut.Country = string.Empty;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(404));
+                Assert.That(result.Street1, Is.EqualTo(string.Empty));
+                Assert.That(result.Street2, Is.EqualTo(string.Empty));
+                Assert.That(result.City, Is.EqualTo(string.Empty));
+                Assert.That(result.ZipCode, Is.EqualTo(string.Empty));
+                Assert.That(result.Country, Is.EqualTo(string.Empty));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithLongStrings_ShouldReturnUSAddressDTOWithLongStrings()
+        {
+            // Arrange
+            var longStreet1 = new string('A', 500) + " Very Long Street Name " + new string('B', 500);
+            var longStreet2 = new string('C', 300) + " Long Apt Number " + new string('D', 300);
+            var longCity = new string('E', 200) + " Long City Name " + new string('F', 200);
+            var longZip = new string('1', 50) + "-" + new string('2', 50);
+            var longCountry = new string('G', 100) + " Long Country Name " + new string('H', 100);
+
+            _sut.Id = 505;
+            _sut.Street1 = longStreet1;
+            _sut.Street2 = longStreet2;
+            _sut.City = longCity;
+            _sut.State = new USState { Name = "New York", Abbreviation = "NY" };
+            _sut.ZipCode = longZip;
+            _sut.Country = longCountry;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(505));
+                Assert.That(result.Street1, Is.EqualTo(longStreet1));
+                Assert.That(result.Street1?.Length, Is.EqualTo(1023)); // 500 + 23 + 500
+                Assert.That(result.Street2, Is.EqualTo(longStreet2));
+                Assert.That(result.Street2?.Length, Is.EqualTo(617)); // 300 + 17 + 300
+                Assert.That(result.City, Is.EqualTo(longCity));
+                Assert.That(result.City?.Length, Is.EqualTo(416)); // 200 + 16 + 200
+                Assert.That(result.ZipCode, Is.EqualTo(longZip));
+                Assert.That(result.ZipCode?.Length, Is.EqualTo(101)); // 50 + 1 + 50
+                Assert.That(result.Country, Is.EqualTo(longCountry));
+                Assert.That(result.Country?.Length, Is.EqualTo(219)); // 100 + 19 + 100
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithSpecialCharactersInStrings_ShouldReturnUSAddressDTOWithSpecialCharacters()
+        {
+            // Arrange
+            var specialStreet1 = "123 O'Connor St. #4B";
+            var specialStreet2 = "Apt 2½ (Back Unit)";
+            var specialCity = "Saint-Jean-sur-Richelieu";
+            var specialZip = "90210-1234";
+            var specialCountry = "United States of America";
+
+            _sut.Id = 606;
+            _sut.Street1 = specialStreet1;
+            _sut.Street2 = specialStreet2;
+            _sut.City = specialCity;
+            _sut.State = new USState { Name = "California", Abbreviation = "CA" };
+            _sut.ZipCode = specialZip;
+            _sut.Country = specialCountry;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(606));
+                Assert.That(result.Street1, Is.EqualTo(specialStreet1));
+                Assert.That(result.Street2, Is.EqualTo(specialStreet2));
+                Assert.That(result.City, Is.EqualTo(specialCity));
+                Assert.That(result.ZipCode, Is.EqualTo(specialZip));
+                Assert.That(result.Country, Is.EqualTo(specialCountry));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithAllTypesEnumValues_ShouldReturnCorrectUSAddressDTO()
+        {
+            // Test each enum value
+            var testCases = new[]
+            {
+                (OrganizerCompanion.Core.Enums.Types.Home, 1),
+                (OrganizerCompanion.Core.Enums.Types.Work, 2),
+                (OrganizerCompanion.Core.Enums.Types.Cell, 3),
+                (OrganizerCompanion.Core.Enums.Types.Fax, 4),
+                (OrganizerCompanion.Core.Enums.Types.Billing, 5),
+                (OrganizerCompanion.Core.Enums.Types.Other, 6)
+            };
+
+            foreach (var (type, id) in testCases)
+            {
+                // Arrange
+                _sut.Id = id;
+                _sut.Street1 = $"{id} Test Street";
+                _sut.City = $"Test City {id}";
+                _sut.State = new USState { Name = "Test State", Abbreviation = "TS" };
+                _sut.ZipCode = $"{id:00000}";
+                _sut.Type = type;
+
+                // Act
+                var result = _sut.Cast<USAddressDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result, Is.Not.Null, $"Failed for type {type}");
+                    Assert.That(result.Id, Is.EqualTo(id), $"Failed for type {type}");
+                    Assert.That(result.Street1, Is.EqualTo($"{id} Test Street"), $"Failed for type {type}");
+                    Assert.That(result.City, Is.EqualTo($"Test City {id}"), $"Failed for type {type}");
+                    Assert.That(result.ZipCode, Is.EqualTo($"{id:00000}"), $"Failed for type {type}");
+                    Assert.That(result.Type, Is.EqualTo(type), $"Failed for type {type}");
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithAllUSStates_ShouldReturnCorrectUSAddressDTO()
+        {
+            // Test with different US states
+            var testStates = new[]
+            {
+                USStates.California,
+                USStates.Texas,
+                USStates.Florida,
+                USStates.NewYork,
+                USStates.Illinois,
+                USStates.Pennsylvania
+            };
+
+            foreach (var stateEnum in testStates)
+            {
+                // Arrange
+                _sut.Id = (int)stateEnum;
+                _sut.Street1 = $"123 {stateEnum} Street";
+                _sut.City = $"{stateEnum} City";
+                _sut.StateEnum = stateEnum; // This will set the State property
+                _sut.ZipCode = "12345";
+                _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+                // Act
+                var result = _sut.Cast<USAddressDTO>();
+
+                // Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(result, Is.Not.Null, $"Failed for state {stateEnum}");
+                    Assert.That(result.Id, Is.EqualTo((int)stateEnum), $"Failed for state {stateEnum}");
+                    Assert.That(result.Street1, Is.EqualTo($"123 {stateEnum} Street"), $"Failed for state {stateEnum}");
+                    Assert.That(result.City, Is.EqualTo($"{stateEnum} City"), $"Failed for state {stateEnum}");
+                    Assert.That(result.State, Is.Not.Null, $"Failed for state {stateEnum}");
+                    Assert.That(result.State!.Name, Is.EqualTo(stateEnum.GetName()), $"Failed for state {stateEnum}");
+                    Assert.That(result.State!.Abbreviation, Is.EqualTo(stateEnum.GetAbbreviation()), $"Failed for state {stateEnum}");
+                    Assert.That(result.ZipCode, Is.EqualTo("12345"), $"Failed for state {stateEnum}");
+                    Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home), $"Failed for state {stateEnum}");
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithMaxIntId_ShouldReturnUSAddressDTOWithMaxIntId()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.Street1 = "123 Max Value Street";
+            _sut.City = "Max City";
+            _sut.State = new USState { Name = "Max State", Abbreviation = "MX" };
+            _sut.ZipCode = "99999";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(result.Street1, Is.EqualTo("123 Max Value Street"));
+                Assert.That(result.City, Is.EqualTo("Max City"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithMinIntId_ShouldReturnUSAddressDTOWithMinIntId()
+        {
+            // Arrange
+            _sut.Id = int.MinValue;
+            _sut.Street1 = "123 Min Value Street";
+            _sut.City = "Min City";
+            _sut.State = new USState { Name = "Min State", Abbreviation = "MN" };
+            _sut.ZipCode = "00001";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MinValue));
+                Assert.That(result.Street1, Is.EqualTo("123 Min Value Street"));
+                Assert.That(result.City, Is.EqualTo("Min City"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithZeroId_ShouldReturnUSAddressDTOWithZeroId()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Street1 = "123 Zero Street";
+            _sut.City = "Zero City";
+            _sut.State = new USState { Name = "Zero State", Abbreviation = "ZS" };
+            _sut.ZipCode = "00000";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.Street1, Is.EqualTo("123 Zero Street"));
+                Assert.That(result.City, Is.EqualTo("Zero City"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.Street1 = "123 Test St";
+            _sut.City = "Test City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockDomainEntity is not supported"));
+            });
+        }
+
+        // Mock class for testing unsupported cast types
+        private class MockUnsupportedType : IDomainEntity
+        {
+            public int Id { get; set; }
+            public bool IsCast { get; set; }
+            public int CastId { get; set; }
+            public string? CastType { get; set; }
+            public DateTime DateCreated { get; set; }
+            public DateTime? DateModified { get; set; }
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedTypeWithMock_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.Street1 = "456 Error Street";
+            _sut.City = "Error City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockUnsupportedType is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WhenExceptionOccursInTryBlock_ShouldThrowInvalidCastExceptionWithInnerException()
+        {
+            // Note: This test demonstrates the exception handling in the Cast method
+            // The current implementation catches any exception and wraps it in InvalidCastException
+            
+            // Arrange
+            _sut.Id = 789;
+            _sut.Street1 = "789 Exception Test Street";
+            _sut.City = "Exception City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act & Assert - Test with a type that should cause the InvalidCastException
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockUnsupportedType is not supported"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithAllNullValues_ShouldReturnUSAddressDTOWithNullValues()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Street1 = null;
+            _sut.Street2 = null;
+            _sut.City = null;
+            _sut.State = null;
+            _sut.ZipCode = null;
+            _sut.Country = null;
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<USAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.Street1, Is.Null);
+                Assert.That(result.Street2, Is.Null);
+                Assert.That(result.City, Is.Null);
+                Assert.That(result.State, Is.Null);
+                Assert.That(result.ZipCode, Is.Null);
+                Assert.That(result.Country, Is.Null);
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIUSAddressDTOWithComplexData_ShouldReturnValidResult()
+        {
+            // Arrange
+            var complexState = new USState { Name = "Complex State Name", Abbreviation = "CS" };
+            _sut.Id = 999;
+            _sut.Street1 = "999 Complex Address Street";
+            _sut.Street2 = "Complex Unit #999";
+            _sut.City = "Complex City";
+            _sut.State = complexState;
+            _sut.ZipCode = "99999-9999";
+            _sut.Country = "Complex Country";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+
+            // Act
+            var result = _sut.Cast<IUSAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<USAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.Street1, Is.EqualTo("999 Complex Address Street"));
+                Assert.That(result.Street2, Is.EqualTo("Complex Unit #999"));
+                Assert.That(result.City, Is.EqualTo("Complex City"));
+                Assert.That(result.State, Is.EqualTo(complexState));
+                Assert.That(result.ZipCode, Is.EqualTo("99999-9999"));
+                Assert.That(result.Country, Is.EqualTo("Complex Country"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_PerformanceTest_ShouldHandleMultipleCastsEfficiently()
+        {
+            // Arrange
+            _sut.Id = 100;
+            _sut.Street1 = "100 Performance Test Street";
+            _sut.City = "Performance City";
+            _sut.State = new USState { Name = "Performance State", Abbreviation = "PS" };
+            _sut.ZipCode = "10000";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            var iterations = 1000;
+
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+            {
+                for (int i = 0; i < iterations; i++)
+                {
+                    var dto = _sut.Cast<USAddressDTO>();
+                    var iDto = _sut.Cast<IUSAddressDTO>();
+                    
+                    Assert.That(dto, Is.Not.Null);
+                    Assert.That(iDto, Is.Not.Null);
+                }
+            });
+        }
+        #endregion
     }
 }

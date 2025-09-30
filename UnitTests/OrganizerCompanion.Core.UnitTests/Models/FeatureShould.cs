@@ -1,5 +1,8 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -295,13 +298,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<Feature>());
-        }
-
-        [Test, Category("Models")]
         public void ToJson_ShouldReturnValidJsonString()
         {
             // Arrange
@@ -520,6 +516,381 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(deserializedFeature.IsEnabled, Is.EqualTo(_sut.IsEnabled));
                 Assert.That(deserializedFeature.DateCreated, Is.EqualTo(_sut.DateCreated));
             });
+        }
+
+        #region Cast Method Tests
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.FeatureName = "TestFeature";
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<FeatureDTO>());
+                Assert.That(result.Id, Is.EqualTo(123));
+                Assert.That(result.FeatureName, Is.EqualTo("TestFeature"));
+                Assert.That(result.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIFeatureDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.FeatureName = "InterfaceFeature";
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<IFeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<FeatureDTO>());
+                Assert.That(result.Id, Is.EqualTo(456));
+                Assert.That(result.FeatureName, Is.EqualTo("InterfaceFeature"));
+                Assert.That(result.IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithNullFeatureName_ShouldHandleNullValues()
+        {
+            // Arrange
+            _sut.Id = 789;
+            _sut.FeatureName = null;
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<FeatureDTO>());
+                Assert.That(result.Id, Is.EqualTo(789));
+                Assert.That(result.FeatureName, Is.Null);
+                Assert.That(result.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithEmptyFeatureName_ShouldHandleEmptyString()
+        {
+            // Arrange
+            _sut.Id = 101;
+            _sut.FeatureName = string.Empty;
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.FeatureName, Is.EqualTo(string.Empty));
+                Assert.That(result.IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FeatureName = "TestFeature";
+            _sut.IsEnabled = true;
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Error Feature Email to type MockDomainEntity: Cannot cast Feature to type MockDomainEntity, casting is not supported for this type"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithCompleteData_ShouldPreserveAllData()
+        {
+            // Arrange - Set up Feature with comprehensive data
+            var dateCreated = DateTime.Now.AddDays(-3);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            var fullFeature = new Feature(
+                id: 999,
+                featureName: "CompleteFeature",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: dateCreated,
+                dateModified: dateModified
+            );
+
+            // Act
+            var result = fullFeature.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<FeatureDTO>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.FeatureName, Is.EqualTo("CompleteFeature"));
+                Assert.That(result.IsEnabled, Is.True);
+                // Note: Cast-related properties are not part of FeatureDTO
+                // This is by design as FeatureDTO is a simplified representation
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_MultipleCallsToSameType_ShouldReturnDifferentInstances()
+        {
+            // Arrange
+            _sut.Id = 777;
+            _sut.FeatureName = "InstanceFeature";
+            _sut.IsEnabled = true;
+
+            // Act
+            var result1 = _sut.Cast<FeatureDTO>();
+            var result2 = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result1, Is.Not.Null);
+                Assert.That(result2, Is.Not.Null);
+                Assert.That(result1, Is.Not.SameAs(result2), "Each cast should return a new instance");
+                Assert.That(result1.Id, Is.EqualTo(result2.Id));
+                Assert.That(result1.FeatureName, Is.EqualTo(result2.FeatureName));
+                Assert.That(result1.IsEnabled, Is.EqualTo(result2.IsEnabled));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithSpecialCharactersInName_ShouldPreserveCharacters()
+        {
+            // Arrange
+            var specialName = "Feature!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 123";
+            _sut.Id = 888;
+            _sut.FeatureName = specialName;
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.FeatureName, Is.EqualTo(specialName));
+                Assert.That(result.IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithUnicodeCharacters_ShouldPreserveUnicode()
+        {
+            // Arrange
+            var unicodeName = "Feature 功能 🚀 ñáéíóú";
+            _sut.Id = 333;
+            _sut.FeatureName = unicodeName;
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.FeatureName, Is.EqualTo(unicodeName));
+                Assert.That(result.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithLongFeatureName_ShouldHandleLongStrings()
+        {
+            // Arrange
+            var longName = new string('A', 1000);
+            _sut.Id = 555;
+            _sut.FeatureName = longName;
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.FeatureName, Is.EqualTo(longName));
+                Assert.That(result.FeatureName!.Length, Is.EqualTo(1000));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithExceptionInCasting_ShouldWrapInInvalidCastException()
+        {
+            // This test verifies the exception handling in the Cast method
+            // Since the current implementation doesn't have scenarios that cause inner exceptions,
+            // this test documents the expected behavior when such scenarios arise
+
+            // Arrange
+            _sut.Id = 1;
+            _sut.FeatureName = "TestFeature";
+
+            // Act & Assert - Test unsupported type casting
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.Message, Contains.Substring("Error Feature Email to type AnotherMockEntity: Cannot cast Feature to type AnotherMockEntity, casting is not supported for this type"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithZeroId_ShouldAllowZeroId()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.FeatureName = "ZeroIdFeature";
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(0));
+                Assert.That(result.FeatureName, Is.EqualTo("ZeroIdFeature"));
+                Assert.That(result.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithMaxIntId_ShouldHandleLargeIds()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.FeatureName = "MaxIntFeature";
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(result.FeatureName, Is.EqualTo("MaxIntFeature"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithNegativeId_ShouldAllowNegativeIds()
+        {
+            // Arrange
+            _sut.Id = -100;
+            _sut.FeatureName = "NegativeIdFeature";
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(-100));
+                Assert.That(result.FeatureName, Is.EqualTo("NegativeIdFeature"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithIsEnabledTrue_ShouldPreserveTrueValue()
+        {
+            // Arrange
+            _sut.Id = 200;
+            _sut.FeatureName = "EnabledFeature";
+            _sut.IsEnabled = true;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.FeatureName, Is.EqualTo("EnabledFeature"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToFeatureDTO_WithIsEnabledFalse_ShouldPreserveFalseValue()
+        {
+            // Arrange
+            _sut.Id = 300;
+            _sut.FeatureName = "DisabledFeature";
+            _sut.IsEnabled = false;
+
+            // Act
+            var result = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.IsEnabled, Is.False);
+                Assert.That(result.FeatureName, Is.EqualTo("DisabledFeature"));
+            });
+        }
+
+        #endregion
+
+        // Helper mock class for testing IDomainEntity
+        private class MockDomainEntity : IDomainEntity
+        {
+            public int Id { get; set; } = 1;
+            public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+            public string? CastType { get; set; } = null;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        // Another helper mock class for testing exception handling
+        private class AnotherMockEntity : IDomainEntity
+        {
+            public int Id { get; set; } = 2;
+            public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+            public string? CastType { get; set; } = null;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
         }
     }
 }

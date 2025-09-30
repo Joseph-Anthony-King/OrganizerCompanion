@@ -2,7 +2,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -125,7 +127,27 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(PhoneNumberDTO) || typeof(T) == typeof(IPhoneNumberDTO))
+                {
+                    object dto = new PhoneNumberDTO
+                    {
+                        Id = this.Id,
+                        Phone = this.Phone,
+                        Type = this.Type,
+                    };
+                    return (T)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast Phone to type {typeof(T).Name} is not supported");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Error casting Phone to type {typeof(T).Name}: {ex.Message}", ex);
+            }
+        }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 

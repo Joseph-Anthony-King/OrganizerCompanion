@@ -3,7 +3,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -160,8 +162,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         public DateTime? DateModified { get; set; } = default(DateTime);
         #endregion
 
-    #region Constructors
-    public CAAddress() { }
+        #region Constructors
+        public CAAddress() { }
 
         [JsonConstructor]
         public CAAddress(
@@ -193,7 +195,32 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            try
+            {
+                if (typeof(T) == typeof(CAAddressDTO) || typeof(T) == typeof(ICAAddressDTO))
+                {
+                    object dto = new CAAddressDTO()
+                    {
+                        Id = this.Id,
+                        Street1 = this.Street1,
+                        Street2 = this.Street2,
+                        City = this.City,
+                        Province = this.Province,
+                        ZipCode = this.ZipCode,
+                        Country = this.Country,
+                        Type = this.Type,
+                    };
+                    return (T)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast CAAddress to type {typeof(T).Name}, casting is not supported for this type");
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidCastException($"Error casting CAAddress to type {typeof(T).Name}: {ex.Message}", ex);
+            }
+        }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 

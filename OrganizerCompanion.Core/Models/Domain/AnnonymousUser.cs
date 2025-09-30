@@ -2,6 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -191,7 +192,17 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     return result;
                 }
-                else throw new Exception($"Conversion from AnnonymousUser to {typeof(T).Name} is not supported.");
+                else if (typeof(T) == typeof(AnnonymousUserDTO))
+                {
+                    var result = (T)(IDomainEntity)new AnnonymousUserDTO
+                    {
+                        Id = this.Id,
+                        AccountId = this.AccountId
+                    };
+
+                    return result;
+                }
+                else throw new InvalidCastException($"Cannot cast AnnonymousUser to {typeof(T).Name}, casting is not supported for this type.");
             }
             catch (Exception ex)
             {

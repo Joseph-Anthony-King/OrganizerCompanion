@@ -2,7 +2,9 @@ using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
@@ -358,13 +360,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.Cast<CAAddress>());
-        }
-
-        [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
@@ -716,6 +711,224 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(firstType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(secondType, Is.EqualTo("AnotherMockEntity"));
                 Assert.That(firstType, Is.Not.EqualTo(secondType));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.Street1 = "456 Test Street";
+            _sut.Street2 = "Unit 789";
+            _sut.City = "Toronto";
+            _sut.Province = CAProvinces.Ontario.ToStateModel();
+            _sut.ZipCode = "M5V 3A8";
+            _sut.Country = "Canada";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var result = _sut.Cast<CAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<CAAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(_sut.Id));
+                Assert.That(result.Street1, Is.EqualTo(_sut.Street1));
+                Assert.That(result.Street2, Is.EqualTo(_sut.Street2));
+                Assert.That(result.City, Is.EqualTo(_sut.City));
+                Assert.That(result.Province, Is.EqualTo(_sut.Province));
+                Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
+                Assert.That(result.Country, Is.EqualTo(_sut.Country));
+                Assert.That(result.Type, Is.EqualTo(_sut.Type));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToICAAddressDTO_ShouldReturnCorrectlyMappedDTO()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.Street1 = "789 Another Street";
+            _sut.Street2 = "Apartment 101";
+            _sut.City = "Vancouver";
+            _sut.Province = CAProvinces.BritishColumbia.ToStateModel();
+            _sut.ZipCode = "V6B 4N8";
+            _sut.Country = "Canada";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Act
+            var result = _sut.Cast<ICAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<CAAddressDTO>());
+                Assert.That(result.Id, Is.EqualTo(_sut.Id));
+                Assert.That(result.Street1, Is.EqualTo(_sut.Street1));
+                Assert.That(result.Street2, Is.EqualTo(_sut.Street2));
+                Assert.That(result.City, Is.EqualTo(_sut.City));
+                Assert.That(result.Province, Is.EqualTo(_sut.Province));
+                Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
+                Assert.That(result.Country, Is.EqualTo(_sut.Country));
+                Assert.That(result.Type, Is.EqualTo(_sut.Type));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_WithNullProperties_ShouldHandleNullValues()
+        {
+            // Arrange
+            _sut.Id = 999;
+            _sut.Street1 = null;
+            _sut.Street2 = null;
+            _sut.City = null;
+            _sut.Province = null;
+            _sut.ZipCode = null;
+            _sut.Country = null;
+            _sut.Type = null;
+
+            // Act
+            var result = _sut.Cast<CAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.Street1, Is.Null);
+                Assert.That(result.Street2, Is.Null);
+                Assert.That(result.City, Is.Null);
+                Assert.That(result.Province, Is.Null);
+                Assert.That(result.ZipCode, Is.Null);
+                Assert.That(result.Country, Is.Null);
+                Assert.That(result.Type, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street1 = "Test Street";
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Error casting CAAddress to type MockDomainEntity: Cannot cast CAAddress to type MockDomainEntity, casting is not supported for this type"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_WhenExceptionOccurs_ShouldWrapInInvalidCastException()
+        {
+            // This test verifies that any exceptions during casting are properly wrapped
+            // Since the current implementation is straightforward, we test the exception handling path
+            // by using a scenario that would cause the cast to fail due to the generic constraint
+
+            // Arrange
+            _sut.Id = 1;
+
+            // Act & Assert
+            // Test with a type that doesn't implement IDomainEntity (this should fail at compile time,
+            // but we test with a type that does implement it but isn't supported)
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Error casting CAAddress to type AnotherMockEntity: Cannot cast CAAddress to type AnotherMockEntity, casting is not supported for this type"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_WithAllProperties_ShouldPreserveAllData()
+        {
+            // Arrange - Set up CAAddress with comprehensive data
+            var province = CAProvinces.Quebec.ToStateModel();
+            var dateCreated = DateTime.Now.AddDays(-5);
+            var dateModified = DateTime.Now.AddHours(-2);
+
+            var fullAddress = new CAAddress(
+                id: 777,
+                street1: "123 Complete Street",
+                street2: "Suite 456",
+                city: "Montreal",
+                province: province,
+                zipCode: "H1A 0A1",
+                country: "Canada",
+                type: OrganizerCompanion.Core.Enums.Types.Billing,
+                dateCreated: dateCreated,
+                dateModified: dateModified
+            );
+
+            // Act
+            var result = fullAddress.Cast<CAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(777));
+                Assert.That(result.Street1, Is.EqualTo("123 Complete Street"));
+                Assert.That(result.Street2, Is.EqualTo("Suite 456"));
+                Assert.That(result.City, Is.EqualTo("Montreal"));
+                Assert.That(result.Province, Is.EqualTo(province));
+                Assert.That(result.Province?.Name, Is.EqualTo("Quebec"));
+                Assert.That(result.Province?.Abbreviation, Is.EqualTo("QC"));
+                Assert.That(result.ZipCode, Is.EqualTo("H1A 0A1"));
+                Assert.That(result.Country, Is.EqualTo("Canada"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToICAAddressDTO_ShouldReturnCAAddressDTOInstance()
+        {
+            // Arrange
+            _sut.Id = 888;
+            _sut.Street1 = "Interface Test Street";
+            _sut.City = "Calgary";
+            _sut.Province = CAProvinces.Alberta.ToStateModel();
+
+            // Act
+            var result = _sut.Cast<ICAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<CAAddressDTO>()); // Should be concrete CAAddressDTO
+                Assert.That(result.Id, Is.EqualTo(888));
+                Assert.That(result.Street1, Is.EqualTo("Interface Test Street"));
+                Assert.That(result.City, Is.EqualTo("Calgary"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_MultipleCallsToSameType_ShouldReturnDifferentInstances()
+        {
+            // Arrange
+            _sut.Id = 555;
+            _sut.Street1 = "Consistency Test Street";
+
+            // Act
+            var result1 = _sut.Cast<CAAddressDTO>();
+            var result2 = _sut.Cast<CAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result1, Is.Not.Null);
+                Assert.That(result2, Is.Not.Null);
+                Assert.That(result1, Is.Not.SameAs(result2)); // Different instances
+                Assert.That(result1.Id, Is.EqualTo(result2.Id)); // Same data
+                Assert.That(result1.Street1, Is.EqualTo(result2.Street1)); // Same data
             });
         }
 
