@@ -132,8 +132,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
-        
+        public string? LinkedEntityType => _linkedEntityType;        
 
         [Required, JsonPropertyName("features")]
         public List<AccountFeature> Features
