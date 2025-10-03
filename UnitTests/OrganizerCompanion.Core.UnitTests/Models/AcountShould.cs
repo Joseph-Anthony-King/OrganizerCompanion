@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Enums;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -45,6 +46,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Id, Is.EqualTo(0));
                 Assert.That(account.AccountName, Is.Null);
                 Assert.That(account.AccountNumber, Is.Null);
+                Assert.That(account.License, Is.Null);
+                Assert.That(account.DatabaseConnection, Is.Null);
+                Assert.That(account.DatabaseType, Is.Null);
                 Assert.That(account.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(account.LinkedEntityType, Is.Null);
                 Assert.That(account.LinkedEntity, Is.Null);
@@ -64,6 +68,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseType: Enums.SupportedDatabases.SQLServer,
+                databaseConnection: "test-db-connection",
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -77,6 +84,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Id, Is.EqualTo(1));
                 Assert.That(account.AccountName, Is.EqualTo("testuser"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
+                Assert.That(account.License, Is.EqualTo("test-license"));
+                Assert.That(account.DatabaseConnection, Is.EqualTo("test-db-connection"));
+                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(1));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
@@ -94,6 +104,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
+                license: "test-license",
+                databaseType: Enums.SupportedDatabases.SQLServer,
+                databaseConnection: "test-db-connection",
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -105,6 +118,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(account.AccountName, Is.EqualTo("testuser2"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
+                Assert.That(account.License, Is.EqualTo("test-license"));
+                Assert.That(account.DatabaseConnection, Is.EqualTo("test-db-connection"));
+                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(_sut.Id));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
@@ -167,6 +183,63 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC789"));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void License_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.License = "new-license-key";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.License, Is.EqualTo("new-license-key"));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void DatabaseConnection_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.DatabaseConnection = "new-connection-string";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.DatabaseConnection, Is.EqualTo("new-connection-string"));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void DatabaseType_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.DatabaseType = Enums.SupportedDatabases.MySQL;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.MySQL));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -348,6 +421,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             account.AccountNumber = null;
             Assert.That(account.AccountNumber, Is.Null);
 
+            account.License = null;
+            Assert.That(account.License, Is.Null);
+
+            account.DatabaseConnection = null;
+            Assert.That(account.DatabaseConnection, Is.Null);
+
+            account.DatabaseType = null;
+            Assert.That(account.DatabaseType, Is.Null);
+
             account.LinkedEntity = null;
             Assert.That(account.LinkedEntity, Is.Null);
         }
@@ -381,6 +463,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -405,6 +490,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: Enums.SupportedDatabases.SQLServer,
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: specificDate,
@@ -436,6 +524,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: Enums.SupportedDatabases.SQLServer,
                 linkedEntity: null!,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -460,6 +551,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -482,6 +576,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: Enums.SupportedDatabases.SQLServer,
                 linkedEntity: mockEntity,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -500,6 +597,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: Enums.SupportedDatabases.SQLServer,
                 linkedEntity: null!,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -520,6 +620,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 accountName: "Test Account",
                 accountNumber: "ACC456",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -549,6 +652,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 777,
                 accountName: "Test Account",
                 accountNumber: "ACC777",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -574,6 +680,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 888,
                 accountName: "Another Test Account",
                 accountNumber: "ACC888",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -599,6 +708,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 999,
                 accountName: "Feature Test Account",
                 accountNumber: "ACC999",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -624,6 +736,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 111,
                 accountName: "Anonymous Test Account",
                 accountNumber: "ACC111",
+                license: "test-license",
+                databaseConnection: "test-db-connection",
+                databaseType: SupportedDatabases.SQLServer,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),

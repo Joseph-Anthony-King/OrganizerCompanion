@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
@@ -18,6 +19,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _accountName = null;
         private string? _accountNumber = null;
+        private string? _license = null;
+        private string? _databaseConnection = null;
+        private SupportedDatabases? _databaseType = null;
         private int _linkedEntityId = 0;
         private string? _linkedEntityType = null;
         private IDomainEntity? _linkedEntity = null;
@@ -67,6 +71,39 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accountNumber = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("license")]
+        public string? License
+        {
+            get => _license;
+            set
+            {
+                _license = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("databaseConnection")]
+        public string? DatabaseConnection
+        {
+            get => _databaseConnection;
+            set
+            {
+                _databaseConnection = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("databaseType")]
+        public SupportedDatabases? DatabaseType
+        {
+            get => _databaseType;
+            set
+            {
+                _databaseType = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -133,6 +170,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? accountName,
             string? accountNumber,
+            string? license,
+            string? databaseConnection,
+            SupportedDatabases? databaseType,
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             List<AccountFeature> features,
@@ -147,6 +187,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _id = id;
                 _accountName = accountName;
                 _accountNumber = accountNumber;
+                _license = license;
+                _databaseConnection = databaseConnection;
+                _databaseType = databaseType;
                 _linkedEntityId = linkedEntityId;
                 _linkedEntity = linkedEntity;
                 _linkedEntityType = linkedEntity?.GetType().Name;
@@ -163,6 +206,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         public Account(
             string? accountName,
             string? accountNumber,
+            string? license,
+            string? databaseConnection,
+            SupportedDatabases? databaseType,
             IDomainEntity linkedEntity,
             List<AccountFeature> features,
             DateTime dateCreated,
@@ -172,6 +218,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _accountName = accountName;
                 _accountNumber = accountNumber;
+                _license = license;
+                _databaseConnection = databaseConnection;
+                _databaseType = databaseType;
                 _linkedEntityId = linkedEntity.Id;
                 _linkedEntityType = linkedEntity.GetType().Name;
                 _linkedEntity = linkedEntity;
