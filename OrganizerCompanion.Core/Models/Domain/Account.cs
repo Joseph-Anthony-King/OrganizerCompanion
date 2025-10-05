@@ -231,7 +231,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = this.Id,
                         AccountName = this.AccountName,
                         AccountNumber = this.AccountNumber,
-                        Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>())
+                        License = this.License,
+                        DatabaseConnection = this.DatabaseConnection,
+                        Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
                     return (T)dto;
                 }

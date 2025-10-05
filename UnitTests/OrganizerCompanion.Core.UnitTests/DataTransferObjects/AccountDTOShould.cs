@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Models.Type;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -30,6 +33,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.AccountName, Is.Null);
                 Assert.That(_sut.AccountNumber, Is.Null);
+                Assert.That(_sut.License, Is.Null);
+                Assert.That(_sut.DatabaseConnection, Is.Null);
                 Assert.That(_sut.Features, Is.Not.Null);
                 Assert.That(_sut.Features, Is.Empty);
             });
@@ -92,6 +97,99 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.AccountNumber, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void License_ShouldGetAndSetValue()
+        {
+            // Arrange
+            string expectedLicense = Guid.NewGuid().ToString();
+
+            // Act
+            _sut.License = expectedLicense;
+
+            // Assert
+            Assert.That(_sut.License, Is.EqualTo(expectedLicense));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void License_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.License = null;
+
+            // Assert
+            Assert.That(_sut.License, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void License_ShouldAcceptValidGuid()
+        {
+            // Arrange
+            string validGuid = "12345678-1234-1234-1234-123456789012";
+
+            // Act
+            _sut.License = validGuid;
+
+            // Assert
+            Assert.That(_sut.License, Is.EqualTo(validGuid));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DatabaseConnection_ShouldGetAndSetValue()
+        {
+            // Arrange
+            var expectedConnection = new DatabaseConnection
+            {
+                ConnectionString = "Server=localhost;Database=testdb;",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
+            // Act
+            _sut.DatabaseConnection = expectedConnection;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DatabaseConnection, Is.EqualTo(expectedConnection));
+                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=localhost;Database=testdb;"));
+                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.SQLServer));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DatabaseConnection_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.DatabaseConnection = null;
+
+            // Assert
+            Assert.That(_sut.DatabaseConnection, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        [TestCase(SupportedDatabases.SQLServer)]
+        [TestCase(SupportedDatabases.SQLite)]
+        [TestCase(SupportedDatabases.MySQL)]
+        [TestCase(SupportedDatabases.PostgreSQL)]
+        public void DatabaseConnection_ShouldAcceptAllDatabaseTypes(SupportedDatabases databaseType)
+        {
+            // Arrange
+            var connection = new DatabaseConnection
+            {
+                ConnectionString = "test-connection-string",
+                DatabaseType = databaseType
+            };
+
+            // Act
+            _sut.DatabaseConnection = connection;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DatabaseConnection, Is.Not.Null);
+                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(databaseType));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -227,24 +325,68 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_Get_ShouldReturnValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateCreated; });
+            // Arrange
+            var beforeCreation = DateTime.Now.AddSeconds(-1);
+            var accountDto = new AccountDTO();
+            var afterCreation = DateTime.Now.AddSeconds(1);
+
+            // Act
+            var dateCreated = accountDto.DateCreated;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(dateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateModified; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 5, 15, 10, 30, 45);
+
+            // Act
+            _sut.DateCreated = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Set_ShouldThrowNotImplementedException()
+        public void DateModified_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.DateModified = DateTime.Now; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 6, 20, 14, 15, 30);
+
+            // Act
+            _sut.DateModified = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = null;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_DefaultValue_ShouldBeNull()
+        {
+            // Arrange & Act
+            var accountDto = new AccountDTO();
+
+            // Assert
+            Assert.That(accountDto.DateModified, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -301,10 +443,88 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void License_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.License));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void License_ShouldHaveGuidValidatorAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.License));
+
+            // Act
+            var guidValidatorAttribute = property?.GetCustomAttribute<GuidValidatorAttribute>();
+
+            // Assert
+            Assert.That(guidValidatorAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DatabaseConnection_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DatabaseConnection));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DatabaseConnection_ShouldHaveDatabaseConnectionValidatorAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DatabaseConnection));
+
+            // Act
+            var validatorAttribute = property?.GetCustomAttribute<DatabaseConnectionValidatorAttribute>();
+
+            // Assert
+            Assert.That(validatorAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void Features_ShouldHaveRequiredAttribute()
         {
             // Arrange
             var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.Features));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DateModified));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -326,12 +546,22 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void AccountDTO_Properties_ShouldBeSettableInChain()
         {
-            // Arrange & Act
+            // Arrange
+            var testGuid = Guid.NewGuid().ToString();
+            var testConnection = new DatabaseConnection
+            {
+                ConnectionString = "Server=localhost;Database=test;",
+                DatabaseType = SupportedDatabases.MySQL
+            };
+
+            // Act
             var accountDTO = new AccountDTO
             {
                 Id = 999,
                 AccountName = "Chained Account",
                 AccountNumber = "CHAIN-999",
+                License = testGuid,
+                DatabaseConnection = testConnection,
                 Features = new List<FeatureDTO>
                 {
                     new() { Id = 1, FeatureName = "Chained Feature", IsEnabled = true }
@@ -344,8 +574,82 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(accountDTO.Id, Is.EqualTo(999));
                 Assert.That(accountDTO.AccountName, Is.EqualTo("Chained Account"));
                 Assert.That(accountDTO.AccountNumber, Is.EqualTo("CHAIN-999"));
+                Assert.That(accountDTO.License, Is.EqualTo(testGuid));
+                Assert.That(accountDTO.DatabaseConnection, Is.EqualTo(testConnection));
+                Assert.That(accountDTO.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=localhost;Database=test;"));
+                Assert.That(accountDTO.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
                 Assert.That(accountDTO.Features.Count, Is.EqualTo(1));
                 Assert.That(accountDTO.Features[0].FeatureName, Is.EqualTo("Chained Feature"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_WithAllProperties_ShouldMaintainConsistency()
+        {
+            // Arrange
+            var guid = Guid.NewGuid().ToString();
+            var connection = new DatabaseConnection
+            {
+                ConnectionString = "Server=testserver;Database=testdb;User ID=admin;",
+                DatabaseType = SupportedDatabases.PostgreSQL
+            };
+            var features = new List<FeatureDTO>
+            {
+                new() { Id = 10, FeatureName = "Feature A", IsEnabled = true },
+                new() { Id = 20, FeatureName = "Feature B", IsEnabled = false }
+            };
+
+            // Act
+            _sut.Id = 500;
+            _sut.AccountName = "Comprehensive Test";
+            _sut.AccountNumber = "COMP-500";
+            _sut.License = guid;
+            _sut.DatabaseConnection = connection;
+            _sut.Features = features;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(500));
+                Assert.That(_sut.AccountName, Is.EqualTo("Comprehensive Test"));
+                Assert.That(_sut.AccountNumber, Is.EqualTo("COMP-500"));
+                Assert.That(_sut.License, Is.EqualTo(guid));
+                Assert.That(_sut.DatabaseConnection, Is.Not.Null);
+                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=testserver;Database=testdb;User ID=admin;"));
+                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
+                Assert.That(_sut.Features, Has.Count.EqualTo(2));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature A"));
+                Assert.That(_sut.Features[1].FeatureName, Is.EqualTo("Feature B"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_ShouldAllowModificationOfDatabaseConnection()
+        {
+            // Arrange
+            var initialConnection = new DatabaseConnection
+            {
+                ConnectionString = "Initial Connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+            _sut.DatabaseConnection = initialConnection;
+
+            var newConnection = new DatabaseConnection
+            {
+                ConnectionString = "New Connection",
+                DatabaseType = SupportedDatabases.SQLite
+            };
+
+            // Act
+            _sut.DatabaseConnection = newConnection;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DatabaseConnection, Is.EqualTo(newConnection));
+                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("New Connection"));
+                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.SQLite));
+                Assert.That(_sut.DatabaseConnection, Is.Not.EqualTo(initialConnection));
             });
         }
 
