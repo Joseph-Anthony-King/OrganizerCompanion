@@ -897,7 +897,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
-        public void Cast_ToAnnonymousUserDTO_ThrowsArgumentException_DueToNotImplementedException()
+        public void Cast_ToAnnonymousUserDTO_ReturnsAnnonymousUserDTOWithCorrectProperties()
         {
             // Arrange
             _sut = new AnnonymousUser(
@@ -912,23 +912,29 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Set AccountId for DTO mapping
             _sut.AccountId = 456;
 
-            // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUserDTO>());
+            var beforeCast = DateTime.Now.AddSeconds(-1);
+
+            // Act
+            var dto = _sut.Cast<AnnonymousUserDTO>();
+            var afterCast = DateTime.Now.AddSeconds(1);
+
+            // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to AnnonymousUserDTO"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException, Is.InstanceOf<NotImplementedException>());
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto, Is.InstanceOf<AnnonymousUserDTO>());
+                Assert.That(dto.Id, Is.EqualTo(789));
+                Assert.That(dto.AccountId, Is.EqualTo(456));
+                Assert.That(dto.DateCreated, Is.EqualTo(_testDateCreated));
+                // DateModified is set to DateTime.Now when the object is created/modified
+                Assert.That(dto.DateModified, Is.GreaterThanOrEqualTo(beforeCast));
+                Assert.That(dto.DateModified, Is.LessThanOrEqualTo(afterCast));
             });
-
-            // Note: This test documents that AnnonymousUserDTO casting currently fails 
-            // due to the Id property setter throwing NotImplementedException
         }
 
         [Test]
         [Category("Models")]
-        public void Cast_ToAnnonymousUserDTO_DoesNotUpdateCastProperties_WhenExceptionThrown()
+        public void Cast_ToAnnonymousUserDTO_DoesNotUpdateSourceCastProperties()
         {
             // Arrange
             _sut = new AnnonymousUser(
@@ -940,19 +946,112 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             );
 
+            _sut.AccountId = 999;
+
             var originalIsCast = _sut.IsCast;
             var originalCastId = _sut.CastId;
             var originalCastType = _sut.CastType;
 
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUserDTO>());
+            // Act
+            var dto = _sut.Cast<AnnonymousUserDTO>();
 
-            // Assert - Cast properties should not be updated when casting fails
+            // Assert - Source object's cast properties should not be updated 
+            // because AnnonymousUserDTO doesn't support cast tracking
             Assert.Multiple(() =>
             {
+                Assert.That(dto, Is.Not.Null);
                 Assert.That(_sut.IsCast, Is.EqualTo(originalIsCast));
                 Assert.That(_sut.CastId, Is.EqualTo(originalCastId));
                 Assert.That(_sut.CastType, Is.EqualTo(originalCastType));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUserDTO_WithDefaultValues_CreatesValidDTO()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act
+            var dto = _sut.Cast<AnnonymousUserDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(0));
+                Assert.That(dto.AccountId, Is.EqualTo(0));
+                Assert.That(dto.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(dto.DateModified, Is.EqualTo(_sut.DateModified));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUserDTO_WithNullDateModified_HandlesCorrectly()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 555,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: null
+            );
+
+            _sut.AccountId = 777;
+
+            var beforeCast = DateTime.Now.AddSeconds(-1);
+
+            // Act
+            var dto = _sut.Cast<AnnonymousUserDTO>();
+            var afterCast = DateTime.Now.AddSeconds(1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(555));
+                Assert.That(dto.AccountId, Is.EqualTo(777));
+                Assert.That(dto.DateCreated, Is.EqualTo(_testDateCreated));
+                // DateModified is set during object initialization
+                Assert.That(dto.DateModified, Is.GreaterThanOrEqualTo(beforeCast));
+                Assert.That(dto.DateModified, Is.LessThanOrEqualTo(afterCast));
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Cast_ToAnnonymousUserDTO_ReturnsDifferentInstanceEachTime()
+        {
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 999,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            _sut.AccountId = 888;
+
+            // Act
+            var dto1 = _sut.Cast<AnnonymousUserDTO>();
+            var dto2 = _sut.Cast<AnnonymousUserDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto1, Is.Not.SameAs(dto2));
+                
+                // Verify they have the same property values but are different instances
+                Assert.That(dto1.Id, Is.EqualTo(dto2.Id));
+                Assert.That(dto1.AccountId, Is.EqualTo(dto2.AccountId));
+                Assert.That(dto1.DateCreated, Is.EqualTo(dto2.DateCreated));
+                Assert.That(dto1.DateModified, Is.EqualTo(dto2.DateModified));
             });
         }
 
@@ -998,24 +1097,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             );
 
+            _sut.AccountId = 888;
+
             // Act
             var organization1 = _sut.Cast<Organization>();
             var organization2 = _sut.Cast<Organization>();
             var person1 = _sut.Cast<User>();
             var person2 = _sut.Cast<User>();
-
-            // Note: AnnonymousUserDTO casting is not tested here due to NotImplementedException
-            // This is documented behavior based on the current DTO implementation
+            var dto1 = _sut.Cast<AnnonymousUserDTO>();
+            var dto2 = _sut.Cast<AnnonymousUserDTO>();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(organization1, Is.Not.SameAs(organization2));
                 Assert.That(person1, Is.Not.SameAs(person2));
+                Assert.That(dto1, Is.Not.SameAs(dto2));
                 
                 // Verify they have the same property values but are different instances
                 Assert.That(organization1.DateCreated, Is.EqualTo(organization2.DateCreated));
                 Assert.That(person1.DateCreated, Is.EqualTo(person2.DateCreated));
+                Assert.That(dto1.DateCreated, Is.EqualTo(dto2.DateCreated));
             });
         }
     }

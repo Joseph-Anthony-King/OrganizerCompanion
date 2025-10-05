@@ -153,8 +153,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         [],
                         [],
                         [],
-                        dateCreated: this.DateCreated,
-                        dateModified: this.DateModified
+                        this.DateCreated,
+                        this.DateModified
                     );
 
                     IsCast = true;
@@ -197,7 +197,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                     var result = (T)(IDomainEntity)new AnnonymousUserDTO
                     {
                         Id = this.Id,
-                        AccountId = this.AccountId
+                        AccountId = this.AccountId,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
 
                     return result;

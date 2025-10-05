@@ -14,10 +14,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
         public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public DateTime DateCreated => throw new NotImplementedException();
-        [JsonIgnore]
-        public DateTime? DateModified { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
@@ -29,8 +25,12 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #endregion
 
         [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
-        public int Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int Id { get; set; } = 0;
         [Required, JsonPropertyName("accountId"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
-        public int AccountId { get; set; }
+        public int AccountId { get; set; } = 0;
+        [Required, JsonPropertyName("dateCreated")]
+        public DateTime DateCreated { get; set; } = DateTime.Now;
+        [Required, JsonPropertyName("dateModified")]
+        public DateTime? DateModified { get; set; } = null;
     }
 }
