@@ -15,6 +15,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
 
+        private int _id = 0;
+        private int _accountId = 0;
+        private Account? _account = null;
+        private int _featureId = 0;
+        private Feature? _feature = null;
         private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
@@ -40,20 +45,62 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
-        public int Id { get; set; } = 0;
+        [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                _id = value;
+                DateModified = DateTime.Now;
+            }
+        }
 
-        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
-        public int AccountId { get; set; } = 0;
+        [Required, JsonPropertyName("accountId"), Range(1, int.MaxValue, ErrorMessage = "Account ID must be a positive number")]
+        public int AccountId
+        {
+            get => _accountId;
+            set
+            {
+                _accountId = value;
+                DateModified = DateTime.Now;
+            }
+        }
 
         [JsonIgnore]
-        public Account? Account { get; set; } = null;
+        public Account? Account
+        {
+            get => _account;
+            set
+            {
+                _account = value;
+                _accountId = value?.Id ?? 0;
+                DateModified = DateTime.Now;
+            }
+        }
 
-        [Required, JsonPropertyName("featureId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
-        public int FeatureId { get; set; } = 0;
+        [Required, JsonPropertyName("featureId"), Range(1, int.MaxValue, ErrorMessage = "Feature ID must be a positive number")]
+        public int FeatureId
+        {
+            get => _featureId;
+            set
+            {
+                _featureId = value;
+                DateModified = DateTime.Now;
+            }
+        }
 
         [JsonIgnore]
-        public Feature? Feature { get; set; } = null;
+        public Feature? Feature
+        {
+            get => _feature;
+            set
+            {
+                _feature = value;
+                _featureId = value?.Id ?? 0;
+                DateModified = DateTime.Now;
+            }
+        }
 
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -75,10 +122,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         public AccountFeature() { }
 
         [JsonConstructor]
-        public AccountFeature(int accountId, int featureId)
+        public AccountFeature(
+            int id,
+            int accountId, 
+            int featureId,
+            DateTime dateCreated,
+            DateTime? dateModified)
         {
-            AccountId = accountId;
-            FeatureId = featureId;
+            _id = id;
+            _accountId = accountId;
+            _featureId = featureId;
+            _dateCreated = dateCreated;
+            DateModified = dateModified;
         }
         #endregion
 

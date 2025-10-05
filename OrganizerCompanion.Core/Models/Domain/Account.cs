@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -20,8 +21,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _accountName = null;
         private string? _accountNumber = null;
         private string? _license = null;
-        private string? _databaseConnection = null;
-        private SupportedDatabases? _databaseType = null;
+        private DatabaseConnection? _databaseConnection = null;
         private int _linkedEntityId = 0;
         private string? _linkedEntityType = null;
         private IDomainEntity? _linkedEntity = null;
@@ -75,7 +75,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("license")]
+        [Required, JsonPropertyName("license"), GuidValidator]
         public string? License
         {
             get => _license;
@@ -86,8 +86,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("databaseConnection")]
-        public string? DatabaseConnection
+        [Required, JsonPropertyName("databaseConnection"), DatabaseConnectionValidator]
+        public DatabaseConnection? DatabaseConnection
         {
             get => _databaseConnection;
             set
@@ -97,18 +97,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("databaseType")]
-        public SupportedDatabases? DatabaseType
-        {
-            get => _databaseType;
-            set
-            {
-                _databaseType = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("linkedEntityId"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
+        [Required, JsonPropertyName("linkedEntityId"), Range(1, int.MaxValue, ErrorMessage = "LinkedEntityId must be a positive number")]
         public int LinkedEntityId
         {
             get => _linkedEntityId;
@@ -170,8 +159,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             string? license,
-            string? databaseConnection,
-            SupportedDatabases? databaseType,
+            DatabaseConnection? databaseConnection,
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             List<AccountFeature> features,
@@ -188,7 +176,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountNumber = accountNumber;
                 _license = license;
                 _databaseConnection = databaseConnection;
-                _databaseType = databaseType;
                 _linkedEntityId = linkedEntityId;
                 _linkedEntity = linkedEntity;
                 _linkedEntityType = linkedEntity?.GetType().Name;
@@ -206,8 +193,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             string? license,
-            string? databaseConnection,
-            SupportedDatabases? databaseType,
+            DatabaseConnection? databaseConnection,
             IDomainEntity linkedEntity,
             List<AccountFeature> features,
             DateTime dateCreated,
@@ -219,7 +205,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountNumber = accountNumber;
                 _license = license;
                 _databaseConnection = databaseConnection;
-                _databaseType = databaseType;
                 _linkedEntityId = linkedEntity.Id;
                 _linkedEntityType = linkedEntity.GetType().Name;
                 _linkedEntity = linkedEntity;

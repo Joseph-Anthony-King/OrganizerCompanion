@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
@@ -1246,7 +1246,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? AccountName { get; set; }
             public string? AccountNumber { get; set; }
             public string? License { get; set; }
-            public string? DatabaseConnection { get; set; }
+            public OrganizerCompanion.Core.Models.Type.DatabaseConnection? DatabaseConnection { get; set; }
             public SupportedDatabases? DatabaseType { get; set; }
             public int LinkedEntityId { get; set; }
             public string? LinkedEntityType { get; set; }
@@ -1263,3 +1263,4 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
     }
 }
+

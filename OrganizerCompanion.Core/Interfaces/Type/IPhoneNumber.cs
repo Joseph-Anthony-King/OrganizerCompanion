@@ -6,5 +6,6 @@ namespace OrganizerCompanion.Core.Interfaces.Type
     {
         string? Phone { get; set; }
         Types? Type { get; set; }
+        Countries? Country { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace OrganizerCompanion.Core.UnitTests.Validation
         public void Constructor_ShouldSetDefaultErrorMessageAndPattern()
         {
             // Arrange & Act
-            var attribute = new GuidValidatedAttribute();
+            var attribute = new GuidValidatorAttribute();
 
             // Assert
             Assert.Multiple(() =>
@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.UnitTests.Validation
         public void IsValid_ShouldReturnCorrectValidationResult(object value, bool expected)
         {
             // Arrange
-            var attribute = new GuidValidatedAttribute();
+            var attribute = new GuidValidatorAttribute();
 
             // Act
             var isValid = attribute.IsValid(value);

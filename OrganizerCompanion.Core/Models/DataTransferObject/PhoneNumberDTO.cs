@@ -35,5 +35,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? Phone { get; set; } = null;
         [Required, JsonPropertyName("type")]
         public Types? Type { get; set; } = null;
+        [Required, JsonPropertyName("country")]
+        public Countries? Country { get; set; } = null;
     }
 }

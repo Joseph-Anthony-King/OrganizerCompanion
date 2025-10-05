@@ -844,7 +844,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("fullName", out _), Is.True);
                 Assert.That(root.TryGetProperty("pronouns", out _), Is.True);
                 Assert.That(root.TryGetProperty("birthDate", out _), Is.True);
-                Assert.That(root.TryGetProperty("joinDate", out _), Is.True);
+                Assert.That(root.TryGetProperty("joinedDate", out _), Is.True);
                 Assert.That(root.TryGetProperty("emails", out _), Is.True);
                 Assert.That(root.TryGetProperty("phoneNumbers", out _), Is.True);
                 Assert.That(root.TryGetProperty("addresses", out _), Is.True);

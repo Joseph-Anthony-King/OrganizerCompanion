@@ -73,7 +73,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var pronouns = Pronouns.HeHim;
             var birthDate = DateTime.Now.AddYears(-30);
             var deceasedDate = DateTime.Now.AddYears(-1);
-            var joinDate = DateTime.Now.AddMonths(-6);
+            var joinedDate = DateTime.Now.AddMonths(-6);
             var emails = new List<Email>();
             var phoneNumbers = new List<PhoneNumber>();
             var addresses = new List<IAddress>();
@@ -85,7 +85,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var person = new User(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinDate,
+            var person = new User(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinedDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, dateCreated, dateModified);
 
             // Assert
@@ -99,7 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
                 Assert.That(person.DeceasedDate, Is.EqualTo(deceasedDate));
-                Assert.That(person.JoinedDate, Is.EqualTo(joinDate));
+                Assert.That(person.JoinedDate, Is.EqualTo(joinedDate));
                 Assert.That(person.Emails, Is.EqualTo(emails));
                 Assert.That(person.PhoneNumbers, Is.EqualTo(phoneNumbers));
                 Assert.That(person.Addresses, Is.EqualTo(addresses));
@@ -138,7 +138,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var userName = "johndoe";
             var pronouns = Pronouns.SheHer;
             var birthDate = DateTime.Now.AddYears(-25);
-            var joinDate = DateTime.Now.AddMonths(-3);
+            var joinedDate = DateTime.Now.AddMonths(-3);
             var emails = new List<Email> { new() };
             var phoneNumbers = new List<PhoneNumber> { new() };
             var addresses = new List<IAddress> { new USAddress() };
@@ -148,7 +148,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateCreated = DateTime.Now.AddDays(-1);
 
             // Act
-            var person = new User(firstName, middleName, lastName, userName, pronouns, birthDate, joinDate,
+            var person = new User(firstName, middleName, lastName, userName, pronouns, birthDate, joinedDate,
                 emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, dateCreated);
 
             // Assert
@@ -159,7 +159,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.LastName, Is.EqualTo(lastName));
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
-                Assert.That(person.JoinedDate, Is.EqualTo(joinDate));
+                Assert.That(person.JoinedDate, Is.EqualTo(joinedDate));
                 Assert.That(person.Emails, Is.EqualTo(emails));
                 Assert.That(person.PhoneNumbers, Is.EqualTo(phoneNumbers));
                 Assert.That(person.Addresses, Is.EqualTo(addresses));
@@ -442,19 +442,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void JoinDate_WhenSet_ShouldUpdateDateModified()
+        public void joinedDate_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newJoinDate = DateTime.Now.AddMonths(-3);
+            var newjoinedDate = DateTime.Now.AddMonths(-3);
             var beforeSet = DateTime.Now;
 
             // Act
-            _sut.JoinedDate = newJoinDate;
+            _sut.JoinedDate = newjoinedDate;
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.JoinedDate, Is.EqualTo(newJoinDate));
+                Assert.That(_sut.JoinedDate, Is.EqualTo(newjoinedDate));
                 Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
                 Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
             });

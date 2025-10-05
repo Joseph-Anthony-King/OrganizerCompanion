@@ -110,5 +110,35 @@ namespace OrganizerCompanion.Core.UnitTests.Validation
             // Assert
             Assert.That(isValid, Is.EqualTo(expected));
         }
+
+        [Test]
+        [Category("Validation")]
+        [TestCase("Server=localhost;Database=mydb;Integrated Security=true;", true)]
+        [TestCase("Server=localhost;Database=mydb;User ID=sa;Password=Pass123;", true)]
+        [TestCase("Data Source=.\\SQLEXPRESS;Initial Catalog=TestDB;Integrated Security=SSPI;", true)]
+        [TestCase("Server=tcp:myserver.database.windows.net,1433;Database=mydb;User ID=user@myserver;Password=Pass123;Encrypt=True;TrustServerCertificate=False;", true)]
+        [TestCase("Server=(localdb)\\MSSQLLocalDB;Database=MyApp;Trusted_Connection=True;", true)]
+        [TestCase("Data Source=localhost;Initial Catalog=mydb;UID=sa;PWD=Pass123;", true)]
+        [TestCase("Server=myserver;Database=mydb;Integrated Security=true;Connection Timeout=30;", true)]
+        [TestCase("Server=localhost;Database=mydb;User ID=sa;Password=Pass123;MultipleActiveResultSets=true;", true)]
+        [TestCase("Server=localhost;Database=mydb;Integrated Security=true;Application Name=MyApp;", true)]
+        [TestCase("Server=localhost;Database=mydb;Integrated Security=true;Pooling=true;Min Pool Size=5;Max Pool Size=100;", true)]
+        [TestCase("Server=localhost;Database=mydb;Integrated Security=true;Encrypt=true;TrustServerCertificate=true;", true)]
+        [TestCase("Server=localhost;Database=mydb", true)] // No trailing semicolon
+        [TestCase("Server=localhost", true)] // Minimal connection string
+        [TestCase("", false)] // Empty string
+        [TestCase("=localhost;Database=mydb;", false)] // Missing key
+        [TestCase("Server=;Database=mydb;", true)] // Empty value (still valid format)
+        [TestCase("123Server=localhost;Database=mydb;", false)] // Key starts with number
+        [TestCase("Server", false)] // No equals sign
+        [TestCase(";Server=localhost;Database=mydb;", false)] // Starts with semicolon
+        public void ValidateSQLServerConnectionStringRegex(string connectionString, bool expected)
+        {
+            // Act
+            var isValid = Regex.IsMatch(connectionString, RegexValidators.SQLServerDbConnectionStringRegexPattern);
+
+            // Assert
+            Assert.That(isValid, Is.EqualTo(expected), $"Connection string validation failed for: {connectionString}");
+        }
     }
 }

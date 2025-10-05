@@ -3,11 +3,11 @@
 namespace OrganizerCompanion.Core.Validation.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
-    internal class UserNameValidatedAttribute : RegularExpressionAttribute
+    internal class PasswordValidatorAttribute : RegularExpressionAttribute
     {
-        internal UserNameValidatedAttribute() : base(RegexValidators.UserNameRegexPattern)
+        internal PasswordValidatorAttribute() : base(RegexValidators.PasswordRegexPattern)
         {
-            ErrorMessage = "The username is not in a valid format.";
+            ErrorMessage = "The password must be from 4 and up through 20 characters with at least 1 upper case letter, 1 lower case letter, 1 numeric character, and 1 special character of ! @ # $ % ^ & * + = ? - _ . ,";
         }
 
         public override bool IsValid(object? value)

@@ -19,6 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _phone = null;
         private Types? _type = null;
+        private Countries? _country = null;
         private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
         private string? _linkedEntityType = null;
@@ -56,6 +57,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             { 
                 _type = value; 
                 DateModified = DateTime.Now; 
+            }
+        }
+
+        [Required, JsonPropertyName("country")]
+        public Countries? Country
+        {
+            get => _country;
+            set
+            {
+                _country = value;
+                DateModified = DateTime.Now;
             }
         }
 
@@ -109,6 +121,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? phone,
             Types? type,
+            Countries? country,
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             string? linkedEntityType,
@@ -118,6 +131,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _phone = phone;
             _type = type;
+            _country = country;
             _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
             _linkedEntityType = linkedEntityType;
@@ -138,6 +152,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = this.Id,
                         Phone = this.Phone,
                         Type = this.Type,
+                        Country = this.Country
                     };
                     return (T)dto;
                 }

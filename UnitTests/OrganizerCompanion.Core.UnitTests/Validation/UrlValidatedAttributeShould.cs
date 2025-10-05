@@ -12,7 +12,7 @@ namespace OrganizerCompanion.Core.UnitTests.Validation
         public void Constructor_ShouldSetDefaultErrorMessageAndPattern()
         {
             // Arrange & Act
-            var attribute = new UrlValidatedAttribute();
+            var attribute = new UrlValidatorAttribute();
 
             // Assert
             Assert.Multiple(() =>
@@ -37,7 +37,7 @@ namespace OrganizerCompanion.Core.UnitTests.Validation
         public void IsValid_ShouldReturnCorrectValidationResult(object value, bool expected)
         {
             // Arrange
-            var attribute = new UrlValidatedAttribute();
+            var attribute = new UrlValidatorAttribute();
 
             // Act
             var isValid = attribute.IsValid(value);

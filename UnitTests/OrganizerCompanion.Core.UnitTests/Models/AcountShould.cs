@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
+using System.ComponentModel.DataAnnotations;
+using NUnit.Framework;
+using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using OrganizerCompanion.Core.Enums;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -12,6 +13,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
         private List<AccountFeature> _testFeatures;
+
+        // Helper method to perform validation
+        private IList<ValidationResult> ValidateModel(object model)
+        {
+            var validationResults = new List<ValidationResult>();
+            var ctx = new ValidationContext(model, null, null);
+            Validator.TryValidateObject(model, ctx, validationResults, true);
+            return validationResults;
+        }
 
         [SetUp]
         public void SetUp()
@@ -48,7 +58,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.License, Is.Null);
                 Assert.That(account.DatabaseConnection, Is.Null);
-                Assert.That(account.DatabaseType, Is.Null);
                 Assert.That(account.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(account.LinkedEntityType, Is.Null);
                 Assert.That(account.LinkedEntity, Is.Null);
@@ -63,14 +72,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_SetsAllPropertiesCorrectly()
         {
-            // Arrange & Act
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
+
+            // Act
             var account = new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseType: Enums.SupportedDatabases.SQLServer,
-                databaseConnection: "test-db-connection",
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -84,9 +99,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Id, Is.EqualTo(1));
                 Assert.That(account.AccountName, Is.EqualTo("testuser"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
-                Assert.That(account.License, Is.EqualTo("test-license"));
-                Assert.That(account.DatabaseConnection, Is.EqualTo("test-db-connection"));
-                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
+                Assert.That(account.License, Is.Not.Null);
+                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
+                Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(1));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
@@ -100,13 +115,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ParameterizedConstructor_SetsPropertiesCorrectlyFromLinkedEntity()
         {
-            // Arrange & Act
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
+
+            // Act
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
-                license: "test-license",
-                databaseType: Enums.SupportedDatabases.SQLServer,
-                databaseConnection: "test-db-connection",
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -118,9 +139,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(account.AccountName, Is.EqualTo("testuser2"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
-                Assert.That(account.License, Is.EqualTo("test-license"));
-                Assert.That(account.DatabaseConnection, Is.EqualTo("test-db-connection"));
-                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
+                Assert.That(account.License, Is.Not.Null);
+                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
+                Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.LinkedEntityId, Is.EqualTo(_sut.Id));
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
@@ -196,12 +217,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var originalDateModified = account.DateModified;
 
             // Act
-            account.License = "new-license-key";
+            account.License = Guid.NewGuid().ToString();
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(account.License, Is.EqualTo("new-license-key"));
+                Assert.That(account.License, Is.Not.Null);
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -215,31 +236,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var originalDateModified = account.DateModified;
 
             // Act
-            account.DatabaseConnection = "new-connection-string";
+            account.DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection { ConnectionString = "new-connection-string", DatabaseType = SupportedDatabases.SQLServer };
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(account.DatabaseConnection, Is.EqualTo("new-connection-string"));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
-        public void DatabaseType_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.DatabaseType = Enums.SupportedDatabases.MySQL;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.MySQL));
+                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("new-connection-string"));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -427,9 +429,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             account.DatabaseConnection = null;
             Assert.That(account.DatabaseConnection, Is.Null);
 
-            account.DatabaseType = null;
-            Assert.That(account.DatabaseType, Is.Null);
-
             account.LinkedEntity = null;
             Assert.That(account.LinkedEntity, Is.Null);
         }
@@ -457,15 +456,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var specificDate = new DateTime(2023, 5, 15, 10, 30, 45);
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
 
             // Act
             var account = new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -485,14 +488,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var specificDate = new DateTime(2023, 6, 20, 14, 15, 30);
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
 
             // Act
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: Enums.SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntity: _sut,
                 features: _testFeatures,
                 dateCreated: specificDate,
@@ -520,13 +527,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ParameterizedConstructor_ThrowsException_WhenLinkedEntityIsNull()
         {
-            // Arrange & Act & Assert
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
+
+            // Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: Enums.SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntity: null!,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -547,13 +560,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // This test would need a scenario that actually causes an exception
             // For demonstration, we'll test with valid parameters to ensure no exception is thrown
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             Assert.DoesNotThrow(() => new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
@@ -571,14 +589,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             // Create a mock object that throws an exception when accessing Id
             var mockEntity = new ThrowingMockEntity();
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
 
             // Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: Enums.SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntity: mockEntity,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -593,13 +615,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromGetType()
         {
-            // Arrange, Act & Assert
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
+
+            // Act & Assert
             var ex = Assert.Throws<Exception>(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: Enums.SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntity: null!,
                 features: _testFeatures,
                 dateCreated: _testDateCreated,
@@ -616,13 +644,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
             // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             var account = new Account(
                 id: 123,
                 accountName: "Test Account",
                 accountNumber: "ACC456",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -648,13 +681,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             var account = new Account(
                 id: 777,
                 accountName: "Test Account",
                 accountNumber: "ACC777",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -676,13 +714,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToAnotherUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             var account = new Account(
                 id: 888,
                 accountName: "Another Test Account",
                 accountNumber: "ACC888",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -704,13 +747,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToFeature_ThrowsInvalidCastException()
         {
             // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             var account = new Account(
                 id: 999,
                 accountName: "Feature Test Account",
                 accountNumber: "ACC999",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -732,13 +780,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToAnnonymousUser_ThrowsInvalidCastException()
         {
             // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
             var account = new Account(
                 id: 111,
                 accountName: "Anonymous Test Account",
                 accountNumber: "ACC111",
-                license: "test-license",
-                databaseConnection: "test-db-connection",
-                databaseType: SupportedDatabases.SQLServer,
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: new List<AccountFeature>(),
@@ -771,6 +824,109 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Pass("This test documents that the Cast method implementation supports AccountDTO " +
                        "but the IDomainEntity constraint prevents compilation of Cast<AccountDTO>() calls");
         }
+
+        [Test]
+        [Category("Validation")]
+        public void Validation_ShouldPass_ForValidAccount()
+        {
+            // Arrange
+            var account = new Account
+            {
+                Id = 1,
+                AccountName = "ValidName",
+                AccountNumber = "ValidNumber",
+                License = Guid.NewGuid().ToString(),
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
+                { 
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
+                    DatabaseType = SupportedDatabases.SQLServer 
+                },
+                LinkedEntityId = 1,
+                LinkedEntity = _sut,
+                Features = _testFeatures
+            };
+
+            // Act
+            var validationResults = ValidateModel(account);
+
+            // Assert
+            Assert.That(validationResults, Is.Empty);
+        }
+
+        [Test]
+        [Category("Validation")]
+        [TestCase(0)]
+        [TestCase(-1)]
+        public void Validation_ShouldFail_WhenIdIsInvalid(int invalidId)
+        {
+            // Arrange
+            var account = new Account 
+            { 
+                Id = invalidId, 
+                AccountName = "name", 
+                AccountNumber = "num", 
+                License = Guid.NewGuid().ToString(), 
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
+                { 
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
+                    DatabaseType = SupportedDatabases.SQLServer 
+                }, 
+                LinkedEntityId = 1, 
+                LinkedEntity = _sut 
+            };
+
+            // Act
+            var validationResults = ValidateModel(account);
+
+            // Assert
+            Assert.That(validationResults, Has.Count.EqualTo(1));
+            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("ID must be a positive number"));
+        }
+
+        [Test]
+        [Category("Validation")]
+        public void Validation_ShouldFail_WhenRequiredStringIsNull()
+        {
+            // Arrange
+            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
+
+            // Act
+            var validationResults = ValidateModel(account);
+
+            // Assert
+            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
+            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
+            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
+            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
+        }
+
+        [Test]
+        [Category("Validation")]
+        public void Validation_ShouldFail_WhenLicenseIsInvalidGuid()
+        {
+            // Arrange
+            var account = new Account 
+            { 
+                Id = 1, 
+                AccountName = "name", 
+                AccountNumber = "num", 
+                License = "invalid-guid", 
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
+                { 
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
+                    DatabaseType = SupportedDatabases.SQLServer 
+                }, 
+                LinkedEntityId = 1, 
+                LinkedEntity = _sut 
+            };
+
+            // Act
+            var validationResults = ValidateModel(account);
+
+            // Assert
+            Assert.That(validationResults, Has.Count.EqualTo(1));
+            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("The GUID is not in a valid format."));
+        }
     }
 
     // Helper classes for testing exception scenarios
@@ -800,8 +956,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
 
-        public new Type GetType() => throw new Exception("Mock exception from GetType method");
+        public new System.Type GetType() => throw new Exception("Mock exception from GetType method");
         public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
         public string ToJson() => throw new NotImplementedException();
     }
 }
+
+

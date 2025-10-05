@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -101,13 +102,24 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("emails")]
+        [Required, JsonPropertyName("emails"), EmailsValidator]
         public List<Email> Emails
         {
             get => _emails;
             set
             {
                 _emails = value ?? [];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("phoneNumbers"), PhoneNumbersValidator]
+        public List<PhoneNumber> PhoneNumbers
+        {
+            get => _phoneNumbers;
+            set
+            {
+                _phoneNumbers = value ?? [];
                 DateModified = DateTime.Now;
             }
         }
@@ -119,17 +131,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _address = value ?? [];
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("phoneNumbers")]
-        public List<PhoneNumber> PhoneNumbers
-        {
-            get => _phoneNumbers;
-            set
-            {
-                _phoneNumbers = value ?? [];
                 DateModified = DateTime.Now;
             }
         }

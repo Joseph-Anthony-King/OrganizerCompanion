@@ -1,4 +1,4 @@
-﻿using OrganizerCompanion.Core.Enums;
+﻿using OrganizerCompanion.Core.Models.Type;
 
 namespace OrganizerCompanion.Core.Interfaces.Domain
 {
@@ -7,8 +7,7 @@ namespace OrganizerCompanion.Core.Interfaces.Domain
         string? AccountName { get; set; }
         string? AccountNumber { get; set; }
         string? License { get; set; }
-        string? DatabaseConnection { get; set; }
-        SupportedDatabases? DatabaseType { get; set; }
+        DatabaseConnection? DatabaseConnection { get; set; }
         int LinkedEntityId { get; set; }
         string? LinkedEntityType { get; }
         IDomainEntity? LinkedEntity { get; set; }

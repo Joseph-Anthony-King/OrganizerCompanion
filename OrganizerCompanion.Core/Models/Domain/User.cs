@@ -162,7 +162,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("joinDate")]
+        [Required, JsonPropertyName("joinedDate")]
         public DateTime? JoinedDate 
         { 
             get => _joinedDate; 

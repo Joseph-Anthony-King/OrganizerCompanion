@@ -3,11 +3,11 @@
 namespace OrganizerCompanion.Core.Validation.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
-    internal class EmailValidatedAttribute : RegularExpressionAttribute
+    internal class UrlValidatorAttribute : RegularExpressionAttribute
     {
-        internal EmailValidatedAttribute() : base(RegexValidators.EmailRegexPattern)
+        internal UrlValidatorAttribute() : base(RegexValidators.UrlRegexPattern)
         {
-            ErrorMessage = "The email address is not in a valid format.";
+            ErrorMessage = "The URL is not in a valid format.";
         }
 
         public override bool IsValid(object? value)

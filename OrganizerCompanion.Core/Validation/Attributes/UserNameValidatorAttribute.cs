@@ -3,11 +3,11 @@
 namespace OrganizerCompanion.Core.Validation.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
-    internal class UrlValidatedAttribute : RegularExpressionAttribute
+    internal class UserNameValidatorAttribute : RegularExpressionAttribute
     {
-        internal UrlValidatedAttribute() : base(RegexValidators.UrlRegexPattern)
+        internal UserNameValidatorAttribute() : base(RegexValidators.UserNameRegexPattern)
         {
-            ErrorMessage = "The URL is not in a valid format.";
+            ErrorMessage = "The username is not in a valid format.";
         }
 
         public override bool IsValid(object? value)

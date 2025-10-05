@@ -32,7 +32,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
         public int Id
         {
             get => _id;

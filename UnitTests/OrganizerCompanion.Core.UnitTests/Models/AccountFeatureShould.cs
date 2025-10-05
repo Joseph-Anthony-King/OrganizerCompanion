@@ -42,16 +42,25 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_SetsPropertiesCorrectly()
         {
-            // Arrange & Act
-            var accountFeature = new AccountFeature(accountId: 123, featureId: 456);
+            // Arrange
+            var testDateCreated = DateTime.UtcNow;
+
+            // Act
+            var accountFeature = new AccountFeature(
+                id: 1,
+                accountId: 123, 
+                featureId: 456,
+                dateCreated: testDateCreated,
+                dateModified: null);
 
             // Assert
             Assert.Multiple(() =>
             {
+                Assert.That(accountFeature.Id, Is.EqualTo(1));
                 Assert.That(accountFeature.AccountId, Is.EqualTo(123));
                 Assert.That(accountFeature.FeatureId, Is.EqualTo(456));
-                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
-                Assert.That(accountFeature.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
+                Assert.That(accountFeature.DateModified, Is.Null);
             });
         }
 
@@ -283,7 +292,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithZeroValues_SetsPropertiesCorrectly()
         {
             // Arrange & Act
-            var accountFeature = new AccountFeature(accountId: 0, featureId: 0);
+            var accountFeature = new AccountFeature(
+                id: 0,
+                accountId: 0,
+                featureId: 0,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null);
 
             // Assert
             Assert.Multiple(() =>
@@ -291,20 +305,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(accountFeature.AccountId, Is.EqualTo(0));
                 Assert.That(accountFeature.FeatureId, Is.EqualTo(0));
                 Assert.That(accountFeature.Id, Is.EqualTo(0));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void JsonConstructor_WithNegativeValues_SetsPropertiesCorrectly()
-        {
-            // Arrange & Act
-            var accountFeature = new AccountFeature(accountId: -1, featureId: -2);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(accountFeature.AccountId, Is.EqualTo(-1));
-                Assert.That(accountFeature.FeatureId, Is.EqualTo(-2));
             });
         }
 
@@ -368,9 +368,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(123, 456)
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 789,
                 Feature = feature
             };
 
@@ -394,9 +398,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(2, "Another Feature", false, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(999, 888)
+            _sut = new AccountFeature(
+                id: 777,
+                accountId: 999,
+                featureId: 888,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 777,
                 Feature = feature
             };
 
@@ -420,9 +428,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
         {
             // Arrange
-            _sut = new AccountFeature(123, 456)
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 789,
                 Feature = null
             };
 
@@ -442,9 +454,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToIFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
         {
             // Arrange
-            _sut = new AccountFeature(100, 200)
+            _sut = new AccountFeature(
+                id: 300,
+                accountId: 100,
+                featureId: 200,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 300,
                 Feature = null
             };
 
@@ -470,9 +486,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 FeatureName = null,
                 IsEnabled = true
             };
-            _sut = new AccountFeature(555, 666)
+            _sut = new AccountFeature(
+                id: 777,
+                accountId: 555,
+                featureId: 666,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 777,
                 Feature = feature
             };
 
@@ -495,9 +515,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(123, 456)
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 789,
                 Feature = feature
             };
 
@@ -516,9 +540,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(123, 456)
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 789,
                 Feature = feature
             };
 
@@ -537,9 +565,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(123, 456)
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 789,
                 Feature = feature
             };
 
@@ -575,15 +607,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var feature1 = new Feature(10, "Feature One", true, false, 0, null, DateTime.Now, DateTime.Now);
             var feature2 = new Feature(20, "Feature Two", false, false, 0, null, DateTime.Now, DateTime.Now);
             
-            var accountFeature1 = new AccountFeature(100, 200)
+            var accountFeature1 = new AccountFeature(
+                id: 1000,
+                accountId: 100,
+                featureId: 200,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 1000,
                 Feature = feature1
             };
             
-            var accountFeature2 = new AccountFeature(300, 400)
+            var accountFeature2 = new AccountFeature(
+                id: 2000,
+                accountId: 300,
+                featureId: 400,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 2000,
                 Feature = feature2
             };
 
@@ -614,9 +654,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Zero ID Test", false, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(0, 0)
+            _sut = new AccountFeature(
+                id: 0,
+                accountId: 0,
+                featureId: 0,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = 0,
                 Feature = feature
             };
 
@@ -639,9 +683,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var feature = new Feature(1, "Max ID Test", true, false, 0, null, DateTime.Now, DateTime.Now);
-            _sut = new AccountFeature(int.MaxValue, int.MaxValue)
+            _sut = new AccountFeature(
+                id: int.MaxValue,
+                accountId: int.MaxValue,
+                featureId: int.MaxValue,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
             {
-                Id = int.MaxValue,
                 Feature = feature
             };
 

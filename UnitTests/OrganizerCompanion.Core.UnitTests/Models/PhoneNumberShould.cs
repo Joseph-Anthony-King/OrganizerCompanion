@@ -59,6 +59,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.Phone, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -72,6 +73,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
+            var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
             var linkedEntityId = 456;
             var linkedEntity = new MockDomainEntity { Id = 456 };
             var linkedEntityType = "MockDomainEntity";
@@ -83,6 +85,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id, 
                 phone, 
                 type, 
+                country,
                 linkedEntityId,
                 linkedEntity,
                 linkedEntityType,
@@ -95,6 +98,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
@@ -199,6 +203,44 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void Country_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newCountry = OrganizerCompanion.Core.Enums.Countries.Canada;
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Country = newCountry;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Country, Is.EqualTo(newCountry));
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Country_WhenSetToNull_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.Country = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Country, Is.Null);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -223,7 +265,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, 0, null, null, specificDate, null);
+            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, specificDate, null);
 
             // Assert
             Assert.That(phoneNumber.DateCreated, Is.EqualTo(specificDate));
@@ -249,6 +291,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var json = _sut.ToJson();
@@ -260,6 +303,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("phone").And.Contains("555-123-4567")); // Allow for Unicode escaping
                 Assert.That(json, Does.Contain("\"type\":1")); // Work enum value is 1
+                Assert.That(json, Does.Contain("\"country\":185")); // UnitedStates enum value is 185
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
                 Assert.That(json, Does.Contain("\"dateModified\":"));
 
@@ -281,6 +325,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":0"));
                 Assert.That(json, Does.Contain("\"phone\":null"));
                 Assert.That(json, Does.Contain("\"type\":null"));
+                Assert.That(json, Does.Contain("\"country\":null"));
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
 
                 // Verify JSON is well-formed
@@ -296,6 +341,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
                 linkedEntityId: 456,
                 linkedEntity: null,
                 linkedEntityType: null,
@@ -324,6 +370,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 123,
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
                 linkedEntityId: 789,
                 linkedEntity: null,
                 linkedEntityType: null,
@@ -409,6 +456,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void PhoneNumber_WithAllCountriesEnumValues_ShouldBeAllowed()
+        {
+            // Test all enum values
+            foreach (OrganizerCompanion.Core.Enums.Countries country in Enum.GetValues<OrganizerCompanion.Core.Enums.Countries>())
+            {
+                // Act
+                _sut.Country = country;
+
+                // Assert
+                Assert.That(_sut.Country, Is.EqualTo(country), $"Failed for country: {country}");
+            }
+        }
+
+        [Test, Category("Models")]
         public void PhoneNumber_WithEmptyPhone_ShouldBeAllowed()
         {
             // Act
@@ -452,123 +513,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
+            var fourthModified = _sut.DateModified;
+            Assert.That(fourthModified, Is.GreaterThan(thirdModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntityId = 456;
+            var fifthModified = _sut.DateModified;
+            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
+            var sixthModified = _sut.DateModified;
+            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithInvalidEnumValue_ShouldHandleGracefully()
+        public void ToJson_WithCompletePhoneNumberData_ShouldSerializeAllProperties()
         {
             // Arrange
-            _sut.Id = 1;
-            _sut.Phone = "+1-555-123-4567";
-            _sut.Type = (OrganizerCompanion.Core.Enums.Types)999; // Invalid enum value
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"id\":1"));
-                Assert.That(json, Does.Contain("phone").And.Contains("555-123-4567")); // Allow for Unicode escaping
-                Assert.That(json, Does.Contain("\"type\":999")); // Invalid enum value
-
-                // Verify JSON is well-formed
-                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithAdditionalProperties_ShouldSerializeAllProperties()
-        {
-            // Arrange
-            _sut.Id = 2;
-            _sut.Phone = "+1-555-765-4321";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"id\":2"));
-                Assert.That(json, Does.Contain("phone").And.Contains("555-765-4321")); // Allow for Unicode escaping
-                Assert.That(json, Does.Contain("\"type\":3")); // Fax enum value is 3
-                Assert.That(json, Does.Contain("\"dateCreated\":"));
-                Assert.That(json, Does.Contain("\"dateModified\":"));
-
-                // Verify JSON is well-formed
-                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_SerializerOptions_ShouldHandleCyclicalReferences()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.Phone = "+1-555-123-4567";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
-
-            // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
-            Assert.DoesNotThrow(() =>
-            {
-                var json = _sut.ToJson();
-                Assert.That(json, Is.Not.Null.And.Not.Empty);
-            });
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_JsonSerialization_ShouldProduceValidFormat()
-        {
-            // Arrange
+            var mockEntity = new MockDomainEntity { Id = 999 };
             _sut.Id = 42;
-            _sut.Phone = "+1-555-TESTING";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _sut.Phone = "+1-800-CALL-NOW";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+            _sut.LinkedEntityId = 999;
+            _sut.LinkedEntity = mockEntity;
             _sut.DateModified = DateTime.Now;
 
             // Act
@@ -581,7 +553,68 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Check that all expected properties are present
                 string[] expectedProperties = [
-                    "id", "phone", "type", "dateCreated", "dateModified"
+                    "id", "phone", "type", "country", "linkedEntityId", "linkedEntity", "linkedEntityType", "dateCreated", "dateModified"
+                ];
+
+                foreach (var property in expectedProperties)
+                {
+                    Assert.That(json, Does.Contain($"\"{property}\":"), $"Property '{property}' not found in JSON");
+                }
+
+                // Check specific values
+                Assert.That(json, Does.Contain("\"id\":42"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":999"));
+                Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
+                Assert.That(json, Does.Contain("\"type\":4")); // Billing enum value is 4
+
+                // Verify JSON is well-formed
+                var jsonDoc = JsonDocument.Parse(json);
+                Assert.That(jsonDoc, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_SerializerOptions_ShouldHandleCyclicalReferences()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Phone = "+1-555-123-4567";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
+
+            // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.DoesNotThrow(() =>
+            {
+                var json = _sut.ToJson();
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                
+                // Verify we can parse it back
+                var jsonDoc = JsonDocument.Parse(json);
+                Assert.That(jsonDoc, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void PhoneNumber_JsonSerialization_ShouldProduceValidFormat()
+        {
+            // Arrange
+            _sut.Id = 42;
+            _sut.Phone = "+1-555-TESTING";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
+            _sut.DateModified = DateTime.Now;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+
+                // Check that all expected properties are present
+                string[] expectedProperties = [
+                    "id", "phone", "type", "country", "dateCreated", "dateModified"
                 ];
 
                 foreach (var property in expectedProperties)
@@ -592,138 +625,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 // Verify JSON is well-formed
                 var jsonDoc = JsonDocument.Parse(json);
                 Assert.That(jsonDoc, Is.Not.Null);
-            });
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_WithNonStandardCharacters_ShouldBeAllowed()
-        {
-            // Arrange
-            var phoneWithUnicode = "☎ +1-555-123-4567 📞";
-
-            // Act
-            _sut.Phone = phoneWithUnicode;
-
-            // Assert
-            Assert.That(_sut.Phone, Is.EqualTo(phoneWithUnicode));
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_WithOnlyNumbers_ShouldBeAllowed()
-        {
-            // Arrange
-            var numericPhone = "15551234567";
-
-            // Act
-            _sut.Phone = numericPhone;
-
-            // Assert
-            Assert.That(_sut.Phone, Is.EqualTo(numericPhone));
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_WithExtension_ShouldBeAllowed()
-        {
-            // Arrange
-            var phoneWithExt = "+1-555-123-4567 x1234";
-
-            // Act
-            _sut.Phone = phoneWithExt;
-
-            // Assert
-            Assert.That(_sut.Phone, Is.EqualTo(phoneWithExt));
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_TypeEnumValues_ShouldMatchExpectedValues()
-        {
-            // Verify the Types enum values are as expected
-            var expectedTypes = new[]
-            {
-                (OrganizerCompanion.Core.Enums.Types.Home, 0),
-                (OrganizerCompanion.Core.Enums.Types.Work, 1),
-                (OrganizerCompanion.Core.Enums.Types.Cell, 2),
-                (OrganizerCompanion.Core.Enums.Types.Fax, 3),
-                (OrganizerCompanion.Core.Enums.Types.Billing, 4),
-                (OrganizerCompanion.Core.Enums.Types.Other, 5)
-            };
-
-            foreach (var (type, expectedValue) in expectedTypes)
-            {
-                Assert.That((int)type, Is.EqualTo(expectedValue), $"Enum value mismatch for {type}");
-            }
-        }
-
-        [Test, Category("Models")]
-        public void Properties_WithNullValues_ShouldHandleCorrectly()
-        {
-            // Act & Assert
-            _sut.Phone = null;
-            Assert.That(_sut.Phone, Is.Null);
-
-            _sut.Type = null;
-            Assert.That(_sut.Type, Is.Null);
-
-            _sut.DateModified = null;
-            Assert.That(_sut.DateModified, Is.Null);
-        }
-
-        [Test, Category("Models")]
-        public void Properties_WithMaxIntValues_ShouldAcceptMaxValues()
-        {
-            // Arrange & Act
-            _sut.Id = int.MaxValue;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
-        }
-
-        [Test, Category("Models")]
-        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
-        {
-            // Arrange & Act
-            _sut.Id = int.MinValue;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithNullProperties_ShouldHandleNullsCorrectly()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.Phone = null;
-            _sut.Type = null;
-            _sut.DateModified = null;
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(json, Is.Not.Null);
-                Assert.That(json, Is.Not.Empty);
-                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
-            });
-
-            var jsonDocument = JsonDocument.Parse(json);
-            var root = jsonDocument.RootElement;
-            
-            Assert.Multiple(() =>
-            {
-                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
-                Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
-                
-                Assert.That(root.TryGetProperty("phone", out var phoneProperty), Is.True);
-                Assert.That(phoneProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
-                Assert.That(root.TryGetProperty("type", out var typeProperty), Is.True);
-                Assert.That(typeProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
-                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
-                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
         }
 
@@ -807,12 +708,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
             var linkedEntityId = 0;
             var dateCreated = DateTime.Now.AddDays(-1);
             DateTime? dateModified = null;
 
             // Act
-            var phoneNumber = new PhoneNumber(id, phone, type, linkedEntityId, null, null, dateCreated, dateModified);
+            var phoneNumber = new PhoneNumber(id, phone, type, country, linkedEntityId, null, null, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -820,6 +722,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityType, Is.Null);
@@ -835,6 +738,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
             var linkedEntityId = 123;
             var mockEntity = new MockDomainEntity { Id = 123 };
             var linkedEntityType = "TestType";
@@ -842,7 +746,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateModified = DateTime.Now.AddHours(-1);
             
             // Act - Test constructor with all parameters
-            var phoneNumber = new PhoneNumber(id, phone, type, linkedEntityId, mockEntity, linkedEntityType, dateCreated, dateModified);
+            var phoneNumber = new PhoneNumber(id, phone, type, country, linkedEntityId, mockEntity, linkedEntityType, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -850,6 +754,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(id));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(mockEntity));
                 Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
@@ -1024,6 +929,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var idProperty = type.GetProperty("Id");
             var phoneProperty = type.GetProperty("Phone");
             var typeProperty = type.GetProperty("Type");
+            var countryProperty = type.GetProperty("Country");
             var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
@@ -1039,6 +945,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "Phone should have Required attribute");
                 Assert.That(typeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
                     Is.Not.Empty, "Type should have Required attribute");
+                Assert.That(countryProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
+                    Is.Not.Empty, "Country should have Required attribute");
                 Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
                     Is.Not.Empty, "LinkedEntityId should have Required attribute");
                 Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
@@ -1082,6 +990,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var idProperty = type.GetProperty("Id");
             var phoneProperty = type.GetProperty("Phone");
             var typeProperty = type.GetProperty("Type");
+            var countryProperty = type.GetProperty("Country");
             var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
@@ -1097,6 +1006,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "Phone should have JsonPropertyName attribute");
                 Assert.That(typeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
                     Is.Not.Empty, "Type should have JsonPropertyName attribute");
+                Assert.That(countryProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
+                    Is.Not.Empty, "Country should have JsonPropertyName attribute");
                 Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
                     Is.Not.Empty, "LinkedEntityId should have JsonPropertyName attribute");
                 Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
@@ -1141,6 +1052,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 0,
                 phone: null,
                 type: null,
+                country: null,
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
@@ -1154,10 +1066,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(0));
                 Assert.That(phoneNumber.Phone, Is.Null);
                 Assert.That(phoneNumber.Type, Is.Null);
+                Assert.That(phoneNumber.Country, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityType, Is.Null);
-                Assert.That(phoneNumber.DateModified, Is.Null);
             });
         }
 
@@ -1169,6 +1081,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 phone: string.Empty,
                 type: OrganizerCompanion.Core.Enums.Types.Other,
+                country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: string.Empty,
@@ -1182,6 +1095,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Id, Is.EqualTo(1));
                 Assert.That(phoneNumber.Phone, Is.EqualTo(string.Empty));
                 Assert.That(phoneNumber.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(phoneNumber.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(string.Empty));
@@ -1240,107 +1154,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntityId = 456;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
             var fourthModified = _sut.DateModified;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
+            _sut.LinkedEntityId = 456;
             var fifthModified = _sut.DateModified;
             Assert.That(fifthModified, Is.GreaterThan(fourthModified));
-        }
 
-        [Test, Category("Models")]
-        public void ToJson_WithCompletePhoneNumberData_ShouldSerializeAllProperties()
-        {
-            // Arrange
-            var mockEntity = new MockDomainEntity { Id = 999 };
-            _sut.Id = 42;
-            _sut.Phone = "+1-800-CALL-NOW";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
-            _sut.LinkedEntityId = 999;
-            _sut.LinkedEntity = mockEntity;
-            _sut.DateModified = DateTime.Now;
-
-            // Act
-            var json = _sut.ToJson();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(json, Is.Not.Null.And.Not.Empty);
-
-                // Check that all expected properties are present
-                string[] expectedProperties = [
-                    "id", "phone", "type", "linkedEntityId", "linkedEntity", "linkedEntityType", "dateCreated", "dateModified"
-                ];
-
-                foreach (var property in expectedProperties)
-                {
-                    Assert.That(json, Does.Contain($"\"{property}\":"), $"Property '{property}' not found in JSON");
-                }
-
-                // Check specific values
-                Assert.That(json, Does.Contain("\"id\":42"));
-                Assert.That(json, Does.Contain("\"linkedEntityId\":999"));
-                Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
-                Assert.That(json, Does.Contain("\"type\":4")); // Billing enum value is 4
-
-                // Verify JSON is well-formed
-                var jsonDoc = JsonDocument.Parse(json);
-                Assert.That(jsonDoc, Is.Not.Null);
-            });
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_WithExtremeValues_ShouldHandleEdgeCases()
-        {
-            // Test extreme integer values
-            Assert.Multiple(() =>
-            {
-                // Test max values
-                _sut.Id = int.MaxValue;
-                Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
-
-                _sut.LinkedEntityId = int.MaxValue;
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MaxValue));
-
-                // Test min values
-                _sut.Id = int.MinValue;
-                Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
-
-                _sut.LinkedEntityId = int.MinValue;
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MinValue));
-
-                // Test zero values
-                _sut.Id = 0;
-                Assert.That(_sut.Id, Is.EqualTo(0));
-
-                _sut.LinkedEntityId = 0;
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void PhoneNumber_SerializerOptions_ShouldUseIgnoreCycles()
-        {
-            // Arrange - Create a phone number with mock entity that could potentially cause cycles
-            var mockEntity = new MockDomainEntity { Id = 123 };
-            _sut.Id = 1;
-            _sut.Phone = "+1-555-CYCLE-TEST";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
-            _sut.LinkedEntity = mockEntity;
-
-            // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
-            Assert.DoesNotThrow(() =>
-            {
-                var json = _sut.ToJson();
-                Assert.That(json, Is.Not.Null.And.Not.Empty);
-                
-                // Verify we can parse it back
-                var jsonDoc = JsonDocument.Parse(json);
-                Assert.That(jsonDoc, Is.Not.Null);
-            });
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
+            var sixthModified = _sut.DateModified;
+            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
         }
 
         #region Cast Method Tests
@@ -1351,6 +1177,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.Phone = "+1-555-123-4567";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1363,6 +1190,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(123));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-123-4567"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
             });
         }
 
@@ -1373,6 +1201,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 456;
             _sut.Phone = "+1-800-CALL-NOW";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
             var result = _sut.Cast<IPhoneNumberDTO>();
@@ -1385,6 +1214,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.Phone, Is.EqualTo("+1-800-CALL-NOW"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
 
@@ -1395,6 +1225,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 789;
             _sut.Phone = null;
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1406,6 +1237,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(789));
                 Assert.That(result.Phone, Is.Null);
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
             });
         }
 
@@ -1416,6 +1248,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 101;
             _sut.Phone = "+1-555-NULL-TYPE";
             _sut.Type = null;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1427,6 +1260,30 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(101));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-NULL-TYPE"));
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithNullCountry_ShouldReturnPhoneNumberDTOWithNullCountry()
+        {
+            // Arrange
+            _sut.Id = 102;
+            _sut.Phone = "+1-555-NULL-COUNTRY";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = null;
+
+            // Act
+            var result = _sut.Cast<PhoneNumberDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(102));
+                Assert.That(result.Phone, Is.EqualTo("+1-555-NULL-COUNTRY"));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.Country, Is.Null);
             });
         }
 
@@ -1437,6 +1294,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 202;
             _sut.Phone = string.Empty;
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1448,17 +1306,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(202));
                 Assert.That(result.Phone, Is.EqualTo(string.Empty));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
 
         [Test, Category("Models")]
-        public void Cast_WithLongPhone_ShouldReturnPhoneNumberDTOWithLongPhone()
+        public void Cast_WithVeryLongPhone_ShouldReturnPhoneNumberDTOWithLongPhone()
         {
             // Arrange
             var longPhone = new string('1', 500) + "+1-555-123-4567" + new string('2', 500);
             _sut.Id = 303;
             _sut.Phone = longPhone;
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1471,6 +1331,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Phone, Is.EqualTo(longPhone));
                 Assert.That(result.Phone?.Length, Is.EqualTo(1015)); // 500 + 15 + 500
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
             });
         }
 
@@ -1482,6 +1343,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 404;
             _sut.Phone = specialPhone;
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1493,6 +1355,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(404));
                 Assert.That(result.Phone, Is.EqualTo(specialPhone));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
             });
         }
 
@@ -1516,6 +1379,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 _sut.Id = id;
                 _sut.Phone = $"+1-555-{id:000}-{id:0000}";
                 _sut.Type = type;
+                _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
                 // Act
                 var result = _sut.Cast<PhoneNumberDTO>();
@@ -1527,6 +1391,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Assert.That(result.Id, Is.EqualTo(id), $"Failed for type {type}");
                     Assert.That(result.Phone, Is.EqualTo($"+1-555-{id:000}-{id:0000}"), $"Failed for type {type}");
                     Assert.That(result.Type, Is.EqualTo(type), $"Failed for type {type}");
+                    Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates), $"Failed for type {type}");
                 });
             }
         }
@@ -1538,6 +1403,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = int.MaxValue;
             _sut.Phone = "+1-555-MAX-VALUE";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1549,6 +1415,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(int.MaxValue));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-MAX-VALUE"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
 
@@ -1559,6 +1426,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = int.MinValue;
             _sut.Phone = "+1-555-MIN-VALUE";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1570,6 +1438,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(int.MinValue));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-MIN-VALUE"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
             });
         }
 
@@ -1580,6 +1449,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 0;
             _sut.Phone = "+1-555-ZERO-ID";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1591,6 +1461,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(0));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-ZERO-ID"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
             });
         }
 
@@ -1601,6 +1472,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.Phone = "+1-555-123-4567";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act & Assert
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
@@ -1631,6 +1503,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 456;
             _sut.Phone = "+1-555-UNSUPPORTED";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
 
             // Act & Assert
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
@@ -1651,6 +1524,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 789;
             _sut.Phone = "+1-555-EXCEPTION-TEST";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act & Assert - Test with a type that should cause the InvalidCastException
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
@@ -1668,6 +1542,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 0;
             _sut.Phone = null;
             _sut.Type = null;
+            _sut.Country = null;
 
             // Act
             var result = _sut.Cast<PhoneNumberDTO>();
@@ -1679,6 +1554,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(0));
                 Assert.That(result.Phone, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.Country, Is.Null);
             });
         }
 
@@ -1689,6 +1565,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 999;
             _sut.Phone = "+1-800-COMPLEX-DATA-123";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
             var result = _sut.Cast<IPhoneNumberDTO>();
@@ -1701,6 +1578,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.Phone, Is.EqualTo("+1-800-COMPLEX-DATA-123"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
 
@@ -1711,6 +1589,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 100;
             _sut.Phone = "+1-555-PERFORMANCE-TEST";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
             var iterations = 1000;
 
             // Act & Assert

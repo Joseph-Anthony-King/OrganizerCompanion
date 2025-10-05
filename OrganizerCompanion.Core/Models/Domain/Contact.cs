@@ -5,6 +5,7 @@ using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -122,7 +123,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _middleName == null ?
                     $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
 
-        [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), UserNameValidator]
         public string? UserName
         {
             get => _userName;
@@ -166,7 +167,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("joinDate")]
+        [Required, JsonPropertyName("joinedDate")]
         public DateTime? JoinedDate
         {
             get => _joinedDate;
@@ -177,7 +178,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("emails")]
+        [Required, JsonPropertyName("emails"), EmailsValidator]
         public List<Email> Emails
         {
             get => _emails;
@@ -188,7 +189,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("phoneNumbers")]
+        [Required, JsonPropertyName("phoneNumbers"), PhoneNumbersValidator]
         public List<PhoneNumber> PhoneNumbers
         {
             get => _phoneNumbers;

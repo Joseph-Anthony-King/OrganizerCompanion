@@ -3,9 +3,9 @@
 namespace OrganizerCompanion.Core.Validation.Attributes
 {
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.Property)]
-    internal class GuidValidatedAttribute : RegularExpressionAttribute
+    internal class GuidValidatorAttribute : RegularExpressionAttribute
     {
-        internal GuidValidatedAttribute() : base(RegexValidators.GuidRegexPattern)
+        internal GuidValidatorAttribute() : base(RegexValidators.GuidRegexPattern)
         {
             ErrorMessage = "The GUID is not in a valid format.";
         }
