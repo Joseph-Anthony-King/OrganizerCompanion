@@ -743,6 +743,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -775,6 +777,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -790,6 +794,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = null;
             _sut.Country = null;
             _sut.Type = null;
+            _sut.DateModified = null;
 
             // Act
             var result = _sut.Cast<CAAddressDTO>();
@@ -806,6 +811,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.Null);
                 Assert.That(result.Country, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.Null);
             });
         }
 
@@ -884,6 +891,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo("H1A 0A1"));
                 Assert.That(result.Country, Is.EqualTo("Canada"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(result.DateCreated, Is.EqualTo(fullAddress.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(fullAddress.DateModified));
             });
         }
 
@@ -907,6 +916,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(888));
                 Assert.That(result.Street1, Is.EqualTo("Interface Test Street"));
                 Assert.That(result.City, Is.EqualTo("Calgary"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -929,6 +940,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result1, Is.Not.SameAs(result2)); // Different instances
                 Assert.That(result1.Id, Is.EqualTo(result2.Id)); // Same data
                 Assert.That(result1.Street1, Is.EqualTo(result2.Street1)); // Same data
+                Assert.That(result1.DateCreated, Is.EqualTo(result2.DateCreated)); // Same DateCreated
+                Assert.That(result1.DateModified, Is.EqualTo(result2.DateModified)); // Same DateModified
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_WithSpecificDateModified_ShouldPreserveDateModified()
+        {
+            // Arrange
+            var specificDateModified = new DateTime(2024, 3, 15, 14, 30, 45);
+            _sut.Id = 321;
+            _sut.Street1 = "Date Test Street";
+            _sut.City = "Test City";
+            _sut.DateModified = specificDateModified;
+
+            // Act
+            var result = _sut.Cast<CAAddressDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Id, Is.EqualTo(321));
+                Assert.That(result.Street1, Is.EqualTo("Date Test Street"));
+                Assert.That(result.City, Is.EqualTo("Test City"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(specificDateModified));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 

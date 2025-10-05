@@ -29,7 +29,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.Id, Is.EqualTo(0)); // Default value should be 0 (non-negative)
                 Assert.That(_sut.Features, Is.Not.Null);
                 Assert.That(_sut.Features, Is.Empty);
                 Assert.That(_sut.Street1, Is.Null);
@@ -39,7 +39,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.ZipCode, Is.Null);
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.DateModified, Is.Null);
             });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DefaultConstructor_ShouldCreateValidObject()
+        {
+            // Arrange & Act
+            var dto = new CAAddressDTO();
+            var validationContext = new ValidationContext(dto);
+            var validationResults = new List<ValidationResult>();
+
+            // Act
+            var isValid = Validator.TryValidateObject(dto, validationContext, validationResults, true);
+
+            // Assert - The default object should not fail validation for the Id property
+            var idValidationErrors = new List<ValidationResult>();
+            foreach (var result in validationResults)
+            {
+                if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
+                    (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                {
+                    idValidationErrors.Add(result);
+                }
+            }
+
+            Assert.That(idValidationErrors, Is.Empty, "Default Id value (0) should be valid");
         }
 
         [Test, Category("DataTransferObjects")]
@@ -329,24 +356,57 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateCreated; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 5, 15, 10, 30, 45);
+
+            // Act
+            _sut.DateCreated = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldHaveDefaultValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateModified; });
+            // Arrange
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var dto = new CAAddressDTO();
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(dto.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Set_ShouldThrowNotImplementedException()
+        public void DateModified_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.DateModified = DateTime.Now; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 5, 15, 10, 30, 45);
+
+            // Act
+            _sut.DateModified = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = null;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -374,6 +434,146 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldHaveRangeAttribute()
+        {
+            // Arrange
+            var property = typeof(CAAddressDTO).GetProperty(nameof(CAAddressDTO.Id));
+
+            // Act
+            var rangeAttribute = property?.GetCustomAttribute<System.ComponentModel.DataAnnotations.RangeAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(rangeAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
+                Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
+                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptZero()
+        {
+            // Arrange & Act
+            _sut.Id = 0;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptPositiveNumbers()
+        {
+            // Arrange
+            var positiveNumbers = new[] { 1, 10, 100, 1000, int.MaxValue };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var number in positiveNumbers)
+                {
+                    _sut.Id = number;
+                    Assert.That(_sut.Id, Is.EqualTo(number));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ValidationContext_ShouldFailForNegativeNumbers()
+        {
+            // Arrange
+            _sut.Id = -1;
+            var validationContext = new ValidationContext(_sut);
+            var validationResults = new List<ValidationResult>();
+
+            // Act
+            var isValid = Validator.TryValidateObject(_sut, validationContext, validationResults, true);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(isValid, Is.False);
+                Assert.That(validationResults, Has.Count.GreaterThan(0));
+                Assert.That(validationResults.Any(r => r.ErrorMessage?.Contains("ID must be a non-negative number") == true), Is.True);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ValidationContext_ShouldPassForNonNegativeNumbers()
+        {
+            // Arrange
+            var validIds = new[] { 0, 1, 100, 1000, int.MaxValue };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var validId in validIds)
+                {
+                    _sut.Id = validId;
+                    var validationContext = new ValidationContext(_sut);
+                    var validationResults = new List<ValidationResult>();
+                    var isValid = Validator.TryValidateObject(_sut, validationContext, validationResults, true);
+
+                    // Filter out validation errors not related to Id
+                    var idValidationErrors = new List<ValidationResult>();
+                    foreach (var result in validationResults)
+                    {
+                        if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
+                            (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                        {
+                            idValidationErrors.Add(result);
+                        }
+                    }
+
+                    Assert.That(idValidationErrors, Is.Empty, $"Id value {validId} should be valid but validation failed");
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ValidationContext_ShouldFailForSpecificNegativeValues()
+        {
+            // Arrange
+            var invalidIds = new[] { -1, -10, -100, int.MinValue };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var invalidId in invalidIds)
+                {
+                    _sut.Id = invalidId;
+                    var validationContext = new ValidationContext(_sut);
+                    var validationResults = new List<ValidationResult>();
+                    var isValid = Validator.TryValidateObject(_sut, validationContext, validationResults, true);
+
+                    var idValidationErrors = new List<ValidationResult>();
+                    foreach (var result in validationResults)
+                    {
+                        if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
+                            (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                        {
+                            idValidationErrors.Add(result);
+                        }
+                    }
+
+                    Assert.That(idValidationErrors, Has.Count.GreaterThan(0), 
+                        $"Id value {invalidId} should be invalid but validation passed");
+                }
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -481,6 +681,32 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(CAAddressDTO).GetProperty(nameof(CAAddressDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(CAAddressDTO).GetProperty(nameof(CAAddressDTO.DateModified));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void CAAddressDTO_ShouldImplementICAAddressDTO()
         {
             // Arrange & Act
@@ -514,7 +740,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Province = new CAProvince { Name = "Ontario", Abbreviation = "ON" },
                 ZipCode = "M5V 3M6",
                 Country = "Canada",
-                Type = OrganizerCompanion.Core.Enums.Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work,
+                DateCreated = new DateTime(2023, 1, 1, 12, 0, 0),
+                DateModified = new DateTime(2023, 1, 2, 12, 0, 0)
             };
 
             // Assert
@@ -529,6 +757,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(caAddressDTO.ZipCode, Is.EqualTo("M5V 3M6"));
                 Assert.That(caAddressDTO.Country, Is.EqualTo("Canada"));
                 Assert.That(caAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(caAddressDTO.DateCreated, Is.EqualTo(new DateTime(2023, 1, 1, 12, 0, 0)));
+                Assert.That(caAddressDTO.DateModified, Is.EqualTo(new DateTime(2023, 1, 2, 12, 0, 0)));
             });
         }
 
@@ -546,7 +776,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(CAAddressDTO.Province), "province" },
                 { nameof(CAAddressDTO.ZipCode), "zipCode" },
                 { nameof(CAAddressDTO.Country), "country" },
-                { nameof(CAAddressDTO.Type), "type" }
+                { nameof(CAAddressDTO.Type), "type" },
+                { nameof(CAAddressDTO.DateCreated), "dateCreated" },
+                { nameof(CAAddressDTO.DateModified), "dateModified" }
             };
 
             // Act & Assert
@@ -570,9 +802,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 nameof(CAAddressDTO.IsCast),
                 nameof(CAAddressDTO.CastId),
-                nameof(CAAddressDTO.CastType),
-                nameof(CAAddressDTO.DateCreated),
-                nameof(CAAddressDTO.DateModified)
+                nameof(CAAddressDTO.CastType)
             };
 
             // Act & Assert
@@ -604,6 +834,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Province.Name, Is.EqualTo("Mock Province"));
                 Assert.That(_sut.Province.Abbreviation, Is.EqualTo("MP"));
             });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_DefaultValue_ShouldBeCloseToCurrentTime()
+        {
+            // Arrange
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var dto = new CAAddressDTO();
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(dto.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_DefaultValue_ShouldBeNull()
+        {
+            // Arrange & Act
+            var dto = new CAAddressDTO();
+
+            // Assert
+            Assert.That(dto.DateModified, Is.Null);
         }
 
         #region Mock Classes
