@@ -230,7 +230,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (typeof(T) == typeof(OrganizationDTO) || typeof(T) == typeof(IOrganizationDTO))
                 {
-                    List<IAddressDTO> addressesDto = new();
+                    List<IAddressDTO> addressesDto = [];
                     foreach (var item in this.Addresses)
                     {
                         if (!string.IsNullOrEmpty(item.LinkedEntityType))

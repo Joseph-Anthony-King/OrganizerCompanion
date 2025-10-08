@@ -80,7 +80,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(password.PasswordValue, Is.EqualTo(passwordValue));
                 Assert.That(password.PasswordHint, Is.EqualTo(passwordHint));
                 Assert.That(password.PreviousPasswords, Is.Not.Null);
-                Assert.That(password.PreviousPasswords.Count, Is.EqualTo(2));
+                Assert.That(password.PreviousPasswords, Has.Count.EqualTo(2));
                 Assert.That(password.PreviousPasswords, Contains.Item("OldPassword1"));
                 Assert.That(password.AccountId, Is.EqualTo(accountId));
                 Assert.That(password.Account, Is.EqualTo(account));
@@ -985,7 +985,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(retrievedPassword, Is.EqualTo("FinalPassword")); // Should return current password
-                Assert.That(password.PreviousPasswords.Count, Is.EqualTo(historyCountBefore)); // History should be unchanged
+                Assert.That(password.PreviousPasswords, Has.Count.EqualTo(historyCountBefore)); // History should be unchanged
             });
         }
 
@@ -1003,7 +1003,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             }
             
             // Verify we have 5 in history 
-            Assert.That(_sut.PreviousPasswords.Count, Is.EqualTo(5));
+            Assert.That(_sut.PreviousPasswords, Has.Count.EqualTo(5));
 
             // Act - Add one more to trigger the removal logic (should remove oldest)
             _sut.PasswordValue = "Pass7";
@@ -1011,7 +1011,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert - Should still have 5 in history with oldest removed
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.PreviousPasswords.Count, Is.EqualTo(5));
+                Assert.That(_sut.PreviousPasswords, Has.Count.EqualTo(5));
                 Assert.That(_sut.PreviousPasswords, Does.Not.Contain("Pass1")); // Should be removed
                 Assert.That(_sut.PreviousPasswords.Contains("Pass6"), Is.True); // Latest should be in history
             });

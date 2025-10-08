@@ -134,7 +134,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.Emails, Is.EqualTo(expectedEmails));
-            Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -152,7 +152,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.PhoneNumbers, Is.EqualTo(expectedPhoneNumbers));
-            Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.PhoneNumbers, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -168,7 +168,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.Addresses, Is.EqualTo(expectedAddresses));
-            Assert.That(_organizationDTO.Addresses.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.Addresses, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -186,7 +186,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.Members, Is.EqualTo(expectedMembers));
-            Assert.That(_organizationDTO.Members.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.Members, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -204,7 +204,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.Contacts, Is.EqualTo(expectedContacts));
-            Assert.That(_organizationDTO.Contacts.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.Contacts, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -222,7 +222,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_organizationDTO.Accounts, Is.EqualTo(expectedAccounts));
-            Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(2));
+            Assert.That(_organizationDTO.Accounts, Has.Count.EqualTo(2));
         }
 
         #endregion
@@ -324,10 +324,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceOrganization.Emails, Is.Not.Null);
-                Assert.That(interfaceOrganization.Emails.Count, Is.EqualTo(2));
+                Assert.That(interfaceOrganization.Emails, Has.Count.EqualTo(2));
                 Assert.That(interfaceOrganization.Emails[0], Is.InstanceOf<IEmailDTO>());
                 Assert.That(interfaceOrganization.Emails[1], Is.InstanceOf<IEmailDTO>());
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(2));
+                Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Emails[0], Is.InstanceOf<EmailDTO>());
                 Assert.That(_organizationDTO.Emails[1], Is.InstanceOf<EmailDTO>());
             });
@@ -352,10 +352,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceOrganization.PhoneNumbers, Is.Not.Null);
-                Assert.That(interfaceOrganization.PhoneNumbers.Count, Is.EqualTo(2));
+                Assert.That(interfaceOrganization.PhoneNumbers, Has.Count.EqualTo(2));
                 Assert.That(interfaceOrganization.PhoneNumbers[0], Is.InstanceOf<IPhoneNumberDTO>());
                 Assert.That(interfaceOrganization.PhoneNumbers[1], Is.InstanceOf<IPhoneNumberDTO>());
-                Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(2));
+                Assert.That(_organizationDTO.PhoneNumbers, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.PhoneNumbers[0], Is.InstanceOf<PhoneNumberDTO>());
                 Assert.That(_organizationDTO.PhoneNumbers[1], Is.InstanceOf<PhoneNumberDTO>());
             });
@@ -380,10 +380,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceOrganization.Members, Is.Not.Null);
-                Assert.That(interfaceOrganization.Members.Count, Is.EqualTo(2));
+                Assert.That(interfaceOrganization.Members, Has.Count.EqualTo(2));
                 Assert.That(interfaceOrganization.Members[0], Is.InstanceOf<IContactDTO>());
                 Assert.That(interfaceOrganization.Members[1], Is.InstanceOf<IContactDTO>());
-                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(2));
+                Assert.That(_organizationDTO.Members, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Members[0], Is.InstanceOf<ContactDTO>());
                 Assert.That(_organizationDTO.Members[1], Is.InstanceOf<ContactDTO>());
             });
@@ -408,10 +408,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceOrganization.Contacts, Is.Not.Null);
-                Assert.That(interfaceOrganization.Contacts.Count, Is.EqualTo(2));
+                Assert.That(interfaceOrganization.Contacts, Has.Count.EqualTo(2));
                 Assert.That(interfaceOrganization.Contacts[0], Is.InstanceOf<IContactDTO>());
                 Assert.That(interfaceOrganization.Contacts[1], Is.InstanceOf<IContactDTO>());
-                Assert.That(_organizationDTO.Contacts.Count, Is.EqualTo(2));
+                Assert.That(_organizationDTO.Contacts, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Contacts[0], Is.InstanceOf<ContactDTO>());
                 Assert.That(_organizationDTO.Contacts[1], Is.InstanceOf<ContactDTO>());
             });
@@ -436,10 +436,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceOrganization.Accounts, Is.Not.Null);
-                Assert.That(interfaceOrganization.Accounts.Count, Is.EqualTo(2));
+                Assert.That(interfaceOrganization.Accounts, Has.Count.EqualTo(2));
                 Assert.That(interfaceOrganization.Accounts[0], Is.InstanceOf<IAccountDTO>());
                 Assert.That(interfaceOrganization.Accounts[1], Is.InstanceOf<IAccountDTO>());
-                Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(2));
+                Assert.That(_organizationDTO.Accounts, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Accounts[0], Is.InstanceOf<AccountDTO>());
                 Assert.That(_organizationDTO.Accounts[1], Is.InstanceOf<AccountDTO>());
             });
@@ -498,11 +498,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             _organizationDTO.Id = 1;
             _organizationDTO.OrganizationName = "Test Org";
-            _organizationDTO.Emails = new List<EmailDTO> { new() { Id = 1, EmailAddress = "test@example.com" } };
-            _organizationDTO.PhoneNumbers = new List<PhoneNumberDTO> { new() { Id = 1, Phone = "555-0123" } };
-            _organizationDTO.Members = new List<ContactDTO> { new() { Id = 1, FirstName = "John", LastName = "Doe" } };
-            _organizationDTO.Contacts = new List<ContactDTO> { new() { Id = 2, FirstName = "Jane", LastName = "Smith" } };
-            _organizationDTO.Accounts = new List<AccountDTO> { new() { Id = 1, AccountName = "testuser" } };
+            _organizationDTO.Emails = [new() { Id = 1, EmailAddress = "test@example.com" }];
+            _organizationDTO.PhoneNumbers = [new() { Id = 1, Phone = "555-0123" }];
+            _organizationDTO.Members = [new() { Id = 1, FirstName = "John", LastName = "Doe" }];
+            _organizationDTO.Contacts = [new() { Id = 2, FirstName = "Jane", LastName = "Smith" }];
+            _organizationDTO.Accounts = [new() { Id = 1, AccountName = "testuser" }];
 
             // Act
             var result = _organizationDTO.ToJson();
@@ -753,12 +753,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert
             Assert.Multiple(() =>
             {
-                Assert.DoesNotThrow(() => _organizationDTO.Emails = new List<EmailDTO>());
-                Assert.DoesNotThrow(() => _organizationDTO.PhoneNumbers = new List<PhoneNumberDTO>());
-                Assert.DoesNotThrow(() => _organizationDTO.Addresses = new List<IAddressDTO>());
-                Assert.DoesNotThrow(() => _organizationDTO.Members = new List<ContactDTO>());
-                Assert.DoesNotThrow(() => _organizationDTO.Contacts = new List<ContactDTO>());
-                Assert.DoesNotThrow(() => _organizationDTO.Accounts = new List<AccountDTO>());
+                Assert.DoesNotThrow(() => _organizationDTO.Emails = []);
+                Assert.DoesNotThrow(() => _organizationDTO.PhoneNumbers = []);
+                Assert.DoesNotThrow(() => _organizationDTO.Addresses = []);
+                Assert.DoesNotThrow(() => _organizationDTO.Members = []);
+                Assert.DoesNotThrow(() => _organizationDTO.Contacts = []);
+                Assert.DoesNotThrow(() => _organizationDTO.Accounts = []);
             });
         }
 
@@ -772,7 +772,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act & Assert
             Assert.DoesNotThrow(() => _organizationDTO.Emails = largeEmailList);
-            Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(1000));
+            Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(1000));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -811,7 +811,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             _organizationDTO.Id = 42;
             _organizationDTO.OrganizationName = "Integration Test Org";
-            _organizationDTO.Emails = new List<EmailDTO> { new() { Id = 1, EmailAddress = "test@integration.com" } };
+            _organizationDTO.Emails = [new() { Id = 1, EmailAddress = "test@integration.com" }];
 
             // Act
             var json = JsonSerializer.Serialize(_organizationDTO);
@@ -824,7 +824,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(deserializedOrganization!.Id, Is.EqualTo(42));
                 Assert.That(deserializedOrganization.OrganizationName, Is.EqualTo("Integration Test Org"));
                 Assert.That(deserializedOrganization.Emails, Is.Not.Null);
-                Assert.That(deserializedOrganization.Emails.Count, Is.EqualTo(1));
+                Assert.That(deserializedOrganization.Emails, Has.Count.EqualTo(1));
             });
         }
 
@@ -850,27 +850,27 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             _organizationDTO.Id = 1;
             _organizationDTO.OrganizationName = "Complex Org";
-            _organizationDTO.Emails = new List<EmailDTO>
-            {
+            _organizationDTO.Emails =
+            [
                 new() { Id = 1, EmailAddress = "email1@complex.com" },
                 new() { Id = 2, EmailAddress = "email2@complex.com" }
-            };
-            _organizationDTO.Members = new List<ContactDTO>
-            {
+            ];
+            _organizationDTO.Members =
+            [
                 new() { Id = 1, FirstName = "Member1", LastName = "LastName1" },
                 new() { Id = 2, FirstName = "Member2", LastName = "LastName2" }
-            };
-            _organizationDTO.Contacts = new List<ContactDTO>
-            {
+            ];
+            _organizationDTO.Contacts =
+            [
                 new() { Id = 3, FirstName = "Contact1", LastName = "ContactLast1" }
-            };
+            ];
 
             // Act & Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(2));
-                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(2));
-                Assert.That(_organizationDTO.Contacts.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(2));
+                Assert.That(_organizationDTO.Members, Has.Count.EqualTo(2));
+                Assert.That(_organizationDTO.Contacts, Has.Count.EqualTo(1));
                 Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(0));
                 Assert.That(_organizationDTO.Addresses.Count, Is.EqualTo(0));
                 Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(0));

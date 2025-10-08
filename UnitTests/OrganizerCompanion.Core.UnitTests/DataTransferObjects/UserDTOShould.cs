@@ -207,7 +207,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_userDTO.Emails, Is.EqualTo(expectedEmails));
-            Assert.That(_userDTO.Emails.Count, Is.EqualTo(2));
+            Assert.That(_userDTO.Emails, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -225,7 +225,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_userDTO.PhoneNumbers, Is.EqualTo(expectedPhoneNumbers));
-            Assert.That(_userDTO.PhoneNumbers.Count, Is.EqualTo(2));
+            Assert.That(_userDTO.PhoneNumbers, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -241,7 +241,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_userDTO.Addresses, Is.EqualTo(expectedAddresses));
-            Assert.That(_userDTO.Addresses.Count, Is.EqualTo(2));
+            Assert.That(_userDTO.Addresses, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -817,7 +817,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.Emails = new List<OrganizerCompanion.Core.Interfaces.Type.IEmail>());
+            Assert.Throws<NotImplementedException>(() => person.Emails = []);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -837,7 +837,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.PhoneNumbers = new List<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber>());
+            Assert.Throws<NotImplementedException>(() => person.PhoneNumbers = []);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -857,7 +857,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.Addresses = new List<OrganizerCompanion.Core.Interfaces.Type.IAddress>());
+            Assert.Throws<NotImplementedException>(() => person.Addresses = []);
         }
 
         #endregion
@@ -1203,9 +1203,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert
             Assert.Multiple(() =>
             {
-                Assert.DoesNotThrow(() => _userDTO.Emails = new List<EmailDTO>());
-                Assert.DoesNotThrow(() => _userDTO.PhoneNumbers = new List<PhoneNumberDTO>());
-                Assert.DoesNotThrow(() => _userDTO.Addresses = new List<IAddressDTO>());
+                Assert.DoesNotThrow(() => _userDTO.Emails = []);
+                Assert.DoesNotThrow(() => _userDTO.PhoneNumbers = []);
+                Assert.DoesNotThrow(() => _userDTO.Addresses = []);
             });
         }
 
@@ -1351,10 +1351,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _userDTO.IsActive = true;
             _userDTO.IsAdmin = true;
             _userDTO.IsSuperUser = false;
-            _userDTO.Emails = new List<EmailDTO>
-            {
+            _userDTO.Emails =
+            [
                 new EmailDTO { Id = 1, EmailAddress = "complex@test.com" }
-            };
+            ];
 
             // Act
             var json = JsonSerializer.Serialize(_userDTO);
@@ -1370,7 +1370,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(deserializedUser.Pronouns, Is.EqualTo(OrganizerCompanion.Core.Enums.Pronouns.TheyThem));
                 Assert.That(deserializedUser.IsAdmin, Is.True);
                 Assert.That(deserializedUser.IsSuperUser, Is.False);
-                Assert.That(deserializedUser.Emails.Count, Is.EqualTo(1));
+                Assert.That(deserializedUser.Emails, Has.Count.EqualTo(1));
             });
         }
 

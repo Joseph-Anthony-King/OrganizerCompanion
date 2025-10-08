@@ -106,7 +106,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features.Count, Is.EqualTo(1));
+                Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -146,7 +146,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features.Count, Is.EqualTo(1));
+                Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -303,7 +303,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features.Count, Is.EqualTo(1));
+                Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -658,7 +658,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
-                features: new List<AccountFeature>(),
+                features: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -695,7 +695,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
-                features: new List<AccountFeature>(),
+                features: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -728,7 +728,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
-                features: new List<AccountFeature>(),
+                features: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -761,7 +761,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
-                features: new List<AccountFeature>(),
+                features: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -794,7 +794,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntityId: 1,
                 linkedEntity: _sut,
-                features: new List<AccountFeature>(),
+                features: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );

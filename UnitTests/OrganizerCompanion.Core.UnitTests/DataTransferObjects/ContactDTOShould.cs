@@ -35,6 +35,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Pronouns, Is.Null);
                 Assert.That(_sut.BirthDate, Is.Null);
                 Assert.That(_sut.DeceasedDate, Is.Null);
+                Assert.That(_sut.UserName, Is.Null);
+                Assert.That(_sut.IsActive, Is.Null);
+                Assert.That(_sut.IsDeceased, Is.Null);
+                Assert.That(_sut.IsAdmin, Is.Null);
+                Assert.That(_sut.IsSuperUser, Is.Null);
                 Assert.That(_sut.JoinedDate, Is.Null);
                 Assert.That(_sut.Emails, Is.Not.Null);
                 Assert.That(_sut.Emails, Is.Empty);
@@ -272,6 +277,121 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldGetAndSetValue()
+        {
+            // Arrange
+            string expectedUserName = "john.doe";
+
+            // Act
+            _sut.UserName = expectedUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(expectedUserName));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.UserName = null;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsActive_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsActive = true;
+
+            // Act
+            _sut.IsActive = expectedIsActive;
+
+            // Assert
+            Assert.That(_sut.IsActive, Is.EqualTo(expectedIsActive));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsActive_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.IsActive = null;
+
+            // Assert
+            Assert.That(_sut.IsActive, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsDeceased_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsDeceased = true;
+
+            // Act
+            _sut.IsDeceased = expectedIsDeceased;
+
+            // Assert
+            Assert.That(_sut.IsDeceased, Is.EqualTo(expectedIsDeceased));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsDeceased_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.IsDeceased = null;
+
+            // Assert
+            Assert.That(_sut.IsDeceased, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsAdmin_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsAdmin = true;
+
+            // Act
+            _sut.IsAdmin = expectedIsAdmin;
+
+            // Assert
+            Assert.That(_sut.IsAdmin, Is.EqualTo(expectedIsAdmin));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsAdmin_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.IsAdmin = null;
+
+            // Assert
+            Assert.That(_sut.IsAdmin, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsSuperUser_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsSuperUser = true;
+
+            // Act
+            _sut.IsSuperUser = expectedIsSuperUser;
+
+            // Assert
+            Assert.That(_sut.IsSuperUser, Is.EqualTo(expectedIsSuperUser));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsSuperUser_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.IsSuperUser = null;
+
+            // Assert
+            Assert.That(_sut.IsSuperUser, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void Emails_ShouldGetAndSetValue()
         {
             // Arrange
@@ -288,7 +408,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Emails, Is.EqualTo(expectedEmails));
-                Assert.That(_sut.Emails.Count, Is.EqualTo(2));
+                Assert.That(_sut.Emails, Has.Count.EqualTo(2));
                 Assert.That(_sut.Emails[0].EmailAddress, Is.EqualTo("john@example.com"));
                 Assert.That(_sut.Emails[1].EmailAddress, Is.EqualTo("john.doe@work.com"));
             });
@@ -328,7 +448,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.PhoneNumbers, Is.EqualTo(expectedPhoneNumbers));
-                Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(2));
+                Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(2));
                 Assert.That(_sut.PhoneNumbers[0].Phone, Is.EqualTo("555-1234"));
                 Assert.That(_sut.PhoneNumbers[1].Phone, Is.EqualTo("555-5678"));
             });
@@ -368,7 +488,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Addresses, Is.EqualTo(expectedAddresses));
-                Assert.That(_sut.Addresses.Count, Is.EqualTo(2));
+                Assert.That(_sut.Addresses, Has.Count.EqualTo(2));
                 Assert.That(_sut.Addresses[0].LinkedEntityId, Is.EqualTo(10));
                 Assert.That(_sut.Addresses[1].LinkedEntityId, Is.EqualTo(20));
             });
@@ -545,6 +665,25 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void Id_ShouldHaveRangeAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.Id));
+
+            // Act
+            var rangeAttribute = property?.GetCustomAttribute<System.ComponentModel.DataAnnotations.RangeAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(rangeAttribute, Is.Not.Null);
+                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
+                Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
+                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void FirstName_ShouldHaveRequiredAttribute()
         {
             // Arrange
@@ -675,10 +814,75 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.UserName));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsActive_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsActive));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsAdmin_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsAdmin));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DeceasedDate_ShouldNotHaveRequiredAttribute()
         {
             // Arrange
             var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.DeceasedDate));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsDeceased_ShouldNotHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsDeceased));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsSuperUser_ShouldNotHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsSuperUser));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -731,10 +935,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Pronouns = OrganizerCompanion.Core.Enums.Pronouns.SheHer,
                 BirthDate = new DateTime(1985, 6, 15),
                 DeceasedDate = null,
+                UserName = "jane.smith",
+                IsActive = true,
+                IsDeceased = false,
+                IsAdmin = false,
+                IsSuperUser = null,
                 JoinedDate = new DateTime(2020, 1, 1),
-                Emails = new List<EmailDTO> { new() { Id = 1, EmailAddress = "jane@example.com" } },
-                PhoneNumbers = new List<PhoneNumberDTO> { new() { Id = 1, Phone = "555-1234" } },
-                Addresses = new List<IAddressDTO> { new MockAddressDTO { LinkedEntityId = 1 } }
+                Emails = [new() { Id = 1, EmailAddress = "jane@example.com" }],
+                PhoneNumbers = [new() { Id = 1, Phone = "555-1234" }],
+                Addresses = [new MockAddressDTO { LinkedEntityId = 1 }]
             };
 
             // Assert
@@ -748,10 +957,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(contactDTO.Pronouns, Is.EqualTo(OrganizerCompanion.Core.Enums.Pronouns.SheHer));
                 Assert.That(contactDTO.BirthDate, Is.EqualTo(new DateTime(1985, 6, 15)));
                 Assert.That(contactDTO.DeceasedDate, Is.Null);
+                Assert.That(contactDTO.UserName, Is.EqualTo("jane.smith"));
+                Assert.That(contactDTO.IsActive, Is.True);
+                Assert.That(contactDTO.IsDeceased, Is.False);
+                Assert.That(contactDTO.IsAdmin, Is.False);
+                Assert.That(contactDTO.IsSuperUser, Is.Null);
                 Assert.That(contactDTO.JoinedDate, Is.EqualTo(new DateTime(2020, 1, 1)));
-                Assert.That(contactDTO.Emails.Count, Is.EqualTo(1));
-                Assert.That(contactDTO.PhoneNumbers.Count, Is.EqualTo(1));
-                Assert.That(contactDTO.Addresses.Count, Is.EqualTo(1));
+                Assert.That(contactDTO.Emails, Has.Count.EqualTo(1));
+                Assert.That(contactDTO.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(contactDTO.Addresses, Has.Count.EqualTo(1));
             });
         }
 
@@ -766,9 +980,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(ContactDTO.MiddleName), "middleName" },
                 { nameof(ContactDTO.LastName), "lastName" },
                 { nameof(ContactDTO.FullName), "fullName" },
-                { nameof(ContactDTO.Pronouns), "userName" }, // Note: JSON name is "userName" not "pronouns"
+                { nameof(ContactDTO.Pronouns), "pronouns" }, // Note: JSON name is "userName" not "pronouns"
                 { nameof(ContactDTO.BirthDate), "birthDate" },
                 { nameof(ContactDTO.DeceasedDate), "deceasedDate" },
+                { nameof(ContactDTO.UserName), "userName" }, // Note: Also has "userName" JSON name
+                { nameof(ContactDTO.IsActive), "isActive" },
+                { nameof(ContactDTO.IsDeceased), "isDeceased" },
+                { nameof(ContactDTO.IsAdmin), "isAdmin" },
+                { nameof(ContactDTO.IsSuperUser), "isSuperUser" },
                 { nameof(ContactDTO.JoinedDate), "joinedDate" },
                 { nameof(ContactDTO.Emails), "emails" },
                 { nameof(ContactDTO.PhoneNumbers), "phoneNumbers" },
@@ -793,6 +1012,40 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.DeceasedDate));
+
+            // Act
+            var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonIgnoreAttribute, Is.Not.Null);
+                Assert.That(jsonIgnoreAttribute?.Condition, Is.EqualTo(System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsDeceased_ShouldHaveJsonIgnoreWhenWritingNullAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsDeceased));
+
+            // Act
+            var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonIgnoreAttribute, Is.Not.Null);
+                Assert.That(jsonIgnoreAttribute?.Condition, Is.EqualTo(System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsSuperUser_ShouldHaveJsonIgnoreWhenWritingNullAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.IsSuperUser));
 
             // Act
             var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();

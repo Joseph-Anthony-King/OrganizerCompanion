@@ -209,7 +209,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Features, Is.EqualTo(expectedFeatures));
-                Assert.That(_sut.Features.Count, Is.EqualTo(2));
+                Assert.That(_sut.Features, Has.Count.EqualTo(2));
                 Assert.That(_sut.Features[0].Id, Is.EqualTo(1));
                 Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature 1"));
                 Assert.That(_sut.Features[0].IsEnabled, Is.True);
@@ -251,7 +251,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.Count, Is.EqualTo(1));
+                Assert.That(result, Has.Count.EqualTo(1));
                 Assert.That(result[0], Is.TypeOf<FeatureDTO>());
                 Assert.That(result[0].Id, Is.EqualTo(1));
                 Assert.That(result[0].FeatureName, Is.EqualTo("Test Feature"));
@@ -275,7 +275,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Features, Is.Not.Null);
-                Assert.That(_sut.Features.Count, Is.EqualTo(1));
+                Assert.That(_sut.Features, Has.Count.EqualTo(1));
                 Assert.That(_sut.Features[0].Id, Is.EqualTo(2));
                 Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Interface Feature"));
                 Assert.That(_sut.Features[0].IsEnabled, Is.False);
@@ -562,10 +562,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 AccountNumber = "CHAIN-999",
                 License = testGuid,
                 DatabaseConnection = testConnection,
-                Features = new List<FeatureDTO>
-                {
+                Features =
+                [
                     new() { Id = 1, FeatureName = "Chained Feature", IsEnabled = true }
-                }
+                ]
             };
 
             // Assert
@@ -578,7 +578,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(accountDTO.DatabaseConnection, Is.EqualTo(testConnection));
                 Assert.That(accountDTO.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=localhost;Database=test;"));
                 Assert.That(accountDTO.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
-                Assert.That(accountDTO.Features.Count, Is.EqualTo(1));
+                Assert.That(accountDTO.Features, Has.Count.EqualTo(1));
                 Assert.That(accountDTO.Features[0].FeatureName, Is.EqualTo("Chained Feature"));
             });
         }

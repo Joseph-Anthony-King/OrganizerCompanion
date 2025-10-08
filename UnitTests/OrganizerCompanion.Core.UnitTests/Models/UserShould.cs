@@ -2159,13 +2159,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.FirstName, Is.EqualTo("Collection"));
                 Assert.That(result.LastName, Is.EqualTo("Test"));
                 Assert.That(result.Emails, Is.Not.Null);
-                Assert.That(result.Emails.Count, Is.EqualTo(2));
+                Assert.That(result.Emails, Has.Count.EqualTo(2));
                 Assert.That(result.Emails[0].Id, Is.EqualTo(1));
                 Assert.That(result.Emails[0].EmailAddress, Is.EqualTo("test1@example.com"));
                 Assert.That(result.Emails[1].Id, Is.EqualTo(2));
                 Assert.That(result.Emails[1].EmailAddress, Is.EqualTo("test2@example.com"));
                 Assert.That(result.PhoneNumbers, Is.Not.Null);
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(2));
+                Assert.That(result.PhoneNumbers, Has.Count.EqualTo(2));
                 Assert.That(result.PhoneNumbers[0].Id, Is.EqualTo(1));
                 Assert.That(result.PhoneNumbers[0].Phone, Is.EqualTo("+1-555-0001"));
                 Assert.That(result.PhoneNumbers[1].Id, Is.EqualTo(2));
@@ -2454,8 +2454,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(userDto.Pronouns, Is.EqualTo(Pronouns.TheyThem));
                 Assert.That(userDto.BirthDate, Is.EqualTo(_sut.BirthDate));
                 Assert.That(userDto.JoinedDate, Is.EqualTo(_sut.JoinedDate));
-                Assert.That(userDto.Emails.Count, Is.EqualTo(1));
-                Assert.That(userDto.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(userDto.Emails, Has.Count.EqualTo(1));
+                Assert.That(userDto.PhoneNumbers, Has.Count.EqualTo(1));
                 Assert.That(userDto.Addresses.Count, Is.EqualTo(0));
                 Assert.That(userDto.IsActive, Is.EqualTo(true));
                 Assert.That(userDto.IsDeceased, Is.EqualTo(false));

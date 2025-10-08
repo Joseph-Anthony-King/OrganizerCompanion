@@ -99,7 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Features, Is.EqualTo(expectedFeatures));
-                Assert.That(_sut.Features.Count, Is.EqualTo(2));
+                Assert.That(_sut.Features, Has.Count.EqualTo(2));
                 Assert.That(_sut.Features[0].Id, Is.EqualTo(1));
                 Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature 1"));
                 Assert.That(_sut.Features[0].IsEnabled, Is.True);
@@ -733,7 +733,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var caAddressDTO = new CAAddressDTO
             {
                 Id = 999,
-                Features = new List<FeatureDTO> { new() { Id = 1, FeatureName = "Test", IsEnabled = true } },
+                Features = [new() { Id = 1, FeatureName = "Test", IsEnabled = true }],
                 Street1 = "123 Test Street",
                 Street2 = "Unit 456",
                 City = "Toronto",
@@ -749,7 +749,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(caAddressDTO.Id, Is.EqualTo(999));
-                Assert.That(caAddressDTO.Features.Count, Is.EqualTo(1));
+                Assert.That(caAddressDTO.Features, Has.Count.EqualTo(1));
                 Assert.That(caAddressDTO.Street1, Is.EqualTo("123 Test Street"));
                 Assert.That(caAddressDTO.Street2, Is.EqualTo("Unit 456"));
                 Assert.That(caAddressDTO.City, Is.EqualTo("Toronto"));

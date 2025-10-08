@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
@@ -35,7 +36,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
-        [Required, JsonPropertyName("id")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
         public int Id { get; set; } = 0;
         [Required, JsonPropertyName("firstName")]
         public string? FirstName { get; set; } = null;
@@ -45,17 +46,27 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? LastName { get; set; } = null;
         [Required, JsonPropertyName("fullName")]
         public string? FullName { get; set; } = null;
-        [Required, JsonPropertyName("userName")]
+        [Required, JsonPropertyName("pronouns")]
         public Pronouns? Pronouns { get; set; } = null;
         [Required, JsonPropertyName("birthDate")]
         public DateTime? BirthDate { get; set; } = null;
         [JsonPropertyName("deceasedDate"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? DeceasedDate { get; set; } = null;
+        [Required, JsonPropertyName("userName")]
+        public string? UserName { get; set; } = null;
+        [Required, JsonPropertyName("isActive")]
+        public bool? IsActive { get; set; } = null;
+        [JsonPropertyName("isDeceased"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? IsDeceased { get; set; } = null;
+        [Required, JsonPropertyName("isAdmin")]
+        public bool? IsAdmin { get; set; } = null;
+        [JsonPropertyName("isSuperUser"), JsonIgnore(Condition =JsonIgnoreCondition.WhenWritingNull)]
+        public bool? IsSuperUser { get; set; } = null;
         [Required, JsonPropertyName("joinedDate")]
         public DateTime? JoinedDate { get; set; } = null;
-        [Required, JsonPropertyName("emails")]
+        [Required, JsonPropertyName("emails"), EmailsValidator]
         public List<EmailDTO> Emails { get; set; } = [];
-        [Required, JsonPropertyName("phoneNumbers")]
+        [Required, JsonPropertyName("phoneNumbers"), PhoneNumbersValidator]
         public List<PhoneNumberDTO> PhoneNumbers { get; set; } = [];
         [Required, JsonPropertyName("addresses")]
         public List<IAddressDTO> Addresses { get; set; } = [];

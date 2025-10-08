@@ -149,9 +149,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.BirthDate, Is.EqualTo(new DateTime(1990, 1, 1)));
                 Assert.That(contact.DeceasedDate, Is.Null);
                 Assert.That(contact.JoinedDate, Is.EqualTo(new DateTime(2023, 1, 1)));
-                Assert.That(contact.Emails.Count, Is.EqualTo(1));
-                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(1));
-                Assert.That(contact.Addresses.Count, Is.EqualTo(1));
+                Assert.That(contact.Emails, Has.Count.EqualTo(1));
+                Assert.That(contact.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(contact.Addresses, Has.Count.EqualTo(1));
                 Assert.That(contact.IsActive, Is.True);
                 Assert.That(contact.IsDeceased, Is.False);
                 Assert.That(contact.IsAdmin, Is.False);
@@ -395,7 +395,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.Emails.Count, Is.EqualTo(1));
+                Assert.That(_sut.Emails, Has.Count.EqualTo(1));
                 Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
                 Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
             });
@@ -414,7 +414,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(1));
                 Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
                 Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
             });
@@ -433,7 +433,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.Addresses.Count, Is.EqualTo(1));
+                Assert.That(_sut.Addresses, Has.Count.EqualTo(1));
                 Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
                 Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
             });
@@ -658,7 +658,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var result = ((Interfaces.Type.IPerson)_sut).Emails;
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result, Has.Count.EqualTo(1));
             Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IEmail>());
         }
 
@@ -672,7 +672,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).Emails = typeEmails;
 
             // Assert
-            Assert.That(_sut.Emails.Count, Is.EqualTo(1));
+            Assert.That(_sut.Emails, Has.Count.EqualTo(1));
         }
 
         [Test, Category("Models")]
@@ -694,7 +694,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var result = ((Interfaces.Type.IPerson)_sut).PhoneNumbers;
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result, Has.Count.EqualTo(1));
             Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IPhoneNumber>());
         }
 
@@ -708,7 +708,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).PhoneNumbers = typePhoneNumbers;
 
             // Assert
-            Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(1));
+            Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(1));
         }
 
         [Test, Category("Models")]
@@ -731,7 +731,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var result = ((Interfaces.Type.IPerson)_sut).Addresses;
 
             // Assert
-            Assert.That(result.Count, Is.EqualTo(1));
+            Assert.That(result, Has.Count.EqualTo(1));
             Assert.That(result[0], Is.InstanceOf<Interfaces.Type.IAddress>());
         }
 
@@ -745,7 +745,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).Addresses = typeAddresses;
 
             // Assert
-            Assert.That(_sut.Addresses.Count, Is.EqualTo(1));
+            Assert.That(_sut.Addresses, Has.Count.EqualTo(1));
         }
 
         [Test, Category("Models")]
@@ -1040,11 +1040,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.DeceasedDate, Is.EqualTo(_sut.DeceasedDate));
                 Assert.That(result.JoinedDate, Is.EqualTo(_sut.JoinedDate));
                 Assert.That(result.Emails, Is.Not.Null);
-                Assert.That(result.Emails.Count, Is.EqualTo(_sut.Emails.Count));
+                Assert.That(result.Emails, Has.Count.EqualTo(_sut.Emails.Count));
                 Assert.That(result.PhoneNumbers, Is.Not.Null);
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(_sut.PhoneNumbers.Count));
+                Assert.That(result.PhoneNumbers, Has.Count.EqualTo(_sut.PhoneNumbers.Count));
                 Assert.That(result.Addresses, Is.Not.Null);
-                Assert.That(result.Addresses.Count, Is.EqualTo(_sut.Addresses.Count));
+                Assert.That(result.Addresses, Has.Count.EqualTo(_sut.Addresses.Count));
             });
         }
 
@@ -1083,9 +1083,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(concreteResult.Pronouns, Is.EqualTo(_sut.Pronouns));
                 Assert.That(concreteResult.BirthDate, Is.EqualTo(_sut.BirthDate));
                 Assert.That(concreteResult.JoinedDate, Is.EqualTo(_sut.JoinedDate));
-                Assert.That(concreteResult.Emails.Count, Is.EqualTo(_sut.Emails.Count));
-                Assert.That(concreteResult.PhoneNumbers.Count, Is.EqualTo(_sut.PhoneNumbers.Count));
-                Assert.That(concreteResult.Addresses.Count, Is.EqualTo(_sut.Addresses.Count));
+                Assert.That(concreteResult.Emails, Has.Count.EqualTo(_sut.Emails.Count));
+                Assert.That(concreteResult.PhoneNumbers, Has.Count.EqualTo(_sut.PhoneNumbers.Count));
+                Assert.That(concreteResult.Addresses, Has.Count.EqualTo(_sut.Addresses.Count));
             });
         }
 
@@ -1216,8 +1216,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.BirthDate, Is.EqualTo(new DateTime(1980, 12, 1)));
                 Assert.That(result.DeceasedDate, Is.Null);
                 Assert.That(result.JoinedDate, Is.EqualTo(new DateTime(2019, 6, 15)));
-                Assert.That(result.Emails.Count, Is.EqualTo(1));
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(result.Emails, Has.Count.EqualTo(1));
+                Assert.That(result.PhoneNumbers, Has.Count.EqualTo(1));
                 Assert.That(result.Addresses.Count, Is.EqualTo(0));
             });
         }
@@ -1277,7 +1277,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Emails, Is.Not.Null);
-                Assert.That(result.Emails.Count, Is.EqualTo(2));
+                Assert.That(result.Emails, Has.Count.EqualTo(2));
                 Assert.That(result.Emails[0], Is.TypeOf<EmailDTO>());
                 Assert.That(result.Emails[1], Is.TypeOf<EmailDTO>());
                 Assert.That(result.Emails[0].EmailAddress, Is.EqualTo("primary@test.com"));
@@ -1316,7 +1316,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.PhoneNumbers, Is.Not.Null);
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(2));
+                Assert.That(result.PhoneNumbers, Has.Count.EqualTo(2));
                 Assert.That(result.PhoneNumbers[0], Is.TypeOf<PhoneNumberDTO>());
                 Assert.That(result.PhoneNumbers[1], Is.TypeOf<PhoneNumberDTO>());
                 Assert.That(result.PhoneNumbers[0].Phone, Is.EqualTo("555-123-4567"));
