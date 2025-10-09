@@ -1146,9 +1146,32 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Unable to cast object of type"));
-                Assert.That(exception.Message, Does.Contain("AddressDTO"));
-                Assert.That(exception.Message, Does.Contain("IAddressDTO"));
+                Assert.That(exception.Message, Does.Contain("Error casting Contact to type ContactDTO"));
+                Assert.That(exception.InnerException?.Message, Does.Contain("Unable to cast object of type"));
+                Assert.That(exception.InnerException?.Message, Does.Contain("AddressDTO"));
+                Assert.That(exception.InnerException?.Message, Does.Contain("IAddressDTO"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContactDTO_WithUnknownAddressType_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            _sut.Id = 998;
+            _sut.FirstName = "Unknown";
+            _sut.LastName = "Address";
+            
+            // Create a mock address that's not CAAddress, MXAddress, or USAddress
+            var unknownAddress = new MockAddress();
+            _sut.Addresses = [unknownAddress];
+
+            // Act & Assert
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<ContactDTO>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.InnerException, Is.TypeOf<InvalidOperationException>());
+                Assert.That(exception.InnerException?.Message, Does.Contain("Unknown address type: MockAddress"));
             });
         }
 
@@ -1165,7 +1188,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting Email to type MockDomainEntity: Cannot cast Email to type MockDomainEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Does.Contain("Error casting Contact to type MockDomainEntity: Cannot cast Contact to type MockDomainEntity, casting is not supported for this type"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ErrorMessages_ShouldMentionContactNotEmail()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.FirstName = "Error";
+            _sut.LastName = "Message";
+
+            // Act & Assert for unsupported type
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.Message, Does.Contain("Error casting Contact to type MockDomainEntity"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast Contact to type MockDomainEntity"));
+                Assert.That(exception.Message, Does.Not.Contain("Error casting Email"));
+                Assert.That(exception.Message, Does.Not.Contain("Cannot cast Email"));
             });
         }
 
@@ -1328,6 +1371,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private class MockDomainEntity : IDomainEntity
         {
             public int Id { get; set; } = 1;
+            public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+            public string? CastType { get; set; } = null;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        // Helper mock class for testing unknown address types
+        private class MockAddress : IAddress
+        {
+            public int Id { get; set; } = 1;
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
+            public int LinkedEntityId { get; set; } = 0;
+            public IDomainEntity? LinkedEntity { get; set; } = null;
+            public string? LinkedEntityType { get; set; } = null;
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;

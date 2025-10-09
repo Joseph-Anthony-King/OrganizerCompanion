@@ -47,6 +47,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.PhoneNumbers, Is.Empty);
                 Assert.That(_sut.Addresses, Is.Not.Null);
                 Assert.That(_sut.Addresses, Is.Empty);
+                Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(_sut.DateModified, Is.Null);
             });
         }
 
@@ -617,24 +619,49 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateCreated; });
+            // Arrange
+            DateTime expectedDateCreated = new(2023, 10, 8, 14, 30, 0);
+
+            // Act
+            _sut.DateCreated = expectedDateCreated;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDateCreated));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldHaveDefaultValueOfNow()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateModified; });
+            // Arrange & Act
+            _sut = new ContactDTO();
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Set_ShouldThrowNotImplementedException()
+        public void DateModified_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.DateModified = DateTime.Now; });
+            // Arrange
+            DateTime expectedDateModified = new(2023, 10, 8, 15, 45, 0);
+
+            // Act
+            _sut.DateModified = expectedDateModified;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(expectedDateModified));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = null;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -853,6 +880,32 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(ContactDTO).GetProperty(nameof(ContactDTO.DateModified));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DeceasedDate_ShouldNotHaveRequiredAttribute()
         {
             // Arrange
@@ -943,7 +996,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 JoinedDate = new DateTime(2020, 1, 1),
                 Emails = [new() { Id = 1, EmailAddress = "jane@example.com" }],
                 PhoneNumbers = [new() { Id = 1, Phone = "555-1234" }],
-                Addresses = [new MockAddressDTO { LinkedEntityId = 1 }]
+                Addresses = [new MockAddressDTO { LinkedEntityId = 1 }],
+                DateCreated = new DateTime(2023, 10, 8, 10, 0, 0),
+                DateModified = new DateTime(2023, 10, 8, 15, 30, 0)
             };
 
             // Assert
@@ -966,6 +1021,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(contactDTO.Emails, Has.Count.EqualTo(1));
                 Assert.That(contactDTO.PhoneNumbers, Has.Count.EqualTo(1));
                 Assert.That(contactDTO.Addresses, Has.Count.EqualTo(1));
+                Assert.That(contactDTO.DateCreated, Is.EqualTo(new DateTime(2023, 10, 8, 10, 0, 0)));
+                Assert.That(contactDTO.DateModified, Is.EqualTo(new DateTime(2023, 10, 8, 15, 30, 0)));
             });
         }
 
@@ -991,7 +1048,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(ContactDTO.JoinedDate), "joinedDate" },
                 { nameof(ContactDTO.Emails), "emails" },
                 { nameof(ContactDTO.PhoneNumbers), "phoneNumbers" },
-                { nameof(ContactDTO.Addresses), "addresses" }
+                { nameof(ContactDTO.Addresses), "addresses" },
+                { nameof(ContactDTO.DateCreated), "dateCreated" },
+                { nameof(ContactDTO.DateModified), "dateModified" }
             };
 
             // Act & Assert
@@ -1066,9 +1125,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 nameof(ContactDTO.IsCast),
                 nameof(ContactDTO.CastId),
-                nameof(ContactDTO.CastType),
-                nameof(ContactDTO.DateCreated),
-                nameof(ContactDTO.DateModified)
+                nameof(ContactDTO.CastType)
             };
 
             // Act & Assert

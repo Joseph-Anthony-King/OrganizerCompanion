@@ -377,14 +377,16 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Emails = this.Emails.ConvertAll(email => email.Cast<EmailDTO>()),
                         PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => phone.Cast<PhoneNumberDTO>()),
                         Addresses = this.Addresses.ConvertAll(address => (IAddressDTO)CastAddressByType(address)),
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified,
                     };
                     return (T)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Email to type {typeof(T).Name}, casting is not supported for this type");
+                else throw new InvalidCastException($"Cannot cast Contact to type {typeof(T).Name}, casting is not supported for this type");
             }
             catch (Exception ex)
             {
-                throw new InvalidCastException($"Error casting Email to type {typeof(T).Name}: {ex.Message}", ex);
+                throw new InvalidCastException($"Error casting Contact to type {typeof(T).Name}: {ex.Message}", ex);
             }
         }
 
