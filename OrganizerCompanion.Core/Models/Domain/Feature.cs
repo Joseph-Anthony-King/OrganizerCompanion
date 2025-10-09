@@ -105,6 +105,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = this.Id,
                         FeatureName = this.FeatureName,
                         IsEnabled = this.IsEnabled,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified,
                     };
                     return (T)dto;
                 }

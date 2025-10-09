@@ -14,10 +14,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
         public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public DateTime DateCreated => throw new NotImplementedException();
-        [JsonIgnore]
-        public DateTime? DateModified { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
@@ -34,5 +30,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? FeatureName { get; set; } = null;
         [Required, JsonPropertyName("isEnabled")]
         public bool IsEnabled { get; set; } = false;
+        [Required, JsonPropertyName("dateCreated")]
+        public DateTime DateCreated { get; set; } = DateTime.Now;
+        [Required, JsonPropertyName("dateModified")]
+        public DateTime? DateModified { get; set; } = null;
     }
 }

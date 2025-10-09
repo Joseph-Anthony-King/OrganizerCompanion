@@ -539,6 +539,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(123));
                 Assert.That(result.FeatureName, Is.EqualTo("TestFeature"));
                 Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -561,6 +563,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.FeatureName, Is.EqualTo("InterfaceFeature"));
                 Assert.That(result.IsEnabled, Is.False);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -583,6 +587,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(789));
                 Assert.That(result.FeatureName, Is.Null);
                 Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -603,6 +609,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.FeatureName, Is.EqualTo(string.Empty));
                 Assert.That(result.IsEnabled, Is.False);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -651,6 +659,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.FeatureName, Is.EqualTo("CompleteFeature"));
                 Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(dateModified));
                 // Note: Cast-related properties are not part of FeatureDTO
                 // This is by design as FeatureDTO is a simplified representation
             });
@@ -677,6 +687,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result1.Id, Is.EqualTo(result2.Id));
                 Assert.That(result1.FeatureName, Is.EqualTo(result2.FeatureName));
                 Assert.That(result1.IsEnabled, Is.EqualTo(result2.IsEnabled));
+                Assert.That(result1.DateCreated, Is.EqualTo(result2.DateCreated));
+                Assert.That(result1.DateModified, Is.EqualTo(result2.DateModified));
             });
         }
 
@@ -698,6 +710,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.FeatureName, Is.EqualTo(specialName));
                 Assert.That(result.IsEnabled, Is.False);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -719,6 +733,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.FeatureName, Is.EqualTo(unicodeName));
                 Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -740,6 +756,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.FeatureName, Is.EqualTo(longName));
                 Assert.That(result.FeatureName!.Length, Is.EqualTo(1000));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -780,6 +798,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(0));
                 Assert.That(result.FeatureName, Is.EqualTo("ZeroIdFeature"));
                 Assert.That(result.IsEnabled, Is.True);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -800,6 +820,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(int.MaxValue));
                 Assert.That(result.FeatureName, Is.EqualTo("MaxIntFeature"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -820,6 +842,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(-100));
                 Assert.That(result.FeatureName, Is.EqualTo("NegativeIdFeature"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -840,6 +864,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.IsEnabled, Is.True);
                 Assert.That(result.FeatureName, Is.EqualTo("EnabledFeature"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -860,6 +886,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.IsEnabled, Is.False);
                 Assert.That(result.FeatureName, Is.EqualTo("DisabledFeature"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
