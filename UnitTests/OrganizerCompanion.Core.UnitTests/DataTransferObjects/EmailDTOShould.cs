@@ -21,8 +21,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void DefaultConstructor_ShouldCreateEmailDTOWithDefaultValues()
         {
-            // Arrange & Act
+            // Arrange
+            var beforeCreation = DateTime.Now;
+
+            // Act
             _sut = new EmailDTO();
+            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
@@ -30,6 +34,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.Null);
             });
         }
 
@@ -254,24 +260,63 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateCreated; });
+            // Arrange
+            var expectedDate = DateTime.Now.AddDays(-1);
+
+            // Act
+            _sut.DateCreated = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Get_ShouldThrowNotImplementedException()
+        public void DateCreated_DefaultValue_ShouldBeCurrentTime()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.DateModified; });
+            // Arrange
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var emailDTO = new EmailDTO();
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.That(emailDTO.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_Set_ShouldThrowNotImplementedException()
+        public void DateModified_ShouldGetAndSetValue()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.DateModified = DateTime.Now; });
+            // Arrange
+            var expectedDate = DateTime.Now.AddHours(-2);
+
+            // Act
+            _sut.DateModified = expectedDate;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptNullValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = null;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_DefaultValue_ShouldBeNull()
+        {
+            // Arrange & Act
+            var emailDTO = new EmailDTO();
+
+            // Assert
+            Assert.That(emailDTO.DateModified, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -328,6 +373,32 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(EmailDTO).GetProperty(nameof(EmailDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(EmailDTO).GetProperty(nameof(EmailDTO.DateModified));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void EmailDTO_ShouldImplementIEmailDTO()
         {
             // Arrange & Act
@@ -350,12 +421,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void EmailDTO_Properties_ShouldBeSettableInChain()
         {
-            // Arrange & Act
+            // Arrange
+            var testDate = DateTime.Now.AddDays(-1);
+            var testModifiedDate = DateTime.Now.AddHours(-2);
+
+            // Act
             var emailDTO = new EmailDTO
             {
                 Id = 999,
                 EmailAddress = "chained@example.com",
-                Type = OrganizerCompanion.Core.Enums.Types.Work
+                Type = OrganizerCompanion.Core.Enums.Types.Work,
+                DateCreated = testDate,
+                DateModified = testModifiedDate
             };
 
             // Assert
@@ -364,6 +441,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(emailDTO.Id, Is.EqualTo(999));
                 Assert.That(emailDTO.EmailAddress, Is.EqualTo("chained@example.com"));
                 Assert.That(emailDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(emailDTO.DateCreated, Is.EqualTo(testDate));
+                Assert.That(emailDTO.DateModified, Is.EqualTo(testModifiedDate));
             });
         }
 
@@ -375,7 +454,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 { nameof(EmailDTO.Id), "id" },
                 { nameof(EmailDTO.EmailAddress), "emailAddress" },
-                { nameof(EmailDTO.Type), "type" }
+                { nameof(EmailDTO.Type), "type" },
+                { nameof(EmailDTO.DateCreated), "dateCreated" },
+                { nameof(EmailDTO.DateModified), "dateModified" }
             };
 
             // Act & Assert
@@ -399,9 +480,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 nameof(EmailDTO.IsCast),
                 nameof(EmailDTO.CastId),
-                nameof(EmailDTO.CastType),
-                nameof(EmailDTO.DateCreated),
-                nameof(EmailDTO.DateModified)
+                nameof(EmailDTO.CastType)
             };
 
             // Act & Assert
@@ -507,6 +586,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+
+                // Test DateCreated reassignments
+                var firstDate = DateTime.Now.AddDays(-1);
+                var secondDate = DateTime.Now.AddDays(-2);
+                _sut.DateCreated = firstDate;
+                Assert.That(_sut.DateCreated, Is.EqualTo(firstDate));
+                _sut.DateCreated = secondDate;
+                Assert.That(_sut.DateCreated, Is.EqualTo(secondDate));
+
+                // Test DateModified reassignments
+                var firstModified = DateTime.Now.AddHours(-1);
+                var secondModified = DateTime.Now.AddHours(-2);
+                _sut.DateModified = firstModified;
+                Assert.That(_sut.DateModified, Is.EqualTo(firstModified));
+                _sut.DateModified = secondModified;
+                Assert.That(_sut.DateModified, Is.EqualTo(secondModified));
+                _sut.DateModified = null;
+                Assert.That(_sut.DateModified, Is.Null);
             });
         }
 

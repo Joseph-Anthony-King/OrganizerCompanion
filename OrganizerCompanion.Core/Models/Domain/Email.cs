@@ -159,7 +159,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                     {
                         Id = this.Id,
                         EmailAddress = this.EmailAddress,
-                        Type = this.Type
+                        Type = this.Type,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified,
                     };
                     return (T)dto;
                 }

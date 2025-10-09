@@ -1295,6 +1295,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(123));
                 Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1317,6 +1319,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.EmailAddress, Is.EqualTo("interface@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1339,6 +1343,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(789));
                 Assert.That(result.EmailAddress, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1363,6 +1369,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 {
                     Assert.That(result.Type, Is.EqualTo(enumValue), $"Type {enumValue} should be preserved");
                     Assert.That(result.EmailAddress, Is.EqualTo($"test_{enumValue}@example.com"));
+                    Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                    Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
                 });
             }
         }
@@ -1414,6 +1422,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.EmailAddress, Is.EqualTo("complete@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(dateModified));
                 // Note: LinkedEntity, LinkedEntityId, IsConfirmed, etc. are not part of EmailDTO
                 // This is by design as EmailDTO is a simplified representation
             });
@@ -1440,6 +1450,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result1.Id, Is.EqualTo(result2.Id));
                 Assert.That(result1.EmailAddress, Is.EqualTo(result2.EmailAddress));
                 Assert.That(result1.Type, Is.EqualTo(result2.Type));
+                Assert.That(result1.DateCreated, Is.EqualTo(result2.DateCreated));
+                Assert.That(result1.DateModified, Is.EqualTo(result2.DateModified));
             });
         }
 
@@ -1460,6 +1472,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(string.Empty));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1481,6 +1495,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(specialEmail));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1502,6 +1518,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(unicodeEmail));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1543,6 +1561,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(0));
                 Assert.That(result.EmailAddress, Is.EqualTo("zero@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1563,6 +1583,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(int.MaxValue));
                 Assert.That(result.EmailAddress, Is.EqualTo("maxint@test.com"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
@@ -1583,6 +1605,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(-100));
                 Assert.That(result.EmailAddress, Is.EqualTo("negative@test.com"));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
 
