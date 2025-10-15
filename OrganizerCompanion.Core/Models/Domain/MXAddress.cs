@@ -214,6 +214,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         State = this.State,
                         Country = this.Country,
                         Type = this.Type,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
                     return (T)dto;
                 }
