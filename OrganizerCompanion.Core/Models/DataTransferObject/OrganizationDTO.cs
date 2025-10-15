@@ -7,6 +7,25 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
     internal class OrganizationDTO : IOrganizationDTO, IDomainEntity
     {
+        #region IDomainEntity Implementation
+        [JsonIgnore]
+        public bool IsCast { get; set; } = false;
+        [JsonIgnore]
+        public int CastId { get; set; } = 0;
+        [JsonIgnore]
+        public string? CastType { get; set; } = null;
+
+        public T Cast<T>() where T : IDomainEntity
+        {
+            throw new NotImplementedException("Cast method not implemented for OrganizationDTO");
+        }
+
+        public string ToJson()
+        {
+            return System.Text.Json.JsonSerializer.Serialize(this);
+        }
+        #endregion
+
         #region Explicit Interface Implementations
         [JsonIgnore]
         List<IEmailDTO> IOrganizationDTO.Emails
@@ -56,28 +75,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public List<ContactDTO> Contacts { get; set; } = [];
         [Required, JsonPropertyName("accounts")]
         public List<AccountDTO> Accounts { get; set; } = [];
-
-        #region IDomainEntity Implementation
-        [JsonIgnore]
-        public bool IsCast { get; set; } = false;
-        [JsonIgnore]
-        public int CastId { get; set; } = 0;
-        [JsonIgnore]
-        public string? CastType { get; set; } = null;
-        [JsonIgnore]
+        [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
-        [JsonIgnore]
+        [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
-
-        public T Cast<T>() where T : IDomainEntity
-        {
-            throw new NotImplementedException("Cast method not implemented for OrganizationDTO");
-        }
-
-        public string ToJson()
-        {
-            return System.Text.Json.JsonSerializer.Serialize(this);
-        }
-        #endregion
     }
 }

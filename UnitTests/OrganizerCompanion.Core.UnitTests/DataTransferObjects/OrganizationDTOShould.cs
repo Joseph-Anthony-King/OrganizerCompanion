@@ -516,6 +516,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(result, Contains.Substring("\"members\""));
                 Assert.That(result, Contains.Substring("\"contacts\""));
                 Assert.That(result, Contains.Substring("\"accounts\""));
+                Assert.That(result, Contains.Substring("\"dateCreated\""));
+                Assert.That(result, Contains.Substring("\"dateModified\""));
             });
         }
 
@@ -668,14 +670,48 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateCreated));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateModified));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
         {
             // Arrange
             var isCastProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.IsCast));
             var castIdProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.CastId));
             var castTypeProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.CastType));
-            var dateCreatedProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateCreated));
-            var dateModifiedProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateModified));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -683,8 +719,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -741,6 +775,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(contactsProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(accountsProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
             });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
+                .FirstOrDefault() as RequiredAttribute;
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.DateModified));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
+                .FirstOrDefault() as RequiredAttribute;
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
         }
 
         #endregion

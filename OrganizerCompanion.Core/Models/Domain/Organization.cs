@@ -250,6 +250,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         caAddressDto.ZipCode = caAddress.ZipCode;
                                         caAddressDto.Country = caAddress.Country;
                                         caAddressDto.Type = caAddress.Type;
+                                        caAddressDto.DateCreated = caAddress.DateCreated;
+                                        caAddressDto.DateModified = caAddress.DateModified;
                                     }
                                     else if (item is MXAddress mxAddress && addressDto is MXAddressDTO mxAddressDto)
                                     {
@@ -261,6 +263,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         mxAddressDto.State = mxAddress.State;
                                         mxAddressDto.Country = mxAddress.Country;
                                         mxAddressDto.Type = mxAddress.Type;
+                                        mxAddressDto.DateCreated = mxAddress.DateCreated;
+                                        mxAddressDto.DateModified = mxAddress.DateModified;
                                     }
                                     else if (item is USAddress usAddress && addressDto is USAddressDTO usAddressDto)
                                     {
@@ -272,6 +276,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         usAddressDto.ZipCode = usAddress.ZipCode;
                                         usAddressDto.Country = usAddress.Country;
                                         usAddressDto.Type = usAddress.Type;
+                                        usAddressDto.DateCreated = usAddress.DateCreated;
+                                        usAddressDto.DateModified = usAddress.DateModified;
                                     }
                                     addressesDto.Add(addressDto);
                                 }

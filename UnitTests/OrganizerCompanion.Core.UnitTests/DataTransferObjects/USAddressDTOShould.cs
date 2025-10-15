@@ -44,6 +44,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(usAddressDTO.ZipCode, Is.Null);
                 Assert.That(usAddressDTO.Country, Is.Null);
                 Assert.That(usAddressDTO.Type, Is.Null);
+                Assert.That(usAddressDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(usAddressDTO.DateModified, Is.Null);
             });
         }
 
@@ -384,24 +386,39 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldThrowNotImplementedException_OnGet()
+        public void DateCreated_ShouldGetAndSetCorrectly()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _usAddressDTO.DateCreated; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 10, 15, 14, 30, 0);
+
+            // Act
+            _usAddressDTO.DateCreated = expectedDate;
+
+            // Assert
+            Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldThrowNotImplementedException_OnGet()
+        public void DateModified_ShouldGetAndSetCorrectly()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _usAddressDTO.DateModified; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 10, 16, 10, 15, 0);
+
+            // Act
+            _usAddressDTO.DateModified = expectedDate;
+
+            // Assert
+            Assert.That(_usAddressDTO.DateModified, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldThrowNotImplementedException_OnSet()
+        public void DateModified_ShouldAcceptNull()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _usAddressDTO.DateModified = DateTime.Now);
+            // Act
+            _usAddressDTO.DateModified = null;
+
+            // Assert
+            Assert.That(_usAddressDTO.DateModified, Is.Null);
         }
 
         #endregion
@@ -571,14 +588,48 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
         {
             // Arrange
             var isCastProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.IsCast));
             var castIdProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CastId));
             var castTypeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CastType));
-            var dateCreatedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
-            var dateModifiedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -586,8 +637,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -607,6 +656,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var zipCodeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.ZipCode));
             var countryProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Country));
             var typeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Type));
+            var dateCreatedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
+            var dateModifiedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -619,6 +670,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(zipCodeProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(countryProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(typeProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -824,6 +877,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"zipCode\":\"10001\""));
                 Assert.That(json, Contains.Substring("\"country\":\"USA\""));
                 Assert.That(json, Contains.Substring("\"type\":"));
+                Assert.That(json, Contains.Substring("\"dateCreated\":"));
+                Assert.That(json, Contains.Substring("\"dateModified\":"));
             });
         }
 
@@ -897,8 +952,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Does.Not.Contain("isCast"));
                 Assert.That(json, Does.Not.Contain("castId"));
                 Assert.That(json, Does.Not.Contain("castType"));
-                Assert.That(json, Does.Not.Contain("dateCreated"));
-                Assert.That(json, Does.Not.Contain("dateModified"));
             });
         }
 

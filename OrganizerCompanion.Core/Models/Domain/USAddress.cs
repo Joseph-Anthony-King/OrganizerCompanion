@@ -222,6 +222,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         ZipCode = this.ZipCode,
                         Country = this.Country,
                         Type = this.Type,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
                     return (T)dto;
                 }
