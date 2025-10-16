@@ -38,6 +38,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(phoneNumberDTO.Id, Is.EqualTo(0));
                 Assert.That(phoneNumberDTO.Phone, Is.Null);
                 Assert.That(phoneNumberDTO.Type, Is.Null);
+                Assert.That(phoneNumberDTO.Country, Is.Null);
+                Assert.That(phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(phoneNumberDTO.DateModified, Is.Null);
             });
         }
 
@@ -147,6 +150,40 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             }
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldGetAndSetCorrectly()
+        {
+            // Arrange
+            const OrganizerCompanion.Core.Enums.Countries expectedCountry = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+
+            // Act
+            _phoneNumberDTO.Country = expectedCountry;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Country, Is.EqualTo(expectedCountry));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldAcceptNull()
+        {
+            // Act
+            _phoneNumberDTO.Country = null;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Country, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldAcceptAllValidEnumValues()
+        {
+            // Arrange & Act & Assert
+            foreach (OrganizerCompanion.Core.Enums.Countries country in Enum.GetValues<OrganizerCompanion.Core.Enums.Countries>())
+            {
+                _phoneNumberDTO.Country = country;
+                Assert.That(_phoneNumberDTO.Country, Is.EqualTo(country));
+            }
+        }
+
         #endregion
 
         #region Interface Implementation Tests
@@ -216,24 +253,39 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldThrowNotImplementedException_OnGet()
+        public void DateCreated_ShouldGetAndSetCorrectly()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _phoneNumberDTO.DateCreated; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 10, 15, 14, 30, 0);
+
+            // Act
+            _phoneNumberDTO.DateCreated = expectedDate;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldThrowNotImplementedException_OnGet()
+        public void DateModified_ShouldGetAndSetCorrectly()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _phoneNumberDTO.DateModified; });
+            // Arrange
+            var expectedDate = new DateTime(2023, 10, 16, 10, 15, 0);
+
+            // Act
+            _phoneNumberDTO.DateModified = expectedDate;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldThrowNotImplementedException_OnSet()
+        public void DateModified_ShouldAcceptNull()
         {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.DateModified = DateTime.Now);
+            // Act
+            _phoneNumberDTO.DateModified = null;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateModified, Is.Null);
         }
 
         #endregion
@@ -313,14 +365,66 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void Country_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.Country));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("country"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateCreated));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateModified));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
         {
             // Arrange
             var isCastProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.IsCast));
             var castIdProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CastId));
             var castTypeProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CastType));
-            var dateCreatedProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateCreated));
-            var dateModifiedProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateModified));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -328,8 +432,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
                 Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -370,6 +472,48 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.Type));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
+                .FirstOrDefault() as RequiredAttribute;
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.Country));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
+                .FirstOrDefault() as RequiredAttribute;
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateCreated));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
+                .FirstOrDefault() as RequiredAttribute;
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateModified));
 
             // Act
             var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
@@ -479,6 +623,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _phoneNumberDTO.Id = 123;
             _phoneNumberDTO.Phone = "555-123-4567";
             _phoneNumberDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
 
             // Act
             var json = JsonSerializer.Serialize(_phoneNumberDTO);
@@ -491,6 +636,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"id\":123"));
                 Assert.That(json, Contains.Substring("\"phone\":\"555-123-4567\""));
                 Assert.That(json, Contains.Substring("\"type\":"));
+                Assert.That(json, Contains.Substring("\"country\":"));
+                Assert.That(json, Contains.Substring("\"dateCreated\":"));
+                Assert.That(json, Contains.Substring("\"dateModified\":"));
             });
         }
 
@@ -549,8 +697,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Does.Not.Contain("isCast"));
                 Assert.That(json, Does.Not.Contain("castId"));
                 Assert.That(json, Does.Not.Contain("castType"));
-                Assert.That(json, Does.Not.Contain("dateCreated"));
-                Assert.That(json, Does.Not.Contain("dateModified"));
             });
         }
 

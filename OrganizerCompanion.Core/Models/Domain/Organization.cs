@@ -292,13 +292,17 @@ namespace OrganizerCompanion.Core.Models.Domain
                         {
                             Id = email.Id,
                             EmailAddress = email.EmailAddress,
-                            Type = email.Type
+                            Type = email.Type,
+                            DateCreated = email.DateCreated,
+                            DateModified = email.DateModified
                         }),
                         PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => new PhoneNumberDTO
                         {
                             Id = phone.Id,
                             Phone = phone.Phone,
-                            Type = phone.Type
+                            Type = phone.Type,
+                            DateCreated = phone.DateCreated,
+                            DateModified = phone.DateModified
                         }),
                         Addresses = addressesDto,
                         Members = this.Members.ConvertAll(member => new ContactDTO
@@ -306,22 +310,30 @@ namespace OrganizerCompanion.Core.Models.Domain
                             Id = member.Id,
                             FirstName = member.FirstName,
                             LastName = member.LastName,
-                            MiddleName = member.MiddleName
+                            MiddleName = member.MiddleName,
+                            DateCreated = member.DateCreated,
+                            DateModified = member.DateModified
                         }),
                         Contacts = this.Contacts.ConvertAll(contact => new ContactDTO
                         {
                             Id = contact.Id,
                             FirstName = contact.FirstName,
                             LastName = contact.LastName,
-                            MiddleName = contact.MiddleName
+                            MiddleName = contact.MiddleName,
+                            DateCreated = contact.DateCreated,
+                            DateModified = contact.DateModified
                         }),
                         Accounts = this.Accounts.ConvertAll(account => new AccountDTO
                         {
                             Id = account.Id,
                             AccountName = account.AccountName,
                             AccountNumber = account.AccountNumber,
-                            Features = []
-                        })
+                            Features = [],
+                            DateCreated = account.DateCreated,
+                            DateModified = account.DateModified
+                        }),
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
                     return (T)(IDomainEntity)dto;
                 }

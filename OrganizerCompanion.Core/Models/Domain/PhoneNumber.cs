@@ -152,7 +152,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = this.Id,
                         Phone = this.Phone,
                         Type = this.Type,
-                        Country = this.Country
+                        Country = this.Country,
+                        DateCreated = this.DateCreated,
+                        DateModified = this.DateModified
                     };
                     return (T)dto;
                 }
