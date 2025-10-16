@@ -8,8 +8,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
     internal class UserDTO : IUserDTO
     {
-        private DateTime _dateCreated = DateTime.Now;
-
         #region Explicit Interface Implementations
         [JsonIgnore]
         int IDomainEntity.Id { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -19,10 +17,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         int IDomainEntity.CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
         string? IDomainEntity.CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        DateTime IDomainEntity.DateCreated => throw new NotImplementedException();
-        [JsonIgnore]
-        DateTime? IDomainEntity.DateModified { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
         string? Interfaces.Type.IPerson.FirstName { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
@@ -99,13 +93,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public bool? IsAdmin { get; set; } = null;
         [JsonPropertyName("superUser"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? IsSuperUser { get; set; } = null;
+        [Required, JsonPropertyName("dateCreated")]
+        public DateTime DateCreated { get; set; } = DateTime.Now;
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime CreatedAt
-        {
-            get => _dateCreated; 
-            set => _dateCreated = value;
-        }
     }
 }

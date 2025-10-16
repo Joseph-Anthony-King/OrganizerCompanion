@@ -12,6 +12,5 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
         new public List<IEmailDTO> Emails { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         new public List<IPhoneNumberDTO> PhoneNumbers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         new public List<IAddressDTO> Addresses { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        DateTime CreatedAt { get; set; }
     }
 }

@@ -371,7 +371,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         IsDeceased = this.IsDeceased,
                         IsAdmin = this.IsAdmin,
                         IsSuperUser = this.IsSuperUser,
-                        CreatedAt = this.DateCreated,
+                        DateCreated = this.DateCreated,
                         DateModified = this.DateModified
                     };
                     return (T)dto;

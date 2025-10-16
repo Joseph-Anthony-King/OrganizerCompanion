@@ -1712,7 +1712,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.IsDeceased, Is.EqualTo(false));
                 Assert.That(result.IsAdmin, Is.EqualTo(true));
                 Assert.That(result.IsSuperUser, Is.EqualTo(false));
-                Assert.That(result.CreatedAt, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
         }
