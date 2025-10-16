@@ -48,9 +48,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public DatabaseConnection? DatabaseConnection { get; set; } = null;
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];
+        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? MainAccountId { get; set; } = null;
+        [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<IAccountDTO>? Accounts { get; set; } = null;
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
-    }
+  }
 }

@@ -1247,11 +1247,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? AccountNumber { get; set; }
             public string? License { get; set; }
             public OrganizerCompanion.Core.Models.Type.DatabaseConnection? DatabaseConnection { get; set; }
-            public SupportedDatabases? DatabaseType { get; set; }
             public int LinkedEntityId { get; set; }
-            public string? LinkedEntityType { get; set; }
+            public string? LinkedEntityType { get; }
             public IDomainEntity? LinkedEntity { get; set; }
             public List<IAccountFeature> Features { get; set; } = [];
+            public int? MainAccountId { get; set; }
+            public List<IAccount>? Accounts { get; set; }
             public DateTime DateCreated { get; set; }
             public DateTime? DateModified { get; set; }
             public bool IsCast { get; set; }

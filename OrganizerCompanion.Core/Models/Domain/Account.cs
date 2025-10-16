@@ -26,17 +26,31 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _linkedEntityType = null;
         private IDomainEntity? _linkedEntity = null;
         private List<AccountFeature> _features = [];
+        private int? _mainAccountId = null;
+        private List<Account>? _accounts = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit Interface Implementations
+        [JsonIgnore]
         List<IAccountFeature> IAccount.Features
         {
             get => _features.ConvertAll(feature => (Interfaces.Domain.IAccountFeature)feature);
             set
             {
                 _features = value.ConvertAll(feature => (AccountFeature)feature);
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonIgnore]
+        List<IAccount>? IAccount.Accounts
+        {
+            get => _accounts?.ConvertAll(account => (IAccount)account);
+            set
+            {
+                _accounts = value?.ConvertAll(account => (Account)account);
                 DateModified = DateTime.Now;
             }
         }
@@ -134,6 +148,29 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? MainAccountId
+        {
+            get => _mainAccountId;
+            set
+            {
+                _mainAccountId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public List<Account>? Accounts
+        {
+            get => _accounts;
+            set
+            {
+                _accounts ??= [];
+                _accounts = value?.ConvertAll(account => account);
+                DateModified = DateTime.Now;
+            }
+        }
+
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
@@ -163,6 +200,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             List<AccountFeature> features,
+            int? mainAccountId,
+            List<Account> accounts,
             DateTime dateCreated,
             DateTime? dateModified,
             bool? isCast = null,
@@ -180,6 +219,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _linkedEntity = linkedEntity;
                 _linkedEntityType = linkedEntity?.GetType().Name;
                 _features = features;
+                _mainAccountId = mainAccountId;
+                _accounts = accounts;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
@@ -196,6 +237,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             DatabaseConnection? databaseConnection,
             IDomainEntity linkedEntity,
             List<AccountFeature> features,
+            int? mainAccountId,
+            List<Account>? accounts,
             DateTime dateCreated,
             DateTime? dateModified)
         {
@@ -209,6 +252,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _linkedEntityType = linkedEntity.GetType().Name;
                 _linkedEntity = linkedEntity;
                 _features = features;
+                _mainAccountId = mainAccountId;
+                _accounts = accounts;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
@@ -234,6 +279,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         License = this.License,
                         DatabaseConnection = this.DatabaseConnection,
                         Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
+                        MainAccountId = this.MainAccountId,
+                        Accounts = this.Accounts?.ConvertAll(account => (IAccountDTO)account.Cast<AccountDTO>()),
                         DateCreated = this.DateCreated,
                         DateModified = this.DateModified
                     };

@@ -63,6 +63,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.Null);
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(0));
+                Assert.That(account.MainAccountId, Is.Null);
+                Assert.That(account.Accounts, Is.Null);
                 Assert.That(account.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(account.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(account.DateModified, Is.EqualTo(default(DateTime)));
@@ -89,6 +91,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -107,6 +111,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.MainAccountId, Is.Null);
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(0));
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -130,6 +137,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntity: _sut,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -147,8 +156,55 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.MainAccountId, Is.Null);
+                Assert.That(account.Accounts, Is.Null);
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_SetsMainAccountIdAndAccountsCorrectly()
+        {
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+            {
+                ConnectionString = "test-db-connection",
+                DatabaseType = Enums.SupportedDatabases.SQLServer
+            };
+
+            var subAccounts = new List<Account>
+            {
+                new() { Id = 10, AccountName = "Sub Account 1", AccountNumber = "SUB001" },
+                new() { Id = 11, AccountName = "Sub Account 2", AccountNumber = "SUB002" }
+            };
+
+            // Act
+            var account = new Account(
+                id: 5,
+                accountName: "Main Account",
+                accountNumber: "MAIN001",
+                license: Guid.NewGuid().ToString(),
+                databaseConnection: databaseConnection,
+                linkedEntityId: 1,
+                linkedEntity: _sut,
+                features: _testFeatures,
+                mainAccountId: 123,
+                accounts: subAccounts,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(5));
+                Assert.That(account.AccountName, Is.EqualTo("Main Account"));
+                Assert.That(account.MainAccountId, Is.EqualTo(123));
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(2));
+                Assert.That(account.Accounts![0].AccountName, Is.EqualTo("Sub Account 1"));
+                Assert.That(account.Accounts![1].AccountName, Is.EqualTo("Sub Account 2"));
             });
         }
 
@@ -304,6 +360,50 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void MainAccountId_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+
+            // Act
+            account.MainAccountId = 123;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.MainAccountId, Is.EqualTo(123));
+                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
+            });
+            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test, Category("Models")]
+        public void Accounts_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var account = new Account();
+            var originalDateModified = account.DateModified;
+            var newAccounts = new List<Account>
+            {
+                new() { Id = 2, AccountName = "Sub Account 1", AccountNumber = "SUB001" },
+                new() { Id = 3, AccountName = "Sub Account 2", AccountNumber = "SUB002" }
+            };
+
+            // Act
+            account.Accounts = newAccounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(2));
                 Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -472,6 +572,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: specificDate,
                 dateModified: _testDateModified,
                 isCast: false,
@@ -502,6 +604,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntity: _sut,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: null,
                 dateCreated: specificDate,
                 dateModified: _testDateModified
             );
@@ -542,6 +646,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntity: null!,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
@@ -575,6 +681,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 2,
                 linkedEntity: _sut,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified,
                 isCast: false,
@@ -603,6 +711,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntity: mockEntity,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
@@ -630,6 +740,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseConnection: databaseConnection,
                 linkedEntity: null!,
                 features: _testFeatures,
+                mainAccountId: null,
+                accounts: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
@@ -659,6 +771,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: [],
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -696,6 +810,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: [],
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -729,6 +845,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: [],
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -762,6 +880,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: [],
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -795,6 +915,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _sut,
                 features: [],
+                mainAccountId: null,
+                accounts: [],
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );

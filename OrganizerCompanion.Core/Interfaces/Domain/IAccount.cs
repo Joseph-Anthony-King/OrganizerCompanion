@@ -12,5 +12,7 @@ namespace OrganizerCompanion.Core.Interfaces.Domain
         string? LinkedEntityType { get; }
         IDomainEntity? LinkedEntity { get; set; }
         List<IAccountFeature> Features { get; set; }
+        int? MainAccountId { get; set; }
+        List<IAccount>? Accounts { get; set; }
     }
 }
