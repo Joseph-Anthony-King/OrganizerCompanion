@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
         public int Id
         {
             get => _id;
@@ -47,7 +47,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("accountId"), Range(1, int.MaxValue, ErrorMessage = "Account ID must be a positive number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int AccountId
         {
             get => _accountId;
@@ -204,11 +204,11 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     return result;
                 }
-                else throw new InvalidCastException($"Cannot cast AnnonymousUser to {typeof(T).Name}, casting is not supported for this type.");
+                else throw new InvalidCastException($"Cannot cast AnnonymousUser to {typeof(T).Name}.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new ArgumentException($"Error converting AnnonymousUser to {typeof(T).Name}.", ex);
+                throw;
             }
         }
 

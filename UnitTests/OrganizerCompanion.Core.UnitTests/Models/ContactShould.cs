@@ -941,7 +941,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(requiredAttribute, Is.Not.Null);
                 Assert.That(rangeAttribute, Is.Not.Null);
-                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(1));
+                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
                 Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
             });
         }
@@ -1146,10 +1146,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting Contact to type ContactDTO"));
-                Assert.That(exception.InnerException?.Message, Does.Contain("Unable to cast object of type"));
-                Assert.That(exception.InnerException?.Message, Does.Contain("AddressDTO"));
-                Assert.That(exception.InnerException?.Message, Does.Contain("IAddressDTO"));
+                Assert.That(exception.Message, Does.Contain("Unable to cast object of type 'OrganizerCompanion.Core.Models.DataTransferObject.CAAddressDTO' to type 'OrganizerCompanion.Core.Interfaces.DataTransferObject.IAddressDTO'."));
             });
         }
 
@@ -1166,12 +1163,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Addresses = [unknownAddress];
 
             // Act & Assert
-            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<ContactDTO>());
+            var exception = Assert.Throws<InvalidOperationException>(() => _sut.Cast<ContactDTO>());
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.InnerException, Is.TypeOf<InvalidOperationException>());
-                Assert.That(exception.InnerException?.Message, Does.Contain("Unknown address type: MockAddress"));
+                Assert.That(exception.Message, Does.Contain("Unknown address type: MockAddress"));
             });
         }
 
@@ -1188,7 +1184,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting Contact to type MockDomainEntity: Cannot cast Contact to type MockDomainEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast Contact to type MockDomainEntity."));
             });
         }
 
@@ -1205,10 +1201,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting Contact to type MockDomainEntity"));
-                Assert.That(exception.Message, Does.Contain("Cannot cast Contact to type MockDomainEntity"));
-                Assert.That(exception.Message, Does.Not.Contain("Error casting Email"));
-                Assert.That(exception.Message, Does.Not.Contain("Cannot cast Email"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast Contact to type MockDomainEntity."));
             });
         }
 

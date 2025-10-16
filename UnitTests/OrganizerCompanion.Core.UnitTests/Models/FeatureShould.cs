@@ -626,7 +626,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
             Assert.Multiple(() =>
             {
-                Assert.That(exception.Message, Contains.Substring("Error Feature Email to type MockDomainEntity: Cannot cast Feature to type MockDomainEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Feature to type MockDomainEntity."));
             });
         }
 
@@ -776,7 +776,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
             Assert.Multiple(() =>
             {
-                Assert.That(exception.Message, Contains.Substring("Error Feature Email to type AnotherMockEntity: Cannot cast Feature to type AnotherMockEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Feature to type AnotherMockEntity."));
             });
         }
 

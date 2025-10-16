@@ -821,7 +821,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type User, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type User."));
             });
         }
 
@@ -856,7 +856,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Organization, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Organization."));
             });
         }
 
@@ -891,7 +891,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Feature, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type Feature."));
             });
         }
 
@@ -926,7 +926,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type AnnonymousUser, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Account to type AnnonymousUser."));
             });
         }
 
@@ -977,7 +977,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Validation")]
-        [TestCase(0)]
+        public void Validation_ShouldPass_WhenIdIsZero()
+        {
+            // Arrange
+            var account = new Account 
+            { 
+                Id = 0, 
+                AccountName = "name", 
+                AccountNumber = "num", 
+                License = Guid.NewGuid().ToString(), 
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
+                { 
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
+                    DatabaseType = SupportedDatabases.SQLServer 
+                }, 
+                LinkedEntityId = 1, 
+                LinkedEntity = _sut,
+                Features = _testFeatures
+            };
+
+            // Act
+            var validationResults = ValidateModel(account);
+
+            // Assert
+            Assert.That(validationResults, Is.Empty);
+        }
+
+        [Test]
+        [Category("Validation")]
         [TestCase(-1)]
         public void Validation_ShouldFail_WhenIdIsInvalid(int invalidId)
         {
@@ -1002,7 +1029,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(validationResults, Has.Count.EqualTo(1));
-            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("ID must be a positive number"));
+            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
         }
 
         [Test]

@@ -867,13 +867,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             );
 
             // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<Account>());
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<Account>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to Account"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to Account, casting is not supported for this type."));
+                Assert.That(ex.Message, Does.Contain("Cannot cast AnnonymousUser to Account."));
             });
         }
 
@@ -885,13 +883,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new AnnonymousUser();
 
             // Act & Assert - Testing with a different unsupported type to ensure the generic error handling works
-            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<AnnonymousUser>());
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnnonymousUser>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to AnnonymousUser"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to AnnonymousUser, casting is not supported for this type."));
+                Assert.That(ex.Message, Does.Contain("Cannot cast AnnonymousUser to AnnonymousUser."));
             });
         }
 
@@ -1072,14 +1068,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.AccountId = 777;
 
             // Act & Assert
-            var ex = Assert.Throws<ArgumentException>(() => _sut.Cast<IAnnonymousUserDTO>());
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<IAnnonymousUserDTO>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error converting AnnonymousUser to IAnnonymousUserDTO"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException, Is.InstanceOf<InvalidCastException>());
-                Assert.That(ex.InnerException!.Message, Does.Contain("Cannot cast AnnonymousUser to IAnnonymousUserDTO, casting is not supported for this type."));
+                Assert.That(ex.Message, Does.Contain("Cannot cast AnnonymousUser to IAnnonymousUserDTO."));
             });
         }
 

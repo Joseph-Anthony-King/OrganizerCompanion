@@ -1335,7 +1335,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockDomainEntity is not supported"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast USAddress to type MockDomainEntity."));
             });
         }
 
@@ -1366,7 +1366,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockUnsupportedType is not supported"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast USAddress to type MockUnsupportedType."));
             });
         }
 
@@ -1387,7 +1387,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Email to type MockUnsupportedType is not supported"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast USAddress to type MockUnsupportedType."));
             });
         }
 

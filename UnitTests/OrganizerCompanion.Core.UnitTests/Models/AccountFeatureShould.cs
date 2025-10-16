@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
@@ -425,7 +426,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         [Category("Models")]
-        public void Cast_ToFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
+        public void Cast_ToFeatureDTO_WithNullFeature_ThrowsNullReferenceException()
         {
             // Arrange
             _sut = new AccountFeature(
@@ -439,19 +440,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             };
 
             // Act & Assert
-            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<FeatureDTO>());
+            var ex = Assert.Throws<NullReferenceException>(() => _sut.Cast<FeatureDTO>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error Feature Email to type FeatureDTO"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException, Is.InstanceOf<NullReferenceException>());
+                Assert.That(ex.Message, Does.Contain("Object reference not set to an instance of an object."));
             });
         }
 
         [Test]
         [Category("Models")]
-        public void Cast_ToIFeatureDTO_WithNullFeature_ThrowsInvalidCastException()
+        public void Cast_ToIFeatureDTO_WithNullFeature_ThrowsNullReferenceException()
         {
             // Arrange
             _sut = new AccountFeature(
@@ -465,13 +464,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             };
 
             // Act & Assert
-            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<IFeatureDTO>());
+            var ex = Assert.Throws<NullReferenceException>(() => _sut.Cast<IFeatureDTO>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Error Feature Email to type IFeatureDTO"));
-                Assert.That(ex.InnerException, Is.Not.Null);
-                Assert.That(ex.InnerException, Is.InstanceOf<NullReferenceException>());
+                Assert.That(ex.Message, Does.Contain("Object reference not set to an instance of an object."));
             });
         }
 
@@ -530,7 +527,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type Account, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type Account."));
             });
         }
 
@@ -555,7 +552,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type User, casting is not supported for this type"));
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type User."));
             });
         }
 
@@ -704,6 +701,187 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(dto.FeatureName, Is.EqualTo("Max ID Test"));
                 Assert.That(dto.IsEnabled, Is.True);
             });
+        }
+        
+        [Test]
+        [Category("Models")]
+        public void ExplicitInterfaceFeature_CanBeSetAndRetrieved()
+        {
+            // Arrange
+            var feature = new Feature(123, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            IAccountFeature accountFeature = _sut;
+
+            // Act
+            accountFeature.Feature = feature;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Feature, Is.EqualTo(feature));
+                Assert.That(_sut.Feature, Is.EqualTo(feature));
+                Assert.That(_sut.FeatureId, Is.EqualTo(123));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void ExplicitInterfaceAccount_CanBeSetAndRetrieved()
+        {
+            // Arrange
+            var account = new Account { Id = 456, AccountName = "Test Account" };
+            IAccountFeature accountFeature = _sut;
+
+            // Act
+            accountFeature.Account = account;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Account, Is.EqualTo(account));
+                Assert.That(_sut.Account, Is.EqualTo(account));
+                Assert.That(_sut.AccountId, Is.EqualTo(456));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void ExplicitInterfaceFeature_WithNullValue_SetsToNull()
+        {
+            // Arrange
+            IAccountFeature accountFeature = _sut;
+
+            // Act
+            accountFeature.Feature = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Feature, Is.Null);
+                Assert.That(_sut.FeatureId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void ExplicitInterfaceAccount_WithNullValue_SetsToNull()
+        {
+            // Arrange
+            IAccountFeature accountFeature = _sut;
+
+            // Act
+            accountFeature.Account = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Account, Is.Null);
+                Assert.That(_sut.AccountId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Account_CanBeSetAndRetrieved()
+        {
+            // Arrange
+            var account = new Account { Id = 789, AccountName = "Test Account" };
+
+            // Act
+            _sut.Account = account;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Account, Is.EqualTo(account));
+                Assert.That(_sut.AccountId, Is.EqualTo(789));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Account_WithNullValue_SetsAccountIdToZero()
+        {
+            // Arrange
+            _sut.AccountId = 999; // Set to non-zero first
+
+            // Act
+            _sut.Account = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Account, Is.Null);
+                Assert.That(_sut.AccountId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Feature_CanBeSetAndRetrieved()
+        {
+            // Arrange
+            var feature = new Feature(101, "Another Feature", false, false, 0, null, DateTime.Now, DateTime.Now);
+
+            // Act
+            _sut.Feature = feature;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Feature, Is.EqualTo(feature));
+                Assert.That(_sut.FeatureId, Is.EqualTo(101));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Feature_WithNullValue_SetsFeatureIdToZero()
+        {
+            // Arrange
+            _sut.FeatureId = 888; // Set to non-zero first
+
+            // Act
+            _sut.Feature = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Feature, Is.Null);
+                Assert.That(_sut.FeatureId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test]
+        [Category("Models")]
+        public void Properties_SetDateModified_WhenChanged()
+        {
+            // Arrange
+            var initialDateModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(10); // Ensure time difference
+
+            // Act & Assert - Test each property setter
+            _sut.Id = 100;
+            Assert.That(_sut.DateModified, Is.Not.EqualTo(initialDateModified));
+            
+            var afterIdChange = _sut.DateModified;
+            System.Threading.Thread.Sleep(10);
+            
+            _sut.AccountId = 200;
+            Assert.That(_sut.DateModified, Is.Not.EqualTo(afterIdChange));
+            
+            var afterAccountIdChange = _sut.DateModified;
+            System.Threading.Thread.Sleep(10);
+            
+            _sut.FeatureId = 300;
+            Assert.That(_sut.DateModified, Is.Not.EqualTo(afterAccountIdChange));
         }
     }
 }

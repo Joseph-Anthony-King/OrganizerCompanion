@@ -1387,8 +1387,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
             Assert.Multiple(() =>
             {
-                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type MockDomainEntity"));
-                Assert.That(exception.Message, Contains.Substring("is not supported"));
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type MockDomainEntity."));
             });
         }
 
@@ -1538,8 +1537,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
             Assert.Multiple(() =>
             {
-                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type AnotherMockEntity"));
-                Assert.That(exception.Message, Contains.Substring("is not supported"));
+                Assert.That(exception.Message, Contains.Substring("Cannot cast Email to type AnotherMockEntity."));
             });
         }
 

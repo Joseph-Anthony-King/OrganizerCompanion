@@ -80,7 +80,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(1, int.MaxValue, ErrorMessage = "ID must be a positive number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
         public int Id
         {
             get => _id;
@@ -337,11 +337,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                     };
                     return (T)(IDomainEntity)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Organization to type {typeof(T).Name}, casting is not supported for this type");
+                else throw new InvalidCastException($"Cannot cast Organization to type {typeof(T).Name}.");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw new InvalidCastException($"Error casting Organization to type {typeof(T).Name}: {ex.Message}", ex);
+                throw;
             }
         }
 

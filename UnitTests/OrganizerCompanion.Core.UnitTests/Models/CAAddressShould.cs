@@ -828,7 +828,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting CAAddress to type MockDomainEntity: Cannot cast CAAddress to type MockDomainEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast CAAddress to type MockDomainEntity."));
             });
         }
 
@@ -849,7 +849,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Error casting CAAddress to type AnotherMockEntity: Cannot cast CAAddress to type AnotherMockEntity, casting is not supported for this type"));
+                Assert.That(exception.Message, Does.Contain("Cannot cast CAAddress to type AnotherMockEntity."));
             });
         }
 
