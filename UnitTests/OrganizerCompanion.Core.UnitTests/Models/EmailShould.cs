@@ -254,32 +254,36 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void IsConfirmed_ToggleMultipleTimes_ShouldUpdateDateModifiedEachTime()
-        {
-            // Arrange
-            _sut = new Email();
+    {
+      // Arrange
+      _sut = new Email();
             var initialTime = DateTime.Now;
 
             // Act & Assert - Test sequential IsConfirmed changes update DateModified
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
             var firstModified = _sut.DateModified;
-            Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
-            Assert.That(_sut.IsConfirmed, Is.True);
-
-            System.Threading.Thread.Sleep(1);
+      Assert.Multiple(() =>
+      {
+        Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
+        Assert.That(_sut.IsConfirmed, Is.True);
+      });
+      System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = false;
             var secondModified = _sut.DateModified;
-            Assert.That(secondModified, Is.GreaterThan(firstModified));
-            Assert.That(_sut.IsConfirmed, Is.False);
-
-            System.Threading.Thread.Sleep(1);
+      Assert.Multiple(() =>
+      {
+        Assert.That(secondModified, Is.GreaterThan(firstModified));
+        Assert.That(_sut.IsConfirmed, Is.False);
+      });
+      System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
             var thirdModified = _sut.DateModified;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
             Assert.That(_sut.IsConfirmed, Is.True);
-        }
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange

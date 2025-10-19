@@ -474,9 +474,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test]
         [Category("Models")]
         public void Properties_CanBeSetMultipleTimes()
-        {
-            // Arrange
-            _sut = new AnnonymousUser();
+    {
+      // Arrange
+      _sut = new AnnonymousUser();
             var firstDate = new DateTime(2023, 1, 1);
             var secondDate = new DateTime(2023, 2, 1);
 
@@ -513,13 +513,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.EqualTo(firstDate));
 
             _sut.DateModified = secondDate;
-            Assert.That(_sut.DateModified, Is.EqualTo(secondDate));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.DateModified, Is.EqualTo(secondDate));
 
-            // DateCreated is set during construction and cannot be modified afterward
-            Assert.That(_sut.DateCreated, Is.Not.EqualTo(default(DateTime)));
-        }
+        // DateCreated is set during construction and cannot be modified afterward
+        Assert.That(_sut.DateCreated, Is.Not.EqualTo(default(DateTime)));
+      });
+    }
 
-        [Test]
+    [Test]
         [Category("Models")]
         public void Id_Setter_UpdatesDateModified_OnEachCall()
         {

@@ -2480,13 +2480,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.DoesNotThrow(() =>
             {
                 for (int i = 0; i < iterations; i++)
-                {
-                    var dto = _sut.Cast<UserDTO>();
+              {
+                var dto = _sut.Cast<UserDTO>();
                     var iDto = _sut.Cast<IUserDTO>();
-                    
-                    Assert.That(dto, Is.Not.Null);
-                    Assert.That(iDto, Is.Not.Null);
-                }
+                Assert.Multiple(() =>
+                {
+                  Assert.That(dto, Is.Not.Null);
+                  Assert.That(iDto, Is.Not.Null);
+                });
+              }
             });
         }
         #endregion

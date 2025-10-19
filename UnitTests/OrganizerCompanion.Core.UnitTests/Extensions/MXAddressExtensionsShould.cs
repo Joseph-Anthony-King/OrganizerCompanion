@@ -39,23 +39,26 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeMXAddress_WithValidDomainMXAddress_ShouldReturnTypeMXAddress()
-        {
-            // Act
-            var result = _sut.AsTypeMXAddress();
+    {
+      // Act
+      var result = _sut.AsTypeMXAddress();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Street, Is.EqualTo("Calle Principal 123"));
-            Assert.That(result.Neighborhood, Is.EqualTo("Centro"));
-            Assert.That(result.PostalCode, Is.EqualTo("01000"));
-            Assert.That(result.City, Is.EqualTo("Ciudad de México"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result.Street, Is.EqualTo("Calle Principal 123"));
+        Assert.That(result.Neighborhood, Is.EqualTo("Centro"));
+        Assert.That(result.PostalCode, Is.EqualTo("01000"));
+        Assert.That(result.City, Is.EqualTo("Ciudad de México"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainMXAddress_WithDomainMXAddressAsTypeMXAddress_ShouldReturnDomainMXAddress()
-        {
-            // Arrange
-            Interfaces.Type.IMXAddress typeMXAddressFromDomain = _sut;
+    {
+      // Arrange
+      Interfaces.Type.IMXAddress typeMXAddressFromDomain = _sut;
 
             // Act
             var result = typeMXAddressFromDomain.AsDomainMXAddress();
@@ -63,13 +66,16 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(_sut));
-            Assert.That(result!.Street, Is.EqualTo("Calle Principal 123"));
-            Assert.That(result.Neighborhood, Is.EqualTo("Centro"));
-            Assert.That(result.PostalCode, Is.EqualTo("01000"));
-            Assert.That(result.City, Is.EqualTo("Ciudad de México"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result!.Street, Is.EqualTo("Calle Principal 123"));
+        Assert.That(result.Neighborhood, Is.EqualTo("Centro"));
+        Assert.That(result.PostalCode, Is.EqualTo("01000"));
+        Assert.That(result.City, Is.EqualTo("Ciudad de México"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainMXAddress_WithPureTypeMXAddress_ShouldReturnNull()
         {
             // Arrange
@@ -84,9 +90,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeMXAddresses_WithListOfDomainMXAddresses_ShouldConvertToTypeMXAddresses()
-        {
-            // Arrange
-            var domainMXAddress2 = new MXAddress()
+    {
+      // Arrange
+      var domainMXAddress2 = new MXAddress()
             {
                 Street = "Calle Juárez 789",
                 Neighborhood = "Zona Centro",
@@ -103,16 +109,19 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0]?.Street, Is.EqualTo("Calle Principal 123"));
-            Assert.That(result[0]?.Neighborhood, Is.EqualTo("Centro"));
-            Assert.That(result[0]?.City, Is.EqualTo("Ciudad de México"));
-            Assert.That(result[1]?.Street, Is.EqualTo("Calle Juárez 789"));
-            Assert.That(result[1]?.Neighborhood, Is.EqualTo("Zona Centro"));
-            Assert.That(result[1]?.City, Is.EqualTo("Guadalajara"));
-            Assert.That(result[2], Is.Null);
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Street, Is.EqualTo("Calle Principal 123"));
+        Assert.That(result[0]?.Neighborhood, Is.EqualTo("Centro"));
+        Assert.That(result[0]?.City, Is.EqualTo("Ciudad de México"));
+        Assert.That(result[1]?.Street, Is.EqualTo("Calle Juárez 789"));
+        Assert.That(result[1]?.Neighborhood, Is.EqualTo("Zona Centro"));
+        Assert.That(result[1]?.City, Is.EqualTo("Guadalajara"));
+        Assert.That(result[2], Is.Null);
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsTypeMXAddresses_WithEmptyList_ShouldReturnEmptyList()
         {
             // Arrange
@@ -128,9 +137,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsDomainMXAddresses_WithListContainingDomainMXAddresses_ShouldReturnOnlyDomainMXAddresses()
-        {
-            // Arrange
-            var domainMXAddress2 = new MXAddress()
+    {
+      // Arrange
+      var domainMXAddress2 = new MXAddress()
             {
                 Street = "Avenida Insurgentes 321",
                 Neighborhood = "Condesa",
@@ -153,15 +162,18 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0]?.Street, Is.EqualTo("Calle Principal 123"));
-            Assert.That(result[0]?.Neighborhood, Is.EqualTo("Centro"));
-            Assert.That(result[0]?.City, Is.EqualTo("Ciudad de México"));
-            Assert.That(result[1]?.Street, Is.EqualTo("Avenida Insurgentes 321"));
-            Assert.That(result[1]?.Neighborhood, Is.EqualTo("Condesa"));
-            Assert.That(result[1]?.City, Is.EqualTo("Ciudad de México"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Street, Is.EqualTo("Calle Principal 123"));
+        Assert.That(result[0]?.Neighborhood, Is.EqualTo("Centro"));
+        Assert.That(result[0]?.City, Is.EqualTo("Ciudad de México"));
+        Assert.That(result[1]?.Street, Is.EqualTo("Avenida Insurgentes 321"));
+        Assert.That(result[1]?.Neighborhood, Is.EqualTo("Condesa"));
+        Assert.That(result[1]?.City, Is.EqualTo("Ciudad de México"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainMXAddresses_WithEmptyList_ShouldReturnEmptyList()
         {
             // Arrange

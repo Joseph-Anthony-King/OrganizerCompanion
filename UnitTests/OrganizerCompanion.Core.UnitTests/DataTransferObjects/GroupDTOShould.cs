@@ -27,23 +27,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 AccountNumber = "ACC123"
             };
 
-            _testMembers = new List<ContactDTO>
-            {
-                new ContactDTO
-                {
+            _testMembers =
+            [
+                new() {
                     Id = 1,
                     FirstName = "John",
                     LastName = "Doe",
                     Pronouns = Pronouns.HeHim
                 },
-                new ContactDTO
-                {
+                new() {
                     Id = 2,
                     FirstName = "Jane",
                     LastName = "Smith",
                     Pronouns = Pronouns.SheHer
                 }
-            };
+            ];
 
             _sut = new GroupDTO();
         }
@@ -221,9 +219,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void IGroupDTO_Members_Get_ReturnsCorrectCastedList()
-        {
-            // Arrange
-            _sut.Members = _testMembers;
+    {
+      // Arrange
+      _sut.Members = _testMembers;
             var groupInterface = (IGroupDTO)_sut;
 
             // Act
@@ -232,17 +230,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.That(interfaceMembers, Is.Not.Null);
             Assert.That(interfaceMembers.Count, Is.EqualTo(2));
-            Assert.That(interfaceMembers[0], Is.InstanceOf<IContactDTO>());
-            Assert.That(interfaceMembers[1], Is.InstanceOf<IContactDTO>());
-            Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
+      Assert.Multiple(() =>
+      {
+        Assert.That(interfaceMembers[0], Is.InstanceOf<IContactDTO>());
+        Assert.That(interfaceMembers[1], Is.InstanceOf<IContactDTO>());
+      });
+      Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
             Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
-        }
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void IGroupDTO_Members_Set_UpdatesMembers()
-        {
-            // Arrange
-            var beforeModified = DateTime.Now;
+    {
+      // Arrange
+      var beforeModified = DateTime.Now;
             var groupInterface = (IGroupDTO)_sut;
             var interfaceMembers = _testMembers.Cast<IContactDTO>().ToList();
 
@@ -253,18 +254,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
             Assert.That(_sut.Members.Count, Is.EqualTo(2));
-            Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
-            Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
+        Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
+        Assert.That(_sut.DateModified, Is.Not.Null);
+      });
+      Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
-        }
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void IGroupDTO_Members_SetEmptyList_UpdatesCorrectly()
-        {
-            // Arrange
-            var beforeModified = DateTime.Now;
+    {
+      // Arrange
+      var beforeModified = DateTime.Now;
             var groupInterface = (IGroupDTO)_sut;
             var emptyInterfaceMembers = new List<IContactDTO>();
 
@@ -274,17 +278,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
-            Assert.That(_sut.Members.Count, Is.EqualTo(0));
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Members.Count, Is.EqualTo(0));
+        Assert.That(_sut.DateModified, Is.Not.Null);
+      });
+      Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
-        }
+    }
 
-        #endregion
+    #endregion
 
-        #region Explicit Interface Implementation Tests - Account
+    #region Explicit Interface Implementation Tests - Account
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void IGroupDTO_Account_Get_ReturnsCorrectValue()
         {
             // Arrange
@@ -575,9 +582,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void Id_HasCorrectRangeAttribute()
-        {
-            // Arrange
-            var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.Id));
+    {
+      // Arrange
+      var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.Id));
             
             // Act
             var rangeAttribute = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false)
@@ -585,28 +592,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             
             // Assert
             Assert.That(rangeAttribute, Is.Not.Null);
-            Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
-            Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
-            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AccountId_HasCorrectRangeAttribute()
-        {
-            // Arrange
-            var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.AccountId));
-            
-            // Act
-            var rangeAttribute = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false)
-                .FirstOrDefault() as System.ComponentModel.DataAnnotations.RangeAttribute;
-            
-            // Assert
-            Assert.That(rangeAttribute, Is.Not.Null);
-            Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
-            Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
-            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Account Id must be a non-negative number."));
-        }
-
-        #endregion
+      Assert.Multiple(() =>
+      {
+        Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
+        Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
+        Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
+      });
     }
+
+    [Test, Category("DataTransferObjects")]
+        public void AccountId_HasCorrectRangeAttribute()
+    {
+      // Arrange
+      var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.AccountId));
+            
+            // Act
+            var rangeAttribute = property?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false)
+                .FirstOrDefault() as System.ComponentModel.DataAnnotations.RangeAttribute;
+            
+            // Assert
+            Assert.That(rangeAttribute, Is.Not.Null);
+      Assert.Multiple(() =>
+      {
+        Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
+        Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
+        Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Account Id must be a non-negative number."));
+      });
+    }
+
+    #endregion
+  }
 }

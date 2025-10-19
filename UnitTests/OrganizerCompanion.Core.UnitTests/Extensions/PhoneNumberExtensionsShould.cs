@@ -26,18 +26,21 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypePhoneNumber_WithValidDomainPhoneNumber_ShouldReturnTypePhoneNumber()
-        {
-            // Act
-            var result = _domainPhoneNumber.AsTypePhoneNumber();
+    {
+      // Act
+      var result = _domainPhoneNumber.AsTypePhoneNumber();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Phone, Is.EqualTo("+1-555-123-4567"));
-            Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-            Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result.Phone, Is.EqualTo("+1-555-123-4567"));
+        Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+        Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainPhoneNumber_WithDomainPhoneNumberAsTypePhoneNumber_ShouldReturnDomainPhoneNumber()
         {
             // Arrange
@@ -67,9 +70,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypePhoneNumbers_WithListOfDomainPhoneNumbers_ShouldConvertToTypePhoneNumbers()
-        {
-            // Arrange
-            var domainPhoneNumber2 = new PhoneNumber(2, "+1-555-111-2222", OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Countries.Canada, 0, null, null, DateTime.Now, DateTime.Now);
+    {
+      // Arrange
+      var domainPhoneNumber2 = new PhoneNumber(2, "+1-555-111-2222", OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Countries.Canada, 0, null, null, DateTime.Now, DateTime.Now);
             var domainPhoneNumbers = new List<IPhoneNumber?> { _domainPhoneNumber, domainPhoneNumber2, null };
 
             // Act
@@ -78,14 +81,17 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
-            Assert.That(result[0]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-            Assert.That(result[1]?.Phone, Is.EqualTo("+1-555-111-2222"));
-            Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
-            Assert.That(result[2], Is.Null);
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
+        Assert.That(result[0]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+        Assert.That(result[1]?.Phone, Is.EqualTo("+1-555-111-2222"));
+        Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
+        Assert.That(result[2], Is.Null);
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsTypePhoneNumbers_WithEmptyList_ShouldReturnEmptyList()
         {
             // Arrange
@@ -101,9 +107,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsDomainPhoneNumbers_WithListContainingDomainPhoneNumbers_ShouldReturnOnlyDomainPhoneNumbers()
-        {
-            // Arrange
-            var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Cell, OrganizerCompanion.Core.Enums.Countries.Mexico, 0, null, null, DateTime.Now, DateTime.Now);
+    {
+      // Arrange
+      var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Cell, OrganizerCompanion.Core.Enums.Countries.Mexico, 0, null, null, DateTime.Now, DateTime.Now);
             var typePhoneNumbers = new List<Interfaces.Type.IPhoneNumber?> 
             { 
                 _domainPhoneNumber,         // This is a domain phone number (should be included)
@@ -118,13 +124,16 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
-            Assert.That(result[0]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-            Assert.That(result[1]?.Phone, Is.EqualTo("+1-555-333-4444"));
-            Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
+        Assert.That(result[0]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+        Assert.That(result[1]?.Phone, Is.EqualTo("+1-555-333-4444"));
+        Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainPhoneNumbers_WithOnlyPureTypePhoneNumbers_ShouldReturnEmptyList()
         {
             // Arrange
@@ -169,21 +178,24 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypePhoneNumber_WithNullPhone_ShouldReturnTypePhoneNumber()
-        {
-            // Arrange
-            var domainPhoneWithNull = new PhoneNumber(4, null, OrganizerCompanion.Core.Enums.Types.Other, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, DateTime.Now, DateTime.Now);
+    {
+      // Arrange
+      var domainPhoneWithNull = new PhoneNumber(4, null, OrganizerCompanion.Core.Enums.Types.Other, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, DateTime.Now, DateTime.Now);
 
             // Act
             var result = domainPhoneWithNull.AsTypePhoneNumber();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Phone, Is.Null);
-            Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
-            Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result.Phone, Is.Null);
+        Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+        Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsTypePhoneNumbers_WithNullPhones_ShouldHandleNullValues()
         {
             // Arrange

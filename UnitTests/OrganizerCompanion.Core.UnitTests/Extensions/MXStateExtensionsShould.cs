@@ -155,15 +155,18 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
             // Act & Assert
             foreach (var state in allStates)
-            {
-                var model = state.ToStateModel();
+      {
+        var model = state.ToStateModel();
                 
                 Assert.That(model, Is.Not.Null);
-                Assert.That(model.Name, Is.Not.Null.And.Not.Empty);
-                Assert.That(model.Abbreviation, Is.Not.Null.And.Not.Empty);
-                Assert.That(model.Abbreviation, Has.Length.EqualTo(2));
-            }
-        }
+        Assert.Multiple(() =>
+        {
+          Assert.That(model.Name, Is.Not.Null.And.Not.Empty);
+          Assert.That(model.Abbreviation, Is.Not.Null.And.Not.Empty);
+        });
+        Assert.That(model.Abbreviation, Has.Length.EqualTo(2));
+      }
+    }
 
         [Test, Category("Extensions")]
         public void ToStateModel_WithInvalidState_ShouldReturnModelWithEnumNameAndEmptyAbbreviation()

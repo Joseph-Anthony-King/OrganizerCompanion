@@ -391,7 +391,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void DateCreated_ShouldGetAndSetValue()
         {
             // Arrange
-            DateTime expectedDateCreated = new DateTime(2023, 10, 15, 14, 30, 0);
+            DateTime expectedDateCreated = new(2023, 10, 15, 14, 30, 0);
 
             // Act
             _sut.DateCreated = expectedDateCreated;
@@ -404,7 +404,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void DateModified_ShouldGetAndSetValue()
         {
             // Arrange
-            DateTime expectedDateModified = new DateTime(2023, 10, 16, 10, 15, 0);
+            DateTime expectedDateModified = new(2023, 10, 16, 10, 15, 0);
 
             // Act
             _sut.DateModified = expectedDateModified;

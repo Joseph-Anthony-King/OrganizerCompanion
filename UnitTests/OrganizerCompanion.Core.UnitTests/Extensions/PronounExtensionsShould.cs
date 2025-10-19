@@ -298,17 +298,20 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void GetFormattedSubject_WithUndefinedPronounValue_ShouldFallbackToCapitalizedEnumString()
-        {
-            // Arrange - Using an undefined enum value (casting from int)
-            var undefinedPronoun = (Pronouns)999;
+    {
+      // Arrange - Using an undefined enum value (casting from int)
+      var undefinedPronoun = (Pronouns)999;
 
             // Act
             var resultCapitalized = undefinedPronoun.GetFormattedSubject(true);
             var resultLowercase = undefinedPronoun.GetFormattedSubject(false);
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(resultCapitalized, Is.EqualTo("999"));
-            Assert.That(resultLowercase, Is.EqualTo("999"));
-        }
+        // Assert
+        Assert.That(resultCapitalized, Is.EqualTo("999"));
+        Assert.That(resultLowercase, Is.EqualTo("999"));
+      });
     }
+  }
 }

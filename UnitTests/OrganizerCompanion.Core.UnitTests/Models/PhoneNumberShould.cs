@@ -1479,7 +1479,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockDomainEntity."));
+                Assert.That(exception.Message, Does.Contain("Cannot cast PhoneNumber to type MockDomainEntity."));
             });
         }
 
@@ -1510,7 +1510,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockUnsupportedType."));
+                Assert.That(exception.Message, Does.Contain("Cannot cast PhoneNumber to type MockUnsupportedType."));
             });
         }
 
@@ -1531,7 +1531,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Cannot cast Phone to type MockUnsupportedType."));
+                Assert.That(exception.Message, Does.Contain("Cannot cast PhoneNumber to type MockUnsupportedType."));
             });
         }
 

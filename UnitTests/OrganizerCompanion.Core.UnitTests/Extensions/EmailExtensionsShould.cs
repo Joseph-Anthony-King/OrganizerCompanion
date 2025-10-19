@@ -28,17 +28,20 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeEmail_WithValidDomainEmail_ShouldReturnTypeEmail()
-        {
-            // Act
-            var result = _sut.AsTypeEmail();
+    {
+      // Act
+      var result = _sut.AsTypeEmail();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
-            Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
+        Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainEmail_WithDomainEmailAsTypeEmail_ShouldReturnDomainEmail()
         {
             // Arrange
@@ -94,9 +97,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeEmails_WithListOfDomainEmails_ShouldConvertToTypeEmails()
-        {
-            // Arrange
-            var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home);
+    {
+      // Arrange
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home);
             var domainEmails = new List<IEmail?> { _sut, domainEmail2, null };
 
             // Act
@@ -105,12 +108,15 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0]?.EmailAddress, Is.EqualTo("test@example.com"));
-            Assert.That(result[1]?.EmailAddress, Is.EqualTo("test2@example.com"));
-            Assert.That(result[2], Is.Null);
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.EmailAddress, Is.EqualTo("test@example.com"));
+        Assert.That(result[1]?.EmailAddress, Is.EqualTo("test2@example.com"));
+        Assert.That(result[2], Is.Null);
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsTypeEmails_WithEmptyList_ShouldReturnEmptyList()
         {
             // Arrange
@@ -126,9 +132,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
-        {
-            // Arrange
-            var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Cell);
+    {
+      // Arrange
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Cell);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)
@@ -143,11 +149,14 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0]?.EmailAddress, Is.EqualTo("test@example.com"));
-            Assert.That(result[1]?.EmailAddress, Is.EqualTo("test2@example.com"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.EmailAddress, Is.EqualTo("test@example.com"));
+        Assert.That(result[1]?.EmailAddress, Is.EqualTo("test2@example.com"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainEmails_WithOnlyPureTypeEmails_ShouldReturnEmptyList()
         {
             // Arrange

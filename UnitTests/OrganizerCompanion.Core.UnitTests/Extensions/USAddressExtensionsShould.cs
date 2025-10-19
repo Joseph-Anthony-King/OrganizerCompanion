@@ -37,22 +37,25 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeUSAddress_WithValidDomainUSAddress_ShouldReturnTypeUSAddress()
-        {
-            // Act
-            var result = _sut.AsTypeUSAddress();
+    {
+      // Act
+      var result = _sut.AsTypeUSAddress();
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Street1, Is.EqualTo("123 Main St"));
-            Assert.That(result.City, Is.EqualTo("Anytown"));
-            Assert.That(result.ZipCode, Is.EqualTo("12345"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result.Street1, Is.EqualTo("123 Main St"));
+        Assert.That(result.City, Is.EqualTo("Anytown"));
+        Assert.That(result.ZipCode, Is.EqualTo("12345"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainUSAddress_WithDomainUSAddressAsTypeUSAddress_ShouldReturnDomainUSAddress()
-        {
-            // Arrange
-            Interfaces.Type.IUSAddress typeUSAddressFromDomain = _sut;
+    {
+      // Arrange
+      Interfaces.Type.IUSAddress typeUSAddressFromDomain = _sut;
 
             // Act
             var result = typeUSAddressFromDomain.AsDomainUSAddress();
@@ -60,12 +63,15 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Is.EqualTo(_sut));
-            Assert.That(result!.Street1, Is.EqualTo("123 Main St"));
-            Assert.That(result.City, Is.EqualTo("Anytown"));
-            Assert.That(result.ZipCode, Is.EqualTo("12345"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result!.Street1, Is.EqualTo("123 Main St"));
+        Assert.That(result.City, Is.EqualTo("Anytown"));
+        Assert.That(result.ZipCode, Is.EqualTo("12345"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainUSAddress_WithPureTypeUSAddress_ShouldReturnNull()
         {
             // Arrange
@@ -80,9 +86,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsTypeUSAddresses_WithListOfDomainUSAddresses_ShouldConvertToTypeUSAddresses()
-        {
-            // Arrange
-            var domainUSAddress2 = new USAddress()
+    {
+      // Arrange
+      var domainUSAddress2 = new USAddress()
             {
                 Street1 = "789 Pine St",
                 City = "Somewhere", 
@@ -98,14 +104,17 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0]?.Street1, Is.EqualTo("123 Main St"));
-            Assert.That(result[0]?.City, Is.EqualTo("Anytown"));
-            Assert.That(result[1]?.Street1, Is.EqualTo("789 Pine St"));
-            Assert.That(result[1]?.City, Is.EqualTo("Somewhere"));
-            Assert.That(result[2], Is.Null);
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Street1, Is.EqualTo("123 Main St"));
+        Assert.That(result[0]?.City, Is.EqualTo("Anytown"));
+        Assert.That(result[1]?.Street1, Is.EqualTo("789 Pine St"));
+        Assert.That(result[1]?.City, Is.EqualTo("Somewhere"));
+        Assert.That(result[2], Is.Null);
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsTypeUSAddresses_WithEmptyList_ShouldReturnEmptyList()
         {
             // Arrange
@@ -121,9 +130,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
         [Test, Category("Extensions")]
         public void AsDomainUSAddresses_WithListContainingDomainUSAddresses_ShouldReturnOnlyDomainUSAddresses()
-        {
-            // Arrange
-            var domainUSAddress2 = new USAddress()
+    {
+      // Arrange
+      var domainUSAddress2 = new USAddress()
             {
                 Street1 = "321 Elm St",
                 City = "Elsewhere",
@@ -145,13 +154,16 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(2));
-            Assert.That(result[0]?.Street1, Is.EqualTo("123 Main St"));
-            Assert.That(result[0]?.City, Is.EqualTo("Anytown"));
-            Assert.That(result[1]?.Street1, Is.EqualTo("321 Elm St"));
-            Assert.That(result[1]?.City, Is.EqualTo("Elsewhere"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Street1, Is.EqualTo("123 Main St"));
+        Assert.That(result[0]?.City, Is.EqualTo("Anytown"));
+        Assert.That(result[1]?.Street1, Is.EqualTo("321 Elm St"));
+        Assert.That(result[1]?.City, Is.EqualTo("Elsewhere"));
+      });
+    }
 
-        [Test, Category("Extensions")]
+    [Test, Category("Extensions")]
         public void AsDomainUSAddresses_WithOnlyPureTypeUSAddresses_ShouldReturnEmptyList()
         {
             // Arrange

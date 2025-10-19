@@ -507,18 +507,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
-        {
-            // Arrange
-            var originalDateCreated = _sut.DateCreated;
+    {
+      // Arrange
+      var originalDateCreated = _sut.DateCreated;
 
             // Act & Assert - DateCreated should not have a public setter
             var propertyInfo = typeof(USAddress).GetProperty(nameof(USAddress.DateCreated));
             Assert.That(propertyInfo, Is.Not.Null);
-            Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
-            Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
+        Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void DateModified_CanBeSetDirectly()
         {
             // Arrange
@@ -1471,13 +1474,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.DoesNotThrow(() =>
             {
                 for (int i = 0; i < iterations; i++)
-                {
-                    var dto = _sut.Cast<USAddressDTO>();
+              {
+                var dto = _sut.Cast<USAddressDTO>();
                     var iDto = _sut.Cast<IUSAddressDTO>();
-                    
-                    Assert.That(dto, Is.Not.Null);
-                    Assert.That(iDto, Is.Not.Null);
-                }
+                Assert.Multiple(() =>
+                {
+                  Assert.That(dto, Is.Not.Null);
+                  Assert.That(iDto, Is.Not.Null);
+                });
+              }
             });
         }
         #endregion

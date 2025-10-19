@@ -198,8 +198,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var expectedEmails = new List<EmailDTO>
             {
-                new EmailDTO { Id = 1, EmailAddress = "test1@example.com" },
-                new EmailDTO { Id = 2, EmailAddress = "test2@example.com" }
+                new() { Id = 1, EmailAddress = "test1@example.com" },
+                new() { Id = 2, EmailAddress = "test2@example.com" }
             };
 
             // Act
@@ -216,8 +216,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var expectedPhoneNumbers = new List<PhoneNumberDTO>
             {
-                new PhoneNumberDTO { Id = 1, Phone = "555-0123" },
-                new PhoneNumberDTO { Id = 2, Phone = "555-0456" }
+                new() { Id = 1, Phone = "555-0123" },
+                new() { Id = 2, Phone = "555-0456" }
             };
 
             // Act

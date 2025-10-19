@@ -652,7 +652,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             ));
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object"));
+            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
             Assert.That(ex.InnerException, Is.Not.Null);
             Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
         }
@@ -717,7 +717,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             ));
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object"));
+            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
             Assert.That(ex.InnerException, Is.Not.Null);
             Assert.That(ex.InnerException.Message, Is.EqualTo("Mock exception from Id property"));
         }
@@ -746,7 +746,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             ));
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object"));
+            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
             Assert.That(ex.InnerException, Is.Not.Null);
             Assert.That(ex.InnerException.Message, Is.EqualTo("Object reference not set to an instance of an object."));
         }

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
+﻿using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -28,23 +27,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountNumber = "ACC123"
             };
 
-            _testMembers = new List<Contact>
-            {
-                new Contact
-                {
+            _testMembers =
+            [
+                new() {
                     Id = 1,
                     FirstName = "John",
                     LastName = "Doe",
                     Pronouns = Pronouns.HeHim
                 },
-                new Contact
-                {
+                new() {
                     Id = 2,
                     FirstName = "Jane",
                     LastName = "Smith",
                     Pronouns = Pronouns.SheHer
                 }
-            };
+            ];
 
             _sut = new Group();
         }
@@ -114,7 +111,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 0,
                 name: null,
                 description: null,
-                members: new List<Contact>(),
+                members: [],
                 accountId: 0,
                 account: null,
                 dateCreated: _testDateCreated,
@@ -285,9 +282,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void IGroup_Members_Get_ReturnsCorrectCastedList()
-        {
-            // Arrange
-            _sut.Members = _testMembers;
+    {
+      // Arrange
+      _sut.Members = _testMembers;
             var groupInterface = (IGroup)_sut;
 
             // Act
@@ -296,17 +293,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.That(interfaceMembers, Is.Not.Null);
             Assert.That(interfaceMembers.Count, Is.EqualTo(2));
-            Assert.That(interfaceMembers[0], Is.InstanceOf<IContact>());
-            Assert.That(interfaceMembers[1], Is.InstanceOf<IContact>());
-            Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
+      Assert.Multiple(() =>
+      {
+        Assert.That(interfaceMembers[0], Is.InstanceOf<IContact>());
+        Assert.That(interfaceMembers[1], Is.InstanceOf<IContact>());
+      });
+      Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
             Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
-        }
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void IGroup_Members_Set_UpdatesMembers()
-        {
-            // Arrange
-            var beforeModified = DateTime.Now;
+    {
+      // Arrange
+      var beforeModified = DateTime.Now;
             var groupInterface = (IGroup)_sut;
             var interfaceMembers = _testMembers.Cast<IContact>().ToList();
 
@@ -317,18 +317,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
             Assert.That(_sut.Members.Count, Is.EqualTo(2));
-            Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
-            Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
+        Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
+        Assert.That(_sut.DateModified, Is.Not.Null);
+      });
+      Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
-        }
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void IGroup_Members_SetEmptyList_UpdatesCorrectly()
-        {
-            // Arrange
-            var beforeModified = DateTime.Now;
+    {
+      // Arrange
+      var beforeModified = DateTime.Now;
             var groupInterface = (IGroup)_sut;
             var emptyInterfaceMembers = new List<IContact>();
 
@@ -338,17 +341,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
-            Assert.That(_sut.Members.Count, Is.EqualTo(0));
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Members.Count, Is.EqualTo(0));
+        Assert.That(_sut.DateModified, Is.Not.Null);
+      });
+      Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
-        }
+    }
 
-        #endregion
+    #endregion
 
-        #region IDomainEntity Not Implemented Properties Tests
+    #region IDomainEntity Not Implemented Properties Tests
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void IsCast_Get_ThrowsNotImplementedException()
         {
             // Act & Assert
@@ -482,7 +488,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 3;
             _sut.Name = "Empty Group";
             _sut.Description = "Group with no members";
-            _sut.Members = new List<Contact>();
+            _sut.Members = [];
             _sut.AccountId = 789;
             _sut.Account = null;
             _sut.DateCreated = _testDateCreated;
@@ -546,9 +552,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
-        {
-            // Arrange
-            _sut.Id = 1;
+    {
+      // Arrange
+      _sut.Id = 1;
             _sut.Name = "JSON Test Group";
             _sut.Description = "Group for JSON testing";
             _sut.Members = _testMembers;
@@ -562,24 +568,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(json, Is.Not.Null);
-            Assert.That(json, Is.Not.Empty);
-            Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
-            
-            // Verify the JSON contains expected properties
-            Assert.That(json, Does.Contain("\"id\":1"));
+      Assert.Multiple(() =>
+      {
+        Assert.That(json, Is.Not.Empty);
+        Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+      });
+
+      // Verify the JSON contains expected properties
+      Assert.That(json, Does.Contain("\"id\":1"));
             Assert.That(json, Does.Contain("\"name\":\"JSON Test Group\""));
             Assert.That(json, Does.Contain("\"description\":\"Group for JSON testing\""));
             Assert.That(json, Does.Contain("\"accountId\":123"));
-        }
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ToJson_WithNullValues_ReturnsValidJsonString()
-        {
-            // Arrange
-            _sut.Id = 0;
+    {
+      // Arrange
+      _sut.Id = 0;
             _sut.Name = null;
             _sut.Description = null;
-            _sut.Members = new List<Contact>();
+            _sut.Members = [];
             _sut.AccountId = 0;
             _sut.Account = null;
             _sut.DateModified = null;
@@ -589,22 +598,25 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(json, Is.Not.Null);
-            Assert.That(json, Is.Not.Empty);
-            Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
-            
-            // Verify the JSON handles nulls appropriately
-            Assert.That(json, Does.Contain("\"id\":0"));
+      Assert.Multiple(() =>
+      {
+        Assert.That(json, Is.Not.Empty);
+        Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+      });
+
+      // Verify the JSON handles nulls appropriately
+      Assert.That(json, Does.Contain("\"id\":0"));
             Assert.That(json, Does.Contain("\"name\":null"));
             Assert.That(json, Does.Contain("\"description\":null"));
             Assert.That(json, Does.Contain("\"accountId\":0"));
             Assert.That(json, Does.Contain("\"account\":null"));
-        }
+    }
 
-        #endregion
+    #endregion
 
-        #region Interface Implementation Tests
+    #region Interface Implementation Tests
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void Group_ImplementsIGroupInterface()
         {
             // Act & Assert
