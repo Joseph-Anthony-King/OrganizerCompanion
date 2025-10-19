@@ -197,9 +197,9 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
 
     [Test, Category("Extensions")]
         public void AsTypePhoneNumbers_WithNullPhones_ShouldHandleNullValues()
-        {
-            // Arrange
-            var domainPhoneWithNull = new PhoneNumber(5, null, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, DateTime.Now, DateTime.Now);
+    {
+      // Arrange
+      var domainPhoneWithNull = new PhoneNumber(5, null, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, DateTime.Now, DateTime.Now);
             var domainPhoneNumbers = new List<IPhoneNumber?> { _domainPhoneNumber, domainPhoneWithNull, null };
 
             // Act
@@ -208,14 +208,17 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             // Assert
             Assert.That(result, Is.Not.Null);
             Assert.That(result, Has.Count.EqualTo(3));
-            Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
-            Assert.That(result[1]?.Phone, Is.Null);
-            Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-            Assert.That(result[2], Is.Null);
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0]?.Phone, Is.EqualTo("+1-555-123-4567"));
+        Assert.That(result[1]?.Phone, Is.Null);
+        Assert.That(result[1]?.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
+        Assert.That(result[2], Is.Null);
+      });
+    }
 
-        // Mock class to simulate a pure Type.IPhoneNumber implementation
-        private class MockTypePhoneNumber : Interfaces.Type.IPhoneNumber
+    // Mock class to simulate a pure Type.IPhoneNumber implementation
+    private class MockTypePhoneNumber : Interfaces.Type.IPhoneNumber
         {
             public string? Phone { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }

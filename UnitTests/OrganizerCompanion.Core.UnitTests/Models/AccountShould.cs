@@ -630,9 +630,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ParameterizedConstructor_ThrowsException_WhenLinkedEntityIsNull()
-        {
-            // Arrange
-            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+    {
+      // Arrange
+      var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
                 DatabaseType = Enums.SupportedDatabases.SQLServer
@@ -651,13 +651,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
+      Assert.Multiple(() =>
+      {
+        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+        Assert.That(ex.InnerException, Is.Not.Null);
+      });
+      Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
+    }
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-            Assert.That(ex.InnerException, Is.Not.Null);
-            Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
-        }
-
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void JsonConstructor_ThrowsException_WhenInternalExceptionOccurs()
         {
             // Note: This test demonstrates the exception handling structure.
@@ -693,10 +695,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromLinkedEntityId()
-        {
-            // Arrange
-            // Create a mock object that throws an exception when accessing Id
-            var mockEntity = new ThrowingMockEntity();
+    {
+      // Arrange
+      // Create a mock object that throws an exception when accessing Id
+      var mockEntity = new ThrowingMockEntity();
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
@@ -716,17 +718,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
+      Assert.Multiple(() =>
+      {
+        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+        Assert.That(ex.InnerException, Is.Not.Null);
+      });
+      Assert.That(ex.InnerException.Message, Is.EqualTo("Mock exception from Id property"));
+    }
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-            Assert.That(ex.InnerException, Is.Not.Null);
-            Assert.That(ex.InnerException.Message, Is.EqualTo("Mock exception from Id property"));
-        }
-
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromGetType()
-        {
-            // Arrange
-            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+    {
+      // Arrange
+      var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
                 DatabaseType = Enums.SupportedDatabases.SQLServer
@@ -745,13 +749,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
+      Assert.Multiple(() =>
+      {
+        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+        Assert.That(ex.InnerException, Is.Not.Null);
+      });
+      Assert.That(ex.InnerException.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+    }
 
-            Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-            Assert.That(ex.InnerException, Is.Not.Null);
-            Assert.That(ex.InnerException.Message, Is.EqualTo("Object reference not set to an instance of an object."));
-        }
-
-        [Test]
+    [Test]
         [Category("Models")]
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
@@ -1035,21 +1041,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test]
         [Category("Validation")]
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
-        {
-            // Arrange
-            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
+    {
+      // Arrange
+      var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
 
             // Act
             var validationResults = ValidateModel(account);
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
-            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
-            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
-            Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
-        }
+        // Assert
+        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
+        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
+        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
+        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
+      });
+    }
 
-        [Test]
+    [Test]
         [Category("Validation")]
         public void Validation_ShouldFail_WhenLicenseIsInvalidGuid()
         {

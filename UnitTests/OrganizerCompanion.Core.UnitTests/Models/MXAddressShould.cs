@@ -443,18 +443,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
-        {
-            // Arrange
-            var originalDateCreated = _sut.DateCreated;
+    {
+      // Arrange
+      var originalDateCreated = _sut.DateCreated;
 
             // Act & Assert - DateCreated should not have a public setter
             var propertyInfo = typeof(MXAddress).GetProperty(nameof(MXAddress.DateCreated));
             Assert.That(propertyInfo, Is.Not.Null);
-            Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
-            Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
+        Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void DateModified_CanBeSetDirectly()
         {
             // Arrange

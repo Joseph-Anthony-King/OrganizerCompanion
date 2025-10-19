@@ -279,8 +279,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
       System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
             var thirdModified = _sut.DateModified;
-            Assert.That(thirdModified, Is.GreaterThan(secondModified));
-            Assert.That(_sut.IsConfirmed, Is.True);
+      Assert.Multiple(() =>
+      {
+        Assert.That(thirdModified, Is.GreaterThan(secondModified));
+        Assert.That(_sut.IsConfirmed, Is.True);
+      });
     }
 
     [Test, Category("Models")]

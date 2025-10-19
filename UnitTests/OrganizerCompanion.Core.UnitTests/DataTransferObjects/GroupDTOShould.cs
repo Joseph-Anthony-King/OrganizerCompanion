@@ -235,8 +235,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         Assert.That(interfaceMembers[0], Is.InstanceOf<IContactDTO>());
         Assert.That(interfaceMembers[1], Is.InstanceOf<IContactDTO>());
       });
-      Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
-            Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
+      Assert.Multiple(() =>
+      {
+        Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
+        Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
+      });
     }
 
     [Test, Category("DataTransferObjects")]

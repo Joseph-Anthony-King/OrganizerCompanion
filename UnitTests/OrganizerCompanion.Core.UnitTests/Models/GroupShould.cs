@@ -298,8 +298,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         Assert.That(interfaceMembers[0], Is.InstanceOf<IContact>());
         Assert.That(interfaceMembers[1], Is.InstanceOf<IContact>());
       });
-      Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
-            Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
+      Assert.Multiple(() =>
+      {
+        Assert.That(interfaceMembers[0].Id, Is.EqualTo(1));
+        Assert.That(interfaceMembers[1].Id, Is.EqualTo(2));
+      });
     }
 
     [Test, Category("Models")]
