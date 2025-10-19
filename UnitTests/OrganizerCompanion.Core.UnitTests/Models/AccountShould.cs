@@ -1029,7 +1029,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(validationResults, Has.Count.EqualTo(1));
-            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
+            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
         }
 
         [Test]

@@ -27,7 +27,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
             get => _id; 
@@ -71,7 +71,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity ID must be a non-negative number")]
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
         public int LinkedEntityId
         {
             get => _linkedEntityId;
@@ -158,7 +158,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                     };
                     return (T)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Phone to type {typeof(T).Name}.");
+                else throw new InvalidCastException($"Cannot cast PhoneNumber to type {typeof(T).Name}.");
             }
             catch (Exception)
             {

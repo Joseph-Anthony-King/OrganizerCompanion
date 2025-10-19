@@ -26,7 +26,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];

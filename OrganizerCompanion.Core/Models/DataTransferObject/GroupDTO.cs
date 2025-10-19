@@ -45,7 +45,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string ToJson() => throw new NotImplementedException();
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
         [Required, JsonPropertyName("name")]
         public string? Name { get; set; } = null;
@@ -53,7 +53,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? Description { get; set; } = null;
         [Required, JsonPropertyName("members")]
         public List<ContactDTO> Members { get; set; } = [];
-        [JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int AccountId { get; set; } = 0;
         [JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AccountDTO? Account { get; set; } = null;

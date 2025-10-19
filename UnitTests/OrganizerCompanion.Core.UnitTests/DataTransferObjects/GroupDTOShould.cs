@@ -587,7 +587,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(rangeAttribute, Is.Not.Null);
             Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
             Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
-            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
+            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -604,7 +604,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(rangeAttribute, Is.Not.Null);
             Assert.That(rangeAttribute.Minimum, Is.EqualTo(0));
             Assert.That(rangeAttribute.Maximum, Is.EqualTo(int.MaxValue));
-            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Account ID must be a non-negative number"));
+            Assert.That(rangeAttribute.ErrorMessage, Is.EqualTo("Account Id must be a non-negative number."));
         }
 
         #endregion

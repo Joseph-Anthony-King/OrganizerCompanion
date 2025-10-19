@@ -60,7 +60,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             foreach (var result in validationResults)
             {
                 if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
-                    (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                    (result.ErrorMessage?.Contains("Id must be a non-negative number.") == true))
                 {
                     idValidationErrors.Add(result);
                 }
@@ -451,7 +451,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(rangeAttribute, Is.Not.Null);
                 Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
                 Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
-                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("ID must be a non-negative number"));
+                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
             });
         }
 
@@ -508,7 +508,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(isValid, Is.False);
                 Assert.That(validationResults, Has.Count.GreaterThan(0));
-                Assert.That(validationResults.Any(r => r.ErrorMessage?.Contains("ID must be a non-negative number") == true), Is.True);
+                Assert.That(validationResults.Any(r => r.ErrorMessage?.Contains("Id must be a non-negative number.") == true), Is.True);
             });
         }
 
@@ -533,7 +533,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     foreach (var result in validationResults)
                     {
                         if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
-                            (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                            (result.ErrorMessage?.Contains("Id must be a non-negative number.") == true))
                         {
                             idValidationErrors.Add(result);
                         }
@@ -564,7 +564,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     foreach (var result in validationResults)
                     {
                         if (result.MemberNames.Contains(nameof(CAAddressDTO.Id)) || 
-                            (result.ErrorMessage?.Contains("ID must be a non-negative number") == true))
+                            (result.ErrorMessage?.Contains("Id must be a non-negative number.") == true))
                         {
                             idValidationErrors.Add(result);
                         }

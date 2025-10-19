@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
         [Required, JsonPropertyName("accountName")]
         public string? AccountName { get; set; } = null;
@@ -48,7 +48,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public DatabaseConnection? DatabaseConnection { get; set; } = null;
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];
-        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? MainAccountId { get; set; } = null;
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<IAccountDTO>? Accounts { get; set; } = null;

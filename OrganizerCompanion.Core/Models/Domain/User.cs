@@ -67,7 +67,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
         #endregion
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
             get => _id; 
@@ -114,7 +114,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("fullName")]
         public string? FullName => _firstName == null && _middleName == null && _lastName == null ? null :
             _firstName == null || _lastName == null ?
-                throw new ArgumentNullException("FirstName and/or LastName properties cannot be null") :
+                throw new ArgumentNullException("FirstName and/or LastName properties cannot be null.") :
             _middleName == null ?
                     $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
 
@@ -391,7 +391,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 CAAddress caAddress => caAddress.Cast<CAAddressDTO>(),
                 MXAddress mxAddress => mxAddress.Cast<MXAddressDTO>(),
                 USAddress usAddress => usAddress.Cast<USAddressDTO>(),
-                _ => throw new InvalidOperationException($"Unknown address type: {address.GetType().Name}")
+                _ => throw new InvalidOperationException($"Unknown address type: {address.GetType().Name}.")
             };
         }
 

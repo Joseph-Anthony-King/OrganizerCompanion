@@ -17,7 +17,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         public T Cast<T>() where T : IDomainEntity
         {
-            throw new NotImplementedException("Cast method not implemented for OrganizationDTO");
+            throw new NotImplementedException("Cast method not implemented for OrganizationDTO.");
         }
 
         public string ToJson()

@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
         [Required, JsonPropertyName("name")]
         public string? Name { get; set; } = null;
@@ -44,7 +44,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         public string? Description { get; set; } = null;
         [Required, JsonPropertyName("members")]
         public List<Contact> Members { get; set; } = [];
-        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account ID must be a non-negative number")]
+        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId { get; set; } = 0;
         [Required, JsonPropertyName("account")]
         public IAccount? Account { get; set; } = null;

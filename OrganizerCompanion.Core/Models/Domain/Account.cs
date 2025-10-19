@@ -56,7 +56,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "ID must be a non-negative number")]
+        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
             get => _id;
@@ -111,7 +111,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "LinkedEntityId must be a non-negative number")]
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "LinkedEntityId must be a non-negative number.")]
         public int LinkedEntityId
         {
             get => _linkedEntityId;
@@ -148,7 +148,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? MainAccountId
         {
             get => _mainAccountId;
@@ -226,7 +226,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
             catch (Exception ex)
             {
-                throw new Exception("Error creating Account object", ex);
+                throw new Exception("Error creating Account object.", ex);
             }
         }
 
@@ -259,7 +259,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
             catch (Exception ex)
             {
-                throw new Exception("Error creating Account object", ex);
+                throw new Exception("Error creating Account object.", ex);
             }
         }
         #endregion
