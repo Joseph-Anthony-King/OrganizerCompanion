@@ -18,8 +18,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
-        private List<Contact>? _assignees = null;
-        private List<Contact>? _contacts = null;
+        private List<Group>? _groups = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private DateTime? _dateCompleted = null;
@@ -29,16 +28,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IContact>? IAssignment.Asssignees
+        List<IGroup>? IAssignment.Groups
         {
-            get => [.. _assignees!.Cast<IContact>()];
-            set => _assignees = [.. value!.Cast<Contact>()];
-        }
-        [JsonIgnore]
-        List<IContact>? IAssignment.Contacts
-        {
-            get => [.. _contacts!.Cast<IContact>()];
-            set => _contacts = [.. value!.Cast<Contact>()];
+            get => [.. _groups!.Cast<IGroup>()];
+            set => _groups = value!.ConvertAll(group => (Group)group);
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -87,26 +80,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("assignees")]
-        public List<Contact>? Asssignees
+        [Required, JsonPropertyName("groups")]
+        public List<Group>? Groups
         {
-            get => _assignees;
+            get => _groups;
             set
             {
-                _assignees ??= [];
-                _assignees = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("contacts")]
-        public List<Contact>? Contacts
-        {
-            get => _contacts;
-            set
-            {
-                _contacts ??= [];
-                _contacts = value;
+                _groups ??= [];
+                _groups = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -170,8 +151,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
-            List<Contact>? asssignees,
-            List<Contact>? contacts,
+            List<Group>? groups,
             bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,
@@ -184,8 +164,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
-            _assignees = asssignees ?? [];
-            _contacts = contacts ?? [];
+            _groups = groups ?? [];
             _isCompleted = isCompleted;
             _dateDue = dateDue;
             _dateCompleted = dateCompleted;
@@ -204,18 +183,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (typeof(T) == typeof(AssignmentDTO) || typeof(T) == typeof(IAssignmentDTO))
                 {
-                    object dto = new AssignmentDTO(
-                        this.Id,
-                        this.Name,
-                        this.Description,
-                        this.Asssignees!.ConvertAll(assignee => assignee.Cast<ContactDTO>()),
-                        this.Contacts!.ConvertAll(contactee => contactee.Cast<ContactDTO>()),
-                        this.IsCompleted,
-                        this.DateDue,
-                        this.DateCompleted,
-                        this.DateCreated,
-                        this.DateModified);
-                    return (T)dto;
+                    // Create AssignmentDTO using default constructor to avoid IsCast property issues
+                    var dto = new AssignmentDTO();
+                    dto.Id = this.Id;
+                    dto.Name = this.Name;
+                    dto.Description = this.Description;
+                    dto.Groups = this.Groups?.ConvertAll(group => group.Cast<GroupDTO>());
+                    dto.IsCompleted = this.IsCompleted;
+                    dto.DateDue = this.DateDue;
+                    dto.DateModified = this.DateModified;
+                    // Note: DateCompleted and DateCreated are read-only properties in AssignmentDTO
+                    
+                    return (T)(object)dto;
                 }
                 else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
             }

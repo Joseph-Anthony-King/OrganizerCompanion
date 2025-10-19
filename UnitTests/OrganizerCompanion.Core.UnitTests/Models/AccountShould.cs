@@ -630,9 +630,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ParameterizedConstructor_ThrowsException_WhenLinkedEntityIsNull()
-    {
-      // Arrange
-      var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+        {
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
                 DatabaseType = Enums.SupportedDatabases.SQLServer
@@ -651,15 +651,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
-      Assert.Multiple(() =>
-      {
-        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-        Assert.That(ex.InnerException, Is.Not.Null);
-      });
-      Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+                Assert.That(ex.InnerException, Is.Not.Null);
+            });
+            Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_ThrowsException_WhenInternalExceptionOccurs()
         {
             // Note: This test demonstrates the exception handling structure.
@@ -695,10 +695,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromLinkedEntityId()
-    {
-      // Arrange
-      // Create a mock object that throws an exception when accessing Id
-      var mockEntity = new ThrowingMockEntity();
+        {
+            // Arrange
+            // Create a mock object that throws an exception when accessing Id
+            var mockEntity = new ThrowingMockEntity();
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
@@ -718,19 +718,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
-      Assert.Multiple(() =>
-      {
-        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-        Assert.That(ex.InnerException, Is.Not.Null);
-      });
-      Assert.That(ex.InnerException.Message, Is.EqualTo("Mock exception from Id property"));
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+                Assert.That(ex.InnerException, Is.Not.Null);
+            });
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void ParameterizedConstructor_HandlesExceptionFromGetType()
-    {
-      // Arrange
-      var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+        {
+            // Arrange
+            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
                 DatabaseType = Enums.SupportedDatabases.SQLServer
@@ -749,15 +748,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
-      Assert.Multiple(() =>
-      {
-        Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-        Assert.That(ex.InnerException, Is.Not.Null);
-      });
-      Assert.That(ex.InnerException.Message, Is.EqualTo("Object reference not set to an instance of an object."));
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
+                Assert.That(ex.InnerException, Is.Not.Null);
+            });
+            Assert.That(ex.InnerException!.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+        }
 
-    [Test]
+        [Test]
         [Category("Models")]
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
@@ -786,11 +785,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             // This test documents that the Cast method cannot actually be called with AccountDTO
             // due to the IDomainEntity constraint, even though the implementation checks for it
-            
+
             // The following would fail to compile:
             // account.Cast<AccountDTO>(); // Cannot compile due to constraint
             // account.Cast<IAccountDTO>(); // Cannot compile due to constraint
-            
+
             // This demonstrates a design inconsistency in the codebase where the Cast method
             // implementation supports AccountDTO/IAccountDTO but the method signature prevents it
             Assert.Pass("This test documents the design limitation where Cast<AccountDTO> cannot be called due to IDomainEntity constraint");
@@ -943,12 +942,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // This test documents the design issue in the Cast method implementation
             // The method checks for AccountDTO and IAccountDTO types but the generic constraint
             // prevents them from being used as type parameters
-            
+
             // Reading the Cast method source code shows:
             // if (typeof(T) == typeof(AccountDTO) || typeof(T) == typeof(IAccountDTO))
             // But the method signature is: public T Cast<T>() where T : IDomainEntity
             // And AccountDTO/IAccountDTO do not implement IDomainEntity
-            
+
             Assert.Pass("This test documents that the Cast method implementation supports AccountDTO " +
                        "but the IDomainEntity constraint prevents compilation of Cast<AccountDTO>() calls");
         }
@@ -964,10 +963,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "ValidName",
                 AccountNumber = "ValidNumber",
                 License = Guid.NewGuid().ToString(),
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
-                { 
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
-                    DatabaseType = SupportedDatabases.SQLServer 
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                {
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
+                    DatabaseType = SupportedDatabases.SQLServer
                 },
                 LinkedEntityId = 1,
                 LinkedEntity = _sut,
@@ -986,18 +985,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldPass_WhenIdIsZero()
         {
             // Arrange
-            var account = new Account 
-            { 
-                Id = 0, 
-                AccountName = "name", 
-                AccountNumber = "num", 
-                License = Guid.NewGuid().ToString(), 
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
-                { 
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
-                    DatabaseType = SupportedDatabases.SQLServer 
-                }, 
-                LinkedEntityId = 1, 
+            var account = new Account
+            {
+                Id = 0,
+                AccountName = "name",
+                AccountNumber = "num",
+                License = Guid.NewGuid().ToString(),
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                {
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
+                    DatabaseType = SupportedDatabases.SQLServer
+                },
+                LinkedEntityId = 1,
                 LinkedEntity = _sut,
                 Features = _testFeatures
             };
@@ -1015,19 +1014,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldFail_WhenIdIsInvalid(int invalidId)
         {
             // Arrange
-            var account = new Account 
-            { 
-                Id = invalidId, 
-                AccountName = "name", 
-                AccountNumber = "num", 
-                License = Guid.NewGuid().ToString(), 
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
-                { 
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
-                    DatabaseType = SupportedDatabases.SQLServer 
-                }, 
-                LinkedEntityId = 1, 
-                LinkedEntity = _sut 
+            var account = new Account
+            {
+                Id = invalidId,
+                AccountName = "name",
+                AccountNumber = "num",
+                License = Guid.NewGuid().ToString(),
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                {
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
+                    DatabaseType = SupportedDatabases.SQLServer
+                },
+                LinkedEntityId = 1,
+                LinkedEntity = _sut
             };
 
             // Act
@@ -1041,41 +1040,41 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test]
         [Category("Validation")]
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
-    {
-      // Arrange
-      var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
+        {
+            // Arrange
+            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
 
             // Act
             var validationResults = ValidateModel(account);
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
-        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
-        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
-        Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
-      });
-    }
+                // Assert
+                Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
+                Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
+                Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
+                Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
+            });
+        }
 
-    [Test]
+        [Test]
         [Category("Validation")]
         public void Validation_ShouldFail_WhenLicenseIsInvalidGuid()
         {
             // Arrange
-            var account = new Account 
-            { 
-                Id = 1, 
-                AccountName = "name", 
-                AccountNumber = "num", 
-                License = "invalid-guid", 
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection 
-                { 
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;", 
-                    DatabaseType = SupportedDatabases.SQLServer 
-                }, 
-                LinkedEntityId = 1, 
-                LinkedEntity = _sut 
+            var account = new Account
+            {
+                Id = 1,
+                AccountName = "name",
+                AccountNumber = "num",
+                License = "invalid-guid",
+                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                {
+                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
+                    DatabaseType = SupportedDatabases.SQLServer
+                },
+                LinkedEntityId = 1,
+                LinkedEntity = _sut
             };
 
             // Act

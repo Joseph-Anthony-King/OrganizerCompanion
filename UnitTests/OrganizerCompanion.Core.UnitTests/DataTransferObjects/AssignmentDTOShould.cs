@@ -8,24 +8,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
     internal class AssignmentDTOShould
     {
         private AssignmentDTO _assignmentDTO;
-        private List<ContactDTO> _testContacts;
-        private List<ContactDTO> _testAssignees;
+        private List<GroupDTO> _testGroups;
 
         [SetUp]
         public void SetUp()
         {
             _assignmentDTO = new AssignmentDTO();
 
-            // Create test contacts and assignees
-            _testContacts =
+            // Create test groups
+            _testGroups =
             [
-                new() { Id = 1, FirstName = "John", LastName = "Doe" },
-                new() { Id = 2, FirstName = "Jane", LastName = "Smith" }
-            ];
-
-            _testAssignees =
-            [
-                new() { Id = 3, FirstName = "Bob", LastName = "Johnson" }
+                new() { Id = 1, Name = "Development Team" },
+                new() { Id = 2, Name = "QA Team" }
             ];
         }
 
@@ -43,8 +37,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(assignmentDTO.Id, Is.EqualTo(0));
                 Assert.That(assignmentDTO.Name, Is.EqualTo(string.Empty));
                 Assert.That(assignmentDTO.Description, Is.Null);
-                Assert.That(assignmentDTO.Asssignees, Is.Null);
-                Assert.That(assignmentDTO.Contacts, Is.Null);
+                Assert.That(assignmentDTO.Groups, Is.Null);
                 Assert.That(assignmentDTO.IsCompleted, Is.False);
                 Assert.That(assignmentDTO.DateDue, Is.Null);
                 Assert.That(assignmentDTO.DateCompleted, Is.Null);
@@ -58,7 +51,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
             Assert.Throws<NotImplementedException>(() => new AssignmentDTO(
-                1, "Test Assignment", "Test Description", _testAssignees, _testContacts,
+                1, "Test Assignment", "Test Description", _testGroups,
                 true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
         }
 
@@ -67,7 +60,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
             Assert.Throws<NotImplementedException>(() => new AssignmentDTO(
-                1, "Test", "Description", null, null,
+                1, "Test", "Description", null,
                 false, null, null, DateTime.Now, null));
         }
 
@@ -79,8 +72,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 id: 1,
                 name: "Test",
                 description: "Description",
-                asssignees: null,
-                contacts: null,
+                groups: null,
                 isCompleted: false,
                 dateDue: null,
                 dateCompleted: null,
@@ -203,65 +195,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void SetAndGetAssignees()
+        public void SetAndGetGroups()
         {
             // Arrange
             var initialDateModified = _assignmentDTO.DateModified;
 
             // Act
-            _assignmentDTO.Asssignees = _testAssignees;
+            _assignmentDTO.Groups = _testGroups;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_assignmentDTO.Asssignees, Is.EqualTo(_testAssignees));
+                Assert.That(_assignmentDTO.Groups, Is.EqualTo(_testGroups));
                 Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
             });
             Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
         }
 
         [Test]
-        public void InitializeEmptyListWhenAssigneesIsNull()
+        public void InitializeEmptyListWhenGroupsIsNull()
         {
             // Arrange
-            _assignmentDTO.Asssignees = _testAssignees; // Set to non-null first
+            _assignmentDTO.Groups = _testGroups; // Set to non-null first
 
             // Act
-            _assignmentDTO.Asssignees = null;
+            _assignmentDTO.Groups = null;
 
             // Assert
-            Assert.That(_assignmentDTO.Asssignees, Is.Null);
-        }
-
-        [Test]
-        public void SetAndGetContacts()
-        {
-            // Arrange
-            var initialDateModified = _assignmentDTO.DateModified;
-
-            // Act
-            _assignmentDTO.Contacts = _testContacts;
-            Assert.Multiple(() =>
-            {
-
-                // Assert
-                Assert.That(_assignmentDTO.Contacts, Is.EqualTo(_testContacts));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
-        }
-
-        [Test]
-        public void InitializeEmptyListWhenContactsIsNull()
-        {
-            // Arrange
-            _assignmentDTO.Contacts = _testContacts; // Set to non-null first
-
-            // Act
-            _assignmentDTO.Contacts = null;
-
-            // Assert
-            Assert.That(_assignmentDTO.Contacts, Is.Null);
+            Assert.That(_assignmentDTO.Groups, Is.Null);
         }
 
         [Test]
@@ -387,30 +348,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             IAssignmentDTO iAssignmentDTO = _assignmentDTO;
-            var testIContacts = _testContacts.Cast<IContactDTO>().ToList();
-            var testIAssignees = _testAssignees.Cast<IContactDTO>().ToList();
+            var testIGroups = _testGroups.Cast<IGroupDTO>().ToList();
 
             // Set up non-null collections first
-            _assignmentDTO.Asssignees = _testAssignees;
-            _assignmentDTO.Contacts = _testContacts;
+            _assignmentDTO.Groups = _testGroups;
 
-            // Act & Assert for Asssignees interface property
-            var retrievedIAssignees = iAssignmentDTO.Asssignees;
-            Assert.That(retrievedIAssignees, Is.Not.Null);
-            Assert.That(retrievedIAssignees.Count, Is.EqualTo(_testAssignees.Count));
+            // Act & Assert for Groups interface property
+            var retrievedIGroups = iAssignmentDTO.Groups;
+            Assert.That(retrievedIGroups, Is.Not.Null);
+            Assert.That(retrievedIGroups.Count, Is.EqualTo(_testGroups.Count));
 
-            iAssignmentDTO.Asssignees = testIAssignees;
-            Assert.That(_assignmentDTO.Asssignees, Is.Not.Null);
-            Assert.That(_assignmentDTO.Asssignees.Count, Is.EqualTo(testIAssignees.Count));
-
-            // Act & Assert for Contacts interface property
-            var retrievedIContacts = iAssignmentDTO.Contacts;
-            Assert.That(retrievedIContacts, Is.Not.Null);
-            Assert.That(retrievedIContacts.Count, Is.EqualTo(_testContacts.Count));
-
-            iAssignmentDTO.Contacts = testIContacts;
-            Assert.That(_assignmentDTO.Contacts, Is.Not.Null);
-            Assert.That(_assignmentDTO.Contacts.Count, Is.EqualTo(testIContacts.Count));
+            iAssignmentDTO.Groups = testIGroups;
+            Assert.That(_assignmentDTO.Groups, Is.Not.Null);
+            Assert.That(_assignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
         }
 
         #endregion
@@ -421,7 +371,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void ThrowNotImplementedExceptionForCastMethod()
         {
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _assignmentDTO.Cast<ContactDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignmentDTO.Cast<GroupDTO>());
         }
 
         #endregion
@@ -473,7 +423,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             _assignmentDTO.Id = 1;
             _assignmentDTO.Name = "Test Assignment";
-            _assignmentDTO.Contacts = _testContacts;
+            _assignmentDTO.Groups = _testGroups;
 
             // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles
             Assert.DoesNotThrow(() => _assignmentDTO.ToJson());
@@ -530,25 +480,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void HandleEmptyAssigneesList()
+        public void HandleEmptyGroupsList()
         {
             // Act
-            _assignmentDTO.Asssignees = [];
+            _assignmentDTO.Groups = [];
 
             // Assert
-            Assert.That(_assignmentDTO.Asssignees, Is.Not.Null);
-            Assert.That(_assignmentDTO.Asssignees, Is.Empty);
-        }
-
-        [Test]
-        public void HandleEmptyContactsList()
-        {
-            // Act
-            _assignmentDTO.Contacts = [];
-
-            // Assert
-            Assert.That(_assignmentDTO.Contacts, Is.Not.Null);
-            Assert.That(_assignmentDTO.Contacts, Is.Empty);
+            Assert.That(_assignmentDTO.Groups, Is.Not.Null);
+            Assert.That(_assignmentDTO.Groups, Is.Empty);
         }
 
         [Test]
@@ -560,29 +499,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void HandleAssigneesNullToEmptyListConversion()
+        public void HandleGroupsNullToEmptyListConversion()
         {
             // Arrange - Start with null
-            _assignmentDTO.Asssignees = null;
+            _assignmentDTO.Groups = null;
 
             // Act - Setting null should initialize empty list due to ??= operator
-            _assignmentDTO.Asssignees = _testAssignees;
+            _assignmentDTO.Groups = _testGroups;
 
             // Assert
-            Assert.That(_assignmentDTO.Asssignees, Is.EqualTo(_testAssignees));
-        }
-
-        [Test]
-        public void HandleContactsNullToEmptyListConversion()
-        {
-            // Arrange - Start with null
-            _assignmentDTO.Contacts = null;
-
-            // Act - Setting null should initialize empty list due to ??= operator
-            _assignmentDTO.Contacts = _testContacts;
-
-            // Assert
-            Assert.That(_assignmentDTO.Contacts, Is.EqualTo(_testContacts));
+            Assert.That(_assignmentDTO.Groups, Is.EqualTo(_testGroups));
         }
 
         #endregion

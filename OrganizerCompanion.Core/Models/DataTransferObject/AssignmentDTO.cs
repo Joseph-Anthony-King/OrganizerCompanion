@@ -17,8 +17,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
-        private List<ContactDTO>? _asssignees = null;
-        private List<ContactDTO>? _contacts = null;
+        private List<GroupDTO>? _groups = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private DateTime? _dateCompleted = null;
@@ -28,16 +27,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IContactDTO>? IAssignmentDTO.Asssignees
+        List<IGroupDTO>? IAssignmentDTO.Groups
         {
-            get => [.. Asssignees!.Cast<IContactDTO>()];
-            set => Asssignees = [.. value!.Cast<ContactDTO>()];
-        }
-        [JsonIgnore]
-        List<IContactDTO>? IAssignmentDTO.Contacts
-        {
-            get => [.. Contacts!.Cast<IContactDTO>()];
-            set => Contacts = [.. value!.Cast<ContactDTO>()];
+            get => [.. _groups!.Cast<IGroupDTO>()];
+            set => _groups = value!.ConvertAll(group => (GroupDTO)group);
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -86,26 +79,14 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             }
         }
 
-        [JsonPropertyName("asssignees")]
-        public List<ContactDTO>? Asssignees
+        [JsonPropertyName("groups")]
+        public List<GroupDTO>? Groups
         {
-            get => _asssignees;
+            get => _groups;
             set
             {
-                _asssignees ??= [];
-                _asssignees = value;
-                DateModified = DateTime.UtcNow;
-            }
-        }
-
-        [JsonPropertyName("contacts")]
-        public List<ContactDTO>? Contacts
-        {
-            get => _contacts;
-            set
-            {
-                _contacts ??= [];
-                _contacts = value;
+                _groups ??= [];
+                _groups = value;
                 DateModified = DateTime.UtcNow;
             }
         }
@@ -159,8 +140,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             int id,
             string name, 
             string? description, 
-            List<ContactDTO>? asssignees, 
-            List<ContactDTO>? contacts, 
+            List<GroupDTO>? groups, 
             bool isCompleted, 
             DateTime? dateDue,
             DateTime? dateCompleted,
@@ -173,8 +153,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             Id = id;
             Name = name;
             Description = description;
-            Asssignees = asssignees;
-            Contacts = contacts;
+            Groups = groups;
             IsCompleted = isCompleted;
             _dateDue = dateDue;
             _dateCompleted = dateCompleted;

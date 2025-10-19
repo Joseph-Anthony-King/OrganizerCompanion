@@ -10,24 +10,31 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     internal class AssignmentShould
     {
         private Assignment _assignment;
-        private List<Contact> _testContacts;
-        private List<Contact> _testAssignees;
+        private List<Group> _groups;
 
         [SetUp]
         public void SetUp()
         {
             _assignment = new Assignment();
-            
-            // Create test contacts and assignees
-            _testContacts =
+
+            _groups =
             [
-                new() { Id = 1, FirstName = "John", LastName = "Doe" },
-                new() { Id = 2, FirstName = "Jane", LastName = "Smith" }
-            ];
-            
-            _testAssignees =
-            [
-                new() { Id = 3, FirstName = "Bob", LastName = "Johnson" }
+                new() {
+                    Id = 1,
+                    Name = "Group 1",
+                    Members =
+                    [
+                        new() { Id = 1, FirstName = "John", LastName = "Doe" },
+                        new() { Id = 2, FirstName = "Jane", LastName = "Smith" }
+                    ] },
+                new() {
+                    Id = 2,
+                    Name = "Group 2",
+                    Members =
+                    [
+                        new() { Id = 3, FirstName = "Bob", LastName = "Johnson" }
+                    ]
+                }
             ];
         }
 
@@ -35,32 +42,31 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         public void HaveDefaultConstructor()
-    {
-      // Arrange & Act
-      var assignment = new Assignment();
-      Assert.Multiple(() =>
-      {
+        {
+            // Arrange & Act
+            var assignment = new Assignment();
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(assignment.Id, Is.EqualTo(0));
-        Assert.That(assignment.Name, Is.EqualTo(string.Empty));
-        Assert.That(assignment.Description, Is.Null);
-        Assert.That(assignment.Asssignees, Is.Null);
-        Assert.That(assignment.Contacts, Is.Null);
-        Assert.That(assignment.IsCompleted, Is.False);
-        Assert.That(assignment.DateDue, Is.Null);
-        Assert.That(assignment.DateCompleted, Is.Null);
-        Assert.That(assignment.DateCreated, Is.Not.EqualTo(default(DateTime)));
-        Assert.That(assignment.DateModified, Is.Null);
-      });
-    }
+                // Assert
+                Assert.That(assignment.Id, Is.EqualTo(0));
+                Assert.That(assignment.Name, Is.EqualTo(string.Empty));
+                Assert.That(assignment.Description, Is.Null);
+                Assert.That(assignment.Groups, Is.Null);
+                Assert.That(assignment.IsCompleted, Is.False);
+                Assert.That(assignment.DateDue, Is.Null);
+                Assert.That(assignment.DateCompleted, Is.Null);
+                Assert.That(assignment.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(assignment.DateModified, Is.Null);
+            });
+        }
 
-    [Test]
+        [Test]
         public void ThrowExceptionWhenUsingJsonConstructor()
         {
             // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException
             Assert.Throws<NotImplementedException>(() => new Assignment(
-                1, "Test Assignment", "Test Description", _testAssignees, _testContacts, 
+                1, "Test Assignment", "Test Description", _groups,
                 true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
         }
 
@@ -69,7 +75,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException  
             Assert.Throws<NotImplementedException>(() => new Assignment(
-                1, "Test", "Description", null, null, 
+                1, "Test", "Description", null,
                 false, null, null, DateTime.Now, null));
         }
 
@@ -79,24 +85,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         public void SetAndGetId()
-    {
-      // Arrange
-      var id = 42;
+        {
+            // Arrange
+            var id = 42;
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.Id = id;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.Id, Is.EqualTo(id));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.Id, Is.EqualTo(id));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void ThrowExceptionForNegativeId()
         {
             // Act & Assert
@@ -105,31 +111,31 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         public void SetAndGetName()
-    {
-      // Arrange
-      var name = "Test Assignment Name";
+        {
+            // Arrange
+            var name = "Test Assignment Name";
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.Name = name;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.Name, Is.EqualTo(name));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.Name, Is.EqualTo(name));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void ThrowExceptionForEmptyName()
         {
             // Act & Assert
             Assert.Throws<ArgumentException>(() => _assignment.Name = "");
         }
 
-        [Test] 
+        [Test]
         public void ThrowExceptionForTooLongName()
         {
             // Arrange
@@ -141,24 +147,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         public void SetAndGetDescription()
-    {
-      // Arrange
-      var description = "Test description";
+        {
+            // Arrange
+            var description = "Test description";
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.Description = description;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.Description, Is.EqualTo(description));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.Description, Is.EqualTo(description));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void ThrowExceptionForTooLongDescription()
         {
             // Arrange
@@ -170,172 +176,172 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test]
         public void SetAndGetAssignees()
-    {
-      // Arrange
-      var initialDateModified = _assignment.DateModified;
+        {
+            // Arrange
+            var initialDateModified = _assignment.DateModified;
 
             // Act
-            _assignment.Asssignees = _testAssignees;
-      Assert.Multiple(() =>
-      {
+            _assignment.Groups = _groups;
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.Asssignees, Is.EqualTo(_testAssignees));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.Groups, Is.EqualTo(_groups));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void InitializeEmptyListWhenAssigneesIsNull()
         {
             // Arrange
-            _assignment.Asssignees = _testAssignees; // Set to non-null first
+            _assignment.Groups = _groups; // Set to non-null first
 
             // Act
-            _assignment.Asssignees = null;
+            _assignment.Groups = null;
 
             // Assert
-            Assert.That(_assignment.Asssignees, Is.Null);
+            Assert.That(_assignment.Groups, Is.Null);
         }
 
         [Test]
         public void SetAndGetContacts()
-    {
-      // Arrange
-      var initialDateModified = _assignment.DateModified;
+        {
+            // Arrange
+            var initialDateModified = _assignment.DateModified;
 
             // Act
-            _assignment.Contacts = _testContacts;
-      Assert.Multiple(() =>
-      {
+            _assignment.Groups = _groups;
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.Contacts, Is.EqualTo(_testContacts));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.Groups, Is.EqualTo(_groups));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void InitializeEmptyListWhenContactsIsNull()
         {
             // Arrange
-            _assignment.Contacts = _testContacts; // Set to non-null first
+            _assignment.Groups = _groups; // Set to non-null first
 
             // Act
-            _assignment.Contacts = null;
+            _assignment.Groups = null;
 
             // Assert
-            Assert.That(_assignment.Contacts, Is.Null);
+            Assert.That(_assignment.Groups, Is.Null);
         }
 
         [Test]
         public void SetIsCompletedToTrueAndUpdateDateCompleted()
-    {
-      // Arrange
-      var initialDateModified = _assignment.DateModified;
+        {
+            // Arrange
+            var initialDateModified = _assignment.DateModified;
             var beforeCompletion = DateTime.Now;
 
             // Act
             _assignment.IsCompleted = true;
             var afterCompletion = DateTime.Now;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.IsCompleted, Is.True);
-        Assert.That(_assignment.DateCompleted, Is.Not.Null);
-      });
-      Assert.That(_assignment.DateCompleted, Is.GreaterThanOrEqualTo(beforeCompletion));
-      Assert.Multiple(() =>
-      {
-        Assert.That(_assignment.DateCompleted, Is.LessThanOrEqualTo(afterCompletion));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.IsCompleted, Is.True);
+                Assert.That(_assignment.DateCompleted, Is.Not.Null);
+            });
+            Assert.That(_assignment.DateCompleted, Is.GreaterThanOrEqualTo(beforeCompletion));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_assignment.DateCompleted, Is.LessThanOrEqualTo(afterCompletion));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void SetIsCompletedToFalseAndClearDateCompleted()
-    {
-      // Arrange
-      _assignment.IsCompleted = true; // Set to true first
+        {
+            // Arrange
+            _assignment.IsCompleted = true; // Set to true first
             Assert.That(_assignment.DateCompleted, Is.Not.Null);
 
             // Act
             _assignment.IsCompleted = false;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.IsCompleted, Is.False);
-        Assert.That(_assignment.DateCompleted, Is.Null);
-      });
-    }
+                // Assert
+                Assert.That(_assignment.IsCompleted, Is.False);
+                Assert.That(_assignment.DateCompleted, Is.Null);
+            });
+        }
 
-    [Test]
+        [Test]
         public void SetAndGetDateDue()
-    {
-      // Arrange
-      var dateDue = DateTime.Now.AddDays(7);
+        {
+            // Arrange
+            var dateDue = DateTime.Now.AddDays(7);
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.DateDue = dateDue;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.DateDue, Is.EqualTo(dateDue));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.DateDue, Is.EqualTo(dateDue));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void SetAndGetDateCompleted()
-    {
-      // Arrange
-      var dateCompleted = DateTime.Now;
+        {
+            // Arrange
+            var dateCompleted = DateTime.Now;
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.DateCompleted = dateCompleted;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.DateCompleted, Is.EqualTo(dateCompleted));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.DateCompleted, Is.EqualTo(dateCompleted));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    [Test]
+        [Test]
         public void SetAndGetDateCreated()
-    {
-      // Arrange
-      var dateCreated = DateTime.Now.AddDays(-5);
+        {
+            // Arrange
+            var dateCreated = DateTime.Now.AddDays(-5);
             var initialDateModified = _assignment.DateModified;
 
             // Act
             _assignment.DateCreated = dateCreated;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_assignment.DateCreated, Is.EqualTo(dateCreated));
-        Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-      });
-      Assert.That(_assignment.DateModified, Is.Not.Null);
-    }
+                // Assert
+                Assert.That(_assignment.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            });
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
 
-    #endregion
+        #endregion
 
-    #region Interface Implementation Tests
+        #region Interface Implementation Tests
 
-    [Test]
+        [Test]
         public void ThrowNotImplementedExceptionForIsCast()
         {
             // Act & Assert
@@ -364,44 +370,61 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Cast Method Tests
 
         [Test]
-        public void ThrowExceptionWhenCastingToAssignmentDTOWithNullContacts()
+        public void CastToAssignmentDTOWithNullGroups()
         {
             // Arrange
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
             _assignment.Description = "Test Description";
-            _assignment.Asssignees = null; // This will cause NullReferenceException in Cast method
-            _assignment.Contacts = null;
+            _assignment.Groups = null;
 
-            // Act & Assert - The Cast method will throw because it tries to ConvertAll on null collections
-            Assert.Throws<NullReferenceException>(() => _assignment.Cast<AssignmentDTO>());
+            // Act
+            var result = _assignment.Cast<AssignmentDTO>();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Test Assignment"));
+            Assert.That(result.Description, Is.EqualTo("Test Description"));
+            Assert.That(result.Groups, Is.Null);
         }
 
         [Test]
-        public void ThrowExceptionWhenCastingToAssignmentDTOWithEmptyCollections()
+        public void CastToAssignmentDTOWithEmptyGroups()
         {
             // Arrange
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
             _assignment.Description = "Test Description";
-            _assignment.Asssignees = []; // Empty list instead of null
-            _assignment.Contacts = [];
+            _assignment.Groups = []; // Empty list
 
-            // Act & Assert - The AssignmentDTO constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<AssignmentDTO>());
+            // Act
+            var result = _assignment.Cast<AssignmentDTO>();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Test Assignment"));
+            Assert.That(result.Description, Is.EqualTo("Test Description"));
+            Assert.That(result.Groups, Is.Not.Null);
+            Assert.That(result.Groups, Is.Empty);
         }
 
         [Test]
-        public void ThrowExceptionWhenCastingToIAssignmentDTO()
+        public void CastToIAssignmentDTO()
         {
             // Arrange
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
-            _assignment.Asssignees = []; // Empty list instead of null
-            _assignment.Contacts = [];
+            _assignment.Groups = [];
 
-            // Act & Assert - The AssignmentDTO constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<IAssignmentDTO>());
+            // Act
+            var result = _assignment.Cast<IAssignmentDTO>();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Test Assignment"));
         }
 
         [Test]
@@ -461,7 +484,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
-            _assignment.Contacts = _testContacts;
+            _assignment.Groups = _groups;
 
             // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles
             Assert.DoesNotThrow(() => _assignment.ToJson());
@@ -533,48 +556,37 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test]
-        public void HandleEmptyAssigneesList()
+        public void HandleEmptyGroupsList()
         {
             // Act
-            _assignment.Asssignees = [];
+            _assignment.Groups = [];
 
             // Assert
-            Assert.That(_assignment.Asssignees, Is.Not.Null);
-            Assert.That(_assignment.Asssignees, Is.Empty);
-        }
-
-        [Test]
-        public void HandleEmptyContactsList()
-        {
-            // Act
-            _assignment.Contacts = [];
-
-            // Assert
-            Assert.That(_assignment.Contacts, Is.Not.Null);
-            Assert.That(_assignment.Contacts, Is.Empty);
+            Assert.That(_assignment.Groups, Is.Not.Null);
+            Assert.That(_assignment.Groups, Is.Empty);
         }
 
         [Test]
         public void HandleNullDateValues()
-    {
-      // Act & Assert
-      Assert.DoesNotThrow(() => 
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() =>
+                  {
+                      _assignment.DateDue = null;
+                      _assignment.DateCompleted = null;
+                  });
+            Assert.Multiple(() =>
             {
-                _assignment.DateDue = null;
-                _assignment.DateCompleted = null;
+                Assert.That(_assignment.DateDue, Is.Null);
+                Assert.That(_assignment.DateCompleted, Is.Null);
             });
-      Assert.Multiple(() =>
-      {
-        Assert.That(_assignment.DateDue, Is.Null);
-        Assert.That(_assignment.DateCompleted, Is.Null);
-      });
-    }
+        }
 
-    #endregion
+        #endregion
 
-    #region Constructor with Optional Parameters Tests
+        #region Constructor with Optional Parameters Tests
 
-    [Test]
+        [Test]
         public void ThrowExceptionWhenConstructorTriesToSetIsCast()
         {
             // Act & Assert - The constructor tries to set IsCast which throws NotImplementedException
@@ -582,8 +594,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 name: "Test",
                 description: "Description",
-                asssignees: null,
-                contacts: null,
+                groups: null,
                 isCompleted: false,
                 dateDue: null,
                 dateCompleted: null,
@@ -603,74 +614,74 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             IAssignment iAssignment = _assignment;
-            var testIContacts = _testContacts.Cast<IContact>().ToList();
-            var testIAssignees = _testAssignees.Cast<IContact>().ToList();
+            var testIGroup = _groups.Cast<IGroup>().ToList();
 
             // Act & Assert for Asssignees interface property
-            iAssignment.Asssignees = testIAssignees;
-            var retrievedIAssignees = iAssignment.Asssignees;
+            iAssignment.Groups = testIGroup;
+            var retrievedIAssignees = iAssignment.Groups;
             Assert.That(retrievedIAssignees, Is.Not.Null);
-            Assert.That(retrievedIAssignees.Count, Is.EqualTo(testIAssignees.Count));
-
-            // Act & Assert for Contacts interface property
-            iAssignment.Contacts = testIContacts;
-            var retrievedIContacts = iAssignment.Contacts;
-            Assert.That(retrievedIContacts, Is.Not.Null);
-            Assert.That(retrievedIContacts.Count, Is.EqualTo(testIContacts.Count));
+            Assert.That(retrievedIAssignees.Count, Is.EqualTo(testIGroup.Count));
         }
 
         [Test]
-        public void CastWithActualContactObjects()
+        public void CastWithActualGroupObjects()
         {
-            // Arrange - Create contacts that will work with Cast<ContactDTO>()
-            var workingContact = new Contact 
-            { 
-                Id = 1, 
-                FirstName = "Test", 
-                LastName = "User",
-                Emails = [],
-                PhoneNumbers = [],
-                Addresses = []
+            // Arrange - Create groups that will work with Cast<GroupDTO>()
+            var workingGroup = new Group
+            {
+                Id = 1,
+                Name = "Working Group",
+                Description = "Description",
+                Members =
+                [
+                    new() { Id = 1, FirstName = "Alice", LastName = "Wonderland" }
+                ],
+                AccountId = 0,
+                Account = null,
             };
-            
+
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
             _assignment.Description = "Test Description";
-            _assignment.Asssignees = [workingContact];
-            _assignment.Contacts = [workingContact];
+            _assignment.Groups = [workingGroup];
 
-            // Act & Assert - This should trigger the ConvertAll calls that are currently uncovered
-            // Note: This may still throw NotImplementedException due to AssignmentDTO constructor issues
-            // but it will cover the ConvertAll lines in the Cast method
-            try
-            {
-                _assignment.Cast<AssignmentDTO>();
-            }
-            catch (NotImplementedException)
-            {
-                // Expected due to AssignmentDTO constructor setting IsCast
-                // The important part is that we covered the ConvertAll lines
-            }
+            // Act
+            var result = _assignment.Cast<AssignmentDTO>();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Test Assignment"));
+            Assert.That(result.Description, Is.EqualTo("Test Description"));
+            Assert.That(result.Groups, Is.Not.Null);
+            Assert.That(result.Groups.Count, Is.EqualTo(1));
+            Assert.That(result.Groups[0].Id, Is.EqualTo(1));
+            Assert.That(result.Groups[0].Name, Is.EqualTo("Working Group"));
         }
 
         [Test]
-        public void CastMethodCatchBlock()
+        public void CastToAssignmentDTOWithCompleteData()
         {
-            // Arrange - Create a scenario that will cause an exception in the Cast method try block
+            // Arrange
             _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
-            _assignment.Asssignees = null; // This will cause NullReferenceException in ConvertAll
+            _assignment.Name = "Complete Assignment";
+            _assignment.Description = "Complete Description";
+            _assignment.Groups = _groups;
+            _assignment.IsCompleted = true;
+            _assignment.DateDue = DateTime.Now.AddDays(7);
 
-            // Act & Assert - This should trigger the catch block
-            try
-            {
-                _assignment.Cast<AssignmentDTO>();
-            }
-            catch (Exception ex)
-            {
-                // The catch block should re-throw the exception
-                Assert.That(ex, Is.Not.Null);
-            }
+            // Act
+            var result = _assignment.Cast<AssignmentDTO>();
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Id, Is.EqualTo(1));
+            Assert.That(result.Name, Is.EqualTo("Complete Assignment"));
+            Assert.That(result.Description, Is.EqualTo("Complete Description"));
+            Assert.That(result.IsCompleted, Is.True);
+            Assert.That(result.DateDue, Is.EqualTo(_assignment.DateDue));
+            Assert.That(result.Groups, Is.Not.Null);
+            Assert.That(result.Groups.Count, Is.EqualTo(2));
         }
 
         #endregion
