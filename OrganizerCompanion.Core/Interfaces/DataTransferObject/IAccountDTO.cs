@@ -11,6 +11,6 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
         DatabaseConnection? DatabaseConnection { get; set; }
         List<IFeatureDTO> Features { get; set; }
         int? MainAccountId { get; set; }
-        List<IAccountDTO>? Accounts { get; set; }
+        List<ISubAccountDTO>? Accounts { get; set; }
     }
 }

@@ -22,12 +22,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _accountNumber = null;
         private string? _license = null;
         private DatabaseConnection? _databaseConnection = null;
-        private int _linkedEntityId = 0;
-        private string? _linkedEntityType = null;
-        private IDomainEntity? _linkedEntity = null;
         private List<AccountFeature> _features = [];
         private int? _mainAccountId = null;
-        private List<Account>? _accounts = null;
+        private List<SubAccount>? _subAccounts = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -36,7 +33,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonIgnore]
         List<IAccountFeature> IAccount.Features
         {
-            get => _features.ConvertAll(feature => (Interfaces.Domain.IAccountFeature)feature);
+            get => _features.ConvertAll(feature => (IAccountFeature)feature);
             set
             {
                 _features = value.ConvertAll(feature => (AccountFeature)feature);
@@ -45,15 +42,24 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonIgnore]
-        List<IAccount>? IAccount.Accounts
+        List<ISubAccount>? IAccount.Accounts
         {
-            get => _accounts?.ConvertAll(account => (IAccount)account);
+            get => _subAccounts?.ConvertAll(account => (ISubAccount)account);
             set
             {
-                _accounts = value?.ConvertAll(account => (Account)account);
+                _subAccounts = value?.ConvertAll(account => (SubAccount)account);
                 DateModified = DateTime.Now;
             }
         }
+
+        [JsonIgnore]
+        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [JsonIgnore]
+        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+        [JsonIgnore]
+        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
@@ -109,33 +115,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _databaseConnection = value;
                 DateModified = DateTime.Now;
             }
-        }
-
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "LinkedEntityId must be a non-negative number.")]
-        public int LinkedEntityId
-        {
-            get => _linkedEntityId;
-            set
-            {
-                _linkedEntityId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("linkedEntity")]
-        public IDomainEntity? LinkedEntity
-        {
-            get => _linkedEntity;
-            set
-            {
-                _linkedEntity = value;
-                _linkedEntityType = value?.GetType().Name;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;        
+        }      
 
         [Required, JsonPropertyName("features")]
         public List<AccountFeature> Features
@@ -160,25 +140,16 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<Account>? Accounts
+        public List<SubAccount>? Accounts
         {
-            get => _accounts;
+            get => _subAccounts;
             set
             {
-                _accounts ??= [];
-                _accounts = value?.ConvertAll(account => account);
+                _subAccounts ??= [];
+                _subAccounts = value?.ConvertAll(account => account);
                 DateModified = DateTime.Now;
             }
         }
-
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
@@ -197,11 +168,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountNumber,
             string? license,
             DatabaseConnection? databaseConnection,
-            int linkedEntityId,
-            IDomainEntity? linkedEntity,
             List<AccountFeature> features,
             int? mainAccountId,
-            List<Account> accounts,
+            List<SubAccount> accounts,
             DateTime dateCreated,
             DateTime? dateModified,
             bool? isCast = null,
@@ -215,12 +184,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountNumber = accountNumber;
                 _license = license;
                 _databaseConnection = databaseConnection;
-                _linkedEntityId = linkedEntityId;
-                _linkedEntity = linkedEntity;
-                _linkedEntityType = linkedEntity?.GetType().Name;
                 _features = features;
                 _mainAccountId = mainAccountId;
-                _accounts = accounts;
+                _subAccounts = accounts;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
             }
@@ -238,7 +204,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             IDomainEntity linkedEntity,
             List<AccountFeature> features,
             int? mainAccountId,
-            List<Account>? accounts,
+            List<SubAccount>? accounts,
             DateTime dateCreated,
             DateTime? dateModified)
         {
@@ -248,14 +214,16 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountNumber = accountNumber;
                 _license = license;
                 _databaseConnection = databaseConnection;
-                _linkedEntityId = linkedEntity.Id;
-                _linkedEntityType = linkedEntity.GetType().Name;
-                _linkedEntity = linkedEntity;
                 _features = features;
                 _mainAccountId = mainAccountId;
-                _accounts = accounts;
+                _subAccounts = accounts;
                 _dateCreated = dateCreated;
                 DateModified = dateModified;
+
+                // Set properties from linkedEntity (this can throw exceptions)
+                _id = linkedEntity.Id;
+                // Access GetType() to potentially trigger exception
+                var entityType = linkedEntity.GetType();
             }
             catch (Exception ex)
             {
@@ -280,7 +248,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         DatabaseConnection = this.DatabaseConnection,
                         Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
                         MainAccountId = this.MainAccountId,
-                        Accounts = this.Accounts?.ConvertAll(account => (IAccountDTO)account.Cast<AccountDTO>()),
+                        Accounts = this.Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
                         DateCreated = this.DateCreated,
                         DateModified = this.DateModified
                     };

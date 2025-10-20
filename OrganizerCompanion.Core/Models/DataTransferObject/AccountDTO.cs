@@ -20,6 +20,27 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             }
         }
         [JsonIgnore]
+        List<ISubAccountDTO>? IAccountDTO.Accounts
+        {
+            get => Accounts?.ConvertAll(account => (ISubAccountDTO)account);
+            set
+            {
+                if (value == null)
+                {
+                    Accounts = [];
+                    return;
+                }
+
+                Accounts ??= [];
+                Accounts.Clear();
+
+                foreach (var account in value)
+                {
+                    Accounts.Add((SubAccountDTO)account);
+                }
+            }
+        }
+        [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         [JsonIgnore]
         public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -50,7 +71,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? MainAccountId { get; set; } = null;
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public List<IAccountDTO>? Accounts { get; set; } = null;
+        public List<SubAccountDTO>? Accounts { get; set; } = null;
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
         [Required, JsonPropertyName("dateModified")]

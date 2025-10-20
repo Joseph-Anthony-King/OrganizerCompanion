@@ -58,9 +58,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.License, Is.Null);
                 Assert.That(account.DatabaseConnection, Is.Null);
-                Assert.That(account.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(account.LinkedEntityType, Is.Null);
-                Assert.That(account.LinkedEntity, Is.Null);
+
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(0));
                 Assert.That(account.MainAccountId, Is.Null);
@@ -88,8 +86,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: [],
@@ -106,9 +102,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.License, Is.Not.Null);
                 Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
                 Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
-                Assert.That(account.LinkedEntityId, Is.EqualTo(1));
-                Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.MainAccountId, Is.Null);
@@ -151,9 +144,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.License, Is.Not.Null);
                 Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
                 Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
-                Assert.That(account.LinkedEntityId, Is.EqualTo(_sut.Id));
-                Assert.That(account.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.MainAccountId, Is.Null);
@@ -173,10 +163,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 DatabaseType = Enums.SupportedDatabases.SQLServer
             };
 
-            var subAccounts = new List<Account>
+            var subAccounts = new List<SubAccount>
             {
-                new() { Id = 10, AccountName = "Sub Account 1", AccountNumber = "SUB001" },
-                new() { Id = 11, AccountName = "Sub Account 2", AccountNumber = "SUB002" }
+                new() { Id = 10 },
+                new() { Id = 11 }
             };
 
             // Act
@@ -186,8 +176,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "MAIN001",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: 123,
                 accounts: subAccounts,
@@ -203,8 +191,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.MainAccountId, Is.EqualTo(123));
                 Assert.That(account.Accounts, Is.Not.Null);
                 Assert.That(account.Accounts, Has.Count.EqualTo(2));
-                Assert.That(account.Accounts![0].AccountName, Is.EqualTo("Sub Account 1"));
-                Assert.That(account.Accounts![1].AccountName, Is.EqualTo("Sub Account 2"));
+                Assert.That(account.Accounts![0].Id, Is.EqualTo(10));
+                Assert.That(account.Accounts![1].Id, Is.EqualTo(11));
             });
         }
 
@@ -303,43 +291,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test, Category("Models")]
-        public void LinkedEntityId_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
 
-            // Act
-            account.LinkedEntityId = 456;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.LinkedEntityId, Is.EqualTo(456));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntity_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.LinkedEntity = _sut;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.LinkedEntity, Is.EqualTo(_sut));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
 
         [Test, Category("Models")]
         public void Features_Setter_UpdatesDateModified()
@@ -390,10 +342,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account();
             var originalDateModified = account.DateModified;
-            var newAccounts = new List<Account>
+            var newAccounts = new List<SubAccount>
             {
-                new() { Id = 2, AccountName = "Sub Account 1", AccountNumber = "SUB001" },
-                new() { Id = 3, AccountName = "Sub Account 2", AccountNumber = "SUB002" }
+                new() { Id = 2 },
+                new() { Id = 3 }
             };
 
             // Act
@@ -528,9 +480,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             account.DatabaseConnection = null;
             Assert.That(account.DatabaseConnection, Is.Null);
-
-            account.LinkedEntity = null;
-            Assert.That(account.LinkedEntity, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -569,8 +518,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 2,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: [],
@@ -680,8 +627,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 2,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: [],
@@ -773,8 +718,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
+                
+                
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -812,8 +757,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC777",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
+                
+                
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -847,8 +792,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC888",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
+                
+                
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -882,8 +827,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC999",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
+                
+                
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -917,8 +862,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC111",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntityId: 1,
-                linkedEntity: _sut,
+                
+                
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -968,8 +913,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                LinkedEntityId = 1,
-                LinkedEntity = _sut,
+                
+                
                 Features = _testFeatures
             };
 
@@ -996,8 +941,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                LinkedEntityId = 1,
-                LinkedEntity = _sut,
+                
+                
                 Features = _testFeatures
             };
 
@@ -1025,8 +970,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                LinkedEntityId = 1,
-                LinkedEntity = _sut
+                
+                
             };
 
             // Act
@@ -1042,7 +987,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
         {
             // Arrange
-            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, LinkedEntityId = 1, LinkedEntity = _sut };
+            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, };
 
             // Act
             var validationResults = ValidateModel(account);
@@ -1073,8 +1018,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                LinkedEntityId = 1,
-                LinkedEntity = _sut
+                
+                
             };
 
             // Act
