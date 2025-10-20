@@ -38,7 +38,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var id = 123;
             var name = "Test Task";
             var description = "Test Description";
-            var assignments = new List<AssignmentDTO>();
+            var assignments = new List<ProjectAssignmentDTO>();
             var isCompleted = true;
             var dateDue = DateTime.UtcNow.AddDays(7);
             var dateCompleted = DateTime.UtcNow;
@@ -228,7 +228,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void Assignments_Set_ShouldSetValue()
         {
             // Arrange
-            var expectedValue = new List<AssignmentDTO>();
+            var expectedValue = new List<ProjectAssignmentDTO>();
 
             // Act
             _sut.Assignments = expectedValue;
@@ -385,7 +385,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var dto = (IProjectTaskDTO)_sut;
-            var assignmentDTOs = new List<AssignmentDTO>();
+            var assignmentDTOs = new List<ProjectAssignmentDTO>();
             _sut.Assignments = assignmentDTOs;
 
             // Act
@@ -393,7 +393,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result, Is.InstanceOf<List<IAssignmentDTO>>());
+            Assert.That(result, Is.InstanceOf<List<IProjectAssignmentDTO>>());
         }
 
         [Test, Category("DataTransferObjects")]
@@ -401,14 +401,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var dto = (IProjectTaskDTO)_sut;
-            var assignmentDTOs = new List<IAssignmentDTO>();
+            var assignmentDTOs = new List<IProjectAssignmentDTO>();
 
             // Act
             dto.Assignments = assignmentDTOs;
 
             // Assert
             Assert.That(_sut.Assignments, Is.Not.Null);
-            Assert.That(_sut.Assignments, Is.InstanceOf<List<AssignmentDTO>>());
+            Assert.That(_sut.Assignments, Is.InstanceOf<List<ProjectAssignmentDTO>>());
         }
 
         [Test, Category("DataTransferObjects")]
@@ -693,7 +693,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => { var value = _sut.Description; });
                 Assert.DoesNotThrow(() => _sut.Description = "test");
                 Assert.DoesNotThrow(() => { var value = _sut.Assignments; });
-                Assert.DoesNotThrow(() => _sut.Assignments = new List<AssignmentDTO>());
+                Assert.DoesNotThrow(() => _sut.Assignments = new List<ProjectAssignmentDTO>());
                 Assert.DoesNotThrow(() => { var value = _sut.IsCompleted; });
                 Assert.DoesNotThrow(() => _sut.IsCompleted = true);
                 Assert.DoesNotThrow(() => { var value = _sut.DateDue; });

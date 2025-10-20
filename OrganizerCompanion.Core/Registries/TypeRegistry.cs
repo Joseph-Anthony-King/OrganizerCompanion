@@ -27,7 +27,7 @@ namespace OrganizerCompanion.Core.Registries
                 RegisterType<Models.Domain.Account>("Account");
                 RegisterType<Models.Domain.AccountFeature>("AccountFeature");
                 RegisterType<Models.Domain.AnnonymousUser>("AnnonymousUser");
-                RegisterType<Models.Domain.Assignment>("Assignment");
+                RegisterType<Models.Domain.ProjectAssignment>("ProjectAssignment");
                 RegisterType<Models.Domain.CAAddress>("CAAddress");
                 RegisterType<Models.Domain.Contact>("Contact");
                 RegisterType<Models.Domain.Email>("Email");
@@ -44,7 +44,7 @@ namespace OrganizerCompanion.Core.Registries
                 // Register DTO types
                 RegisterType<Models.DataTransferObject.AccountDTO>("AccountDTO");
                 RegisterType<Models.DataTransferObject.AnnonymousUserDTO>("AnnonymousUserDTO");
-                RegisterType<Models.DataTransferObject.AssignmentDTO>("AssignmentDTO");
+                RegisterType<Models.DataTransferObject.ProjectAssignmentDTO>("ProjectAssignmentDTO");
                 RegisterType<Models.DataTransferObject.CAAddressDTO>("CAAddressDTO");
                 RegisterType<Models.DataTransferObject.ContactDTO>("ContactDTO");
                 RegisterType<Models.DataTransferObject.EmailDTO>("EmailDTO");

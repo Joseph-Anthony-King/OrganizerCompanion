@@ -1,6 +1,6 @@
 ﻿namespace OrganizerCompanion.Core.Interfaces.Domain
 {
-    internal interface IAssignment : IDomainEntity
+    internal interface IProjectAssignment : IDomainEntity
     {
         string Name { get; set; }
         string? Description { get; set; }

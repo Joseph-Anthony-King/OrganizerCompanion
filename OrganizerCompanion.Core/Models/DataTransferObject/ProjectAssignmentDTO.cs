@@ -6,7 +6,7 @@ using ProjectTask = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
-    internal class AssignmentDTO : IAssignmentDTO
+    internal class ProjectAssignmentDTO : IProjectAssignmentDTO
     {
         #region Fields
         private readonly DateTime? _dateCompleted = null;
@@ -16,13 +16,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IGroupDTO>? IAssignmentDTO.Groups
+        List<IGroupDTO>? IProjectAssignmentDTO.Groups
         {
             get => [.. Groups!.Cast<IGroupDTO>()];
             set => Groups = value!.ConvertAll(group => (GroupDTO)group);
         }
         [JsonIgnore]
-        IProjectTask? IAssignmentDTO.Task
+        IProjectTask? IProjectAssignmentDTO.Task
         {
             get => Task;
             set => Task = (ProjectTask?)value;
@@ -70,10 +70,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #endregion
 
         #region Constructors
-        public AssignmentDTO() { }
+        public ProjectAssignmentDTO() { }
 
         [JsonConstructor]
-        public AssignmentDTO(
+        public ProjectAssignmentDTO(
             int id,
             string name, 
             string? description, 

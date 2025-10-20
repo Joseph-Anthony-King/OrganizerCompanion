@@ -2,7 +2,7 @@
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IAssignmentDTO : IDomainEntity
+    internal interface IProjectAssignmentDTO : IDomainEntity
     {
         string Name { get; set; }
         string? Description { get; set; }

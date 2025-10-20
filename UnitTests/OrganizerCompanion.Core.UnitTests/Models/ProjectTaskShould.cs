@@ -46,7 +46,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var name = "Test Task";
             var description = "Test Description";
-            var assignments = new List<Assignment>();
+            var assignments = new List<ProjectAssignment>();
             var isCompleted = true;
             var dateDue = DateTime.Now.AddDays(7);
             var dateCompleted = DateTime.Now;
@@ -339,10 +339,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Assignments_WhenSetToValidList_ShouldReturnCorrectValue()
         {
             // Arrange
-            var assignments = new List<Assignment>
+            var assignments = new List<ProjectAssignment>
             {
-                new Assignment { Id = 1, Name = "Assignment 1" },
-                new Assignment { Id = 2, Name = "Assignment 2" }
+                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
+                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
             };
 
             // Act
@@ -356,7 +356,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Assignments_WhenSetToEmptyList_ShouldReturnEmptyList()
         {
             // Arrange
-            var assignments = new List<Assignment>();
+            var assignments = new List<ProjectAssignment>();
 
             // Act
             _sut.Assignments = assignments;
@@ -380,7 +380,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
-            var assignments = new List<Assignment>();
+            var assignments = new List<ProjectAssignment>();
             
             // Act
             _sut.Assignments = assignments;
@@ -533,9 +533,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange 
             var task = (IProjectTask)_sut;
-            var assignment1 = new Assignment { Id = 1, Name = "Assignment 1" };
-            var assignment2 = new Assignment { Id = 2, Name = "Assignment 2" };
-            var assignments = new List<IAssignment> { assignment1, assignment2 };
+            var assignment1 = new ProjectAssignment { Id = 1, Name = "Assignment 1" };
+            var assignment2 = new ProjectAssignment { Id = 2, Name = "Assignment 2" };
+            var assignments = new List<IProjectAssignment> { assignment1, assignment2 };
 
             // Act
             task.Assignments = assignments;
@@ -552,10 +552,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var task = (IProjectTask)_sut;
-            var assignments = new List<Assignment>
+            var assignments = new List<ProjectAssignment>
             {
-                new Assignment { Id = 1, Name = "Assignment 1" },
-                new Assignment { Id = 2, Name = "Assignment 2" }
+                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
+                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
             };
             _sut.Assignments = assignments;
 
@@ -663,9 +663,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 3;
             _sut.Name = "Task with Assignments";
-            _sut.Assignments = new List<Assignment>
+            _sut.Assignments = new List<ProjectAssignment>
             {
-                new Assignment { Id = 1, Name = "Assignment 1" }
+                new ProjectAssignment { Id = 1, Name = "Assignment 1" }
             };
 
             // Act & Assert
@@ -757,19 +757,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Task_WithComplexAssignmentStructure_ShouldHandleCorrectly()
         {
             // Arrange
-            var assignment1 = new Assignment 
+            var assignment1 = new ProjectAssignment 
             { 
                 Id = 1, 
                 Name = "Complex Assignment 1",
                 Description = "Description 1"
             };
-            var assignment2 = new Assignment 
+            var assignment2 = new ProjectAssignment 
             { 
                 Id = 2, 
                 Name = "Complex Assignment 2",
                 Description = "Description 2"
             };
-            var assignments = new List<Assignment> { assignment1, assignment2 };
+            var assignments = new List<ProjectAssignment> { assignment1, assignment2 };
 
             // Act
             _sut.Id = 1;

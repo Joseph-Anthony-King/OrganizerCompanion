@@ -15,10 +15,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #region Properties
         #region Explicit ITaskDTO Implementation
         [JsonIgnore]
-        List<IAssignmentDTO>? IProjectTaskDTO.Assignments
+        List<IProjectAssignmentDTO>? IProjectTaskDTO.Assignments
         {
-            get => [.. Assignments!.Cast<IAssignmentDTO>()];
-            set => Assignments = [.. value!.Cast<AssignmentDTO>()];
+            get => [.. Assignments!.Cast<IProjectAssignmentDTO>()];
+            set => Assignments = [.. value!.Cast<ProjectAssignmentDTO>()];
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -38,7 +38,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? Description { get; set; } = null;
 
         [Required, JsonPropertyName("assignments")]
-        public List<AssignmentDTO>? Assignments { get; set; } = null;
+        public List<ProjectAssignmentDTO>? Assignments { get; set; } = null;
 
         [Required, JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; } = false;
@@ -60,7 +60,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public ProjectTaskDTO() { }
 
         [JsonConstructor]
-        public ProjectTaskDTO(int id, string name, string? description, List<AssignmentDTO>? assignments, bool isCompleted, DateTime? dateDue, DateTime? dateCompleted, DateTime dateCreated, DateTime? dateModified)
+        public ProjectTaskDTO(int id, string name, string? description, List<ProjectAssignmentDTO>? assignments, bool isCompleted, DateTime? dateDue, DateTime? dateCompleted, DateTime dateCreated, DateTime? dateModified)
         {
             Id = id;
             Name = name;

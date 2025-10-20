@@ -18,7 +18,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
-        private List<Assignment>? _assignments = null;
+        private List<ProjectAssignment>? _assignments = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private readonly DateTime? _dateCompleted = null;
@@ -27,10 +27,10 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit ITaskDTO Implementation
-        List<IAssignment>? IProjectTask.Assignments
+        List<IProjectAssignment>? IProjectTask.Assignments
         {
-            get => _assignments?.Select(a => a.Cast<IAssignment>()).ToList();
-            set => _assignments = value?.Select(a => (Assignment)a).ToList();
+            get => _assignments?.Select(a => a.Cast<IProjectAssignment>()).ToList();
+            set => _assignments = value?.Select(a => (ProjectAssignment)a).ToList();
         }
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -81,7 +81,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("assignments")]
-        public List<Assignment>? Assignments
+        public List<ProjectAssignment>? Assignments
         {
             get => _assignments;
             set
@@ -132,7 +132,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
-            List<Assignment>? assignments,
+            List<ProjectAssignment>? assignments,
             bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,

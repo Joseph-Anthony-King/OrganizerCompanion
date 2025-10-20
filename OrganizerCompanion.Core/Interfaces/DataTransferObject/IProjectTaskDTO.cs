@@ -6,7 +6,7 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
     {
         string Name { get; set; }
         string? Description { get; set; }
-        List<IAssignmentDTO>? Assignments { get; set; }
+        List<IProjectAssignmentDTO>? Assignments { get; set; }
         bool IsCompleted { get; set; }
         DateTime? DateDue { get; set; }
         DateTime? DateCompleted { get; }

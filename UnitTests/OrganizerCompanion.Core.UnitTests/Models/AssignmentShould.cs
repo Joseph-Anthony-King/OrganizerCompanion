@@ -9,13 +9,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     [TestFixture]
     internal class AssignmentShould
     {
-        private Assignment _assignment;
+        private ProjectAssignment _assignment;
         private List<Group> _groups;
 
         [SetUp]
         public void SetUp()
         {
-            _assignment = new Assignment();
+            _assignment = new ProjectAssignment();
 
             _groups =
             [
@@ -44,7 +44,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void HaveDefaultConstructor()
         {
             // Arrange & Act
-            var assignment = new Assignment();
+            var assignment = new ProjectAssignment();
             Assert.Multiple(() =>
             {
 
@@ -65,7 +65,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ThrowExceptionWhenUsingJsonConstructor()
         {
             // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new Assignment(
+            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
                 1, "Test Assignment", "Test Description", _groups,
                 1, null, true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
         }
@@ -74,7 +74,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ThrowExceptionWhenUsingJsonConstructorWithNullCollections()
         {
             // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException  
-            Assert.Throws<NotImplementedException>(() => new Assignment(
+            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
                 1, "Test", "Description", null,
                 null, null, false, null, null, DateTime.Now, null));
         }
@@ -456,7 +456,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.Groups = null;
 
             // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<AssignmentDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         [Test]
@@ -469,7 +469,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.Groups = []; // Empty list
 
             // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<AssignmentDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         [Test]
@@ -481,7 +481,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.Groups = [];
 
             // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<IAssignmentDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignment.Cast<IProjectAssignmentDTO>());
         }
 
         [Test]
@@ -647,7 +647,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ThrowExceptionWhenConstructorTriesToSetIsCast()
         {
             // Act & Assert - The constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new Assignment(
+            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
                 id: 1,
                 name: "Test",
                 description: "Description",
@@ -672,7 +672,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CoverExplicitInterfaceImplementations()
         {
             // Arrange
-            IAssignment iAssignment = _assignment;
+            IProjectAssignment iAssignment = _assignment;
             var testIGroup = _groups.Cast<IGroup>().ToList();
 
             // Act & Assert for Groups interface property
@@ -686,7 +686,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CoverTaskInterfaceImplementation()
         {
             // Arrange
-            IAssignment iAssignment = _assignment;
+            IProjectAssignment iAssignment = _assignment;
             var testTask = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
 
             // Act & Assert for Task interface property getter
@@ -725,7 +725,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.Groups = [workingGroup];
 
             // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<AssignmentDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         [Test]
@@ -740,7 +740,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.DateDue = DateTime.Now.AddDays(7);
 
             // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<AssignmentDTO>());
+            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         #endregion

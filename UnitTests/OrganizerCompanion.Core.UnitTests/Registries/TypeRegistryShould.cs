@@ -70,10 +70,10 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             // Assert - Check all expected domain types
             var expectedDomainTypes = new[]
             {
-                "Account", "AccountFeature", "AnnonymousUser", "Assignment",
-                "CAAddress", "Contact", "Email", "Feature", "Group",
-                "MXAddress", "Organization", "Password", "PhoneNumber",
-                "SubAccount", "USAddress", "User"
+                "Account", "AccountFeature", "AnnonymousUser", "CAAddress", 
+                "Contact", "Email", "Feature", "Group", "MXAddress", "Organization", 
+                "Password", "PhoneNumber", "ProjectAssignment", "SubAccount", 
+                "USAddress", "User"
             };
 
             foreach (var typeName in expectedDomainTypes)
@@ -92,10 +92,10 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             // Assert - Check all expected DTO types
             var expectedDTOTypes = new[]
             {
-                "AccountDTO", "AnnonymousUserDTO", "AssignmentDTO", "CAAddressDTO",
+                "AccountDTO", "AnnonymousUserDTO", "CAAddressDTO",
                 "ContactDTO", "EmailDTO", "FeatureDTO", "GroupDTO",
-                "MXAddressDTO", "OrganizationDTO", "PhoneNumberDTO",
-                "SubAccountDTO", "USAddressDTO", "UserDTO"
+                "MXAddressDTO", "OrganizationDTO", "PhoneNumberDTO", 
+                "ProjectAssignmentDTO", "SubAccountDTO", "USAddressDTO", "UserDTO"
             };
 
             foreach (var typeName in expectedDTOTypes)

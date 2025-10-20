@@ -7,7 +7,7 @@ using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class Assignment : IAssignment
+    internal class ProjectAssignment : IProjectAssignment
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -30,13 +30,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IGroup>? IAssignment.Groups
+        List<IGroup>? IProjectAssignment.Groups
         {
             get => [.. _groups!.Cast<IGroup>()];
             set => _groups = value!.ConvertAll(group => (Group)group);
         }
         [JsonIgnore]
-        IProjectTask? IAssignment.Task
+        IProjectTask? IProjectAssignment.Task
         {
             get => _task;
             set => _task = (ProjectTask?)value;
@@ -176,10 +176,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Constructors
-        public Assignment() { }
+        public ProjectAssignment() { }
 
         [JsonConstructor]
-        public Assignment(
+        public ProjectAssignment(
             int id,
             string name,
             string? description,
@@ -217,9 +217,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                if (typeof(T) == typeof(AssignmentDTO) || typeof(T) == typeof(IAssignmentDTO))
+                if (typeof(T) == typeof(ProjectAssignmentDTO) || typeof(T) == typeof(IProjectAssignmentDTO))
                 {
-                    var dto = new AssignmentDTO(
+                    var dto = new ProjectAssignmentDTO(
                         Id,
                         Name,
                         Description,
