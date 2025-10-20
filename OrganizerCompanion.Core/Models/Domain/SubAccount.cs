@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Registries;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -73,6 +74,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
+                // Automatically update LinkedEntityType when LinkedEntity is set
+                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.UtcNow;
             }
         }
@@ -124,8 +127,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             Id = id;
             LinkedEntityId = linkedEntityId;
-            _linkedEntityType = linkedEntityType;
-            LinkedEntity = linkedEntity;
+            _linkedEntityType = linkedEntityType; // Set the type first
+            _linkedEntity = linkedEntity; // Set the entity without triggering the setter that would override _linkedEntityType
             AccountId = accountId;
             Account = account;
             _dateCreated = dateCreated;
@@ -145,17 +148,120 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Dynamically casts the LinkedEntity using TypeRegistry
+        /// </summary>
+        /// <typeparam name="T">The target type to cast to</typeparam>
+        /// <returns>The LinkedEntity cast to type T</returns>
+        /// <exception cref="InvalidOperationException">Thrown when LinkedEntity is null or LinkedEntityType is not set</exception>
+        /// <exception cref="InvalidCastException">Thrown when the cast is not possible</exception>
+        public T CastLinkedEntity<T>() where T : class, IDomainEntity
+        {
+            if (_linkedEntity == null)
+                throw new InvalidOperationException("LinkedEntity is null and cannot be cast.");
+            
+            if (string.IsNullOrEmpty(_linkedEntityType))
+                throw new InvalidOperationException("LinkedEntityType is not set.");
+
+            // Check if type is registered in the TypeRegistry
+            var targetType = TypeRegistry.GetType(_linkedEntityType);
+            if (targetType == null)
+            {
+                // Fallback to reflection if not in registry
+                targetType = System.Type.GetType($"OrganizerCompanion.Core.Models.Domain.{_linkedEntityType}") 
+                           ?? System.Type.GetType($"OrganizerCompanion.Core.Models.DataTransferObject.{_linkedEntityType}")
+                           ?? System.Type.GetType(_linkedEntityType);
+                
+                if (targetType == null)
+                    throw new InvalidCastException($"Could not find type '{_linkedEntityType}'.");
+            }
+
+            if (!typeof(T).IsAssignableFrom(targetType) && targetType != typeof(T))
+                throw new InvalidCastException($"Cannot cast LinkedEntity of type '{_linkedEntityType}' to '{typeof(T).Name}'.");
+
+            // If the LinkedEntity is already of the correct type, return it directly
+            if (_linkedEntity is T directCast)
+                return directCast;
+
+            // If the LinkedEntity has a Cast method, use it
+            if (_linkedEntity.GetType().GetMethod("Cast")?.MakeGenericMethod(typeof(T)) is var castMethod && castMethod != null)
+            {
+                try
+                {
+                    return (T)castMethod.Invoke(_linkedEntity, null)!;
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidCastException($"Failed to cast LinkedEntity to type '{typeof(T).Name}': {ex.Message}", ex);
+                }
+            }
+
+            throw new InvalidCastException($"Cannot cast LinkedEntity of type '{_linkedEntity.GetType().Name}' to '{typeof(T).Name}'.");
+        }
+
+        /// <summary>
+        /// Gets the LinkedEntity as a specific type without casting, using pattern matching
+        /// </summary>
+        /// <typeparam name="T">The target type</typeparam>
+        /// <returns>The LinkedEntity as type T, or null if not of that type</returns>
+        public T? GetLinkedEntityAs<T>() where T : class, IDomainEntity
+        {
+            return _linkedEntity as T;
+        }
+
+        /// <summary>
+        /// Checks if the LinkedEntity can be cast to the specified type using TypeRegistry
+        /// </summary>
+        /// <typeparam name="T">The target type to check</typeparam>
+        /// <returns>True if the cast is possible, false otherwise</returns>
+        public bool CanCastLinkedEntityTo<T>() where T : class, IDomainEntity
+        {
+            if (_linkedEntity == null || string.IsNullOrEmpty(_linkedEntityType))
+                return false;
+
+            var targetType = TypeRegistry.GetType(_linkedEntityType);
+            return _linkedEntity is T || (targetType != null && typeof(T).IsAssignableFrom(targetType));
+        }
+
         public T Cast<T>() where T : IDomainEntity
         {
             try
             {
                 if (typeof(T) == typeof(SubAccountDTO) || typeof(T) == typeof(ISubAccountDTO))
                 {
+                    // Cast LinkedEntity using TypeRegistry approach if possible
+                    IDomainEntity? castedLinkedEntity = null;
+                    if (_linkedEntity != null && !string.IsNullOrEmpty(_linkedEntityType))
+                    {
+                        try
+                        {
+                            var targetTypeName = string.Format("{0}DTO", typeof(T).Name);
+                            // Try to use TypeRegistry for LinkedEntity casting
+                            var linkedEntityType = TypeRegistry.GetType(targetTypeName);
+                            if (linkedEntityType != null)
+                            {
+                                // Use reflection to call the Cast method with the dynamic type
+                                var castMethod = typeof(IDomainEntity).GetMethod("Cast")!.MakeGenericMethod(linkedEntityType);
+                                castedLinkedEntity = (IDomainEntity)castMethod.Invoke(_linkedEntity, null)!;
+                            }
+                            else
+                            {
+                                // Fallback to original approach
+                                castedLinkedEntity = _linkedEntity.Cast<IDomainEntity>();
+                            }
+                        }
+                        catch
+                        {
+                            // If casting fails, use the original entity
+                            castedLinkedEntity = _linkedEntity;
+                        }
+                    }
+
                     var dto = new SubAccountDTO(
                         _id,
                         _linkedEntityId,
                         _linkedEntityType,
-                        _linkedEntity?.Cast<IDomainEntity>(),
+                        castedLinkedEntity,
                         _accountId,
                         _account!.Cast<AccountDTO>(),
                         _dateCreated,

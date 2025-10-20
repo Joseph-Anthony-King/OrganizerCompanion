@@ -8,7 +8,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class SubAccountDTO : ISubAccountDTO
     {
         #region Fields
-        private DateTime _dateCreated = DateTime.UtcNow;
+        private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
         #region Explicit Interface Implementations
