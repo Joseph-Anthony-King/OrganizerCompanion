@@ -375,7 +375,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void SetAndGetTask()
         {
             // Arrange
-            var task = new OrganizerCompanion.Core.Models.Domain.Task();
+            var task = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
             var initialDateModified = _assignment.DateModified;
 
             // Act
@@ -687,7 +687,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             IAssignment iAssignment = _assignment;
-            var testTask = new OrganizerCompanion.Core.Models.Domain.Task();
+            var testTask = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
 
             // Act & Assert for Task interface property getter
             var retrievedTask = iAssignment.Task;

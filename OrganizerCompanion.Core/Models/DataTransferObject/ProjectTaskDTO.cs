@@ -2,30 +2,23 @@
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using ProjectTask = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
-    internal class AssignmentDTO : IAssignmentDTO
+    internal class ProjectTaskDTO : IProjectTaskDTO
     {
         #region Fields
         private readonly DateTime? _dateCompleted = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
         #region Properties
-        #region Explicit Interface Implementations
+        #region Explicit ITaskDTO Implementation
         [JsonIgnore]
-        List<IGroupDTO>? IAssignmentDTO.Groups
+        List<IAssignmentDTO>? IProjectTaskDTO.Assignments
         {
-            get => [.. Groups!.Cast<IGroupDTO>()];
-            set => Groups = value!.ConvertAll(group => (GroupDTO)group);
-        }
-        [JsonIgnore]
-        IProjectTask? IAssignmentDTO.Task
-        {
-            get => Task;
-            set => Task = (ProjectTask?)value;
+            get => [.. Assignments!.Cast<IAssignmentDTO>()];
+            set => Assignments = [.. value!.Cast<AssignmentDTO>()];
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -39,19 +32,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int Id { get; set; } = 0;
 
         [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name { set; get; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
+        [Required, JsonPropertyName("description"), MinLength(1, ErrorMessage = "Description must be at least 1 character long"), MaxLength(1000, ErrorMessage = "Name cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
 
-        [Required, JsonPropertyName("groups")]
-        public List<GroupDTO>? Groups { get; set; } = null;
-
-        [Required, JsonPropertyName("taskId"), Range(0, int.MaxValue, ErrorMessage = "Task Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int? TaskId { get; set; } = null;
-        
-        [Required, JsonPropertyName("task"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ProjectTask? Task { get; set; } = null;
+        [Required, JsonPropertyName("assignments")]
+        public List<AssignmentDTO>? Assignments { get; set; } = null;
 
         [Required, JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; } = false;
@@ -70,46 +57,33 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #endregion
 
         #region Constructors
-        public AssignmentDTO() { }
+        public ProjectTaskDTO() { }
 
         [JsonConstructor]
-        public AssignmentDTO(
-            int id,
-            string name, 
-            string? description, 
-            List<GroupDTO>? groups,
-            int? taskId,
-            ProjectTask? task,
-            bool isCompleted, 
-            DateTime? dateDue,
-            DateTime? dateCompleted,
-            DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+        public ProjectTaskDTO(int id, string name, string? description, List<AssignmentDTO>? assignments, bool isCompleted, DateTime? dateDue, DateTime? dateCompleted, DateTime dateCreated, DateTime? dateModified)
         {
             Id = id;
             Name = name;
             Description = description;
-            Groups = groups;
-            TaskId = taskId;
-            Task = task;
+            Assignments = assignments;
             IsCompleted = isCompleted;
             DateDue = dateDue;
             _dateCompleted = dateCompleted;
             _dateCreated = dateCreated;
             DateModified = dateModified;
-            IsCast = isCast ?? false;
-            CastId = castId ?? 0;
-            CastType = castType;
         }
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            throw new NotImplementedException();
+        }
 
-        public string ToJson() => throw new NotImplementedException();
+        public string ToJson()
+        {
+          throw new NotImplementedException();
+        }
         #endregion
-    }
+  }
 }

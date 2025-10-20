@@ -22,7 +22,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private IDomainEntity? _linkedEntity = null;
         private int? _accountId = null;
         private IAccount? _account = null;
-        private DateTime _dateCreated = DateTime.UtcNow;
+        private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
         #region Properties

@@ -3,8 +3,6 @@ using NUnit.Framework;
 using OrganizerCompanion.Core.Registries;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
-using OrganizerCompanion.Core.Interfaces.Domain;
-using DomainTask = OrganizerCompanion.Core.Models.Domain.Task;
 
 namespace OrganizerCompanion.Core.UnitTests.Registries
 {

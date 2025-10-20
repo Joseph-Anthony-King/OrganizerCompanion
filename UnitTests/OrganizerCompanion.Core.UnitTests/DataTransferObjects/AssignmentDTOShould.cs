@@ -1,8 +1,7 @@
 ﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-using OrganizerCompanion.Core.Interfaces.Domain;
-using Task = OrganizerCompanion.Core.Models.Domain.Task;
+using Task = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -497,7 +496,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void SetAndGetTask()
         {
             // Arrange
-            var testTask = new OrganizerCompanion.Core.Models.Domain.Task();
+            var testTask = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
 
             // Act
             _assignmentDTO.Task = testTask;

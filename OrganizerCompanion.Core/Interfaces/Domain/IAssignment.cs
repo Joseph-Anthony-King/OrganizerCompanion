@@ -6,7 +6,7 @@
         string? Description { get; set; }
         List<IGroup>? Groups { get; set; }
         int? TaskId { get; set; }
-        ITask? Task { get; set; }
+        IProjectTask? Task { get; set; }
         bool IsCompleted { get; set; }
         DateTime? DateDue { get; set; }
         DateTime? DateCompleted { get; }

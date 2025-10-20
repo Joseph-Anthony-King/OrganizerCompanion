@@ -1,8 +1,6 @@
-﻿using OrganizerCompanion.Core.Interfaces.Domain;
-
-namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
+﻿namespace OrganizerCompanion.Core.Interfaces.Domain
 {
-    internal interface ITaskDTO : IDomainEntity
+    internal interface IProjectTask : IDomainEntity
     {
         string Name { get; set; }
         string? Description { get; set; }

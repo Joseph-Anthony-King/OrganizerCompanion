@@ -20,7 +20,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _description = null;
         private List<Group>? _groups = null;
         private int? _taskId = null;
-        private Task? _task = null;
+        private ProjectTask? _task = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private DateTime? _dateCompleted = null;
@@ -36,10 +36,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set => _groups = value!.ConvertAll(group => (Group)group);
         }
         [JsonIgnore]
-        ITask? IAssignment.Task
+        IProjectTask? IAssignment.Task
         {
             get => _task;
-            set => _task = (Task?)value;
+            set => _task = (ProjectTask?)value;
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -114,7 +114,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonPropertyName("task")]
-        public Task? Task
+        public ProjectTask? Task
         {
             get => _task;
             set
@@ -185,7 +185,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? description,
             List<Group>? groups,
             int? taskId,
-            Task? task,
+            ProjectTask? task,
             bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,

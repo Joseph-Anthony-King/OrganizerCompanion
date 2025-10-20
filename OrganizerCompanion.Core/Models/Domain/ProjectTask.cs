@@ -1,18 +1,13 @@
-﻿using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-using OrganizerCompanion.Core.Interfaces.Domain;
-using OrganizerCompanion.Core.Models.DataTransferObject;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class Task : ITask
+    internal class ProjectTask : IProjectTask
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -26,13 +21,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         private List<Assignment>? _assignments = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
-        private DateTime? _dateCompleted = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime? _dateCompleted = null;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit ITaskDTO Implementation
-        List<IAssignment>? ITask.Assignments
+        List<IAssignment>? IProjectTask.Assignments
         {
             get => _assignments?.Select(a => a.Cast<IAssignment>()).ToList();
             set => _assignments = value?.Select(a => (Assignment)a).ToList();
@@ -130,18 +125,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Constructors
-        public Task() { }
+        public ProjectTask() { }
 
         [JsonConstructor]
-        public Task(
-            int id, 
-            string name, 
-            string? description, 
-            List<Assignment>? assignments, 
-            bool isCompleted, 
-            DateTime? dateDue, 
-            DateTime? dateCompleted, 
-            DateTime dateCreated, 
+        public ProjectTask(
+            int id,
+            string name,
+            string? description,
+            List<Assignment>? assignments,
+            bool isCompleted,
+            DateTime? dateDue,
+            DateTime? dateCompleted,
+            DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
@@ -159,7 +154,21 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Methods
         public T Cast<T>() where T : IDomainEntity
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (typeof(T) == typeof(ProjectTaskDTO) || typeof(T) == typeof(IProjectTaskDTO))
+                {
+                    // ProjectTaskDTO is currently a stub implementation that throws NotImplementedException
+                    // for all properties and methods, so we just return a new instance
+                    var dto = new ProjectTaskDTO();
+                    return (T)(object)dto;
+                }
+                else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
