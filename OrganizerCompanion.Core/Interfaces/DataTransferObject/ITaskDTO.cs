@@ -2,13 +2,11 @@
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IAssignmentDTO : IDomainEntity
+    internal interface ITaskDTO : IDomainEntity
     {
         string Name { get; set; }
         string? Description { get; set; }
-        List<IGroupDTO>? Groups { get; set; }
-        int? TaskId { get; set; }
-        ITask? Task { get; set; }
+        List<IAssignment>? Assignments { get; set; }
         bool IsCompleted { get; set; }
         DateTime? DateDue { get; set; }
         DateTime? DateCompleted { get; }

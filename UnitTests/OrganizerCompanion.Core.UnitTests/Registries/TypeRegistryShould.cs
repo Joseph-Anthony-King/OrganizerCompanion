@@ -4,6 +4,7 @@ using OrganizerCompanion.Core.Registries;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using DomainTask = OrganizerCompanion.Core.Models.Domain.Task;
 
 namespace OrganizerCompanion.Core.UnitTests.Registries
 {
@@ -110,13 +111,13 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
         public void Initialize_IsThreadSafe()
         {
             // Arrange
-            var tasks = new List<Task>();
+            var tasks = new List<System.Threading.Tasks.Task>();
             var exceptions = new List<Exception>();
 
             // Act - Run initialization from multiple threads
             for (int i = 0; i < 10; i++)
             {
-                tasks.Add(Task.Run(() =>
+                tasks.Add(System.Threading.Tasks.Task.Run(() =>
                 {
                     try
                     {
@@ -132,7 +133,7 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
                 }));
             }
 
-            Task.WaitAll(tasks.ToArray());
+            System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
 
             // Assert - No exceptions should occur
             Assert.That(exceptions, Is.Empty, "Thread-safe initialization should not throw exceptions");
@@ -542,7 +543,7 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
         public void TypeRegistry_ConcurrentAccess_IsThreadSafe()
         {
             // Arrange
-            var tasks = new List<Task>();
+            var tasks = new List<System.Threading.Tasks.Task>();
             var results = new List<bool>();
             var lockObject = new object();
 
@@ -550,7 +551,7 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             for (int i = 0; i < 20; i++)
             {
                 int threadIndex = i;
-                tasks.Add(Task.Run(() =>
+                tasks.Add(System.Threading.Tasks.Task.Run(() =>
                 {
                     try
                     {
@@ -581,7 +582,7 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
                 }));
             }
 
-            Task.WaitAll(tasks.ToArray());
+            System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
 
             // Assert - All operations should succeed
             Assert.That(results.All(r => r), Is.True, "All concurrent operations should succeed");

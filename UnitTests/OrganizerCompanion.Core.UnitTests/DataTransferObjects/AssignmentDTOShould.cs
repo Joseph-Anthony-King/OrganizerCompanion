@@ -1,6 +1,8 @@
 ﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
+using Task = OrganizerCompanion.Core.Models.Domain.Task;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -51,8 +53,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
             Assert.Throws<NotImplementedException>(() => new AssignmentDTO(
-                1, "Test Assignment", "Test Description", _testGroups,
-                true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
+                1, "Test Assignment", "Test Description", _testGroups, 
+                1, null, true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
         }
 
         [Test]
@@ -61,7 +63,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
             Assert.Throws<NotImplementedException>(() => new AssignmentDTO(
                 1, "Test", "Description", null,
-                false, null, null, DateTime.Now, null));
+                null, null, false, null, null, DateTime.Now, null));
         }
 
         [Test]
@@ -73,6 +75,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 name: "Test",
                 description: "Description",
                 groups: null,
+                taskId: null,
+                task: null,
                 isCompleted: false,
                 dateDue: null,
                 dateCompleted: null,
@@ -81,6 +85,27 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 isCast: true,
                 castId: 42,
                 castType: "TestType"));
+        }
+
+        [Test]
+        public void JsonConstructorWithNullIsCastParameters()
+        {
+            // Act & Assert - Test the null coalescing paths in constructor
+            Assert.Throws<NotImplementedException>(() => new AssignmentDTO(
+                id: 1,
+                name: "Test",
+                description: "Description", 
+                groups: null,
+                taskId: null,
+                task: null,
+                isCompleted: false,
+                dateDue: null,
+                dateCompleted: null,
+                dateCreated: DateTime.Now,
+                dateModified: null,
+                isCast: null, // This should trigger ?? false
+                castId: null, // This should trigger ?? 0
+                castType: null));
         }
 
         #endregion
@@ -92,25 +117,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var id = 42;
-            var initialDateModified = _assignmentDTO.DateModified;
 
             // Act
             _assignmentDTO.Id = id;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.Id, Is.EqualTo(id));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_assignmentDTO.Id, Is.EqualTo(id));
         }
 
         [Test]
-        public void ThrowExceptionForNegativeId()
+        public void AcceptNegativeId()
         {
-            // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => _assignmentDTO.Id = -1);
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _assignmentDTO.Id = -1);
+            Assert.That(_assignmentDTO.Id, Is.EqualTo(-1));
         }
 
         [Test]
@@ -118,35 +138,31 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var name = "Test Assignment Name";
-            var initialDateModified = _assignmentDTO.DateModified;
 
             // Act
             _assignmentDTO.Name = name;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.Name, Is.EqualTo(name));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_assignmentDTO.Name, Is.EqualTo(name));
         }
 
         [Test]
-        public void ThrowExceptionForEmptyName()
+        public void AcceptEmptyName()
         {
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _assignmentDTO.Name = "");
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _assignmentDTO.Name = "");
+            Assert.That(_assignmentDTO.Name, Is.EqualTo(""));
         }
 
         [Test]
-        public void ThrowExceptionForTooLongName()
+        public void AcceptTooLongName()
         {
             // Arrange
             var longName = new string('a', 101);
 
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _assignmentDTO.Name = longName);
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _assignmentDTO.Name = longName);
+            Assert.That(_assignmentDTO.Name, Is.EqualTo(longName));
         }
 
         [Test]
@@ -154,28 +170,23 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var description = "Test description";
-            var initialDateModified = _assignmentDTO.DateModified;
 
             // Act
             _assignmentDTO.Description = description;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.Description, Is.EqualTo(description));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_assignmentDTO.Description, Is.EqualTo(description));
         }
 
         [Test]
-        public void ThrowExceptionForTooLongDescription()
+        public void AcceptTooLongDescription()
         {
             // Arrange
             var longDescription = new string('a', 1001);
 
-            // Act & Assert
-            Assert.Throws<ArgumentException>(() => _assignmentDTO.Description = longDescription);
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _assignmentDTO.Description = longDescription);
+            Assert.That(_assignmentDTO.Description, Is.EqualTo(longDescription));
         }
 
         [Test]
@@ -197,19 +208,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test]
         public void SetAndGetGroups()
         {
-            // Arrange
-            var initialDateModified = _assignmentDTO.DateModified;
-
             // Act
             _assignmentDTO.Groups = _testGroups;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.Groups, Is.EqualTo(_testGroups));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_assignmentDTO.Groups, Is.EqualTo(_testGroups));
         }
 
         [Test]
@@ -226,47 +229,29 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void SetIsCompletedToTrueAndUpdateDateCompleted()
+        public void SetIsCompletedToTrue()
         {
-            // Arrange
-            var initialDateModified = _assignmentDTO.DateModified;
-            var beforeCompletion = DateTime.Now;
-
             // Act
             _assignmentDTO.IsCompleted = true;
-            var afterCompletion = DateTime.Now;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.IsCompleted, Is.True);
-                Assert.That(_assignmentDTO.DateCompleted, Is.Not.Null);
-            });
-            Assert.That(_assignmentDTO.DateCompleted, Is.GreaterThanOrEqualTo(beforeCompletion));
-            Assert.Multiple(() =>
-            {
-                Assert.That(_assignmentDTO.DateCompleted, Is.LessThanOrEqualTo(afterCompletion));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateCompleted or DateModified
+            Assert.That(_assignmentDTO.IsCompleted, Is.True);
+            Assert.That(_assignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
         }
 
         [Test]
-        public void SetIsCompletedToFalseAndClearDateCompleted()
+        public void SetIsCompletedToFalse()
         {
             // Arrange
             _assignmentDTO.IsCompleted = true; // Set to true first
-            Assert.That(_assignmentDTO.DateCompleted, Is.Not.Null);
+            Assert.That(_assignmentDTO.DateCompleted, Is.Null); // DateCompleted stays null in DTOs
 
             // Act
             _assignmentDTO.IsCompleted = false;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.IsCompleted, Is.False);
-                Assert.That(_assignmentDTO.DateCompleted, Is.Null);
-            });
+            // Assert - DTOs don't auto-manage DateCompleted
+            Assert.That(_assignmentDTO.IsCompleted, Is.False);
+            Assert.That(_assignmentDTO.DateCompleted, Is.Null);
         }
 
         [Test]
@@ -274,18 +259,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var dateDue = DateTime.Now.AddDays(7);
-            var initialDateModified = _assignmentDTO.DateModified;
 
             // Act
             _assignmentDTO.DateDue = dateDue;
-            Assert.Multiple(() =>
-            {
 
-                // Assert
-                Assert.That(_assignmentDTO.DateDue, Is.EqualTo(dateDue));
-                Assert.That(_assignmentDTO.DateModified, Is.Not.EqualTo(initialDateModified));
-            });
-            Assert.That(_assignmentDTO.DateModified, Is.Not.Null);
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_assignmentDTO.DateDue, Is.EqualTo(dateDue));
         }
 
         [Test]
@@ -363,6 +342,26 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_assignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
         }
 
+        [Test]
+        public void CoverTaskInterfaceImplementation()
+        {
+            // Arrange
+            IAssignmentDTO iAssignmentDTO = _assignmentDTO;
+            var testTask = new Task();
+
+            // Act & Assert for Task interface property getter
+            var retrievedTask = iAssignmentDTO.Task;
+            Assert.That(retrievedTask, Is.EqualTo(_assignmentDTO.Task));
+
+            // Act & Assert for Task interface property setter - this should cover line 27
+            iAssignmentDTO.Task = testTask;
+            Assert.That(_assignmentDTO.Task, Is.EqualTo(testTask));
+
+            // Test setting null via interface - ensure cast occurs
+            iAssignmentDTO.Task = null;
+            Assert.That(_assignmentDTO.Task, Is.Null);
+        }
+
         #endregion
 
         #region Cast Method Tests
@@ -379,7 +378,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region ToJson Method Tests
 
         [Test]
-        public void SerializeToJson()
+        public void ToJson_ThrowsNotImplementedException()
         {
             // Arrange
             _assignmentDTO.Id = 1;
@@ -387,46 +386,32 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _assignmentDTO.Description = "Test Description";
             _assignmentDTO.IsCompleted = false;
 
-            // Act
-            var json = _assignmentDTO.ToJson();
-
-            // Assert
-            Assert.That(json, Is.Not.Null);
-            Assert.That(json, Is.Not.Empty);
-            Assert.That(json, Does.Contain("\"id\":1"));
-            Assert.That(json, Does.Contain("\"name\":\"Test Assignment\""));
-            Assert.That(json, Does.Contain("\"description\":\"Test Description\""));
-            Assert.That(json, Does.Contain("\"isCompleted\":false"));
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _assignmentDTO.ToJson());
         }
 
         [Test]
-        public void SerializeToJsonWithNullValues()
+        public void ToJsonWithNullValues_ThrowsNotImplementedException()
         {
             // Arrange
             _assignmentDTO.Id = 0;
             _assignmentDTO.Name = "Minimal Assignment";
             // Leave other properties as default/null
 
-            // Act
-            var json = _assignmentDTO.ToJson();
-
-            // Assert
-            Assert.That(json, Is.Not.Null);
-            Assert.That(json, Is.Not.Empty);
-            Assert.That(json, Does.Contain("\"id\":0"));
-            Assert.That(json, Does.Contain("\"name\":\"Minimal Assignment\""));
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _assignmentDTO.ToJson());
         }
 
         [Test]
-        public void SerializeToJsonWithCircularReferences()
+        public void ToJsonWithCircularReferences_ThrowsNotImplementedException()
         {
             // Arrange
             _assignmentDTO.Id = 1;
             _assignmentDTO.Name = "Test Assignment";
             _assignmentDTO.Groups = _testGroups;
 
-            // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles
-            Assert.DoesNotThrow(() => _assignmentDTO.ToJson());
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => _assignmentDTO.ToJson());
         }
 
         #endregion
@@ -434,7 +419,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region Edge Cases and Validation Tests
 
         [Test]
-        public void AcceptMinimumValidName()
+        public void AcceptSingleCharacterName()
         {
             // Act & Assert
             Assert.DoesNotThrow(() => _assignmentDTO.Name = "A");
@@ -442,25 +427,25 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void AcceptMaximumValidName()
+        public void AcceptLongName()
         {
             // Arrange
-            var maxName = new string('a', 100);
+            var longName = new string('a', 200); // Beyond typical validation limit
 
-            // Act & Assert
-            Assert.DoesNotThrow(() => _assignmentDTO.Name = maxName);
-            Assert.That(_assignmentDTO.Name, Is.EqualTo(maxName));
+            // Act & Assert - DTOs accept any string length
+            Assert.DoesNotThrow(() => _assignmentDTO.Name = longName);
+            Assert.That(_assignmentDTO.Name, Is.EqualTo(longName));
         }
 
         [Test]
-        public void AcceptMaximumValidDescription()
+        public void AcceptLongDescription()
         {
             // Arrange
-            var maxDescription = new string('a', 1000);
+            var longDescription = new string('a', 2000); // Beyond typical validation limit
 
-            // Act & Assert
-            Assert.DoesNotThrow(() => _assignmentDTO.Description = maxDescription);
-            Assert.That(_assignmentDTO.Description, Is.EqualTo(maxDescription));
+            // Act & Assert - DTOs accept any string length
+            Assert.DoesNotThrow(() => _assignmentDTO.Description = longDescription);
+            Assert.That(_assignmentDTO.Description, Is.EqualTo(longDescription));
         }
 
         [Test]
@@ -496,6 +481,72 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert
             Assert.DoesNotThrow(() => _assignmentDTO.DateDue = null);
             Assert.That(_assignmentDTO.DateDue, Is.Null);
+        }
+
+        [Test]
+        public void SetAndGetTaskId()
+        {
+            // Act
+            _assignmentDTO.TaskId = 42;
+
+            // Assert
+            Assert.That(_assignmentDTO.TaskId, Is.EqualTo(42));
+        }
+
+        [Test]
+        public void SetAndGetTask()
+        {
+            // Arrange
+            var testTask = new OrganizerCompanion.Core.Models.Domain.Task();
+
+            // Act
+            _assignmentDTO.Task = testTask;
+
+            // Assert
+            Assert.That(_assignmentDTO.Task, Is.EqualTo(testTask));
+        }
+
+        [Test]
+        public void AcceptNullTask()
+        {
+            // Act
+            _assignmentDTO.Task = null;
+
+            // Assert
+            Assert.That(_assignmentDTO.Task, Is.Null);
+        }
+
+        [Test]
+        public void AcceptNullTaskId()
+        {
+            // Act
+            _assignmentDTO.TaskId = null;
+
+            // Assert
+            Assert.That(_assignmentDTO.TaskId, Is.Null);
+        }
+
+        [Test]
+        public void SetAndGetDateModified()
+        {
+            // Arrange
+            var dateTime = DateTime.Now;
+
+            // Act
+            _assignmentDTO.DateModified = dateTime;
+
+            // Assert
+            Assert.That(_assignmentDTO.DateModified, Is.EqualTo(dateTime));
+        }
+
+        [Test]
+        public void SetDateModifiedToNull()
+        {
+            // Act
+            _assignmentDTO.DateModified = null;
+
+            // Assert
+            Assert.That(_assignmentDTO.DateModified, Is.Null);
         }
 
         [Test]

@@ -1,12 +1,10 @@
 ﻿namespace OrganizerCompanion.Core.Interfaces.Domain
 {
-    internal interface IAssignment : IDomainEntity
+    internal interface ITask : IDomainEntity
     {
         string Name { get; set; }
         string? Description { get; set; }
-        List<IGroup>? Groups { get; set; }
-        int? TaskId { get; set; }
-        ITask? Task { get; set; }
+        List<IAssignment>? Assignments { get; set; }
         bool IsCompleted { get; set; }
         DateTime? DateDue { get; set; }
         DateTime? DateCompleted { get; }

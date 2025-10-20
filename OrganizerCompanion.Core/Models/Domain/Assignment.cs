@@ -19,6 +19,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string _name = string.Empty;
         private string? _description = null;
         private List<Group>? _groups = null;
+        private int? _taskId = null;
+        private Task? _task = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private DateTime? _dateCompleted = null;
@@ -32,6 +34,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             get => [.. _groups!.Cast<IGroup>()];
             set => _groups = value!.ConvertAll(group => (Group)group);
+        }
+        [JsonIgnore]
+        ITask? IAssignment.Task
+        {
+            get => _task;
+            set => _task = (Task?)value;
         }
         [JsonIgnore]
         public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -88,6 +96,30 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _groups ??= [];
                 _groups = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("taskId"), Range(0, int.MaxValue, ErrorMessage = "Task Id must be a non-negative number.")]
+        public int? TaskId
+        {
+            get => _taskId;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(TaskId), "Task Id must be a non-negative number.");
+                _taskId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("task")]
+        public Task? Task
+        {
+            get => _task;
+            set
+            {
+                _task = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -152,6 +184,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             string name,
             string? description,
             List<Group>? groups,
+            int? taskId,
+            Task? task,
             bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,
@@ -165,6 +199,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _name = name;
             _description = description;
             _groups = groups ?? [];
+            _taskId = taskId;
+            _task = task;
             _isCompleted = isCompleted;
             _dateDue = dateDue;
             _dateCompleted = dateCompleted;
@@ -183,16 +219,22 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (typeof(T) == typeof(AssignmentDTO) || typeof(T) == typeof(IAssignmentDTO))
                 {
-                    // Create AssignmentDTO using default constructor to avoid IsCast property issues
-                    var dto = new AssignmentDTO();
-                    dto.Id = this.Id;
-                    dto.Name = this.Name;
-                    dto.Description = this.Description;
-                    dto.Groups = this.Groups?.ConvertAll(group => group.Cast<GroupDTO>());
-                    dto.IsCompleted = this.IsCompleted;
-                    dto.DateDue = this.DateDue;
-                    dto.DateModified = this.DateModified;
-                    // Note: DateCompleted and DateCreated are read-only properties in AssignmentDTO
+                    var dto = new AssignmentDTO(
+                        Id,
+                        Name,
+                        Description,
+                        Groups?.ConvertAll(group => group.Cast<GroupDTO>()),
+                        TaskId,
+                        Task,
+                        IsCompleted,
+                        DateDue,
+                        DateCompleted,
+                        DateCreated,
+                        DateModified,
+                        IsCast,
+                        CastId,
+                        CastType
+                    );
                     
                     return (T)(object)dto;
                 }
