@@ -80,6 +80,8 @@ namespace OrganizerCompanion.Core.Registries
         {
             if (!_initialized) Initialize();
             
+            if (string.IsNullOrEmpty(typeName)) return null;
+            
             return _typeCache.TryGetValue(typeName, out var type) ? type : null;
         }
 
@@ -91,6 +93,8 @@ namespace OrganizerCompanion.Core.Registries
         public static bool IsTypeRegistered(string typeName)
         {
             if (!_initialized) Initialize();
+            
+            if (string.IsNullOrEmpty(typeName)) return false;
             
             return _typeCache.ContainsKey(typeName);
         }
