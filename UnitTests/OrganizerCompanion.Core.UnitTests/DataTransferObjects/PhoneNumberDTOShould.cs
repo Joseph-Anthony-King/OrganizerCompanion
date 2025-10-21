@@ -97,7 +97,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Phone_ShouldAcceptVariousFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var phoneFormats = new[]
             {
                 "555-123-4567",
@@ -142,7 +142,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Type_ShouldAcceptAllValidEnumValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             foreach (OrganizerCompanion.Core.Enums.Types type in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
             {
                 _phoneNumberDTO.Type = type;
@@ -176,7 +176,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Country_ShouldAcceptAllValidEnumValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             foreach (OrganizerCompanion.Core.Enums.Countries country in Enum.GetValues<OrganizerCompanion.Core.Enums.Countries>())
             {
                 _phoneNumberDTO.Country = country;
@@ -688,7 +688,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void PhoneNumberDTO_ShouldHandleTypesEnumConversions()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var allTypes = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
             
             foreach (var type in allTypes)
@@ -821,7 +821,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Phone_ShouldAcceptWhitespace()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _phoneNumberDTO.Phone = "   ";
@@ -868,7 +868,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Type_ShouldHandleNullToValueTransitions()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Start with null
@@ -906,7 +906,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Country_ShouldHandleNullToValueTransitions()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Start with null
@@ -1090,7 +1090,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.Cast<MockDomainEntity>());
@@ -1154,7 +1154,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Phone_ShouldAcceptComplexFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Emergency numbers
@@ -1227,7 +1227,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void PhoneNumberDTO_ShouldSupportCountrySpecificFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // US formats

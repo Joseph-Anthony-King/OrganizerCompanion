@@ -411,14 +411,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.Cast<MockDomainEntity>(); });
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.ToJson(); });
         }
 
@@ -964,14 +964,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Features_ShouldAllowNullAssignment()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.DoesNotThrow(() => { _sut.Features = null!; });
         }
 
         [Test, Category("DataTransferObjects")]
         public void StringProperties_ShouldAcceptEmptyStrings()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.DoesNotThrow(() => _sut.Street1 = "");
@@ -1069,7 +1069,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void DateTimeProperties_ShouldAcceptBoundaryValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test DateCreated with boundary values
@@ -1094,7 +1094,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Id_ShouldAcceptBoundaryValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test minimum value (0)
@@ -1174,7 +1174,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_WithDifferentTypes_ShouldAlwaysThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.Cast<CAAddressDTO>());
@@ -1186,7 +1186,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void ToJson_RepeatedCalls_ShouldAlwaysThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.ToJson());

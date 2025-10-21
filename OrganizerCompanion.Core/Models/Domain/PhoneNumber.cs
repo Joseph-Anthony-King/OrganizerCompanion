@@ -31,8 +31,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         public int Id 
         { 
             get => _id; 
-            set 
-            { 
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value; 
                 DateModified = DateTime.Now; 
             } 
@@ -77,6 +79,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _linkedEntityId;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(LinkedEntityId), "Linked Entity Id must be a non-negative number.");
                 _linkedEntityId = value;
                 DateModified = DateTime.Now;
             }

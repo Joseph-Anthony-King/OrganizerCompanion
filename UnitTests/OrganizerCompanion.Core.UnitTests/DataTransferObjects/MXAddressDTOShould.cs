@@ -392,7 +392,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void IsPrimary_ShouldSupportMultipleReassignments()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _sut.IsPrimary = true;
@@ -445,14 +445,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.Cast<MockDomainEntity>(); });
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.ToJson(); });
         }
 
@@ -713,7 +713,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void StringProperties_ShouldAcceptEmptyStrings()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _sut.Street = "";
@@ -736,7 +736,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void StringProperties_ShouldAcceptWhitespace()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _sut.Street = " Calle con espacios ";
@@ -759,7 +759,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void StringProperties_ShouldAcceptSpecialCharacters()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _sut.Street = "Calle José María Morelos y Pavón #123-B";
@@ -779,7 +779,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Properties_ShouldAllowMultipleReassignments()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test Street reassignments
@@ -1037,7 +1037,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Type_ShouldHandleNullToValueTransitions()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Start with null
@@ -1298,7 +1298,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.Cast<MockDomainEntity>());
@@ -1419,7 +1419,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void StringProperties_ShouldAcceptMexicanSpecificFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test Mexican street formats

@@ -138,7 +138,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Id_WhenSetToNegativeValue_ShouldThrowArgumentOutOfRangeException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = -1);
         }
 
@@ -202,21 +202,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Name_WhenSetToNull_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Name = null!);
         }
 
         [Test, Category("Models")]
         public void Name_WhenSetToEmptyString_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Name = string.Empty);
         }
 
         [Test, Category("Models")]
         public void Name_WhenSetToWhitespace_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Name = "   ");
         }
 
@@ -290,21 +290,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Description_WhenSetToNull_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Description = null!);
         }
 
         [Test, Category("Models")]
         public void Description_WhenSetToEmptyString_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Description = string.Empty);
         }
 
         [Test, Category("Models")]
         public void Description_WhenSetToWhitespace_ShouldThrowArgumentException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<ArgumentException>(() => _sut.Description = "   ");
         }
 
@@ -768,7 +768,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<ProjectAssignment>());
             Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type ProjectAssignment"));
         }

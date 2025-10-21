@@ -271,7 +271,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Pronouns_ShouldAcceptAllValidEnumValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             foreach (OrganizerCompanion.Core.Enums.Pronouns pronoun in Enum.GetValues<OrganizerCompanion.Core.Enums.Pronouns>())
             {
                 _userDTO.Pronouns = pronoun;
@@ -804,7 +804,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Names_ShouldAcceptSpecialCharacters()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var namesWithSpecialChars = new[]
             {
                 "O'Connor",
@@ -827,7 +827,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void UserName_ShouldAcceptVariousFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var userNameFormats = new[]
             {
                 "john.doe",
@@ -860,7 +860,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void BooleanProperties_ShouldAcceptAllStates()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var booleanProperties = new[]
             {
                 (Action<bool?>)(value => _userDTO.IsActive = value),
@@ -880,7 +880,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void DateProperties_ShouldAcceptValidDateRanges()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var dates = new[]
             {
                 DateTime.MinValue,
@@ -1029,45 +1029,45 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region Explicit Interface Implementation Tests - IUserDTO
 
         [Test, Category("DataTransferObjects")]
-        public void IUserDTO_Emails_Get_ShouldThrowNotImplementedException()
+        public void IUserDTO_Emails_Get_ShouldNotThrowNotImplementedException()
         {
             // Arrange
             IUserDTO userInterface = _userDTO;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = userInterface.Emails; });
+            Assert.DoesNotThrow(() => { var _ = userInterface.Emails; });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IUserDTO_Emails_Set_ShouldThrowNotImplementedException()
+        public void IUserDTO_Emails_Set_ShouldNotThrowNotImplementedException()
         {
             // Arrange
             IUserDTO userInterface = _userDTO;
             var mockEmails = new List<IEmailDTO>();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { userInterface.Emails = mockEmails; });
+            Assert.DoesNotThrow(() => { userInterface.Emails = mockEmails; });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IUserDTO_PhoneNumbers_Get_ShouldThrowNotImplementedException()
+        public void IUserDTO_PhoneNumbers_Get_ShouldNotThrowNotImplementedException()
         {
             // Arrange
             IUserDTO userInterface = _userDTO;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = userInterface.PhoneNumbers; });
+            Assert.DoesNotThrow(() => { var _ = userInterface.PhoneNumbers; });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IUserDTO_PhoneNumbers_Set_ShouldThrowNotImplementedException()
+        public void IUserDTO_PhoneNumbers_Set_ShouldNotThrowNotImplementedException()
         {
             // Arrange
             IUserDTO userInterface = _userDTO;
             var mockPhoneNumbers = new List<IPhoneNumberDTO>();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { userInterface.PhoneNumbers = mockPhoneNumbers; });
+            Assert.DoesNotThrow(() => { userInterface.PhoneNumbers = mockPhoneNumbers; });
         }
 
         #endregion

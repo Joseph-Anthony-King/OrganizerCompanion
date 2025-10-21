@@ -43,6 +43,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _id;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -228,7 +230,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}", _id);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.UserName{1}", _id, _userName);
         #endregion
     }
 }

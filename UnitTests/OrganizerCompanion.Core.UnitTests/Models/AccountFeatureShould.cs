@@ -287,17 +287,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Properties_WithMinValues_WorkCorrectly()
         {
-            // Arrange & Act
-            _sut.Id = int.MinValue;
-            _sut.AccountId = int.MinValue;
-            _sut.FeatureId = int.MinValue;
-
-            // Assert
-            Assert.Multiple(() =>
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
-                Assert.That(_sut.AccountId, Is.EqualTo(int.MinValue));
-                Assert.That(_sut.FeatureId, Is.EqualTo(int.MinValue));
+                _sut.Id = int.MinValue;
+                _sut.AccountId = int.MinValue;
+                _sut.FeatureId = int.MinValue;
             });
         }
 
@@ -1236,20 +1231,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void NegativeIds_AreAccepted()
+        public void NegativeIds_AreNotAccepted()
         {
-            // Arrange & Act - Domain models don't validate, they accept any int values
-            _sut.Id = -100;
-            _sut.AccountId = -200;
-            _sut.FeatureId = -300;
-
-            // Assert
-            Assert.Multiple(() =>
+            // Arrange, Act & Assert - Domain models don't validate, they accept any int values
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(_sut.Id, Is.EqualTo(-100));
-                Assert.That(_sut.AccountId, Is.EqualTo(-200));
-                Assert.That(_sut.FeatureId, Is.EqualTo(-300));
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                _sut.Id = -100;
+                _sut.AccountId = -200;
+                _sut.FeatureId = -300;
             });
         }
 

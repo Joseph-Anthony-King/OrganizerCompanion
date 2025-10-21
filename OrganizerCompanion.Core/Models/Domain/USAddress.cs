@@ -37,8 +37,10 @@ namespace OrganizerCompanion.Core.Models.Domain
         public int Id 
         { 
             get => _id; 
-            set 
-            { 
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value; 
                 DateModified = DateTime.Now; 
             } 
@@ -149,10 +151,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _linkedEntityId;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(value), "Linked Entity Id must be a non-negative number.");
                 _linkedEntityId = value;
                 DateModified = DateTime.Now;
             }
         }
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => _linkedEntityType;
 
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
@@ -165,9 +172,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 DateModified = DateTime.Now;
             }
         }
-
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
@@ -190,11 +194,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? country, 
             Types? type,
             bool isPrimary,
+            int linkedEntityId,
+            string? linkedEntityType,
+            IDomainEntity? linkedEntity,
             DateTime dateCreated, 
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _street1 = street1;
@@ -205,6 +209,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             _country = country;
             _type = type;
             _isPrimary = isPrimary;
+            _linkedEntityId = linkedEntityId;
+            _linkedEntityType = linkedEntityType;
+            _linkedEntity = linkedEntity;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

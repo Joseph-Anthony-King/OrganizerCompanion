@@ -72,11 +72,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var country = "United States";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var isPrimary = true;
+            var linkedEntityId = 456;
+            var linkedEntity = new MockDomainEntity { Id = 456 };
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var address = new USAddress(id, street1, street2, city, state, zipCode, country, type, isPrimary, dateCreated, dateModified);
+            var address = new USAddress(
+              id,
+              street1,
+              street2,
+              city,
+              state,
+              zipCode,
+              country,
+              type,
+              isPrimary,
+              linkedEntityId,
+              linkedEntity.GetType().Name,
+              linkedEntity,
+              dateCreated,
+              dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -90,9 +106,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(address.Country, Is.EqualTo(country));
                 Assert.That(address.Type, Is.EqualTo(type));
                 Assert.That(address.IsPrimary, Is.EqualTo(isPrimary));
-                Assert.That(address.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(address.LinkedEntity, Is.Null);
-                Assert.That(address.LinkedEntityType, Is.Null);
+                Assert.That(address.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(address.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(address.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(address.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(address.DateModified, Is.EqualTo(dateModified));
             });
@@ -723,13 +739,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
+        public void Properties_WithMinIntValues_ShouldNotAcceptMinValues()
         {
-            // Arrange & Act
-            _sut.Id = int.MinValue;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = int.MinValue);
         }
 
         [Test, Category("Models")]
@@ -1323,31 +1336,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Street1, Is.EqualTo("123 Max Value Street"));
                 Assert.That(result.City, Is.EqualTo("Max City"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_WithMinIntId_ShouldReturnUSAddressDTOWithMinIntId()
-        {
-            // Arrange
-            _sut.Id = int.MinValue;
-            _sut.Street1 = "123 Min Value Street";
-            _sut.City = "Min City";
-            _sut.State = new USState { Name = "Min State", Abbreviation = "MN" };
-            _sut.ZipCode = "00001";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
-
-            // Act
-            var result = _sut.Cast<USAddressDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Id, Is.EqualTo(int.MinValue));
-                Assert.That(result.Street1, Is.EqualTo("123 Min Value Street"));
-                Assert.That(result.City, Is.EqualTo("Min City"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
             });
         }
 

@@ -450,7 +450,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void CastId_ShouldSupportMinAndMaxValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 _sut.CastId = int.MinValue;
@@ -484,14 +484,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.Cast<MockDomainEntity>(); });
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.ToJson(); });
         }
 
@@ -1054,7 +1054,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_WithDifferentTypes_ShouldAlwaysThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.Cast<AnnonymousUserDTO>());
@@ -1066,7 +1066,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void ToJson_RepeatedCalls_ShouldAlwaysThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.ToJson());
@@ -1104,7 +1104,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void AllIntegerProperties_ShouldAcceptFullRange()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test Id with full range
@@ -1136,7 +1136,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void AllDateTimeProperties_ShouldAcceptFullRange()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test DateCreated with boundary values

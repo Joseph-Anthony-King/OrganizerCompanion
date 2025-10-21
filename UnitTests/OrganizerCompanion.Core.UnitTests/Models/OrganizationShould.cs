@@ -301,7 +301,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<InvalidCastException>(() => _sut.Cast<Organization>());
         }
 

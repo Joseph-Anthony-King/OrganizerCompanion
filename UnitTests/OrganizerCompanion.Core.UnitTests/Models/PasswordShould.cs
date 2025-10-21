@@ -485,7 +485,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<Password>());
         }
 
@@ -514,7 +514,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Password_WithVeryLongPasswordValue_ShouldBeAllowed()
         {
             // Arrange
-            var longPassword = new string('A', 1000);
+            var longPassword = new string('A', 256);
 
             // Act
             _sut.PasswordValue = longPassword;
@@ -527,7 +527,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Password_WithVeryLongPasswordHint_ShouldBeAllowed()
         {
             // Arrange
-            var longHint = new string('H', 1000);
+            var longHint = new string('H', 256);
 
             // Act
             _sut.PasswordHint = longHint;
@@ -590,13 +590,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Password_WithNegativeId_ShouldBeAllowed()
+        public void Password_WithNegativeId_ShouldNotBeAllowed()
         {
-            // Act
-            _sut.Id = -1;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(-1));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = -1);
         }
 
         [Test, Category("Models")]
@@ -620,13 +617,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Password_WithNegativeAccountId_ShouldBeAllowed()
+        public void Password_WithNegativeAccountId_ShouldNotBeAllowed()
         {
-            // Act
-            _sut.AccountId = -1;
-
-            // Assert
-            Assert.That(_sut.AccountId, Is.EqualTo(-1));
+            // Araange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _sut.AccountId = -1);
         }
 
         [Test, Category("Models")]
@@ -763,8 +757,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void PreviousPasswords_WithVeryLongPasswords_ShouldTrackCorrectly()
         {
             // Arrange
-            var longPassword1 = new string('A', 1000);
-            var longPassword2 = new string('B', 1500);
+            var longPassword1 = new string('A', 256);
+            var longPassword2 = new string('B', 256);
 
             // Act
             _sut.PasswordValue = longPassword1;
@@ -817,7 +811,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.ToJson());
         }
 

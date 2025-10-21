@@ -261,21 +261,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<IProjectTaskDTO>());
         }
 
         [Test, Category("DataTransferObjects")]
         public void Cast_WithDifferentType_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<IDomainEntity>());
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.ToJson());
         }
 
@@ -675,7 +675,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void TypeChecks_ShouldReturnCorrectTypes()
     {
-      // Arrange & Act & Assert
+      // Arrange, Act & Assert
       Assert.That(_sut.GetType(), Is.EqualTo(typeof(ProjectTaskDTO)));
       Assert.Multiple(() =>
       {
@@ -689,7 +689,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
     {
       Assert.Multiple(() =>
       {
-        // Arrange & Act & Assert
+        // Arrange, Act & Assert
         Assert.That(_sut is IProjectTaskDTO, Is.True);
         Assert.That(_sut is IDomainEntity, Is.True);
         Assert.That(_sut is ProjectTaskDTO, Is.True);

@@ -10,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithValidStates_ShouldReturnCorrectNames()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(MXStates.Aguascalientes.GetName(), Is.EqualTo("Aguascalientes"));
@@ -64,7 +64,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetAbbreviation_WithValidStates_ShouldReturnCorrectAbbreviations()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(MXStates.Aguascalientes.GetAbbreviation(), Is.EqualTo("AG"));
@@ -189,7 +189,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void ToStateModel_WithStatesContainingSpaces_ShouldHandleCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 var bajaCaliforniaModel = MXStates.BajaCalifornia.ToStateModel();
@@ -233,7 +233,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void ToStateModel_WithStatesContainingSpecialCharacters_ShouldHandleCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 var mexicoModel = MXStates.México.ToStateModel();

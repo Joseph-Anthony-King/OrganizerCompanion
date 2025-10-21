@@ -694,11 +694,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PhoneNumber_WithNegativeId_ShouldBeAllowed()
         {
-            // Act
-            _sut.Id = -1;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(-1));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = -1);
         }
 
         [Test, Category("Models")]
@@ -836,13 +833,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_WithNegativeValue_ShouldBeAllowed()
+        public void LinkedEntityId_WithNegativeValue_ShouldNotBeAllowed()
         {
-            // Act
-            _sut.LinkedEntityId = -1;
-
-            // Assert
-            Assert.That(_sut.LinkedEntityId, Is.EqualTo(-1));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _sut.LinkedEntityId = -1;
+            });
         }
 
         [Test, Category("Models")]
@@ -856,13 +853,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_WithMinValue_ShouldBeAllowed()
+        public void LinkedEntityId_WithMinValue_ShouldNotBeAllowed()
         {
-            // Act
-            _sut.LinkedEntityId = int.MinValue;
-
-            // Assert
-            Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MinValue));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _sut.LinkedEntityId = int.MinValue;
+            });
         }
 
         [Test, Category("Models")]
@@ -1388,29 +1385,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Phone, Is.EqualTo("+1-555-MAX-VALUE"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_WithMinIntId_ShouldReturnPhoneNumberDTOWithMinIntId()
-        {
-            // Arrange
-            _sut.Id = int.MinValue;
-            _sut.Phone = "+1-555-MIN-VALUE";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
-            _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
-
-            // Act
-            var result = _sut.Cast<PhoneNumberDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Id, Is.EqualTo(int.MinValue));
-                Assert.That(result.Phone, Is.EqualTo("+1-555-MIN-VALUE"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
-                Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
             });
         }
 

@@ -56,9 +56,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
-                {
-                    throw new ArgumentException("Id must be a non-negative number.");
-                }
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
                 DateModified = DateTime.Now;
             }

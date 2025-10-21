@@ -86,15 +86,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _sut = new Email(
-                id, 
-                emailAddress, 
+                id,
+                emailAddress,
                 type,
                 isPrimary,
                 linkedEntityId,
                 linkedEntity,
                 linkedEntityType,
                 isConfirmed,
-                dateCreated, 
+                dateCreated,
                 dateModified);
 
             // Assert
@@ -188,15 +188,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Type_WhenSetToNull_ShouldAcceptNullValue()
         {
-      // Arrange
-      _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
-      {
-        // Act
-        Type = null
-      };
+            // Arrange
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
+            {
+                // Act
+                Type = null
+            };
 
-      // Assert
-      Assert.That(_sut.Type, Is.Null);
+            // Assert
+            Assert.That(_sut.Type, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -221,7 +221,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void IsPrimary_ShouldGetAndSetCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test setting to true
@@ -273,7 +273,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
 
             // Assert
-            Assert.That(_sut.IsPrimary, Is.True, 
+            Assert.That(_sut.IsPrimary, Is.True,
                 "IsPrimary should maintain its value when other properties change");
         }
 
@@ -299,12 +299,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void IsConfirmed_WhenSetToFalse_ShouldUpdateDateModified()
         {
-      // Arrange
-      _sut = new Email
-      {
-        IsConfirmed = true // Set to true first
-      };
-      var beforeSet = DateTime.Now;
+            // Arrange
+            _sut = new Email
+            {
+                IsConfirmed = true // Set to true first
+            };
+            var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsConfirmed = false;
@@ -340,39 +340,39 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void IsConfirmed_ToggleMultipleTimes_ShouldUpdateDateModifiedEachTime()
-    {
-      // Arrange
-      _sut = new Email();
+        {
+            // Arrange
+            _sut = new Email();
             var initialTime = DateTime.Now;
 
             // Act & Assert - Test sequential IsConfirmed changes update DateModified
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
             var firstModified = _sut.DateModified;
-      Assert.Multiple(() =>
-      {
-        Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
-        Assert.That(_sut.IsConfirmed, Is.True);
-      });
-      System.Threading.Thread.Sleep(1);
+            Assert.Multiple(() =>
+            {
+                Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
+                Assert.That(_sut.IsConfirmed, Is.True);
+            });
+            System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = false;
             var secondModified = _sut.DateModified;
-      Assert.Multiple(() =>
-      {
-        Assert.That(secondModified, Is.GreaterThan(firstModified));
-        Assert.That(_sut.IsConfirmed, Is.False);
-      });
-      System.Threading.Thread.Sleep(1);
+            Assert.Multiple(() =>
+            {
+                Assert.That(secondModified, Is.GreaterThan(firstModified));
+                Assert.That(_sut.IsConfirmed, Is.False);
+            });
+            System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
             var thirdModified = _sut.DateModified;
-      Assert.Multiple(() =>
-      {
-        Assert.That(thirdModified, Is.GreaterThan(secondModified));
-        Assert.That(_sut.IsConfirmed, Is.True);
-      });
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(thirdModified, Is.GreaterThan(secondModified));
+                Assert.That(_sut.IsConfirmed, Is.True);
+            });
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -398,15 +398,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _sut = new Email(
-                1, 
-                "test@example.com", 
+                1,
+                "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
                 0,
                 null,
                 null,
                 false,
-                specificDate, 
+                specificDate,
                 DateTime.Now);
 
             // Assert
@@ -480,7 +480,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var mockEntity1 = new MockDomainEntity();
             var mockEntity2 = new AnotherMockEntity();
-            
+
             _sut.LinkedEntity = mockEntity1;
             var firstType = _sut.LinkedEntityType;
 
@@ -502,15 +502,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email(
-                1, 
-                "test@example.com", 
+                1,
+                "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
                 0,
                 null,
                 null,
                 true,
-                DateTime.Now.AddDays(-1), 
+                DateTime.Now.AddDays(-1),
                 DateTime.Now);
 
             // Act
@@ -549,7 +549,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"id\":0"));
                 Assert.That(json, Does.Contain("\"emailAddress\":null"));
                 Assert.That(json, Does.Contain("\"isConfirmed\":false"));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -558,21 +558,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_WithIsConfirmedTrue_ShouldSerializeCorrectly()
         {
-      // Arrange
-      _sut = new Email
-      {
-        IsConfirmed = true
-      };
+            // Arrange
+            _sut = new Email
+            {
+                IsConfirmed = true
+            };
 
-      // Act
-      var json = _sut.ToJson();
+            // Act
+            var json = _sut.ToJson();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"isConfirmed\":true"));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -581,21 +581,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_WithIsConfirmedFalse_ShouldSerializeCorrectly()
         {
-      // Arrange
-      _sut = new Email
-      {
-        IsConfirmed = false
-      };
+            // Arrange
+            _sut = new Email
+            {
+                IsConfirmed = false
+            };
 
-      // Act
-      var json = _sut.ToJson();
+            // Act
+            var json = _sut.ToJson();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"isConfirmed\":false"));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -618,7 +618,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"isPrimary\":true"));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -641,7 +641,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"isPrimary\":false"));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -650,14 +650,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_ShouldSerializeBooleanValuesCorrectly()
         {
-            // Arrange & Act & Assert for true
+            // Arrange, Act & Assert for true
             _sut.IsPrimary = true;
             var jsonTrue = _sut.ToJson();
             var documentTrue = JsonDocument.Parse(jsonTrue);
             Assert.That(documentTrue.RootElement.TryGetProperty("isPrimary", out var isPrimaryTrueProperty), Is.True);
             Assert.That(isPrimaryTrueProperty.GetBoolean(), Is.True);
 
-            // Arrange & Act & Assert for false
+            // Arrange, Act & Assert for false
             _sut.IsPrimary = false;
             var jsonFalse = _sut.ToJson();
             var documentFalse = JsonDocument.Parse(jsonFalse);
@@ -670,15 +670,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email(
-                123, 
-                "test@example.com", 
+                123,
+                "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Home,
                 false,
                 0,
                 null,
                 null,
                 false,
-                DateTime.Now.AddDays(-1), 
+                DateTime.Now.AddDays(-1),
                 DateTime.Now);
 
             // Act
@@ -698,15 +698,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email(
-                456, 
-                null, 
+                456,
+                null,
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
                 0,
                 null,
                 null,
                 true,
-                DateTime.Now.AddDays(-1), 
+                DateTime.Now.AddDays(-1),
                 DateTime.Now);
 
             // Act
@@ -742,15 +742,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email(
-                1, 
-                "test@example.com", 
+                1,
+                "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Mobil,
                 true,
                 0,
                 null,
                 null,
                 false,
-                DateTime.Now.AddDays(-1), 
+                DateTime.Now.AddDays(-1),
                 DateTime.Now);
 
             // Act
@@ -888,15 +888,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email(
-                1, 
-                "test@example.com", 
+                1,
+                "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
                 0,
                 null,
                 null,
                 true,
-                DateTime.Now, 
+                DateTime.Now,
                 DateTime.Now);
 
             // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
@@ -941,13 +941,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var mockEntity = new MockDomainEntity();
-            
+
             // Act
             _sut.LinkedEntity = mockEntity;
-            
+
             // Assert - LinkedEntityType should be read-only and set automatically
             Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-            
+
             // Verify that LinkedEntityType doesn't have a public setter
             var property = typeof(Email).GetProperty("LinkedEntityType");
             Assert.That(property?.SetMethod, Is.Null, "LinkedEntityType should be read-only");
@@ -980,13 +980,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Email_WithNegativeId_ShouldBeAllowed()
+        public void Email_WithNegativeId_ShouldNotBeAllowed()
         {
-            // Arrange & Act
-            _sut = new Email { Id = -1 };
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(-1));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _sut = new Email { Id = -1 };
+            });
         }
 
         [Test, Category("Models")]
@@ -1078,7 +1078,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"linkedEntityId\":456"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
-                
+
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
             });
@@ -1119,15 +1119,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             foreach (var enumValue in enumValues)
             {
-        // Arrange
-        _sut = new Email
-        {
-          // Act
-          Type = enumValue
-        };
+                // Arrange
+                _sut = new Email
+                {
+                    // Act
+                    Type = enumValue
+                };
 
-        // Assert
-        Assert.That(_sut.Type, Is.EqualTo(enumValue), $"Failed for enum value: {enumValue}");
+                // Assert
+                Assert.That(_sut.Type, Is.EqualTo(enumValue), $"Failed for enum value: {enumValue}");
             }
         }
 
@@ -1181,7 +1181,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(json, Is.Not.Null);
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
-                
+
                 // The serialization should handle reference cycles due to ReferenceHandler.IgnoreCycles
                 Assert.That(json, Does.Contain("\"id\":"));
             });
@@ -1202,7 +1202,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(email.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(email.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                
+
                 // DateCreated should be read-only
                 var property = typeof(Email).GetProperty("DateCreated");
                 Assert.That(property?.SetMethod, Is.Null, "DateCreated should be read-only");
@@ -1270,7 +1270,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act - Verify that JsonPropertyName attributes are correctly applied
             var type = typeof(Email);
-            
+
             // Assert - Check that properties have the correct JsonPropertyName attributes
             var idProperty = type.GetProperty("Id");
             var emailProperty = type.GetProperty("EmailAddress");
@@ -1284,23 +1284,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             Assert.Multiple(() =>
             {
-                Assert.That(idProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(idProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "Id should have JsonPropertyName attribute");
-                Assert.That(emailProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(emailProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "EmailAddress should have JsonPropertyName attribute");
-                Assert.That(typeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(typeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "Type should have JsonPropertyName attribute");
-                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "LinkedEntityId should have JsonPropertyName attribute");
-                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "LinkedEntity should have JsonPropertyName attribute");
-                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "LinkedEntityType should have JsonPropertyName attribute");
-                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "IsConfirmed should have JsonPropertyName attribute");
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "DateCreated should have JsonPropertyName attribute");
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false), 
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "DateModified should have JsonPropertyName attribute");
             });
         }
@@ -1325,20 +1325,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Email_WithMinIntValues_ShouldBeAllowed()
+        public void Email_WithMinIntValues_ShouldNotBeAllowed()
         {
-            // Arrange & Act
-            _sut = new Email
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Id = int.MinValue,
-                LinkedEntityId = int.MinValue
-            };
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MinValue));
+                _sut = new Email
+                {
+                    Id = int.MinValue,
+                    LinkedEntityId = int.MinValue
+                };
             });
         }
 
@@ -1347,7 +1343,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act - Verify that Required attributes are correctly applied
             var type = typeof(Email);
-            
+
             // Assert - Check that properties have Required attributes where expected
             var idProperty = type.GetProperty("Id");
             var emailProperty = type.GetProperty("EmailAddress");
@@ -1362,23 +1358,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 // Verify Required attributes exist on appropriate properties
-                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "Id should have Required attribute");
-                Assert.That(emailProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(emailProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "EmailAddress should have Required attribute");
-                Assert.That(typeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(typeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "Type should have Required attribute");
-                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "LinkedEntityId should have Required attribute");
-                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(linkedEntityProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "LinkedEntity should have Required attribute");
-                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(linkedEntityTypeProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "LinkedEntityType should have Required attribute");
-                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "IsConfirmed should have Required attribute");
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "DateCreated should have Required attribute");
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false), 
+                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "DateModified should have Required attribute");
             });
         }
@@ -1388,7 +1384,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act - Verify that Range attributes are correctly applied
             var type = typeof(Email);
-            
+
             // Assert - Check that properties have Range attributes where expected
             var idProperty = type.GetProperty("Id");
             var linkedEntityIdProperty = type.GetProperty("LinkedEntityId");
@@ -1396,9 +1392,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 // Verify Range attributes exist on appropriate properties
-                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false), 
+                Assert.That(idProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false),
                     Is.Not.Empty, "Id should have Range attribute");
-                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false), 
+                Assert.That(linkedEntityIdProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RangeAttribute), false),
                     Is.Not.Empty, "LinkedEntityId should have Range attribute");
             });
         }
@@ -1722,28 +1718,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test, Category("Models")]
-        public void Cast_ToEmailDTO_WithNegativeId_ShouldAllowNegativeIds()
-        {
-            // Arrange
-            _sut.Id = -100;
-            _sut.EmailAddress = "negative@test.com";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
-
-            // Act
-            var result = _sut.Cast<EmailDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Id, Is.EqualTo(-100));
-                Assert.That(result.EmailAddress, Is.EqualTo("negative@test.com"));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
-            });
-        }
-
         #endregion
 
         #region Additional Comprehensive Coverage Tests
@@ -1752,7 +1726,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
         {
             // Test that JsonConstructor handles parameters correctly and doesn't have issues with edge cases
-            
+
             // Arrange & Act
             var testDate = DateTime.Now;
             var email = new Email(
@@ -1787,7 +1761,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ExceptionHandling_RethrowsCorrectly()
         {
             // This test verifies that the catch block in the Cast method properly rethrows exceptions
-            
+
             // Arrange
             _sut.Id = 1;
             _sut.EmailAddress = "test@example.com";
@@ -1805,7 +1779,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void LinkedEntity_WithComplexEntityTypeChange_ShouldUpdateLinkedEntityTypeCorrectly()
         {
             // Test comprehensive LinkedEntity behavior with type changes
-            
+
             // Arrange
             var entity1 = new MockDomainEntity();
             var entity2 = new AnotherMockEntity();
@@ -1847,7 +1821,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_WithExtremeValues_ShouldHandleAllScenarios()
         {
             // Test ToString with various extreme value combinations
-            
+
             // Case 1: Maximum values
             _sut.Id = int.MaxValue;
             _sut.EmailAddress = new string('a', 1000) + "@verylongdomain.com";
@@ -1887,7 +1861,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
         {
             // Test that the serialization options handle complex scenarios correctly
-            
+
             // Arrange - Create email with LinkedEntity that could cause cycles
             var mockEntity = new MockDomainEntity { Id = 123 };
             _sut = new Email(
@@ -1916,7 +1890,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             json1 = _sut.ToJson();
             json2 = _sut.ToJson();
             json3 = _sut.ToJson();
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(json1, Is.Not.Null.And.Not.Empty);
@@ -1931,7 +1905,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
         {
             // Test that multiple Cast calls create independent DTO instances
-            
+
             // Arrange
             _sut = new Email(
                 id: 100,
@@ -1957,12 +1931,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(emailDto1, Is.Not.SameAs(emailDto2));
                 Assert.That(emailDto1, Is.Not.SameAs(iEmailDto));
                 Assert.That(emailDto2, Is.Not.SameAs(iEmailDto));
-                
+
                 // All should have same data
                 Assert.That(emailDto1.Id, Is.EqualTo(100));
                 Assert.That(emailDto2.Id, Is.EqualTo(100));
                 Assert.That(iEmailDto.Id, Is.EqualTo(100));
-                
+
                 Assert.That(emailDto1.EmailAddress, Is.EqualTo("multi@cast.com"));
                 Assert.That(emailDto2.EmailAddress, Is.EqualTo("multi@cast.com"));
                 Assert.That(iEmailDto.EmailAddress, Is.EqualTo("multi@cast.com"));
@@ -1973,9 +1947,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void AllEnumTypes_ComprehensiveCastAndSerializationTest()
         {
             // Test all enum values with Cast and serialization operations
-            
+
             var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
-            
+
             foreach (var enumValue in enumValues)
             {
                 // Arrange
@@ -2012,7 +1986,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DateModified_PropertyChangeCombinations_ShouldUpdateInSequence()
         {
             // Test that rapid sequential property changes all update DateModified correctly
-            
+
             // Arrange
             _sut = new Email();
             var timestamps = new List<DateTime?>
@@ -2048,7 +2022,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert - Each timestamp should be greater than the previous
             for (int i = 1; i < timestamps.Count; i++)
             {
-                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]), 
+                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]),
                     $"Timestamp at index {i} should be greater than timestamp at index {i - 1}");
             }
         }
@@ -2057,12 +2031,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_ComprehensiveFunctionalityIntegrationTest()
         {
             // Comprehensive test that exercises all major functionality together
-            
+
             // Test default constructor
             var defaultEmail = new Email();
             Assert.That(defaultEmail, Is.Not.Null);
             Assert.That(defaultEmail.DateCreated, Is.Not.EqualTo(default(DateTime)));
-            
+
             // Test simple constructor
             var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work, true);
             Assert.Multiple(() =>
@@ -2071,7 +2045,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(simpleEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(simpleEmail.IsConfirmed, Is.False);
             });
-            
+
             // Test JsonConstructor with comprehensive data
             var testDate = DateTime.Now;
             var linkedEntity = new MockDomainEntity { Id = 456 };
@@ -2087,7 +2061,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
-            
+
             // Verify comprehensive properties
             Assert.Multiple(() =>
             {
@@ -2101,7 +2075,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(comprehensiveEmail.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
                 Assert.That(comprehensiveEmail.DateModified, Is.EqualTo(testDate));
             });
-            
+
             // Test all property setters
             defaultEmail.Id = 54321;
             defaultEmail.EmailAddress = "updated@test.com";
@@ -2109,7 +2083,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultEmail.LinkedEntityId = 789;
             defaultEmail.LinkedEntity = new AnotherMockEntity();
             defaultEmail.IsConfirmed = true;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(defaultEmail.Id, Is.EqualTo(54321));
@@ -2119,11 +2093,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultEmail.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
                 Assert.That(defaultEmail.IsConfirmed, Is.True);
             });
-            
+
             // Test Cast functionality
             var emailDto = defaultEmail.Cast<EmailDTO>();
             var iEmailDto = defaultEmail.Cast<IEmailDTO>();
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(emailDto, Is.InstanceOf<EmailDTO>());
@@ -2131,11 +2105,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(emailDto.Id, Is.EqualTo(defaultEmail.Id));
                 Assert.That(iEmailDto.Id, Is.EqualTo(defaultEmail.Id));
             });
-            
+
             // Test JSON serialization
             var json = defaultEmail.ToJson();
             Assert.That(json, Is.Not.Null.And.Not.Empty);
-            
+
             // Test ToString functionality
             var stringResult = defaultEmail.ToString();
             Assert.Multiple(() =>
@@ -2144,7 +2118,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(stringResult, Does.Contain("updated@test.com"));
                 Assert.That(stringResult, Does.Contain("54321"));
             });
-            
+
             // Test exception scenarios
             Assert.Throws<InvalidCastException>(() => defaultEmail.Cast<MockDomainEntity>());
         }
@@ -2153,24 +2127,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void LinkedEntityType_ReadOnlyProperty_ComprehensiveBehaviorTest()
         {
             // Comprehensive test of LinkedEntityType read-only behavior
-            
+
             // Verify property is read-only
             var property = typeof(Email).GetProperty("LinkedEntityType");
             Assert.That(property?.SetMethod, Is.Null, "LinkedEntityType should be read-only");
-            
+
             // Test behavior with null LinkedEntity
             _sut.LinkedEntity = null;
             Assert.That(_sut.LinkedEntityType, Is.Null);
-            
+
             // Test behavior with various entity types
             var mockEntity = new MockDomainEntity();
             _sut.LinkedEntity = mockEntity;
             Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-            
+
             var anotherEntity = new AnotherMockEntity();
             _sut.LinkedEntity = anotherEntity;
             Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
-            
+
             // Test that setting back to null clears the type
             _sut.LinkedEntity = null;
             Assert.That(_sut.LinkedEntityType, Is.Null);
@@ -2180,10 +2154,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ExceptionRethrowing_ShouldPreserveOriginalException()
         {
             // Test that the catch block in Cast method properly rethrows exceptions
-            
+
             // Arrange
             _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work, true);
-            
+
             // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
             var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
             Assert.Multiple(() =>
@@ -2192,7 +2166,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(ex.Message, Does.Contain("Cannot cast Email to type MockDomainEntity"));
                 Assert.That(ex.InnerException, Is.Null); // Should be the original exception, not wrapped
             });
-            
+
             // Test multiple unsupported types
             Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
         }

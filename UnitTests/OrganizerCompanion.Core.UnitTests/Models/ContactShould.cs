@@ -1553,7 +1553,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // This tests the private CastAddressByType method indirectly by verifying it doesn't throw exceptions
             // when casting Contact with different address types
             
-            // Arrange & Act & Assert - Test that Cast method handles addresses without throwing exceptions
+            // Arrange, Act & Assert - Test that Cast method handles addresses without throwing exceptions
             _sut.Id = 1;
             _sut.FirstName = "Test";
             _sut.LastName = "User";

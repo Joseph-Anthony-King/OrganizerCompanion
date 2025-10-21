@@ -59,6 +59,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _id;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -165,23 +167,16 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime dateCreated,
             DateTime? dateModified)
         {
-            try
-            {
-                _id = id;
-                _accountName = accountName;
-                _accountNumber = accountNumber;
-                _license = license;
-                _databaseConnection = databaseConnection;
-                _features = features;
-                _mainAccountId = mainAccountId;
-                _subAccounts = accounts;
-                _dateCreated = dateCreated;
-                DateModified = dateModified;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error creating Account object.", ex);
-            }
+            _id = id;
+            _accountName = accountName;
+            _accountNumber = accountNumber;
+            _license = license;
+            _databaseConnection = databaseConnection;
+            _features = features;
+            _mainAccountId = mainAccountId;
+            _subAccounts = accounts;
+            _dateCreated = dateCreated;
+            DateModified = dateModified;
         }
 
         public Account(
@@ -189,34 +184,21 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountNumber,
             string? license,
             DatabaseConnection? databaseConnection,
-            IDomainEntity linkedEntity,
             List<AccountFeature> features,
             int? mainAccountId,
             List<SubAccount>? accounts,
             DateTime dateCreated,
             DateTime? dateModified)
         {
-            try
-            {
-                _accountName = accountName;
-                _accountNumber = accountNumber;
-                _license = license;
-                _databaseConnection = databaseConnection;
-                _features = features;
-                _mainAccountId = mainAccountId;
-                _subAccounts = accounts;
-                _dateCreated = dateCreated;
-                DateModified = dateModified;
-
-                // Set properties from linkedEntity (this can throw exceptions)
-                _id = linkedEntity.Id;
-                // Access GetType() to potentially trigger exception
-                var entityType = linkedEntity.GetType();
-            }
-            catch (Exception ex)
-            {
-                throw new Exception("Error creating Account object.", ex);
-            }
+            _accountName = accountName;
+            _accountNumber = accountNumber;
+            _license = license;
+            _databaseConnection = databaseConnection;
+            _features = features;
+            _mainAccountId = mainAccountId;
+            _subAccounts = accounts;
+            _dateCreated = dateCreated;
+            DateModified = dateModified;
         }
         #endregion
 

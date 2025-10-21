@@ -754,14 +754,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.Cast<MockDomainEntity>(); });
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => { _sut.ToJson(); });
         }
 
@@ -770,7 +770,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Note: This test verifies behavior if someone tries to assign null
             // even though the property initializes to an empty list
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.DoesNotThrow(() => { _sut.Features = null!; });
         }
 
@@ -1584,14 +1584,14 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Cast_WithSpecificType_ShouldThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Throws<NotImplementedException>(() => _sut.Cast<AccountDTO>());
         }
 
         [Test, Category("DataTransferObjects")]
         public void ToJson_MultipleCalls_ShouldAlwaysThrowNotImplementedException()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.Throws<NotImplementedException>(() => _sut.ToJson());
@@ -1674,7 +1674,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Id_ShouldAcceptBoundaryValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test minimum value (0)
@@ -1694,7 +1694,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void MainAccountId_ShouldAcceptBoundaryValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test minimum value (0)

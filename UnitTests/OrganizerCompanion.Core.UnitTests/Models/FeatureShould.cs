@@ -432,11 +432,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var negativeId = -456;
 
-            // Act
-            _sut.Id = negativeId;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(negativeId));
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _sut.Id = negativeId;
+            });
         }
 
         [Test, Category("Models")]
@@ -760,24 +760,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_ToFeatureDTO_WithNegativeId_ShouldAllowNegativeIds()
+        public void Cast_ToFeatureDTO_WithNegativeId_ShouldNotBeAllowed()
         {
-            // Arrange
-            _sut.Id = -100;
-            _sut.FeatureName = "NegativeIdFeature";
-            _sut.IsEnabled = true;
-
-            // Act
-            var result = _sut.Cast<FeatureDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Id, Is.EqualTo(-100));
-                Assert.That(result.FeatureName, Is.EqualTo("NegativeIdFeature"));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                _sut.Id = -100;
+                _sut.FeatureName = "NegativeIdFeature";
+                _sut.IsEnabled = true;
             });
         }
 
@@ -946,14 +936,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
 
             // Case 3: Negative ID with null feature name
-            _sut.Id = -42;
-            _sut.FeatureName = null;
-            var nullResult = _sut.ToString();
-            Assert.Multiple(() =>
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(nullResult, Is.Not.Null);
-                Assert.That(nullResult, Does.Contain(".Id:-42"));
-                Assert.That(nullResult, Does.Contain(".FeatureName:"));
+                _sut.Id = -42;
             });
         }
 

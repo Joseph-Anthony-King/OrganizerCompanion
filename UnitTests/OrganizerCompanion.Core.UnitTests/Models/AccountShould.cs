@@ -114,7 +114,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ParameterizedConstructor_SetsPropertiesCorrectlyFromLinkedEntity()
+        public void ParameterizedConstructor_SetsPropertiesCorrectly()
         {
             // Arrange
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
@@ -129,7 +129,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: null,
@@ -487,7 +486,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: null,
@@ -511,37 +509,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(account.DateModified, Is.EqualTo(testDate));
-        }
-
-        [Test, Category("Models")]
-        public void ParameterizedConstructor_ThrowsException_WhenLinkedEntityIsNull()
-        {
-            // Arrange
-            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
-            // Act & Assert
-            var ex = Assert.Throws<Exception>(() => new Account(
-                accountName: "testuser",
-                accountNumber: "ACC123",
-                license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
-                linkedEntity: null!,
-                features: _testFeatures,
-                mainAccountId: null,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
-            ));
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-                Assert.That(ex.InnerException, Is.Not.Null);
-            });
-            Assert.That(ex.InnerException, Is.TypeOf<NullReferenceException>());
         }
 
         [Test, Category("Models")]
@@ -606,70 +573,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ParameterizedConstructor_HandlesExceptionFromLinkedEntityId()
-        {
-            // Arrange
-            // Create a mock object that throws an exception when accessing Id
-            var mockEntity = new ThrowingMockEntity();
-            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
-            // Act & Assert
-            var ex = Assert.Throws<Exception>(() => new Account(
-                accountName: "testuser",
-                accountNumber: "ACC123",
-                license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
-                linkedEntity: mockEntity,
-                features: _testFeatures,
-                mainAccountId: null,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
-            ));
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-                Assert.That(ex.InnerException, Is.Not.Null);
-            });
-        }
-
-        [Test, Category("Models")]
-        public void ParameterizedConstructor_HandlesExceptionFromGetType()
-        {
-            // Arrange
-            var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
-            // Act & Assert
-            var ex = Assert.Throws<Exception>(() => new Account(
-                accountName: "testuser",
-                accountNumber: "ACC123",
-                license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
-                linkedEntity: null!,
-                features: _testFeatures,
-                mainAccountId: null,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
-            ));
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex.Message, Is.EqualTo("Error creating Account object."));
-                Assert.That(ex.InnerException, Is.Not.Null);
-            });
-            Assert.That(ex.InnerException!.Message, Is.EqualTo("Object reference not set to an instance of an object."));
-        }
-
-        [Test]
-        [Category("Models")]
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
             // Arrange
@@ -685,8 +588,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                
-                
+
+
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -707,8 +610,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Pass("This test documents the design limitation where Cast<AccountDTO> cannot be called due to IDomainEntity constraint");
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
@@ -724,8 +626,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC777",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                
-                
+
+
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -742,8 +644,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnotherUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
@@ -759,8 +660,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC888",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                
-                
+
+
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -777,8 +678,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToFeature_ThrowsInvalidCastException()
         {
             // Arrange
@@ -794,8 +694,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC999",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                
-                
+
+
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -812,8 +712,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUser_ThrowsInvalidCastException()
         {
             // Arrange
@@ -829,8 +728,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC111",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                
-                
+
+
                 features: [],
                 mainAccountId: null,
                 accounts: [],
@@ -847,8 +746,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_InternalImplementation_SupportsAccountDTOButConstraintPreventsUsage()
         {
             // This test documents the design issue in the Cast method implementation
@@ -864,8 +762,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                        "but the IDomainEntity constraint prevents compilation of Cast<AccountDTO>() calls");
         }
 
-        [Test]
-        [Category("Validation")]
+        [Test, Category("Validation")]
         public void Validation_ShouldPass_ForValidAccount()
         {
             // Arrange
@@ -880,8 +777,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                
-                
+
+
                 Features = _testFeatures
             };
 
@@ -892,8 +789,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(validationResults, Is.Empty);
         }
 
-        [Test]
-        [Category("Validation")]
+        [Test, Category("Validation")]
         public void Validation_ShouldPass_WhenIdIsZero()
         {
             // Arrange
@@ -908,8 +804,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                
-                
+
+
                 Features = _testFeatures
             };
 
@@ -920,37 +816,28 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(validationResults, Is.Empty);
         }
 
-        [Test]
-        [Category("Validation")]
-        [TestCase(-1)]
+        [Test, Category("Validation"), TestCase(-1)]
         public void Validation_ShouldFail_WhenIdIsInvalid(int invalidId)
         {
-            // Arrange
-            var account = new Account
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Id = invalidId,
-                AccountName = "name",
-                AccountNumber = "num",
-                License = Guid.NewGuid().ToString(),
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                var account = new Account
                 {
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
-                    DatabaseType = SupportedDatabases.SQLServer
-                },
-                
-                
-            };
-
-            // Act
-            var validationResults = ValidateModel(account);
-
-            // Assert
-            Assert.That(validationResults, Has.Count.EqualTo(1));
-            Assert.That(validationResults[0].ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
+                    Id = invalidId,
+                    AccountName = "name",
+                    AccountNumber = "num",
+                    License = Guid.NewGuid().ToString(),
+                    DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                    {
+                        ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
+                        DatabaseType = SupportedDatabases.SQLServer
+                    },
+                };
+            });
         }
 
-        [Test]
-        [Category("Validation")]
+        [Test, Category("Validation")]
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
         {
             // Arrange
@@ -969,8 +856,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Validation")]
+        [Test, Category("Validation")]
         public void Validation_ShouldFail_WhenLicenseIsInvalidGuid()
         {
             // Arrange
@@ -985,8 +871,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
                 },
-                
-                
+
+
             };
 
             // Act
@@ -1051,12 +937,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ExplicitInterface_Accounts_GetWithNullSubAccounts_ReturnsNull()
         {
-      // Arrange
-      var account = new Account
-      {
-        Accounts = null
-      };
-      IAccount iAccount = account;
+            // Arrange
+            var account = new Account
+            {
+                Accounts = null
+            };
+            IAccount iAccount = account;
 
             // Act
             var accounts = iAccount.Accounts;
@@ -1092,12 +978,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ExplicitInterface_Accounts_SetWithNull_SetsToNull()
         {
-      // Arrange
-      var account = new Account
-      {
-        Accounts = [new SubAccount { Id = 1 }] // Start with some accounts
-      };
-      IAccount iAccount = account;
+            // Arrange
+            var account = new Account
+            {
+                Accounts = [new SubAccount { Id = 1 }] // Start with some accounts
+            };
+            IAccount iAccount = account;
             var originalDateModified = account.DateModified;
 
             // Act
@@ -1297,9 +1183,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void AllProperties_GettersAndSetters_WorkCorrectly()
-    {
-      // Arrange
-      var account = new Account();
+        {
+            // Arrange
+            var account = new Account();
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "comprehensive-test",
@@ -1336,16 +1222,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(account.Accounts, Is.EqualTo(testSubAccounts));
 
             account.DateModified = testDate;
-      Assert.Multiple(() =>
-      {
-        Assert.That(account.DateModified, Is.EqualTo(testDate));
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.DateModified, Is.EqualTo(testDate));
 
-        // DateCreated is read-only, just verify it's set
-        Assert.That(account.DateCreated, Is.Not.EqualTo(default(DateTime)));
-      });
-    }
+                // DateCreated is read-only, just verify it's set
+                Assert.That(account.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            });
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void DateCreated_PropertyInfo_IsReadOnly()
         {
             // Arrange & Act
@@ -1514,20 +1400,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Accounts_SetterNullCoalescing_WorksCorrectly()
         {
-      // Arrange
-      var account = new Account
-      {
-        // First, set to a non-null value to ensure _subAccounts is not null
-        Accounts = [new SubAccount { Id = 1 }]
-      };
-      Assert.That(account.Accounts, Is.Not.Null);
-            
+            // Arrange
+            var account = new Account
+            {
+                // First, set to a non-null value to ensure _subAccounts is not null
+                Accounts = [new SubAccount { Id = 1 }]
+            };
+            Assert.That(account.Accounts, Is.Not.Null);
+
             // Act - Test the null-coalescing assignment: _subAccounts ??= [];
             account.Accounts = null;
-            
+
             // The setter logic is: _subAccounts ??= []; _subAccounts = value?.ConvertAll(account => account);
             // When value is null, ConvertAll is not called, so _subAccounts becomes null
-            
+
             // Assert
             Assert.That(account.Accounts, Is.Null);
         }
@@ -1535,13 +1421,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Accounts_SetterWithNewListAfterNull_InitializesCorrectly()
         {
-      // Arrange
-      var account = new Account
-      {
-        Accounts = null // Start with null
-      };
+            // Arrange
+            var account = new Account
+            {
+                Accounts = null // Start with null
+            };
 
-      var newAccounts = new List<SubAccount>
+            var newAccounts = new List<SubAccount>
             {
                 new() { Id = 100 },
                 new() { Id = 200 }
@@ -1583,7 +1469,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test with actual data
             var feature = new AccountFeature { Id = 1, FeatureId = 1 };
             var subAccount = new SubAccount { Id = 1 };
-            
+
             iAccount.Features = [feature];
             iAccount.Accounts = [subAccount];
 
@@ -1601,7 +1487,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Test to ensure all private fields are covered through properties
             var account = new Account();
-            
+
             // Access all properties to ensure complete coverage
             _ = account.Id;
             _ = account.AccountName;
@@ -1653,7 +1539,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Id = 123,
                 AccountName = "Test",
-                Features = null! 
+                Features = null!
             };
 
             // Act & Assert - The Cast method throws InvalidCastException before reaching ConvertAll
@@ -1683,7 +1569,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // This test attempts to trigger the exception handling in the JSON constructor
             // Since direct field assignments rarely throw, this documents the structure
-            
+
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
@@ -1740,12 +1626,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 dateModified: _testDateModified
             );
 
-            var account3 = new Account( // Parameterized constructor with linked entity
+            var account3 = new Account( // Parameterized constructor
                 accountName: "Linked Account",
                 accountNumber: "LINK123",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntity: _sut,
                 features: features,
                 mainAccountId: null,
                 accounts: null,
@@ -1771,7 +1656,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 // Verify all constructors worked
                 Assert.That(account1.Id, Is.EqualTo(0));
                 Assert.That(account2.Id, Is.EqualTo(999));
-                Assert.That(account3.Id, Is.EqualTo(_sut.Id));
+                Assert.That(account3.Id, Is.EqualTo(0));
 
                 // Verify interface functionality
                 Assert.That(interfaceFeatures, Is.Not.Null);
@@ -1852,7 +1737,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Is.Empty);
                 Assert.That(account.Features, Is.InstanceOf<List<AccountFeature>>());
-                
+
                 // Verify we can add to it
                 account.Features.Add(new AccountFeature { Id = 1 });
                 Assert.That(account.Features.Count, Is.EqualTo(1));
@@ -1904,7 +1789,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // This test documents the exception handling structure in the parameterized constructor
             // The try-catch block exists but is difficult to trigger in practice due to 
             // simple field assignments and property access
-            
+
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "test-db-connection",
@@ -1917,7 +1802,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 databaseConnection: databaseConnection,
-                linkedEntity: _sut,
                 features: _testFeatures,
                 mainAccountId: null,
                 accounts: null,
@@ -1944,9 +1828,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account2 = new Account(0, null, null, null, null, [], null, [], DateTime.Now, null);
             Assert.That(account2.Id, Is.EqualTo(0));
 
-            // Test parameterized constructor with linked entity
-            var account3 = new Account(null, null, null, null, _sut, [], null, null, DateTime.Now, null);
-            Assert.That(account3.Id, Is.EqualTo(_sut.Id));
+            // Test parameterized constructor 
+            var account3 = new Account(null, null, null, null, [], null, null, DateTime.Now, null);
+            Assert.That(account3.Id, Is.EqualTo(0));
 
             // Verify all constructors work
             Assert.Multiple(() =>

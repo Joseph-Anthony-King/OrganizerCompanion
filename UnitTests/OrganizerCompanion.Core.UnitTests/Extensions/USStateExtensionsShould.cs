@@ -10,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithValidStates_ShouldReturnCorrectNames()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(USStates.Alabama.GetName(), Is.EqualTo("Alabama"));
@@ -82,7 +82,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetAbbreviation_WithValidStates_ShouldReturnCorrectAbbreviations()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(USStates.Alabama.GetAbbreviation(), Is.EqualTo("AL"));
@@ -227,7 +227,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void ToStateModel_WithStatesContainingSpaces_ShouldHandleCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 var newHampshireModel = USStates.NewHampshire.ToStateModel();

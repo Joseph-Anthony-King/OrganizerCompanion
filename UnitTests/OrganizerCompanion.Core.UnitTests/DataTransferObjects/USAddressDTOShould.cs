@@ -229,7 +229,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void ZipCode_ShouldAcceptVariousFormats()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var zipCodeFormats = new[]
             {
                 "12345",
@@ -304,7 +304,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Type_ShouldAcceptAllValidEnumValues()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             foreach (OrganizerCompanion.Core.Enums.Types type in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
             {
                 _usAddressDTO.Type = type;
@@ -315,7 +315,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void IsPrimary_ShouldGetAndSetCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test setting to true
@@ -855,7 +855,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void IsPrimary_ShouldHandleRepeatedAssignments()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             for (int i = 0; i < 100; i++)
             {
                 var expectedValue = i % 2 == 0;
@@ -999,12 +999,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void USAddressDTO_ShouldSerializeBooleanValuesCorrectly()
         {
-            // Arrange & Act & Assert for true
+            // Arrange, Act & Assert for true
             _usAddressDTO.IsPrimary = true;
             var jsonTrue = JsonSerializer.Serialize(_usAddressDTO);
             Assert.That(jsonTrue, Contains.Substring("\"isPrimary\":true"));
 
-            // Arrange & Act & Assert for false
+            // Arrange, Act & Assert for false
             _usAddressDTO.IsPrimary = false;
             var jsonFalse = JsonSerializer.Serialize(_usAddressDTO);
             Assert.That(jsonFalse, Contains.Substring("\"isPrimary\":false"));
@@ -1087,7 +1087,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void USAddressDTO_ShouldHandleTypesEnumConversions()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             var allTypes = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
             
             foreach (var type in allTypes)

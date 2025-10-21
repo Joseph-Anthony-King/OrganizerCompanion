@@ -71,11 +71,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var country = "México";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var isPrimary = true;
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, isPrimary, dateCreated, dateModified);
+            var address = new MXAddress(
+              id,
+              street,
+              neighborhood,
+              postalCode,
+              city,
+              state,
+              country,
+              type,
+              isPrimary,
+              linkedEntityId,
+              linkedEntity.GetType().Name,
+              linkedEntity,
+              dateCreated,
+              dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -88,9 +104,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(address.State, Is.EqualTo(state));
                 Assert.That(address.Country, Is.EqualTo(country));
                 Assert.That(address.Type, Is.EqualTo(type));
-                Assert.That(address.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(address.LinkedEntity, Is.Null);
-                Assert.That(address.LinkedEntityType, Is.Null);
+                Assert.That(address.LinkedEntityId, Is.EqualTo(42));
+                Assert.That(address.LinkedEntityType, Is.EqualTo(linkedEntity.GetType().Name));
+                Assert.That(address.LinkedEntity, Is.Not.Null);
                 Assert.That(address.IsPrimary, Is.EqualTo(isPrimary));
                 Assert.That(address.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(address.DateModified, Is.EqualTo(dateModified));
@@ -559,11 +575,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var country = "México";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
             var isPrimary = false;
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var dateCreated = DateTime.Now.AddDays(-2);
             var dateModified = DateTime.Now.AddHours(-1);
 
             // Act
-            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, isPrimary, dateCreated, dateModified);
+            var address = new MXAddress(
+                id, 
+                street, 
+                neighborhood, 
+                postalCode, 
+                city, 
+                state, 
+                country, 
+                type, 
+                isPrimary,
+                linkedEntityId,
+                linkedEntity.GetType().Name,
+                linkedEntity,
+                dateCreated, 
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -800,13 +832,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Properties_WithMinIntValues_ShouldAcceptMinValues()
+        public void Properties_WithMinIntValues_ShouldNotAcceptMinValues()
         {
-            // Arrange & Act
-            _sut.Id = int.MinValue;
-
-            // Assert
-            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = int.MinValue);
         }
 
         [Test, Category("Models")]
@@ -1052,6 +1081,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToMXAddressDTO_WithCompleteData_ShouldPreserveAllData()
         {
             // Arrange - Set up MXAddress with comprehensive data
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var dateCreated = DateTime.Now.AddDays(-7);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -1065,6 +1096,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
                 isPrimary: true,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: dateCreated,
                 dateModified: dateModified
             );
@@ -1241,23 +1275,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_ToMXAddressDTO_WithNegativeId_ShouldAllowNegativeIds()
+        public void Cast_ToMXAddressDTO_WithNegativeId_ShouldNotAllowNegativeIds()
         {
-            // Arrange
-            _sut.Id = -100;
-            _sut.Street = "Calle Negative";
-            _sut.City = "Negative City";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
-
-            // Act
-            var result = _sut.Cast<MXAddressDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
+            // Arrange, Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result.Id, Is.EqualTo(-100));
-                Assert.That(result.Street, Is.EqualTo("Calle Negative"));
+                _sut.Id = -1; // Setting negative Id should throw
             });
         }
 
@@ -1351,8 +1374,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
         {
             // Test that JsonConstructor handles unused parameters (isCast, castId, castType) correctly
-            
+
             // Arrange & Act
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var testDate = DateTime.Now;
             var state = MXStates.Jalisco.ToStateModel();
             var address = new MXAddress(
@@ -1365,6 +1390,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
                 isPrimary: false,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
@@ -1454,8 +1482,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
         {
             // Test that the serialization options handle complex scenarios correctly
-            
+
             // Arrange - Create address with complex data
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
+
             _sut = new MXAddress(
                 id: 1,
                 street: "Serialization Test Street",
@@ -1466,6 +1497,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: true,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: DateTime.Now.AddHours(-1),
                 dateModified: DateTime.Now
             );
@@ -1498,7 +1532,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
         {
             // Test that multiple Cast calls create independent DTO instances
-            
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
+
             // Arrange
             _sut = new MXAddress(
                 id: 100,
@@ -1510,6 +1546,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
                 isPrimary: true,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now
             );
@@ -1723,8 +1762,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
                 Assert.That(defaultAddress.Country, Is.EqualTo(Countries.Mexico.GetName()));
             });
-            
+
             // Test JsonConstructor with comprehensive data
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var testDate = DateTime.Now;
             var state = MXStates.CiudadDeMéxico.ToStateModel();
             var comprehensiveAddress = new MXAddress(
@@ -1737,6 +1778,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: false,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
@@ -1889,8 +1933,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             System.Threading.Thread.Sleep(1);
             var address2 = new MXAddress();
             Assert.That(address2.DateCreated, Is.GreaterThanOrEqualTo(address1.DateCreated));
-            
+
             // Test JsonConstructor with specific DateCreated
+            var linkedEntityId = 42;
+            var linkedEntity = new MockDomainEntity { Id = linkedEntityId };
             var specificDate = DateTime.Now.AddDays(-5);
             var address3 = new MXAddress(
                 id: 1,
@@ -1902,6 +1948,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
                 isPrimary: true,
+                linkedEntityId: linkedEntityId,
+                linkedEntityType: linkedEntity.GetType().Name,
+                linkedEntity: linkedEntity,
                 dateCreated: specificDate,
                 dateModified: DateTime.Now
             );
@@ -1946,18 +1995,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
 
             // Case 3: Negative ID with null values
-            _sut.Id = -42;
-            _sut.Street = null;
-            _sut.City = null;
-            _sut.PostalCode = null;
-            _sut.State = null;
-            
-            var nullResult = _sut.ToString();
-            Assert.Multiple(() =>
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Assert.That(nullResult, Is.Not.Null);
-                Assert.That(nullResult, Does.Contain(".Id:-42"));
-                Assert.That(nullResult, Does.Contain(".State:Unknown"));
+                _sut.Id = -42;
             });
         }
 

@@ -29,6 +29,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Implementations
+        [JsonIgnore]
         List<IEmail> IOrganization.Emails
         {
             get => _emails.ConvertAll(email => (IEmail)email);
@@ -39,6 +40,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<IPhoneNumber> IOrganization.PhoneNumbers
         {
             get => _phoneNumbers.ConvertAll(phone => (IPhoneNumber)phone!);
@@ -49,6 +51,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<IPerson> IOrganization.Members
         {
             get => _members.ConvertAll(member => (IPerson)member);
@@ -59,6 +62,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<IPerson> IOrganization.Contacts
         {
             get => _contacts.ConvertAll(contact => (IPerson)contact);
@@ -69,6 +73,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<IAccount> IOrganization.Accounts
         {
             get => _accounts.ConvertAll(account => (IAccount)account);
@@ -86,6 +91,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _id;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
                 DateModified = DateTime.Now;
             }

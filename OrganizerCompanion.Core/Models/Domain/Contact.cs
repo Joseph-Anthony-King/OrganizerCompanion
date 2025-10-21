@@ -41,6 +41,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Properties
+        [JsonIgnore]
         List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
         {
             get => [.. _emails];
@@ -51,6 +52,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
         {
             get => [.. _phoneNumbers];
@@ -61,6 +63,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonIgnore]
         List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
         {
             get => [.. _addresses.Cast<Interfaces.Type.IAddress>()];
@@ -78,6 +81,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _id;
             set
             {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
                 DateModified = DateTime.Now;
             }

@@ -10,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithValidCountry_ShouldReturnCorrectName()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Countries.UnitedStates.GetName(), Is.EqualTo("United States"));
@@ -29,7 +29,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetIsoCode_WithValidCountry_ShouldReturnCorrectIsoCode()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Countries.UnitedStates.GetIsoCode(), Is.EqualTo("US"));
@@ -48,7 +48,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithSpecialCharactersInName_ShouldReturnCorrectName()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Countries.IvoryCoast.GetName(), Is.EqualTo("Côte d'Ivoire"));
@@ -64,7 +64,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithCompoundCountryNames_ShouldReturnCorrectName()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Countries.CentralAfricanRepublic.GetName(), Is.EqualTo("Central African Republic"));
@@ -117,7 +117,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithSampleFromEachAlphabetSection_ShouldReturnCorrectNames()
         {
-            // Arrange & Act & Assert - Testing representative countries from each alphabetical section
+            // Arrange, Act & Assert - Testing representative countries from each alphabetical section
             Assert.Multiple(() =>
             {
                 // A section
@@ -233,7 +233,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetIsoCode_WithSampleFromEachAlphabetSection_ShouldReturnCorrectIsoCodes()
         {
-            // Arrange & Act & Assert - Testing representative countries from each alphabetical section
+            // Arrange, Act & Assert - Testing representative countries from each alphabetical section
             Assert.Multiple(() =>
             {
                 // A section
@@ -349,7 +349,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithCountriesThatHaveSpacesAndHyphens_ShouldReturnCorrectFormat()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Countries.NewZealand.GetName(), Is.EqualTo("New Zealand"));

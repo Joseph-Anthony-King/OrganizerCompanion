@@ -65,7 +65,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                // Automatically update LinkedEntityType when LinkedEntity is set
                 _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.UtcNow;
             }

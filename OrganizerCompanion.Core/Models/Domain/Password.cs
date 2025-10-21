@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Models.Domain
@@ -17,16 +18,20 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
+        [JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
             get => _id; 
-            set 
-            { 
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value; 
                 DateModified = DateTime.Now; 
             } 
         }
 
+        [JsonPropertyName("passwordValue"), MaxLength(256, ErrorMessage = "Password cannot exceed 256 characters.")]
         public string? PasswordValue 
         { 
             get
@@ -47,6 +52,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
             set
             {
+                if (value != null && value.Length > 256)
+                {
+                    throw new ArgumentException("Password cannot exceed 256 characters.", nameof(PasswordValue));
+                }
                 if (_previousPasswords.Contains(value!))
                 {
                     throw new ArgumentException("New password cannot be the same as any previous 5 passwords.");
@@ -63,30 +72,41 @@ namespace OrganizerCompanion.Core.Models.Domain
             } 
         }
 
+        [JsonPropertyName("passwordHint"), MaxLength(256, ErrorMessage = "Password Hint cannot exceed 256 characters.")]
         public string? PasswordHint 
         { 
             get => _passwordHint; 
-            set 
-            { 
+            set
+            {
+                if (value != null && value.Length > 256)
+                {
+                    throw new ArgumentException("Password Hint cannot exceed 256 characters.", nameof(PasswordHint));
+                }
                 _passwordHint = value; 
                 DateModified = DateTime.Now; 
             }
         }
 
+        [JsonPropertyName("previousPasswords")]
         public List<string> PreviousPasswords => _previousPasswords!;
 
+        [JsonPropertyName("expirationDate")]
         public DateTime? ExpirationDate => _expirationDate;
 
+        [JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId 
         { 
             get => _accountId; 
-            set 
-            { 
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(AccountId), "Account Id must be a non-negative number.");
                 _accountId = value; 
                 DateModified = DateTime.Now; 
             } 
         }
 
+        [JsonPropertyName("account")]
         public IAccount? Account 
         { 
             get => _account; 
@@ -97,8 +117,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
 
+        [JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = default(DateTime);
         #endregion
 

@@ -21,8 +21,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _testDateModified = new DateTime(2023, 1, 2, 12, 0, 0);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void DefaultConstructor_SetsDefaultValues()
         {
             // Arrange
@@ -79,8 +78,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_CreatesObjectSuccessfully()
         {
             // This test verifies that the JsonConstructor creates objects successfully
@@ -99,8 +97,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -110,8 +107,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -129,8 +125,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_ThrowsException_WhenNull()
         {
             // Arrange
@@ -141,8 +136,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_ThrowsException_WhenEmpty()
         {
             // Arrange
@@ -153,8 +147,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_ThrowsException_WhenWhitespace()
         {
             // Arrange
@@ -165,8 +158,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_ThrowsException_WhenTooLong()
         {
             // Arrange
@@ -178,8 +170,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Does.Contain("User Name cannot exceed 100 characters."));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_AcceptsMaxLength()
         {
             // Arrange
@@ -191,8 +182,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.UserName, Is.EqualTo(maxLengthUserName));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void UserName_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -215,8 +205,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Id_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -226,8 +215,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Id, Is.EqualTo(0));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Id_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -246,8 +234,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void IsCast_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -257,8 +244,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.IsCast, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void IsCast_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -277,8 +263,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastId_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -288,8 +273,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.CastId, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastId_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -308,8 +292,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastId_Setter_CanSetToZero()
         {
             // Arrange
@@ -325,8 +308,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.CastId, Is.EqualTo(0));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastType_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -336,8 +318,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.CastType, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastType_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -356,8 +337,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastType_Setter_CanSetToNull()
         {
             // Arrange
@@ -373,8 +353,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.CastType, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void DateCreated_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
@@ -392,8 +371,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_SetsDateCreatedFromParameter()
         {
             // Arrange
@@ -415,8 +393,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateCreated, Is.EqualTo(specificDate));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void DateModified_CanBeSetAndRetrieved()
         {
             // Arrange
@@ -430,8 +407,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.EqualTo(testDate));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void DateModified_CanBeSetToNull()
         {
             // Arrange
@@ -444,8 +420,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
@@ -481,8 +456,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ToJson_HandlesDefaultValues()
         {
             // Arrange
@@ -506,8 +480,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"dateModified\""));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ToJson_HandlesNullDateModified()
         {
             // Arrange
@@ -540,8 +513,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"dateModified\":null"));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ToJson_WithCastProperties_IncludesConvertedFields()
         {
             // Arrange
@@ -574,8 +546,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ToJson_WithNullCastProperties_HandlesCorrectly()
         {
             // Arrange
@@ -608,8 +579,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Not.Contain("\"castType\""));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Properties_CanBeSetMultipleTimes()
         {
             // Arrange
@@ -659,8 +629,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Id_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -683,8 +652,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void IsCast_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -707,8 +675,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastId_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -731,8 +698,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void CastType_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -755,8 +721,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_HandlesMinAndMaxDateTimeValues()
         {
             // Arrange & Act
@@ -780,8 +745,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToOrganization_ReturnsOrganizationWithCorrectProperties()
         {
             // Arrange
@@ -821,8 +785,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToOrganization_UpdatesCastProperties()
         {
             // Arrange
@@ -849,8 +812,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToPerson_ReturnsPersonWithCorrectProperties()
         {
             // Arrange
@@ -897,8 +859,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToUser_UpdatesCastProperties()
         {
             // Arrange
@@ -925,8 +886,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_WithDefaultConstructor_ToOrganization_PreservesDateCreated()
         {
             // Arrange
@@ -947,8 +907,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_WithDefaultConstructor_ToPerson_PreservesDateCreated()
         {
             // Arrange
@@ -969,8 +928,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_WithNullDateModified_HandlesCorrectly()
         {
             // Arrange
@@ -1004,8 +962,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToUnsupportedType_ThrowsArgumentException()
         {
             // Arrange
@@ -1029,8 +986,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnotherUnsupportedType_ThrowsArgumentException()
         {
             // Arrange
@@ -1045,8 +1001,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUserDTO_ReturnsAnnonymousUserDTOWithCorrectProperties()
         {
             // Arrange
@@ -1086,8 +1041,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUserDTO_DoesNotUpdateSourceCastProperties()
         {
             // Arrange
@@ -1123,8 +1077,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUserDTO_WithDefaultValues_CreatesValidDTO()
         {
             // Arrange
@@ -1144,8 +1097,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUserDTO_WithNullDateModified_HandlesCorrectly()
         {
             // Arrange
@@ -1182,8 +1134,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToAnnonymousUserDTO_ReturnsDifferentInstanceEachTime()
         {
             // Arrange
@@ -1218,8 +1169,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ToIAnnonymousUserDTO_ThrowsArgumentException_NotSupported()
         {
             // Arrange
@@ -1246,8 +1196,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_ReturnsNewInstanceEachTime()
         {
             // Arrange
@@ -1287,8 +1236,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void AccountId_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -1298,8 +1246,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.AccountId, Is.EqualTo(0));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void AccountId_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -1318,8 +1265,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void AccountId_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -1342,8 +1288,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Account_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -1353,8 +1298,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Account, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Account_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -1374,8 +1318,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Account_Setter_CanSetToNull()
         {
             // Arrange
@@ -1391,8 +1334,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Account, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Account_Setter_UpdatesDateModified_OnEachCall()
         {
             // Arrange
@@ -1417,8 +1359,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ExplicitInterfaceImplementation_Account_Getter_ReturnsCorrectValue()
         {
             // Arrange
@@ -1429,8 +1370,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(interfaceReference.Account, Is.Null);
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ExplicitInterfaceImplementation_Account_Setter_UpdatesValueAndDateModified()
         {
             // Arrange
@@ -1452,8 +1392,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ExplicitInterfaceImplementation_Account_Setter_CanSetToNull()
         {
             // Arrange
@@ -1474,8 +1413,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void ExplicitInterfaceImplementation_Account_Setter_CastsCorrectly()
         {
             // Arrange
@@ -1496,8 +1434,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void Cast_CatchBlock_RethrowsExceptions()
         {
             // This test verifies that the catch block in the Cast method rethrows exceptions.
@@ -1517,8 +1454,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_WithNullValues_HandlesCorrectly()
         {
             // Arrange & Act
@@ -1545,8 +1481,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_WithFalseIsCast_SetsCorrectly()
         {
             // Arrange & Act
@@ -1573,8 +1508,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_WithExtremeValues_HandlesCorrectly()
         {
             // Test with extreme values to ensure robustness and potentially trigger
@@ -1605,8 +1539,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void JsonConstructor_ParameterVariations_CoverageTest()
         {
             // This test ensures comprehensive coverage of the JsonConstructor with
@@ -1629,8 +1562,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        [Category("Models")]
+        [Test, Category("Models")]
         public void AnnonymousUser_ComprehensiveCoverageVerification()
         {
             // This test verifies comprehensive coverage of all major functionality
@@ -1699,27 +1631,5 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test exception scenarios
             Assert.Throws<InvalidCastException>(() => defaultUser.Cast<Account>());
         }
-
-        /* NOTE: Code Coverage Analysis
-         * 
-         * The AnnonymousUser class should achieve near 100% code coverage with these tests.
-         * 
-         * The JsonConstructor has been simplified and no longer contains exception handling,
-         * making it fully testable with straightforward scenarios.
-         * 
-         * The only remaining potential uncovered line would be the Cast method catch-rethrow
-         * (line ~199 in the simplified version), which represents defensive programming where
-         * the actual operations (simple field assignments and object creation) are extremely
-         * unlikely to fail under normal circumstances.
-         * 
-         * This comprehensive test suite covers all practical functionality and realistic
-         * error scenarios in the AnnonymousUser class, including:
-         * - All constructors and their parameter variations
-         * - All property getters and setters (including explicit interface implementations)
-         * - All Cast method variants and exception scenarios
-         * - JSON serialization functionality
-         * - DateModified tracking behavior
-         * - Edge cases and boundary conditions
-         */
     }
 }

@@ -10,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetSubject_WithTraditionalPronouns_ShouldReturnCorrectSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetSubject(), Is.EqualTo("she"));
@@ -21,14 +21,14 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetSubject_WithGenderNeutralPronouns_ShouldReturnCorrectSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.That(Pronouns.TheyThem.GetSubject(), Is.EqualTo("they"));
         }
 
         [Test, Category("Extensions")]
         public void GetSubject_WithNeoPronouns_ShouldReturnCorrectSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.XeXir.GetSubject(), Is.EqualTo("xe"));
@@ -43,7 +43,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetSubject_WithOtherOptions_ShouldReturnEmptyString()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.PreferNotToSay.GetSubject(), Is.EqualTo(""));
@@ -54,7 +54,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetObject_WithTraditionalPronouns_ShouldReturnCorrectObject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetObject(), Is.EqualTo("her"));
@@ -65,14 +65,14 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetObject_WithGenderNeutralPronouns_ShouldReturnCorrectObject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.That(Pronouns.TheyThem.GetObject(), Is.EqualTo("them"));
         }
 
         [Test, Category("Extensions")]
         public void GetObject_WithNeoPronouns_ShouldReturnCorrectObject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.XeXir.GetObject(), Is.EqualTo("xir"));
@@ -87,7 +87,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetObject_WithOtherOptions_ShouldReturnEmptyString()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.PreferNotToSay.GetObject(), Is.EqualTo(""));
@@ -98,7 +98,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetPossessive_WithTraditionalPronouns_ShouldReturnCorrectPossessive()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetPossessive(), Is.EqualTo("hers"));
@@ -109,14 +109,14 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetPossessive_WithGenderNeutralPronouns_ShouldReturnCorrectPossessive()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.That(Pronouns.TheyThem.GetPossessive(), Is.EqualTo("theirs"));
         }
 
         [Test, Category("Extensions")]
         public void GetPossessive_WithNeoPronouns_ShouldReturnCorrectPossessive()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.XeXir.GetPossessive(), Is.EqualTo("xirs"));
@@ -131,7 +131,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetPossessive_WithOtherOptions_ShouldReturnEmptyString()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.PreferNotToSay.GetPossessive(), Is.EqualTo(""));
@@ -142,7 +142,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetDisplayFormat_WithTraditionalPronouns_ShouldReturnCorrectDisplayFormat()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetDisplayFormat(), Is.EqualTo("she/her"));
@@ -153,14 +153,14 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetDisplayFormat_WithGenderNeutralPronouns_ShouldReturnCorrectDisplayFormat()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.That(Pronouns.TheyThem.GetDisplayFormat(), Is.EqualTo("they/them"));
         }
 
         [Test, Category("Extensions")]
         public void GetDisplayFormat_WithNeoPronouns_ShouldReturnCorrectDisplayFormat()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.XeXir.GetDisplayFormat(), Is.EqualTo("xe/xir"));
@@ -175,7 +175,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetDisplayFormat_WithOtherOptions_ShouldReturnCorrectDisplayFormat()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.PreferNotToSay.GetDisplayFormat(), Is.EqualTo("Prefer not to say"));
@@ -186,7 +186,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetFormattedSubject_WithCapitalizeTrue_ShouldReturnCapitalizedSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetFormattedSubject(true), Is.EqualTo("She"));
@@ -204,7 +204,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetFormattedSubject_WithCapitalizeFalse_ShouldReturnLowercaseSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetFormattedSubject(false), Is.EqualTo("she"));
@@ -222,7 +222,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetFormattedSubject_WithDefaultParameter_ShouldReturnCapitalizedSubject()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.SheHer.GetFormattedSubject(), Is.EqualTo("She"));
@@ -234,7 +234,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetFormattedSubject_WithOtherOptions_ShouldReturnEmptyString()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(Pronouns.PreferNotToSay.GetFormattedSubject(), Is.EqualTo(""));

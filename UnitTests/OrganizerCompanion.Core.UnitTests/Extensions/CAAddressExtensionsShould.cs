@@ -10,7 +10,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetName_WithValidProvinces_ShouldReturnCorrectNames()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(CAProvinces.Alberta.GetName(), Is.EqualTo("Alberta"));
@@ -45,7 +45,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void GetAbbreviation_WithValidProvinces_ShouldReturnCorrectAbbreviations()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 Assert.That(CAProvinces.Alberta.GetAbbreviation(), Is.EqualTo("AB"));
@@ -146,7 +146,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [Test, Category("Extensions")]
         public void ToStateModel_WithProvincesContainingSpaces_ShouldHandleCorrectly()
         {
-            // Arrange & Act & Assert
+            // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 var britishColumbiaModel = CAProvinces.BritishColumbia.ToStateModel();
