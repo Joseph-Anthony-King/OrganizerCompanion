@@ -1415,9 +1415,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Additional Comprehensive Coverage Tests
 
         [Test, Category("Models")]
-        public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
+        public void JsonConstructor_WithAllParameters_ShouldSetPropertiesCorrectly()
         {
-            // Arrange & Act - Test that unused parameters (isCast, castId, castType) are ignored
+            // Arrange & Act - Test that all valid constructor parameters work correctly
             var testDate = DateTime.Now;
             
             var contact = new Contact(
@@ -1441,13 +1441,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntity: null,
                 linkedEntityType: null,
                 dateCreated: testDate,
-                dateModified: testDate,
-                isCast: true,        // These parameters are not used by the constructor
-                castId: 123,         // but should be handled gracefully
-                castType: "TestType"
+                dateModified: testDate
             );
 
-            // Assert - Verify that the object is created correctly and unused parameters don't affect it
+            // Assert - Verify that the object is created correctly with all constructor parameters
             Assert.Multiple(() =>
             {
                 Assert.That(contact.Id, Is.EqualTo(999));

@@ -313,10 +313,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             IDomainEntity? linkedEntity,
             string? linkedEntityType,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _firstName = firstName;

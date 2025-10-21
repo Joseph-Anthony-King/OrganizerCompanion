@@ -96,6 +96,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.MiddleName, Is.EqualTo(middleName));
                 Assert.That(person.LastName, Is.EqualTo(lastName));
                 Assert.That(person.FullName, Is.EqualTo($"{firstName} {middleName} {lastName}"));
+                Assert.That(person.UserName, Is.EqualTo(userName));
                 Assert.That(person.Pronouns, Is.EqualTo(pronouns));
                 Assert.That(person.BirthDate, Is.EqualTo(birthDate));
                 Assert.That(person.DeceasedDate, Is.EqualTo(deceasedDate));
@@ -1612,10 +1613,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
             
-            // Act - Test that optional cast parameters are accepted but don't affect the object
+            // Act - Test that the JsonConstructor works with the proper parameters
             var user = new User(id, firstName, null, lastName, null, null, null, null, null,
-                [], [], [], null, null, null, null, dateCreated, dateModified, 
-                true, 123, "TestType"); // Optional cast parameters
+                [], [], [], null, null, null, null, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -2581,6 +2581,251 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.That(result, Has.Count.EqualTo(1));
             Assert.That(result[0], Is.TypeOf<USAddress>());
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContact_ShouldReturnValidContact()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.FirstName = "John";
+            _sut.MiddleName = "Michael";
+            _sut.LastName = "Doe";
+            _sut.UserName = "johndoe";
+            _sut.Pronouns = Pronouns.HeHim;
+            _sut.BirthDate = DateTime.Now.AddYears(-30);
+            _sut.DeceasedDate = DateTime.Now.AddYears(-1);
+            _sut.JoinedDate = DateTime.Now.AddMonths(-6);
+            _sut.IsActive = true;
+            _sut.IsDeceased = false;
+            _sut.IsAdmin = true;
+            _sut.IsSuperUser = false;
+
+            // Act
+            var result = _sut.Cast<Contact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<Contact>());
+                Assert.That(result.Id, Is.EqualTo(0)); // Contact ID is set to 0 in cast
+                Assert.That(result.FirstName, Is.EqualTo("John"));
+                Assert.That(result.MiddleName, Is.EqualTo("Michael"));
+                Assert.That(result.LastName, Is.EqualTo("Doe"));
+                Assert.That(result.UserName, Is.EqualTo("johndoe"));
+                Assert.That(result.Pronouns, Is.EqualTo(Pronouns.HeHim));
+                Assert.That(result.BirthDate, Is.EqualTo(_sut.BirthDate));
+                Assert.That(result.DeceasedDate, Is.EqualTo(_sut.DeceasedDate));
+                Assert.That(result.JoinedDate, Is.EqualTo(_sut.JoinedDate));
+                Assert.That(result.IsActive, Is.EqualTo(true));
+                Assert.That(result.IsDeceased, Is.EqualTo(false));
+                Assert.That(result.IsAdmin, Is.EqualTo(true));
+                Assert.That(result.IsSuperUser, Is.EqualTo(false));
+                Assert.That(result.LinkedEntityId, Is.EqualTo(0)); // LinkedEntityId is set to 0 in cast
+                Assert.That(result.LinkedEntity, Is.Null); // LinkedEntity is set to null in cast
+                Assert.That(result.LinkedEntityType, Is.Null); // LinkedEntityType is set to null in cast
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIContact_ShouldReturnValidIContact()
+        {
+            // Arrange
+            _sut.Id = 456;
+            _sut.FirstName = "Jane";
+            _sut.MiddleName = "Elizabeth";
+            _sut.LastName = "Smith";
+            _sut.UserName = "janesmith";
+            _sut.Pronouns = Pronouns.SheHer;
+            _sut.BirthDate = DateTime.Now.AddYears(-25);
+            _sut.IsActive = false;
+            _sut.IsDeceased = true;
+            _sut.IsAdmin = false;
+
+            // Act
+            var result = _sut.Cast<IContact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<IContact>());
+                Assert.That(result.Id, Is.EqualTo(0)); // Contact ID is set to 0 in cast
+                Assert.That(result.FirstName, Is.EqualTo("Jane"));
+                Assert.That(result.MiddleName, Is.EqualTo("Elizabeth"));
+                Assert.That(result.LastName, Is.EqualTo("Smith"));
+                Assert.That(result.UserName, Is.EqualTo("janesmith"));
+                Assert.That(result.Pronouns, Is.EqualTo(Pronouns.SheHer));
+                Assert.That(result.BirthDate, Is.EqualTo(_sut.BirthDate));
+                Assert.That(result.IsActive, Is.EqualTo(false));
+                Assert.That(result.IsDeceased, Is.EqualTo(true));
+                Assert.That(result.IsAdmin, Is.EqualTo(false));
+                Assert.That(result.LinkedEntityId, Is.EqualTo(0)); // LinkedEntityId is set to 0 in cast
+                Assert.That(result.LinkedEntity, Is.Null); // LinkedEntity is set to null in cast
+                Assert.That(result.LinkedEntityType, Is.Null); // LinkedEntityType is set to null in cast
+                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContact_WithNullValues_ShouldReturnContactWithNullValues()
+        {
+            // Arrange - Leave most properties as default (null)
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+
+            // Act
+            var result = _sut.Cast<Contact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<Contact>());
+                Assert.That(result.FirstName, Is.EqualTo("John"));
+                Assert.That(result.MiddleName, Is.Null);
+                Assert.That(result.LastName, Is.EqualTo("Doe"));
+                Assert.That(result.UserName, Is.Null);
+                Assert.That(result.Pronouns, Is.Null);
+                Assert.That(result.BirthDate, Is.Null);
+                Assert.That(result.DeceasedDate, Is.Null);
+                Assert.That(result.JoinedDate, Is.Null);
+                Assert.That(result.IsActive, Is.Null);
+                Assert.That(result.IsDeceased, Is.Null);
+                Assert.That(result.IsAdmin, Is.Null);
+                Assert.That(result.IsSuperUser, Is.Null);
+                Assert.That(result.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(result.LinkedEntity, Is.Null);
+                Assert.That(result.LinkedEntityType, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContact_WithCollections_ShouldCopyCollections()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.Emails = new List<Email> { new() };
+            _sut.PhoneNumbers = new List<PhoneNumber> { new() };
+            _sut.Addresses = new List<IAddress> { new USAddress() };
+
+            // Act
+            var result = _sut.Cast<Contact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Emails, Is.Not.Null);
+                Assert.That(result.Emails, Has.Count.EqualTo(1));
+                Assert.That(result.PhoneNumbers, Is.Not.Null);
+                Assert.That(result.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(result.Addresses, Is.Not.Null);
+                Assert.That(result.Addresses, Has.Count.EqualTo(1));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContact_WithEmptyCollections_ShouldReturnContactWithEmptyCollections()
+        {
+            // Arrange
+            _sut.FirstName = "John";
+            _sut.LastName = "Doe";
+            _sut.Emails = new List<Email>();
+            _sut.PhoneNumbers = new List<PhoneNumber>();
+            _sut.Addresses = new List<IAddress>();
+
+            // Act
+            var result = _sut.Cast<Contact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.Emails, Is.Not.Null.And.Empty);
+                Assert.That(result.PhoneNumbers, Is.Not.Null.And.Empty);
+                Assert.That(result.Addresses, Is.Not.Null.And.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToContact_PreservesAllSupportedUserProperties()
+        {
+            // Arrange - Set all possible properties
+            _sut.Id = 999; // Note: This will not be preserved in Contact (Contact ID = 0)
+            _sut.FirstName = "Test";
+            _sut.MiddleName = "Middle";
+            _sut.LastName = "User";
+            _sut.UserName = "testuser";
+            _sut.Pronouns = Pronouns.TheyThem;
+            _sut.BirthDate = new DateTime(1990, 5, 15);
+            _sut.DeceasedDate = new DateTime(2020, 12, 25);
+            _sut.JoinedDate = new DateTime(2015, 3, 10);
+            _sut.IsActive = true;
+            _sut.IsDeceased = false;
+            _sut.IsAdmin = true;
+            _sut.IsSuperUser = true;
+            var specificDateCreated = DateTime.Now.AddDays(-100);
+            var specificDateModified = DateTime.Now.AddDays(-50);
+
+            // Use a User constructor that allows setting DateCreated
+            var userWithDates = new User(
+                999,
+                "Test",
+                "Middle", 
+                "User",
+                "testuser",
+                Pronouns.TheyThem,
+                new DateTime(1990, 5, 15),
+                new DateTime(2020, 12, 25),
+                new DateTime(2015, 3, 10),
+                new List<Email>(),
+                new List<PhoneNumber>(),
+                new List<IAddress>(),
+                true,
+                false,
+                true,
+                true,
+                specificDateCreated,
+                specificDateModified
+            );
+
+            // Act
+            var result = userWithDates.Cast<Contact>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<Contact>());
+                
+                // Properties that should be copied from User
+                Assert.That(result.FirstName, Is.EqualTo("Test"));
+                Assert.That(result.MiddleName, Is.EqualTo("Middle"));
+                Assert.That(result.LastName, Is.EqualTo("User"));
+                Assert.That(result.UserName, Is.EqualTo("testuser"));
+                Assert.That(result.Pronouns, Is.EqualTo(Pronouns.TheyThem));
+                Assert.That(result.BirthDate, Is.EqualTo(new DateTime(1990, 5, 15)));
+                Assert.That(result.DeceasedDate, Is.EqualTo(new DateTime(2020, 12, 25)));
+                Assert.That(result.JoinedDate, Is.EqualTo(new DateTime(2015, 3, 10)));
+                Assert.That(result.IsActive, Is.EqualTo(true));
+                Assert.That(result.IsDeceased, Is.EqualTo(false));
+                Assert.That(result.IsAdmin, Is.EqualTo(true));
+                Assert.That(result.IsSuperUser, Is.EqualTo(true));
+                Assert.That(result.DateCreated, Is.EqualTo(specificDateCreated));
+                Assert.That(result.DateModified, Is.EqualTo(specificDateModified));
+                
+                // Contact-specific properties that should be set to defaults
+                Assert.That(result.Id, Is.EqualTo(0)); // Contact ID is always 0 in cast
+                Assert.That(result.LinkedEntityId, Is.EqualTo(0)); // LinkedEntityId is always 0 in cast
+                Assert.That(result.LinkedEntity, Is.Null); // LinkedEntity is always null in cast
+                Assert.That(result.LinkedEntityType, Is.Null); // LinkedEntityType is always null in cast
+            });
         }
 
         // Mock class for testing unknown address type scenario

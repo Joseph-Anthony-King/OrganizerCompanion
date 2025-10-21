@@ -280,10 +280,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool? isAdmin,
             bool? isSuperUser,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _firstName = firstName;
@@ -367,6 +364,34 @@ namespace OrganizerCompanion.Core.Models.Domain
                         DateModified = this.DateModified
                     };
                     return (T)dto;
+                }
+                else if (typeof(T) == typeof(Contact) || typeof(T) == typeof(IContact))
+                {
+                    object contact = new Contact
+                    (
+                        0,
+                        FirstName,
+                        MiddleName,
+                        LastName,
+                        UserName,
+                        Pronouns,
+                        BirthDate,
+                        DeceasedDate,
+                        JoinedDate,
+                        Emails,
+                        PhoneNumbers,
+                        Addresses,
+                        IsActive,
+                        IsDeceased,
+                        IsAdmin,
+                        IsSuperUser,
+                        0,
+                        null,
+                        null,
+                        DateCreated,
+                        DateModified
+                    );
+                    return (T)contact;
                 }
                 else throw new InvalidCastException($"Cannot cast User to type {typeof(T).Name}.");
             }
