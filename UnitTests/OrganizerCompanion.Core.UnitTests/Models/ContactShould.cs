@@ -856,8 +856,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(result, Contains.Substring("Contact"));
-            Assert.That(result, Contains.Substring("Id123"));
-            Assert.That(result, Contains.Substring("FullNameJohn Doe"));
+            Assert.That(result, Contains.Substring("Id:123"));
+            Assert.That(result, Contains.Substring("FullName:John Doe"));
         }
 
         [Test, Category("Models")]
@@ -873,7 +873,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(result, Contains.Substring("Contact"));
-            Assert.That(result, Contains.Substring("Id456"));
+            Assert.That(result, Contains.Substring("Id:456"));
             Assert.That(result, Contains.Substring("FullName"));
         }
 
@@ -1334,6 +1334,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             public int Id { get; set; } = 1;
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
+            public bool IsPrimary { get; set; } = true;
             public int LinkedEntityId { get; set; } = 0;
             public IDomainEntity? LinkedEntity { get; set; } = null;
             public string? LinkedEntityType { get; set; } = null;

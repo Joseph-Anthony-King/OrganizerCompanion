@@ -34,6 +34,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.Null);
             });
@@ -218,6 +219,66 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsPrimary = true;
+
+            // Act
+            _sut.IsPrimary = expectedIsPrimary;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.EqualTo(expectedIsPrimary));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldAcceptTrueValue()
+        {
+            // Arrange & Act
+            _sut.IsPrimary = true;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.True);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldAcceptFalseValue()
+        {
+            // Arrange & Act
+            _sut.IsPrimary = false;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.False);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_DefaultValue_ShouldBeFalse()
+        {
+            // Arrange & Act
+            var emailDTO = new EmailDTO();
+
+            // Assert
+            Assert.That(emailDTO.IsPrimary, Is.False);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldSupportMultipleReassignments()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+                
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
+                
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetValue()
         {
             // Arrange
@@ -331,6 +392,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(EmailDTO).GetProperty(nameof(EmailDTO.IsPrimary));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldHaveRequiredAttribute()
         {
             // Arrange
@@ -389,6 +463,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Id = 999,
                 EmailAddress = "chained@example.com",
                 Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = true,
                 DateCreated = testDate,
                 DateModified = testModifiedDate
             };
@@ -399,6 +474,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(emailDTO.Id, Is.EqualTo(999));
                 Assert.That(emailDTO.EmailAddress, Is.EqualTo("chained@example.com"));
                 Assert.That(emailDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(emailDTO.IsPrimary, Is.True);
                 Assert.That(emailDTO.DateCreated, Is.EqualTo(testDate));
                 Assert.That(emailDTO.DateModified, Is.EqualTo(testModifiedDate));
             });
@@ -413,6 +489,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(EmailDTO.Id), "id" },
                 { nameof(EmailDTO.EmailAddress), "emailAddress" },
                 { nameof(EmailDTO.Type), "type" },
+                { nameof(EmailDTO.IsPrimary), "isPrimary" },
                 { nameof(EmailDTO.DateCreated), "dateCreated" },
                 { nameof(EmailDTO.DateModified), "dateModified" }
             };
@@ -522,6 +599,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+
+                // Test IsPrimary reassignments
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
 
                 // Test DateCreated reassignments
                 var firstDate = DateTime.Now.AddDays(-1);
@@ -713,6 +796,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             interfaceDto.Id = 100;
             interfaceDto.EmailAddress = "interface@test.com";
             interfaceDto.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            interfaceDto.IsPrimary = true;
             interfaceDto.DateModified = testModified;
 
             // Assert
@@ -721,6 +805,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceDto.Id, Is.EqualTo(100));
                 Assert.That(interfaceDto.EmailAddress, Is.EqualTo("interface@test.com"));
                 Assert.That(interfaceDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(interfaceDto.IsPrimary, Is.True);
                 Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
                 Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
             });
@@ -814,9 +899,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var operations = new[]
             {
-                new { Id = 1, Email = (string?)"first@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Home },
-                new { Id = 2, Email = (string?)"second@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Work },
-                new { Id = 3, Email = (string?)null, Type = (OrganizerCompanion.Core.Enums.Types?)null }
+                new { Id = 1, Email = (string?)"first@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Home, IsPrimary = true },
+                new { Id = 2, Email = (string?)"second@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Work, IsPrimary = false },
+                new { Id = 3, Email = (string?)null, Type = (OrganizerCompanion.Core.Enums.Types?)null, IsPrimary = true }
             };
 
             // Act & Assert
@@ -827,10 +912,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     _sut.Id = op.Id;
                     _sut.EmailAddress = op.Email;
                     _sut.Type = op.Type;
+                    _sut.IsPrimary = op.IsPrimary;
 
                     Assert.That(_sut.Id, Is.EqualTo(op.Id));
                     Assert.That(_sut.EmailAddress, Is.EqualTo(op.Email));
                     Assert.That(_sut.Type, Is.EqualTo(op.Type));
+                    Assert.That(_sut.IsPrimary, Is.EqualTo(op.IsPrimary));
                 }
             });
         }
@@ -842,6 +929,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Id = 999;
             _sut.EmailAddress = "independent@test.com";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _sut.IsPrimary = true;
             var testDate = DateTime.Now.AddDays(-5);
             var testModified = DateTime.Now.AddHours(-3);
             _sut.DateCreated = testDate;
@@ -851,6 +939,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var originalId = _sut.Id;
             var originalEmail = _sut.EmailAddress;
             var originalType = _sut.Type;
+            var originalIsPrimary = _sut.IsPrimary;
             var originalCreated = _sut.DateCreated;
             var originalModified = _sut.DateModified;
 
@@ -861,6 +950,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _sut.Id = 1000;
                 Assert.That(_sut.EmailAddress, Is.EqualTo(originalEmail));
                 Assert.That(_sut.Type, Is.EqualTo(originalType));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(originalIsPrimary));
                 Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
 
@@ -868,6 +958,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _sut.EmailAddress = "changed@test.com";
                 Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_sut.Type, Is.EqualTo(originalType));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(originalIsPrimary));
                 Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
 
@@ -875,6 +966,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
                 Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_sut.EmailAddress, Is.EqualTo("changed@test.com")); // New value
+                Assert.That(_sut.IsPrimary, Is.EqualTo(originalIsPrimary));
                 Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
             });
@@ -893,6 +985,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Id = 555,
                 EmailAddress = "initializer@test.com",
                 Type = OrganizerCompanion.Core.Enums.Types.Billing,
+                IsPrimary = true,
                 DateCreated = testCreated,
                 DateModified = testModified
             };
@@ -903,6 +996,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(emailDto.Id, Is.EqualTo(555));
                 Assert.That(emailDto.EmailAddress, Is.EqualTo("initializer@test.com"));
                 Assert.That(emailDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(emailDto.IsPrimary, Is.True);
                 Assert.That(emailDto.DateCreated, Is.EqualTo(testCreated));
                 Assert.That(emailDto.DateModified, Is.EqualTo(testModified));
             });

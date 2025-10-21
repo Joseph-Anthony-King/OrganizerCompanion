@@ -51,6 +51,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
                 Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
@@ -69,11 +70,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var state = new MXState { Name = "Ciudad de México", Abbreviation = "DF" };
             var country = "México";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var isPrimary = true;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, dateCreated, dateModified);
+            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, isPrimary, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -89,6 +91,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(address.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(address.LinkedEntity, Is.Null);
                 Assert.That(address.LinkedEntityType, Is.Null);
+                Assert.That(address.IsPrimary, Is.EqualTo(isPrimary));
                 Assert.That(address.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(address.DateModified, Is.EqualTo(dateModified));
             });
@@ -295,6 +298,25 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsPrimary_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var originalDateModified = _sut.DateModified;
+            Thread.Sleep(10); // Ensure time difference
+
+            // Act
+            _sut.IsPrimary = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.True);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
         public void ToJson_ShouldReturnValidJsonString()
         {
             // Arrange
@@ -320,6 +342,40 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"postalCode\":\"12345\""));
                 Assert.That(json, Does.Contain("\"city\":\"Ciudad de Prueba\""));
                 Assert.That(json, Does.Contain("\"country\":\"M\\u00E9xico\""));
+                Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_WhenTrue_ShouldSerializeToJsonCorrectly()
+        {
+            // Arrange
+            _sut.IsPrimary = true;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Does.Contain("\"isPrimary\":true"));
+                Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_WhenFalse_ShouldSerializeToJsonCorrectly()
+        {
+            // Arrange
+            _sut.IsPrimary = false;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Does.Contain("\"isPrimary\":false"));
                 Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
             });
         }
@@ -502,11 +558,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var state = MXStates.Jalisco.ToStateModel();
             var country = "México";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
+            var isPrimary = false;
             var dateCreated = DateTime.Now.AddDays(-2);
             var dateModified = DateTime.Now.AddHours(-1);
 
             // Act
-            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, dateCreated, dateModified);
+            var address = new MXAddress(id, street, neighborhood, postalCode, city, state, country, type, isPrimary, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -857,6 +914,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.State = new MXState { Name = "Ciudad de México", Abbreviation = "DF" };
             _sut.Country = "México";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = true;
 
             // Act
             var result = _sut.Cast<MXAddressDTO>();
@@ -874,6 +932,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.State, Is.EqualTo(_sut.State));
                 Assert.That(result.Country, Is.EqualTo("México"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.IsPrimary, Is.True);
             });
         }
 
@@ -889,6 +948,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.State = MXStates.Jalisco.ToStateModel();
             _sut.Country = "México";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.IsPrimary = false;
 
             // Act
             var result = _sut.Cast<IMXAddressDTO>();
@@ -907,6 +967,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.State?.Abbreviation, Is.EqualTo("JA"));
                 Assert.That(result.Country, Is.EqualTo("México"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.IsPrimary, Is.False);
             });
         }
 
@@ -939,6 +1000,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.State, Is.Null);
                 Assert.That(result.Country, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.IsPrimary, Is.False);
             });
         }
 
@@ -1002,6 +1064,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: MXStates.CiudadDeMéxico.ToStateModel(),
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
+                isPrimary: true,
                 dateCreated: dateCreated,
                 dateModified: dateModified
             );
@@ -1023,6 +1086,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.State?.Abbreviation, Is.EqualTo("DF"));
                 Assert.That(result.Country, Is.EqualTo("México"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(result.IsPrimary, Is.True);
                 // Note: LinkedEntity, LinkedEntityId, etc. are not part of MXAddressDTO
                 // This is by design as MXAddressDTO is a simplified representation
             });
@@ -1300,11 +1364,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: state,
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
+                isPrimary: false,
                 dateCreated: testDate.AddDays(-1),
-                dateModified: testDate,
-                isCast: true,        // These parameters are unused by the constructor
-                castId: 12345,       // but should be handled gracefully
-                castType: "TestType"
+                dateModified: testDate
             );
 
             // Assert - Verify that the object is created correctly and unused parameters don't affect it
@@ -1403,6 +1465,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: MXStates.CiudadDeMéxico.ToStateModel(),
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: true,
                 dateCreated: DateTime.Now.AddHours(-1),
                 dateModified: DateTime.Now
             );
@@ -1446,6 +1509,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: MXStates.Jalisco.ToStateModel(),
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                isPrimary: true,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now
             );
@@ -1672,6 +1736,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: state,
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: false,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
@@ -1836,6 +1901,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 state: MXStates.Jalisco.ToStateModel(),
                 country: "México",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
+                isPrimary: true,
                 dateCreated: specificDate,
                 dateModified: DateTime.Now
             );

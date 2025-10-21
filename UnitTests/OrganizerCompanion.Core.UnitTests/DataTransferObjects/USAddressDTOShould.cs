@@ -44,6 +44,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(usAddressDTO.ZipCode, Is.Null);
                 Assert.That(usAddressDTO.Country, Is.Null);
                 Assert.That(usAddressDTO.Type, Is.Null);
+                Assert.That(usAddressDTO.IsPrimary, Is.False);
                 Assert.That(usAddressDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
                 Assert.That(usAddressDTO.DateModified, Is.Null);
             });
@@ -309,6 +310,49 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _usAddressDTO.Type = type;
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(type));
             }
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldGetAndSetCorrectly()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test setting to true
+                _usAddressDTO.IsPrimary = true;
+                Assert.That(_usAddressDTO.IsPrimary, Is.True);
+
+                // Test setting to false
+                _usAddressDTO.IsPrimary = false;
+                Assert.That(_usAddressDTO.IsPrimary, Is.False);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldDefaultToFalse()
+        {
+            // Arrange & Act
+            var newAddressDTO = new USAddressDTO();
+
+            // Assert
+            Assert.That(newAddressDTO.IsPrimary, Is.False);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHandleBooleanToggling()
+        {
+            // Arrange
+            Assert.That(_usAddressDTO.IsPrimary, Is.False, "Should start as false");
+
+            // Act & Assert - Toggle multiple times
+            _usAddressDTO.IsPrimary = !_usAddressDTO.IsPrimary;
+            Assert.That(_usAddressDTO.IsPrimary, Is.True, "Should be true after first toggle");
+
+            _usAddressDTO.IsPrimary = !_usAddressDTO.IsPrimary;
+            Assert.That(_usAddressDTO.IsPrimary, Is.False, "Should be false after second toggle");
+
+            _usAddressDTO.IsPrimary = !_usAddressDTO.IsPrimary;
+            Assert.That(_usAddressDTO.IsPrimary, Is.True, "Should be true after third toggle");
         }
 
         #endregion
@@ -582,6 +626,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.IsPrimary));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
+                .FirstOrDefault() as JsonPropertyNameAttribute;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("isPrimary"));
+            });
+        }
+
         #endregion
 
         #region Data Annotation Tests
@@ -598,6 +660,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var zipCodeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.ZipCode));
             var countryProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Country));
             var typeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Type));
+            var isPrimaryProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.IsPrimary));
             var dateCreatedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
             var dateModifiedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
 
@@ -612,6 +675,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(zipCodeProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(countryProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(typeProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
+                Assert.That(isPrimaryProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
             });
@@ -788,6 +852,36 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_usAddressDTO.Id, Is.EqualTo(minValue));
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHandleRepeatedAssignments()
+        {
+            // Arrange & Act & Assert
+            for (int i = 0; i < 100; i++)
+            {
+                var expectedValue = i % 2 == 0;
+                _usAddressDTO.IsPrimary = expectedValue;
+                Assert.That(_usAddressDTO.IsPrimary, Is.EqualTo(expectedValue), 
+                    $"Failed on iteration {i} with expected value {expectedValue}");
+            }
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldMaintainValueAfterOtherPropertyChanges()
+        {
+            // Arrange
+            _usAddressDTO.IsPrimary = true;
+
+            // Act - Change other properties
+            _usAddressDTO.Id = 999;
+            _usAddressDTO.Street1 = "Test Street";
+            _usAddressDTO.City = "Test City";
+            _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Assert
+            Assert.That(_usAddressDTO.IsPrimary, Is.True, 
+                "IsPrimary should maintain its value when other properties change");
+        }
+
         #endregion
 
         #region JSON Serialization Tests
@@ -803,6 +897,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.ZipCode = "10001";
             _usAddressDTO.Country = "USA";
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _usAddressDTO.IsPrimary = true;
 
             // Act
             var json = JsonSerializer.Serialize(_usAddressDTO);
@@ -819,6 +914,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"zipCode\":\"10001\""));
                 Assert.That(json, Contains.Substring("\"country\":\"USA\""));
                 Assert.That(json, Contains.Substring("\"type\":"));
+                Assert.That(json, Contains.Substring("\"isPrimary\":true"));
                 Assert.That(json, Contains.Substring("\"dateCreated\":"));
                 Assert.That(json, Contains.Substring("\"dateModified\":"));
             });
@@ -828,7 +924,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void USAddressDTO_ShouldDeserializeCorrectly()
         {
             // Arrange
-            const string json = "{\"id\":456,\"street\":\"456 Oak Ave\",\"street2\":\"Suite 7\",\"city\":\"Chicago\",\"state\":null,\"zipCode\":\"60601\",\"country\":\"United States\",\"type\":1}";
+            const string json = "{\"id\":456,\"street\":\"456 Oak Ave\",\"street2\":\"Suite 7\",\"city\":\"Chicago\",\"state\":null,\"zipCode\":\"60601\",\"country\":\"United States\",\"type\":1,\"isPrimary\":true}";
 
             // Act
             var usAddressDTO = JsonSerializer.Deserialize<USAddressDTO>(json);
@@ -845,6 +941,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(usAddressDTO.ZipCode, Is.EqualTo("60601"));
                 Assert.That(usAddressDTO.Country, Is.EqualTo("United States"));
                 Assert.That(usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(usAddressDTO.IsPrimary, Is.True);
             });
         }
 
@@ -860,6 +957,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.ZipCode = null;
             _usAddressDTO.Country = null;
             _usAddressDTO.Type = null;
+            _usAddressDTO.IsPrimary = false;
 
             // Act
             var json = JsonSerializer.Serialize(_usAddressDTO);
@@ -875,6 +973,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"zipCode\":null"));
                 Assert.That(json, Contains.Substring("\"country\":null"));
                 Assert.That(json, Contains.Substring("\"type\":null"));
+                Assert.That(json, Contains.Substring("\"isPrimary\":false"));
             });
         }
 
@@ -895,6 +994,34 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Does.Not.Contain("castId"));
                 Assert.That(json, Does.Not.Contain("castType"));
             });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void USAddressDTO_ShouldSerializeBooleanValuesCorrectly()
+        {
+            // Arrange & Act & Assert for true
+            _usAddressDTO.IsPrimary = true;
+            var jsonTrue = JsonSerializer.Serialize(_usAddressDTO);
+            Assert.That(jsonTrue, Contains.Substring("\"isPrimary\":true"));
+
+            // Arrange & Act & Assert for false
+            _usAddressDTO.IsPrimary = false;
+            var jsonFalse = JsonSerializer.Serialize(_usAddressDTO);
+            Assert.That(jsonFalse, Contains.Substring("\"isPrimary\":false"));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void USAddressDTO_ShouldDeserializeBooleanValuesCorrectly()
+        {
+            // Test deserializing true
+            const string jsonTrue = "{\"id\":1,\"isPrimary\":true}";
+            var dtoTrue = JsonSerializer.Deserialize<USAddressDTO>(jsonTrue);
+            Assert.That(dtoTrue?.IsPrimary, Is.True);
+
+            // Test deserializing false
+            const string jsonFalse = "{\"id\":2,\"isPrimary\":false}";
+            var dtoFalse = JsonSerializer.Deserialize<USAddressDTO>(jsonFalse);
+            Assert.That(dtoFalse?.IsPrimary, Is.False);
         }
 
         #endregion
@@ -919,6 +1046,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.ZipCode = "94043-1351";
             _usAddressDTO.Country = "United States";
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _usAddressDTO.IsPrimary = true;
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -931,6 +1059,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("94043-1351"));
                 Assert.That(_usAddressDTO.Country, Is.EqualTo("United States"));
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(_usAddressDTO.IsPrimary, Is.True);
             });
         }
 
@@ -1152,6 +1281,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 usAddressInterface.Type = OrganizerCompanion.Core.Enums.Types.Work;
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
 
+                usAddressInterface.IsPrimary = true;
+                Assert.That(_usAddressDTO.IsPrimary, Is.True);
+
                 var testDate = DateTime.Now;
                 usAddressInterface.DateModified = testDate;
                 Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
@@ -1222,15 +1354,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act & Assert - Should handle multiple state assignments
             foreach (var state in states)
-            {
-                _usAddressDTO.State = state;
+      {
+        _usAddressDTO.State = state;
                 Assert.That(_usAddressDTO.State, Is.SameAs(state));
-                Assert.That(_usAddressDTO.State?.Name, Is.EqualTo(state.Name));
-                Assert.That(_usAddressDTO.State?.Abbreviation, Is.EqualTo(state.Abbreviation));
-            }
+        Assert.Multiple(() =>
+        {
+          Assert.That(_usAddressDTO.State?.Name, Is.EqualTo(state.Name));
+          Assert.That(_usAddressDTO.State?.Abbreviation, Is.EqualTo(state.Abbreviation));
+        });
+      }
 
-            // Test null assignment
-            _usAddressDTO.State = null;
+      // Test null assignment
+      _usAddressDTO.State = null;
             Assert.That(_usAddressDTO.State, Is.Null);
         }
 
@@ -1249,6 +1384,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.ZipCode = "12345";
             _usAddressDTO.Country = "Test Country";
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _usAddressDTO.IsPrimary = true;
             var testDate = DateTime.Now;
             _usAddressDTO.DateCreated = testDate;
             _usAddressDTO.DateModified = testDate;
@@ -1264,6 +1400,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("12345"));
                 Assert.That(_usAddressDTO.Country, Is.EqualTo("Test Country"));
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(_usAddressDTO.IsPrimary, Is.True);
                 Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(testDate));
                 Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
             });
@@ -1326,6 +1463,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(newInstance.ZipCode, Is.Null);
                 Assert.That(newInstance.Country, Is.Null);
                 Assert.That(newInstance.Type, Is.Null);
+                Assert.That(newInstance.IsPrimary, Is.False);
                 Assert.That(newInstance.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
                 Assert.That(newInstance.DateModified, Is.Null);
             });
@@ -1374,6 +1512,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.ZipCode = "94043-1351";
             _usAddressDTO.Country = "United States";
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _usAddressDTO.IsPrimary = true;
             _usAddressDTO.DateCreated = createdDate;
             _usAddressDTO.DateModified = modifiedDate;
 
@@ -1390,6 +1529,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("94043-1351"));
                 Assert.That(_usAddressDTO.Country, Is.EqualTo("United States"));
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(_usAddressDTO.IsPrimary, Is.True);
                 Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(createdDate));
                 Assert.That(_usAddressDTO.DateModified, Is.EqualTo(modifiedDate));
             });

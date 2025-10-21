@@ -331,6 +331,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             public string? ZipCode { get; set; }
             public string? Country { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            public bool IsPrimary { get; set; }
         }
     }
 }

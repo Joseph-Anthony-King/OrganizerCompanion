@@ -35,6 +35,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
@@ -54,7 +55,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var beforeCreation = DateTime.Now;
 
             // Act
-            _sut = new Email(emailAddress, type);
+            _sut = new Email(emailAddress, type, true);
 
             // Assert
             Assert.Multiple(() =>
@@ -62,6 +63,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
                 Assert.That(_sut.Type, Is.EqualTo(type));
+                Assert.That(_sut.IsPrimary, Is.True);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
             });
@@ -74,6 +76,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var emailAddress = "test@example.com";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var isPrimary = true;
             var linkedEntityId = 123;
             var linkedEntity = new MockDomainEntity();
             var linkedEntityType = "MockDomainEntity";
@@ -85,7 +88,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 id, 
                 emailAddress, 
-                type, 
+                type,
+                isPrimary,
                 linkedEntityId,
                 linkedEntity,
                 linkedEntityType,
@@ -99,6 +103,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(id));
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
                 Assert.That(_sut.Type, Is.EqualTo(type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(isPrimary));
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo(linkedEntityType));
@@ -151,7 +156,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void EmailAddress_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
             {
                 EmailAddress = null
             };
@@ -184,7 +189,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSetToNull_ShouldAcceptNullValue()
         {
       // Arrange
-      _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
+      _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
       {
         // Act
         Type = null
@@ -192,6 +197,84 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
       // Assert
       Assert.That(_sut.Type, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            _sut = new Email();
+            var beforeSet = DateTime.Now;
+
+            // Act
+            _sut.IsPrimary = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.True);
+                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldGetAndSetCorrectly()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test setting to true
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+
+                // Test setting to false
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldDefaultToFalse()
+        {
+            // Arrange & Act
+            var newEmail = new Email();
+
+            // Assert
+            Assert.That(newEmail.IsPrimary, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldHandleBooleanToggling()
+        {
+            // Arrange
+            Assert.That(_sut.IsPrimary, Is.False, "Should start as false");
+
+            // Act & Assert - Toggle multiple times
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.True, "Should be true after first toggle");
+
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.False, "Should be false after second toggle");
+
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.True, "Should be true after third toggle");
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldMaintainValueAfterOtherPropertyChanges()
+        {
+            // Arrange
+            _sut.IsPrimary = true;
+
+            // Act - Change other properties
+            _sut.Id = 999;
+            _sut.EmailAddress = "test@example.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.True, 
+                "IsPrimary should maintain its value when other properties change");
         }
 
         [Test, Category("Models")]
@@ -249,7 +332,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void IsConfirmed_WithSimpleConstructor_ShouldDefaultToFalse()
         {
             // Arrange & Act
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work);
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true);
 
             // Assert
             Assert.That(_sut.IsConfirmed, Is.False);
@@ -318,6 +401,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 1, 
                 "test@example.com", 
                 OrganizerCompanion.Core.Enums.Types.Work,
+                false,
                 0,
                 null,
                 null,
@@ -421,6 +505,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 1, 
                 "test@example.com", 
                 OrganizerCompanion.Core.Enums.Types.Work,
+                false,
                 0,
                 null,
                 null,
@@ -517,6 +602,70 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void ToJson_WithIsPrimaryTrue_ShouldSerializeCorrectly()
+        {
+            // Arrange
+            _sut = new Email
+            {
+                IsPrimary = true
+            };
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"isPrimary\":true"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithIsPrimaryFalse_ShouldSerializeCorrectly()
+        {
+            // Arrange
+            _sut = new Email
+            {
+                IsPrimary = false
+            };
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"isPrimary\":false"));
+                
+                // Verify JSON is well-formed
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_ShouldSerializeBooleanValuesCorrectly()
+        {
+            // Arrange & Act & Assert for true
+            _sut.IsPrimary = true;
+            var jsonTrue = _sut.ToJson();
+            var documentTrue = JsonDocument.Parse(jsonTrue);
+            Assert.That(documentTrue.RootElement.TryGetProperty("isPrimary", out var isPrimaryTrueProperty), Is.True);
+            Assert.That(isPrimaryTrueProperty.GetBoolean(), Is.True);
+
+            // Arrange & Act & Assert for false
+            _sut.IsPrimary = false;
+            var jsonFalse = _sut.ToJson();
+            var documentFalse = JsonDocument.Parse(jsonFalse);
+            Assert.That(documentFalse.RootElement.TryGetProperty("isPrimary", out var isPrimaryFalseProperty), Is.True);
+            Assert.That(isPrimaryFalseProperty.GetBoolean(), Is.False);
+        }
+
+        [Test, Category("Models")]
         public void ToString_ShouldReturnFormattedString()
         {
             // Arrange
@@ -524,6 +673,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 123, 
                 "test@example.com", 
                 OrganizerCompanion.Core.Enums.Types.Home,
+                false,
                 0,
                 null,
                 null,
@@ -551,6 +701,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 456, 
                 null, 
                 OrganizerCompanion.Core.Enums.Types.Work,
+                false,
                 0,
                 null,
                 null,
@@ -594,6 +745,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 1, 
                 "test@example.com", 
                 OrganizerCompanion.Core.Enums.Types.Mobil,
+                true,
                 0,
                 null,
                 null,
@@ -627,7 +779,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             foreach (var enumValue in enumValues)
             {
                 // Arrange
-                _sut = new Email($"test{enumValue}@example.com", enumValue)
+                _sut = new Email($"test{enumValue}@example.com", enumValue, true)
                 {
                     Id = 1
                 };
@@ -652,7 +804,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_WithEmptyEmailAddress_ShouldBeAllowed()
         {
             // Arrange & Act
-            _sut = new Email(string.Empty, OrganizerCompanion.Core.Enums.Types.Other);
+            _sut = new Email(string.Empty, OrganizerCompanion.Core.Enums.Types.Other, true);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(string.Empty));
@@ -665,7 +817,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var longEmail = new string('a', 1000) + "@example.com";
 
             // Act
-            _sut = new Email(longEmail, OrganizerCompanion.Core.Enums.Types.Work);
+            _sut = new Email(longEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(longEmail));
@@ -739,6 +891,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 1, 
                 "test@example.com", 
                 OrganizerCompanion.Core.Enums.Types.Work,
+                false,
                 0,
                 null,
                 null,
@@ -762,6 +915,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 0,
                 emailAddress: null,
                 type: null,
+                isPrimary: false,
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
@@ -806,7 +960,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specialEmail = "test+special.chars@example-domain.co.uk";
 
             // Act
-            _sut = new Email(specialEmail, OrganizerCompanion.Core.Enums.Types.Work);
+            _sut = new Email(specialEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(specialEmail));
@@ -819,7 +973,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var unicodeEmail = "tést@ëxämplë.com";
 
             // Act
-            _sut = new Email(unicodeEmail, OrganizerCompanion.Core.Enums.Types.Work);
+            _sut = new Email(unicodeEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(unicodeEmail));
@@ -907,6 +1061,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 1,
                 "linked@test.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
+                true,
                 456,
                 mockEntity,
                 "MockDomainEntity",
@@ -1003,6 +1158,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 emailAddress: "test@example.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: false,
                 linkedEntityId: 123,
                 linkedEntity: new MockDomainEntity(),
                 linkedEntityType: "CustomEntityType", // Different from actual type name
@@ -1153,7 +1309,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Constructor_SimpleEmailAndType_ShouldNotSetLinkedProperties()
         {
             // Arrange & Act
-            var email = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Home);
+            var email = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Home, true);
 
             // Assert
             Assert.Multiple(() =>
@@ -1256,6 +1412,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 123;
             _sut.EmailAddress = "test@example.com";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.IsPrimary = true;
 
             // Act
             var result = _sut.Cast<EmailDTO>();
@@ -1268,6 +1425,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(123));
                 Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
@@ -1280,6 +1438,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 456;
             _sut.EmailAddress = "interface@test.com";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = false;
 
             // Act
             var result = _sut.Cast<IEmailDTO>();
@@ -1292,6 +1451,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.EmailAddress, Is.EqualTo("interface@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
@@ -1304,6 +1464,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 789;
             _sut.EmailAddress = null;
             _sut.Type = null;
+            _sut.IsPrimary = false;
 
             // Act
             var result = _sut.Cast<EmailDTO>();
@@ -1316,6 +1477,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(789));
                 Assert.That(result.EmailAddress, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.IsPrimary, Is.False);
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
@@ -1375,6 +1537,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 999,
                 emailAddress: "complete@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                isPrimary: false,
                 linkedEntityId: 42,
                 linkedEntity: new MockDomainEntity { Id = 42 },
                 linkedEntityType: "MockDomainEntity",
@@ -1596,6 +1759,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 999,
                 emailAddress: "comprehensive@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: false,
                 linkedEntityId: 456,
                 linkedEntity: new MockDomainEntity(),
                 linkedEntityType: "CustomType", // This parameter should be respected in JsonConstructor
@@ -1692,7 +1856,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(maxResult, Is.Not.Null);
                 Assert.That(maxResult, Does.Contain(int.MaxValue.ToString()));
-                Assert.That(maxResult, Does.Contain("Id" + int.MaxValue));
+                Assert.That(maxResult, Does.Contain("Id:" + int.MaxValue));
                 Assert.That(maxResult, Does.Contain(_sut.EmailAddress));
             });
 
@@ -1703,7 +1867,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(minResult, Is.Not.Null);
-                Assert.That(minResult, Does.Contain("Id0"));
+                Assert.That(minResult, Does.Contain("Id:0"));
                 Assert.That(minResult, Does.Contain("EmailAddress"));
             });
 
@@ -1714,7 +1878,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(nullResult, Is.Not.Null);
-                Assert.That(nullResult, Does.Contain("Id42"));
+                Assert.That(nullResult, Does.Contain("Id:42"));
                 Assert.That(nullResult, Does.Contain("EmailAddress"));
             });
         }
@@ -1730,6 +1894,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 emailAddress: "cycle@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: true,
                 linkedEntityId: 123,
                 linkedEntity: mockEntity,
                 linkedEntityType: "MockDomainEntity",
@@ -1772,6 +1937,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 100,
                 emailAddress: "multi@cast.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                isPrimary: false,
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
@@ -1817,6 +1983,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     id: (int)enumValue,
                     emailAddress: $"test{enumValue}@example.com",
                     type: enumValue,
+                    isPrimary: false,
                     linkedEntityId: 0,
                     linkedEntity: null,
                     linkedEntityType: null,
@@ -1897,7 +2064,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(defaultEmail.DateCreated, Is.Not.EqualTo(default(DateTime)));
             
             // Test simple constructor
-            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work);
+            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work, true);
             Assert.Multiple(() =>
             {
                 Assert.That(simpleEmail.EmailAddress, Is.EqualTo("simple@test.com"));
@@ -1912,6 +2079,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 12345,
                 emailAddress: "comprehensive@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                isPrimary: false,
                 linkedEntityId: 456,
                 linkedEntity: linkedEntity,
                 linkedEntityType: "MockDomainEntity",
@@ -2014,7 +2182,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test that the catch block in Cast method properly rethrows exceptions
             
             // Arrange
-            _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work);
+            _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work, true);
             
             // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
             var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());

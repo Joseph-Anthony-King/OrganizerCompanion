@@ -1480,6 +1480,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             public int Id { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            public bool IsPrimary { get; set; }
             public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
             public string? LinkedEntityType { get; set; }

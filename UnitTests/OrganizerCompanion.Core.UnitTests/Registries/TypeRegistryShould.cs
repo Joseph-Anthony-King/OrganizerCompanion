@@ -107,9 +107,9 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
 
         [Test, Category("Registries")]
         public void Initialize_IsThreadSafe()
-        {
-            // Arrange
-            var tasks = new List<System.Threading.Tasks.Task>();
+    {
+      // Arrange
+      var tasks = new List<System.Threading.Tasks.Task>();
             var exceptions = new List<Exception>();
 
             // Act - Run initialization from multiple threads
@@ -132,17 +132,20 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             }
 
             System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+      Assert.Multiple(() =>
+      {
 
-            // Assert - No exceptions should occur
-            Assert.That(exceptions, Is.Empty, "Thread-safe initialization should not throw exceptions");
-            Assert.That(TypeRegistry.IsTypeRegistered("Account"), Is.True, "Types should be properly registered");
-        }
+        // Assert - No exceptions should occur
+        Assert.That(exceptions, Is.Empty, "Thread-safe initialization should not throw exceptions");
+        Assert.That(TypeRegistry.IsTypeRegistered("Account"), Is.True, "Types should be properly registered");
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region RegisterType Tests
+    #region RegisterType Tests
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void RegisterType_WithValidType_RegistersSuccessfully()
         {
             // Act
@@ -239,22 +242,25 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
 
         [Test, Category("Registries")]
         public void GetType_BeforeInitialization_InitializesAutomatically()
-        {
-            // Arrange - Don't call Initialize() explicitly
+    {
+      // Arrange - Don't call Initialize() explicitly
 
-            // Act
-            var result = TypeRegistry.GetType("User");
+      // Act
+      var result = TypeRegistry.GetType("User");
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(result, Is.EqualTo(typeof(User)));
-            Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
-        }
+        // Assert
+        Assert.That(result, Is.EqualTo(typeof(User)));
+        Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region IsTypeRegistered Tests
+    #region IsTypeRegistered Tests
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void IsTypeRegistered_WithRegisteredType_ReturnsTrue()
         {
             // Arrange
@@ -391,21 +397,24 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
 
         [Test, Category("Registries")]
         public void GetRegisteredTypeNames_ReturnsConsistentCollection()
-        {
-            // Arrange
-            TypeRegistry.Initialize();
+    {
+      // Arrange
+      TypeRegistry.Initialize();
 
             // Act
             var typeNames1 = TypeRegistry.GetRegisteredTypeNames();
             var typeNames2 = TypeRegistry.GetRegisteredTypeNames();
+      Assert.Multiple(() =>
+      {
 
-            // Assert - Should be able to enumerate multiple times and get consistent results
-            Assert.That(typeNames1.Count(), Is.EqualTo(typeNames2.Count()));
-            Assert.That(typeNames1, Is.Not.Null);
-            Assert.That(typeNames2, Is.Not.Null);
-        }
+        // Assert - Should be able to enumerate multiple times and get consistent results
+        Assert.That(typeNames1.Count(), Is.EqualTo(typeNames2.Count()));
+        Assert.That(typeNames1, Is.Not.Null);
+        Assert.That(typeNames2, Is.Not.Null);
+      });
+    }
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void GetRegisteredTypeNames_AfterClear_ReturnsEmpty()
         {
             // Arrange
@@ -450,20 +459,23 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
 
         [Test, Category("Registries")]
         public void Clear_ResetsInitializationFlag()
-        {
-            // Arrange
-            TypeRegistry.Initialize();
+    {
+      // Arrange
+      TypeRegistry.Initialize();
             TypeRegistry.Clear();
 
             // Act - GetType should reinitialize
             var result = TypeRegistry.GetType("User");
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(result, Is.EqualTo(typeof(User)));
-            Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
-        }
+        // Assert
+        Assert.That(result, Is.EqualTo(typeof(User)));
+        Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
+      });
+    }
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void Clear_CanBeCalledMultipleTimes()
         {
             // Arrange
@@ -487,41 +499,47 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
 
         [Test, Category("Registries")]
         public void Clear_AllowsReinitialization()
-        {
-            // Arrange
-            TypeRegistry.Initialize();
+    {
+      // Arrange
+      TypeRegistry.Initialize();
             var initialCount = TypeRegistry.GetRegisteredTypeNames().Count();
             TypeRegistry.Clear();
 
             // Act
             TypeRegistry.Initialize();
             var newCount = TypeRegistry.GetRegisteredTypeNames().Count();
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(newCount, Is.EqualTo(initialCount));
-            Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
-        }
+        // Assert
+        Assert.That(newCount, Is.EqualTo(initialCount));
+        Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True);
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region Integration Tests
+    #region Integration Tests
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void TypeRegistry_IntegrationTest_FullWorkflow()
-        {
-            // Test complete workflow
-            
-            // 1. Ensure initialized state
-            TypeRegistry.Initialize();
+    {
+      // Test complete workflow
+
+      // 1. Ensure initialized state
+      TypeRegistry.Initialize();
             Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True, "Registry should be initialized");
 
             // 2. Register custom type
             TypeRegistry.RegisterType<Organization>("CustomOrganization");
-            Assert.That(TypeRegistry.IsTypeRegistered("CustomOrganization"), Is.True);
-            Assert.That(TypeRegistry.GetType("CustomOrganization"), Is.EqualTo(typeof(Organization)));
+      Assert.Multiple(() =>
+      {
+        Assert.That(TypeRegistry.IsTypeRegistered("CustomOrganization"), Is.True);
+        Assert.That(TypeRegistry.GetType("CustomOrganization"), Is.EqualTo(typeof(Organization)));
+      });
 
-            // 3. Verify all functionality works together
-            var allTypes = TypeRegistry.GetRegisteredTypeNames().ToList();
+      // 3. Verify all functionality works together
+      var allTypes = TypeRegistry.GetRegisteredTypeNames().ToList();
             Assert.That(allTypes, Does.Contain("User"));
             Assert.That(allTypes, Does.Contain("CustomOrganization"));
 
@@ -535,13 +553,13 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             // 5. Verify reinitialization works
             TypeRegistry.Initialize();
             Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True, "Should reinitialize properly");
-        }
+    }
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void TypeRegistry_ConcurrentAccess_IsThreadSafe()
-        {
-            // Arrange
-            var tasks = new List<System.Threading.Tasks.Task>();
+    {
+      // Arrange
+      var tasks = new List<System.Threading.Tasks.Task>();
             var results = new List<bool>();
             var lockObject = new object();
 
@@ -581,32 +599,39 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
             }
 
             System.Threading.Tasks.Task.WaitAll(tasks.ToArray());
+      Assert.Multiple(() =>
+      {
 
-            // Assert - All operations should succeed
-            Assert.That(results.All(r => r), Is.True, "All concurrent operations should succeed");
-            Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True, "Registry should be properly initialized");
-        }
+        // Assert - All operations should succeed
+        Assert.That(results.All(r => r), Is.True, "All concurrent operations should succeed");
+        Assert.That(TypeRegistry.IsTypeRegistered("User"), Is.True, "Registry should be properly initialized");
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region Edge Cases and Error Conditions
+    #region Edge Cases and Error Conditions
 
-        [Test, Category("Registries")]
+    [Test, Category("Registries")]
         public void TypeRegistry_HandlesManyRegistrations()
-        {
-            // Act - Register many types
-            for (int i = 0; i < 1000; i++)
+    {
+      // Act - Register many types
+      for (int i = 0; i < 1000; i++)
             {
                 TypeRegistry.RegisterType<User>($"TestType{i}");
             }
 
-            // Assert
-            Assert.That(TypeRegistry.GetRegisteredTypeNames().Count(), Is.GreaterThanOrEqualTo(1000));
-            Assert.That(TypeRegistry.IsTypeRegistered("TestType0"), Is.True);
-            Assert.That(TypeRegistry.IsTypeRegistered("TestType999"), Is.True);
-        }
+      Assert.Multiple(() =>
+      {
 
-        [Test, Category("Registries")]
+        // Assert
+        Assert.That(TypeRegistry.GetRegisteredTypeNames().Count(), Is.GreaterThanOrEqualTo(1000));
+        Assert.That(TypeRegistry.IsTypeRegistered("TestType0"), Is.True);
+        Assert.That(TypeRegistry.IsTypeRegistered("TestType999"), Is.True);
+      });
+    }
+
+    [Test, Category("Registries")]
         public void TypeRegistry_HandlesSpecialCharactersInTypeNames()
         {
             // Act & Assert - Should handle various string inputs gracefully

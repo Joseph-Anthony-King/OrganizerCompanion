@@ -37,6 +37,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.State, Is.Null);
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
                 Assert.That(_sut.DateModified, Is.Null);
             });
@@ -346,6 +347,66 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsPrimary = true;
+
+            // Act
+            _sut.IsPrimary = expectedIsPrimary;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.EqualTo(expectedIsPrimary));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldAcceptTrueValue()
+        {
+            // Arrange & Act
+            _sut.IsPrimary = true;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.True);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldAcceptFalseValue()
+        {
+            // Arrange & Act
+            _sut.IsPrimary = false;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.False);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_DefaultValue_ShouldBeFalse()
+        {
+            // Arrange & Act
+            var mxAddressDTO = new MXAddressDTO();
+
+            // Assert
+            Assert.That(mxAddressDTO.IsPrimary, Is.False);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldSupportMultipleReassignments()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+                
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
+                
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetValue()
         {
             // Arrange
@@ -500,6 +561,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(MXAddressDTO).GetProperty(nameof(MXAddressDTO.IsPrimary));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldHaveRequiredAttribute()
         {
             // Arrange
@@ -563,6 +637,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 State = new MXState { Name = "Distrito Federal", Abbreviation = "DF" },
                 Country = "México",
                 Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = true,
                 DateCreated = testDateCreated,
                 DateModified = testDateModified
             };
@@ -578,6 +653,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(mxAddressDTO.State?.Name, Is.EqualTo("Distrito Federal"));
                 Assert.That(mxAddressDTO.Country, Is.EqualTo("México"));
                 Assert.That(mxAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(mxAddressDTO.IsPrimary, Is.True);
                 Assert.That(mxAddressDTO.DateCreated, Is.EqualTo(testDateCreated));
                 Assert.That(mxAddressDTO.DateModified, Is.EqualTo(testDateModified));
             });
@@ -597,6 +673,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(MXAddressDTO.State), "state" },
                 { nameof(MXAddressDTO.Country), "country" },
                 { nameof(MXAddressDTO.Type), "type" },
+                { nameof(MXAddressDTO.IsPrimary), "isPrimary" },
                 { nameof(MXAddressDTO.DateCreated), "dateCreated" },
                 { nameof(MXAddressDTO.DateModified), "dateModified" }
             };
@@ -722,6 +799,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+
+                // Test IsPrimary reassignments
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
             });
         }
 
@@ -993,6 +1076,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             interfaceDto.State = testState;
             interfaceDto.Country = "Interface Country";
             interfaceDto.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            interfaceDto.IsPrimary = true;
             interfaceDto.DateModified = testModified;
 
             // Assert
@@ -1006,6 +1090,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceDto.State, Is.EqualTo(testState));
                 Assert.That(interfaceDto.Country, Is.EqualTo("Interface Country"));
                 Assert.That(interfaceDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(interfaceDto.IsPrimary, Is.True);
                 Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
                 Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
             });
@@ -1083,10 +1168,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var operations = new[]
             {
-                new { Id = 1, Street = (string?)"Street 1", Neighborhood = (string?)"Neighborhood 1", City = (string?)"City 1" },
-                new { Id = 2, Street = (string?)null, Neighborhood = (string?)"Neighborhood 2", City = (string?)null },
-                new { Id = 3, Street = (string?)"", Neighborhood = (string?)null, City = (string?)"City 3" },
-                new { Id = 4, Street = (string?)"Street 4", Neighborhood = (string?)"", City = (string?)"" }
+                new { Id = 1, Street = (string?)"Street 1", Neighborhood = (string?)"Neighborhood 1", City = (string?)"City 1", IsPrimary = true },
+                new { Id = 2, Street = (string?)null, Neighborhood = (string?)"Neighborhood 2", City = (string?)null, IsPrimary = false },
+                new { Id = 3, Street = (string?)"", Neighborhood = (string?)null, City = (string?)"City 3", IsPrimary = true },
+                new { Id = 4, Street = (string?)"Street 4", Neighborhood = (string?)"", City = (string?)"", IsPrimary = false }
             };
 
             // Act & Assert
@@ -1098,11 +1183,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     _sut.Street = op.Street;
                     _sut.Neighborhood = op.Neighborhood;
                     _sut.City = op.City;
+                    _sut.IsPrimary = op.IsPrimary;
 
                     Assert.That(_sut.Id, Is.EqualTo(op.Id));
                     Assert.That(_sut.Street, Is.EqualTo(op.Street));
                     Assert.That(_sut.Neighborhood, Is.EqualTo(op.Neighborhood));
                     Assert.That(_sut.City, Is.EqualTo(op.City));
+                    Assert.That(_sut.IsPrimary, Is.EqualTo(op.IsPrimary));
                 }
             });
         }
@@ -1119,6 +1206,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.State = new MXState { Name = "Independent State", Abbreviation = "IS" };
             _sut.Country = "Independent Country";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = true;
             var testDate = DateTime.Now.AddDays(-5);
             var testModified = DateTime.Now.AddHours(-3);
             _sut.DateCreated = testDate;
@@ -1133,6 +1221,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var originalState = _sut.State;
             var originalCountry = _sut.Country;
             var originalType = _sut.Type;
+            var originalIsPrimary = _sut.IsPrimary;
             var originalCreated = _sut.DateCreated;
             var originalModified = _sut.DateModified;
 
@@ -1184,6 +1273,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 State = testState,
                 Country = "Initializer Country",
                 Type = OrganizerCompanion.Core.Enums.Types.Billing,
+                IsPrimary = true,
                 DateCreated = testCreated,
                 DateModified = testModified
             };
@@ -1199,6 +1289,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(mxAddressDto.State, Is.EqualTo(testState));
                 Assert.That(mxAddressDto.Country, Is.EqualTo("Initializer Country"));
                 Assert.That(mxAddressDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(mxAddressDto.IsPrimary, Is.True);
                 Assert.That(mxAddressDto.DateCreated, Is.EqualTo(testCreated));
                 Assert.That(mxAddressDto.DateModified, Is.EqualTo(testModified));
             });

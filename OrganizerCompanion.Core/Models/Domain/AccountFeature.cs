@@ -152,6 +152,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
+
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.AccountId:{1}.FeatureId:{2}", _id, _accountId, _featureId);
         #endregion
     }
 }

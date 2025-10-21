@@ -49,6 +49,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.ZipCode, Is.Null);
                 Assert.That(_sut.Country, Is.EqualTo(Countries.UnitedStates.GetName()));
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
@@ -70,11 +71,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var zipCode = "90210";
             var country = "United States";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var isPrimary = true;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var address = new USAddress(id, street1, street2, city, state, zipCode, country, type, dateCreated, dateModified);
+            var address = new USAddress(id, street1, street2, city, state, zipCode, country, type, isPrimary, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -87,6 +89,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(address.ZipCode, Is.EqualTo(zipCode));
                 Assert.That(address.Country, Is.EqualTo(country));
                 Assert.That(address.Type, Is.EqualTo(type));
+                Assert.That(address.IsPrimary, Is.EqualTo(isPrimary));
                 Assert.That(address.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(address.LinkedEntity, Is.Null);
                 Assert.That(address.LinkedEntityType, Is.Null);
@@ -311,6 +314,78 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsPrimary_WhenSet_ShouldUpdateDateModified()
+        {
+            // Arrange
+            var newIsPrimary = true;
+            var originalDateModified = _sut.DateModified;
+            Thread.Sleep(10); // Ensure time difference
+
+            // Act
+            _sut.IsPrimary = newIsPrimary;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.EqualTo(newIsPrimary));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_WhenChangedMultipleTimes_ShouldUpdateDateModifiedEachTime()
+        {
+            // Arrange
+            var originalDateModified = _sut.DateModified;
+            Thread.Sleep(10); // Ensure time difference
+
+            // Act & Assert - Test changing from default false to true
+            _sut.IsPrimary = true;
+            var firstDateModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.True);
+                Assert.That(firstDateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(firstDateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+            });
+
+            Thread.Sleep(10); // Ensure time difference
+
+            // Act & Assert - Test changing from true back to false
+            _sut.IsPrimary = false;
+            var secondDateModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.False);
+                Assert.That(secondDateModified, Is.Not.EqualTo(firstDateModified));
+                Assert.That(secondDateModified, Is.GreaterThan(firstDateModified));
+            });
+
+            Thread.Sleep(10); // Ensure time difference
+
+            // Act & Assert - Test setting to same value (false)
+            _sut.IsPrimary = false;
+            var thirdDateModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.False);
+                Assert.That(thirdDateModified, Is.Not.EqualTo(secondDateModified));
+                Assert.That(thirdDateModified, Is.GreaterThan(secondDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_DefaultValue_ShouldBeFalse()
+        {
+            // Arrange & Act - Using new instance to test default
+            var newAddress = new USAddress();
+
+            // Assert
+            Assert.That(newAddress.IsPrimary, Is.False);
+        }
+
+        [Test, Category("Models")]
         public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
@@ -362,6 +437,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "12345";
             _sut.Country = "Test Country";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = true;
             _sut.LinkedEntityId = 10;
             _sut.LinkedEntity = new MockDomainEntity { Id = 10 };
 
@@ -379,6 +455,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"zipCode\":\"12345\""));
                 Assert.That(json, Does.Contain("\"country\":\"Test Country\""));
                 Assert.That(json, Does.Contain("\"type\":0")); // Assuming OrganizerCompanion.Core.Enums.Types.Home is 0
+                Assert.That(json, Does.Contain("\"isPrimary\":true"));
                 Assert.That(json, Does.Contain("\"linkedEntityId\":10"));
                 Assert.That(json, Does.Contain("\"linkedEntity\""));
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
@@ -527,6 +604,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 ZipCode = "10001",
                 Country = "USA",
                 Type = OrganizerCompanion.Core.Enums.Types.Billing,
+                IsPrimary = false,
                 DateModified = DateTime.Now.AddMinutes(-30)
             };
 
@@ -544,6 +622,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"zipCode\":\"10001\""));
                 Assert.That(json, Does.Contain("\"country\":\"USA\""));
                 Assert.That(json, Does.Contain("\"type\":4")); // OrganizerCompanion.Core.Enums.Types.Billing enum value
+                Assert.That(json, Does.Contain("\"isPrimary\":false"));
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
                 Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
@@ -599,6 +678,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             _sut.Type = null;
             Assert.That(_sut.Type, Is.Null);
+
+            _sut.IsPrimary = true;
+            Assert.That(_sut.IsPrimary, Is.True);
+
+            _sut.IsPrimary = false;
+            Assert.That(_sut.IsPrimary, Is.False);
 
             _sut.LinkedEntity = null;
             Assert.That(_sut.LinkedEntity, Is.Null);
@@ -659,6 +744,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = null;
             _sut.Country = null;
             _sut.Type = null;
+            _sut.IsPrimary = false;
             _sut.DateModified = null;
 
             // Act
@@ -682,6 +768,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 Assert.That(root.TryGetProperty("street1", out var street1Property), Is.True);
                 Assert.That(street1Property.ValueKind, Is.EqualTo(JsonValueKind.Null));
+
+                Assert.That(root.TryGetProperty("isPrimary", out var isPrimaryProperty), Is.True);
+                Assert.That(isPrimaryProperty.GetBoolean(), Is.False);
 
                 Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
                 Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
@@ -723,6 +812,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 { "ZipCode", () => _sut.ZipCode = "12345" },
                 { "Country", () => _sut.Country = "Test Country" },
                 { "Type", () => _sut.Type = OrganizerCompanion.Core.Enums.Types.Other },
+                { "IsPrimary", () => _sut.IsPrimary = true },
                 { "StateEnum", () => _sut.StateEnum = USStates.California },
                 { "LinkedEntityId", () => _sut.LinkedEntityId = 10 },
                 { "LinkedEntity", () => _sut.LinkedEntity = new MockDomainEntity() }
@@ -856,6 +946,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "90210";
             _sut.Country = "United States";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = true;
 
             // Act
             var result = _sut.Cast<USAddressDTO>();
@@ -873,6 +964,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo("90210"));
                 Assert.That(result.Country, Is.EqualTo("United States"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(result.IsPrimary, Is.True);
             });
         }
 
@@ -889,6 +981,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "75201";
             _sut.Country = "USA";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.IsPrimary = false;
 
             // Act
             var result = _sut.Cast<IUSAddressDTO>();
@@ -906,6 +999,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo("75201"));
                 Assert.That(result.Country, Is.EqualTo("USA"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(result.IsPrimary, Is.False);
             });
         }
 

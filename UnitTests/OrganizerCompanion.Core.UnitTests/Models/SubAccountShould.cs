@@ -1507,16 +1507,19 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void CanCastLinkedEntityTo_WithTypeRegistrySupport_ReturnsCorrectResult()
-        {
-            // Arrange
-            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+    {
+      // Arrange
+      var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+      Assert.Multiple(() =>
+      {
 
-            // Act & Assert - Should work with TypeRegistry lookup
-            Assert.That(subAccount.CanCastLinkedEntityTo<User>(), Is.True);
-            Assert.That(subAccount.CanCastLinkedEntityTo<Account>(), Is.False);
-        }
+        // Act & Assert - Should work with TypeRegistry lookup
+        Assert.That(subAccount.CanCastLinkedEntityTo<User>(), Is.True);
+        Assert.That(subAccount.CanCastLinkedEntityTo<Account>(), Is.False);
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void CastLinkedEntity_WithCastMethodFailure_ThrowsInvalidCastExceptionWithInnerException()
         {
             // Arrange - Create an entity that will fail when trying to cast via reflection

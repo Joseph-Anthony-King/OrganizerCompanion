@@ -208,16 +208,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void LinkedEntityType_ShouldBeReadOnly()
-        {
-            // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.LinkedEntityType));
+    {
+      // Arrange
+      var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.LinkedEntityType));
+      Assert.Multiple(() =>
+      {
 
-            // Act & Assert
-            Assert.That(property?.CanWrite, Is.False);
-            Assert.That(_sut.LinkedEntityType, Is.Null);
-        }
+        // Act & Assert
+        Assert.That(property?.CanWrite, Is.False);
+        Assert.That(_sut.LinkedEntityType, Is.Null);
+      });
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void LinkedEntity_ShouldGetAndSetValue()
         {
             // Act

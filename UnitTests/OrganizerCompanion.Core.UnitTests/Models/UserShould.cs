@@ -2480,53 +2480,62 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ExplicitInterfaceProperties_Emails_WithValidInput_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
+    {
+      // Arrange
+      var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
             var typeEmails = new List<OrganizerCompanion.Core.Interfaces.Type.IEmail> { new Email() };
             var beforeSet = DateTime.Now;
 
             // Act
             typePerson.Emails = typeEmails;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.Emails, Is.Not.Null);
-        }
+        // Assert
+        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.Emails, Is.Not.Null);
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ExplicitInterfaceProperties_PhoneNumbers_WithValidInput_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
+    {
+      // Arrange
+      var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
             var typePhones = new List<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber> { new PhoneNumber() };
             var beforeSet = DateTime.Now;
 
             // Act
             typePerson.PhoneNumbers = typePhones;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.PhoneNumbers, Is.Not.Null);
-        }
+        // Assert
+        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.PhoneNumbers, Is.Not.Null);
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ExplicitInterfaceProperties_Addresses_WithValidInput_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
+    {
+      // Arrange
+      var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
             var typeAddresses = new List<OrganizerCompanion.Core.Interfaces.Type.IAddress> { new USAddress() };
             var beforeSet = DateTime.Now;
 
             // Act
             typePerson.Addresses = typeAddresses;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.Addresses, Is.Not.Null);
-        }
+        // Assert
+        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.Addresses, Is.Not.Null);
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ExplicitInterfaceProperties_GetEmails_ShouldReturnConvertedList()
         {
             // Arrange
@@ -2583,6 +2592,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? City { get; set; } = "Unknown City";
             public string? Country { get; set; } = "Unknown Country";
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            public bool IsPrimary { get; set; }
             public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
             public string? LinkedEntityType => LinkedEntity?.GetType().Name;

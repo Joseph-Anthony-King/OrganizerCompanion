@@ -232,6 +232,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
+
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}.IsCompleted:{2}", _id, _name, _isCompleted);
         #endregion
     }
 }

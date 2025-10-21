@@ -1476,6 +1476,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
     {
         public int Id { get; set; }
         public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+        public bool IsPrimary { get; set; }
         public int LinkedEntityId { get; set; }
         public IDomainEntity? LinkedEntity { get; set; }
         public string? LinkedEntityType { get; set; }
@@ -1502,9 +1503,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
     internal class MockDomainEntity : IDomainEntity
     {
         public int Id { get; set; }
-        public bool IsCast { get; set; }
-        public int CastId { get; set; }
-        public string? CastType { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime? DateModified { get; set; }
 

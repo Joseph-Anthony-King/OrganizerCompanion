@@ -1,9 +1,10 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using System.ComponentModel.DataAnnotations;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -14,36 +15,118 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
+
+        private int _id = 0;
+        private string? _name = null;
+        private string? _description = null;
+        private List<Contact> _members = [];
+        private int _accountId = 0;
+        private Account? _account = null;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IContact> IGroup.Members
+        List<IContact>? IGroup.Members
         {
             get => [.. Members.Cast<IContact>()];
             set
             {
-                Members = [.. value.Cast<Contact>()];
+                Members = [.. value!.Cast<Contact>()];
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonIgnore]
+        IAccount? IGroup.Account
+        {
+            get => Account;
+            set
+            {
+                Account = (Account)value!;
                 DateModified = DateTime.Now;
             }
         }
         #endregion
 
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
-        public int Id { get; set; } = 0;
+        public int Id
+        {
+            get => _id;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Id must be a non-negative number.");
+                }
+                _id = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("name")]
-        public string? Name { get; set; } = null;
+        public string? Name
+        {
+            get => _name;
+            set
+            {
+                _name = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("description")]
-        public string? Description { get; set; } = null;
+        public string? Description
+        {
+            get => _description;
+            set
+            {
+                _description = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("members")]
-        public List<Contact> Members { get; set; } = [];
+        public List<Contact> Members
+        {
+            get => _members;
+            set
+            {
+                _members = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
-        public int AccountId { get; set; } = 0;
+        public int AccountId
+        {
+            get => _accountId;
+            set
+            {
+                if (value < 0)
+                {
+                    throw new ArgumentException("Account Id must be a non-negative number.");
+                }
+                _accountId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("account")]
-        public IAccount? Account { get; set; } = null;
+        public Account? Account
+        {
+            get => _account;
+            set
+            {
+                _account = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion
@@ -58,7 +141,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? description,
             List<Contact> members,
             int accountId,
-            IAccount? account,
+            Account? account,
             DateTime dateCreated,
             DateTime? dateModified,
             bool isCast = false,
@@ -108,6 +191,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
+
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}", _id, _name);
         #endregion
     }
 }

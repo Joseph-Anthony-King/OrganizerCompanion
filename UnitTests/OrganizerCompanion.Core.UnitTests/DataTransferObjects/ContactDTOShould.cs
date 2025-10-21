@@ -1777,6 +1777,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public IDomainEntity? LinkedEntity { get; set; }
             public string? LinkedEntityType { get; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            bool OrganizerCompanion.Core.Interfaces.Type.IAddress.IsPrimary { get; set; }
         }
         #endregion
     }

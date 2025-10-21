@@ -245,16 +245,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test]
         public void SetIsCompletedToTrue()
-        {
-            // Act
-            _projectAssignmentDTO.IsCompleted = true;
+    {
+      // Act
+      _projectAssignmentDTO.IsCompleted = true;
+      Assert.Multiple(() =>
+      {
 
-            // Assert - DTOs don't auto-update DateCompleted or DateModified
-            Assert.That(_projectAssignmentDTO.IsCompleted, Is.True);
-            Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
-        }
+        // Assert - DTOs don't auto-update DateCompleted or DateModified
+        Assert.That(_projectAssignmentDTO.IsCompleted, Is.True);
+        Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
+      });
+    }
 
-        [Test]
+    [Test]
         public void SetIsCompletedToFalse()
         {
             // Arrange
@@ -658,9 +661,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Interface")]
         public void CoverGroupsInterfaceGetterCastingLogic()
-        {
-            // Arrange
-            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+    {
+      // Arrange
+      IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
             var groupA = new GroupDTO { Id = 10, Name = "Group A" };
             var groupB = new GroupDTO { Id = 20, Name = "Group B" };
             _projectAssignmentDTO.Groups = [groupA, groupB];
@@ -671,17 +674,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.That(interfaceGroups, Is.Not.Null);
             Assert.That(interfaceGroups.Count, Is.EqualTo(2));
-            Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
-            Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
-            Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
-            Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
+        Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
+        Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
+        Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
+      });
+    }
 
-        [Test, Category("Interface")]
+    [Test, Category("Interface")]
         public void CoverGroupsInterfaceSetterConversionLogic()
-        {
-            // Arrange
-            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+    {
+      // Arrange
+      IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
             var group1 = new GroupDTO { Id = 100, Name = "Interface Group 1" };
             var group2 = new GroupDTO { Id = 200, Name = "Interface Group 2" };
             var interfaceGroups = new List<IGroupDTO> { group1, group2 };
@@ -693,12 +699,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
             Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(2));
             Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
-            Assert.That(_projectAssignmentDTO.Groups[0].Id, Is.EqualTo(100));
-            Assert.That(_projectAssignmentDTO.Groups[1], Is.InstanceOf<GroupDTO>());
-            Assert.That(_projectAssignmentDTO.Groups[1].Id, Is.EqualTo(200));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(_projectAssignmentDTO.Groups[0].Id, Is.EqualTo(100));
+        Assert.That(_projectAssignmentDTO.Groups[1], Is.InstanceOf<GroupDTO>());
+      });
+      Assert.That(_projectAssignmentDTO.Groups[1].Id, Is.EqualTo(200));
+    }
 
-        [Test, Category("Boundary")]
+    [Test, Category("Boundary")]
         public void HandleVeryLargeCollections()
         {
             // Arrange
@@ -734,21 +743,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Unicode")]
         public void HandleUnicodeCharacters()
-        {
-            // Arrange
-            var unicodeName = "项目分配 🚀";
+    {
+      // Arrange
+      var unicodeName = "项目分配 🚀";
             var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
 
             // Act
             _projectAssignmentDTO.Name = unicodeName;
             _projectAssignmentDTO.Description = unicodeDescription;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
-            Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
-        }
+        // Assert
+        Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
+        Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
+      });
+    }
 
-        [Test, Category("Boundary")]
+    [Test, Category("Boundary")]
         public void HandleMaximumIntegerValues()
         {
             // Act & Assert for Id

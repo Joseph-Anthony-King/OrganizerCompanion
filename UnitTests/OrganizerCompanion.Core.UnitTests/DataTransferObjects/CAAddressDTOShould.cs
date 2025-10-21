@@ -39,6 +39,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.ZipCode, Is.Null);
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
+                Assert.That(_sut.IsPrimary, Is.False);
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
                 Assert.That(_sut.DateModified, Is.Null);
             });
@@ -311,6 +312,46 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     Assert.That(_sut.Type, Is.EqualTo(enumValue));
                 }
             });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldGetAndSetValue()
+        {
+            // Arrange
+            bool expectedIsPrimary = true;
+
+            // Act
+            _sut.IsPrimary = expectedIsPrimary;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.EqualTo(expectedIsPrimary));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldGetAndSetBooleanValues()
+        {
+            // Arrange
+            var booleanValues = new[] { true, false };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var boolValue in booleanValues)
+                {
+                    _sut.IsPrimary = boolValue;
+                    Assert.That(_sut.IsPrimary, Is.EqualTo(boolValue));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHaveDefaultValue()
+        {
+            // Arrange & Act
+            var dto = new CAAddressDTO();
+
+            // Assert
+            Assert.That(dto.IsPrimary, Is.False);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -665,6 +706,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void IsPrimary_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(CAAddressDTO).GetProperty(nameof(CAAddressDTO.IsPrimary));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void CAAddressDTO_ShouldImplementICAAddressDTO()
         {
             // Arrange & Act
@@ -699,6 +753,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 ZipCode = "M5V 3M6",
                 Country = "Canada",
                 Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = true,
                 DateCreated = new DateTime(2023, 1, 1, 12, 0, 0),
                 DateModified = new DateTime(2023, 1, 2, 12, 0, 0)
             };
@@ -715,6 +770,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(caAddressDTO.ZipCode, Is.EqualTo("M5V 3M6"));
                 Assert.That(caAddressDTO.Country, Is.EqualTo("Canada"));
                 Assert.That(caAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(caAddressDTO.IsPrimary, Is.True);
                 Assert.That(caAddressDTO.DateCreated, Is.EqualTo(new DateTime(2023, 1, 1, 12, 0, 0)));
                 Assert.That(caAddressDTO.DateModified, Is.EqualTo(new DateTime(2023, 1, 2, 12, 0, 0)));
             });
@@ -735,6 +791,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(CAAddressDTO.ZipCode), "zipCode" },
                 { nameof(CAAddressDTO.Country), "country" },
                 { nameof(CAAddressDTO.Type), "type" },
+                { nameof(CAAddressDTO.IsPrimary), "isPrimary" },
                 { nameof(CAAddressDTO.DateCreated), "dateCreated" },
                 { nameof(CAAddressDTO.DateModified), "dateModified" }
             };

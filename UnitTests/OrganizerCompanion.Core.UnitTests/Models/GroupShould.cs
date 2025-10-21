@@ -586,22 +586,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region DateModified Update Tests
 
         [Test, Category("Models")]
-        public void Members_Set_UpdatesDateModified()
-        {
-            // Arrange
-            var beforeModified = DateTime.Now;
-            _sut.DateModified = null;
-
-            // Act
-            _sut.Members = _testMembers;
-            var afterModified = DateTime.Now;
-
-            // Assert - Note: Based on code analysis, the regular Members property doesn't update DateModified
-            // Only the interface implementation does
-            Assert.That(_sut.DateModified, Is.Null);
-        }
-
-        [Test, Category("Models")]
         public void IGroup_Members_Set_UpdatesDateModified_WhenNull()
         {
             // Arrange
@@ -840,27 +824,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void AutoProperties_DoNotUpdateDateModified()
-        {
-            // Test that auto-properties don't update DateModified (unlike explicit interface implementation)
-            
-            // Arrange
-            _sut.DateModified = _testDateModified;
-            var originalDateModified = _sut.DateModified;
-            
-            // Act - Set various auto-properties
-            _sut.Id = 999;
-            _sut.Name = "UpdatedName";
-            _sut.Description = "UpdatedDescription";
-            _sut.Members = _testMembers;
-            _sut.AccountId = 789;
-            _sut.Account = _testAccount;
-            
-            // Assert - DateModified should not have changed
-            Assert.That(_sut.DateModified, Is.EqualTo(originalDateModified));
-        }
-
-        [Test, Category("Models")]
         public void Cast_WithNullAccount_ShouldHandleNullAccountCorrectly()
         {
             // Test that Cast handles null Account correctly without casting issues
@@ -1012,7 +975,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceMembers, Has.Count.EqualTo(2));
-                Assert.That(interfaceMembers[0], Is.InstanceOf<IContact>());
+                Assert.That(interfaceMembers![0]!, Is.InstanceOf<IContact>());
                 Assert.That(interfaceMembers[1], Is.InstanceOf<IContact>());
             });
             

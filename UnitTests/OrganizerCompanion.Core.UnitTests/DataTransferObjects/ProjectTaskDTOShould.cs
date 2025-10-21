@@ -33,9 +33,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void ParameterizedConstructor_ShouldCreateInstanceWithValues()
-        {
-            // Arrange
-            var id = 123;
+    {
+      // Arrange
+      var id = 123;
             var name = "Test Task";
             var description = "Test Description";
             var assignments = new List<ProjectAssignmentDTO>();
@@ -50,22 +50,25 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut, Is.Not.Null);
-            Assert.That(_sut.Id, Is.EqualTo(id));
-            Assert.That(_sut.Name, Is.EqualTo(name));
-            Assert.That(_sut.Description, Is.EqualTo(description));
-            Assert.That(_sut.Assignments, Is.EqualTo(assignments));
-            Assert.That(_sut.IsCompleted, Is.EqualTo(isCompleted));
-            Assert.That(_sut.DateDue, Is.EqualTo(dateDue));
-            Assert.That(_sut.DateCompleted, Is.EqualTo(dateCompleted));
-            Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
-            Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Id, Is.EqualTo(id));
+        Assert.That(_sut.Name, Is.EqualTo(name));
+        Assert.That(_sut.Description, Is.EqualTo(description));
+        Assert.That(_sut.Assignments, Is.EqualTo(assignments));
+        Assert.That(_sut.IsCompleted, Is.EqualTo(isCompleted));
+        Assert.That(_sut.DateDue, Is.EqualTo(dateDue));
+        Assert.That(_sut.DateCompleted, Is.EqualTo(dateCompleted));
+        Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
+        Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region IDomainEntity Properties Tests
+    #region IDomainEntity Properties Tests
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void Id_Get_ShouldReturnDefaultValue()
         {
             // Arrange & Act
@@ -392,9 +395,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void AsIProjectTaskDTO_Assignments_Get_WithPopulatedList_ShouldReturnCastedItems()
-        {
-            // Arrange
-            var dto = (IProjectTaskDTO)_sut;
+    {
+      // Arrange
+      var dto = (IProjectTaskDTO)_sut;
             var assignment1 = new ProjectAssignmentDTO { Id = 1, Name = "Assignment 1" };
             var assignment2 = new ProjectAssignmentDTO { Id = 2, Name = "Assignment 2" };
             _sut.Assignments = [assignment1, assignment2];
@@ -405,17 +408,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert - This covers the casting logic [.. Assignments!.Cast<IProjectAssignmentDTO>()]
             Assert.That(result, Is.Not.Null);
             Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result[0].Id, Is.EqualTo(1));
-            Assert.That(result[0].Name, Is.EqualTo("Assignment 1"));
-            Assert.That(result[1].Id, Is.EqualTo(2));
-            Assert.That(result[1].Name, Is.EqualTo("Assignment 2"));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(result[0].Id, Is.EqualTo(1));
+        Assert.That(result[0].Name, Is.EqualTo("Assignment 1"));
+        Assert.That(result[1].Id, Is.EqualTo(2));
+        Assert.That(result[1].Name, Is.EqualTo("Assignment 2"));
+      });
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void AsIProjectTaskDTO_Assignments_Set_WithPopulatedList_ShouldSetCastedItems()
-        {
-            // Arrange
-            var dto = (IProjectTaskDTO)_sut;
+    {
+      // Arrange
+      var dto = (IProjectTaskDTO)_sut;
             var assignment1 = new ProjectAssignmentDTO { Id = 10, Name = "Interface Assignment 1" };
             var assignment2 = new ProjectAssignmentDTO { Id = 20, Name = "Interface Assignment 2" };
             var interfaceAssignments = new List<IProjectAssignmentDTO> { assignment1, assignment2 };
@@ -427,12 +433,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_sut.Assignments, Is.Not.Null);
             Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
             Assert.That(_sut.Assignments[0], Is.InstanceOf<ProjectAssignmentDTO>());
-            Assert.That(_sut.Assignments[0].Id, Is.EqualTo(10));
-            Assert.That(_sut.Assignments[1], Is.InstanceOf<ProjectAssignmentDTO>());
-            Assert.That(_sut.Assignments[1].Id, Is.EqualTo(20));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Assignments[0].Id, Is.EqualTo(10));
+        Assert.That(_sut.Assignments[1], Is.InstanceOf<ProjectAssignmentDTO>());
+      });
+      Assert.That(_sut.Assignments[1].Id, Is.EqualTo(20));
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void AsIProjectTaskDTO_IsCompleted_Get_ShouldReturnValue()
         {
             // Arrange
@@ -601,20 +610,23 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void MultipleInterfaceCasts_ShouldMaintainSameInstance()
-        {
-            // Arrange & Act
-            var asProjectTaskDTO = (IProjectTaskDTO)_sut;
+    {
+      // Arrange & Act
+      var asProjectTaskDTO = (IProjectTaskDTO)_sut;
             var asDomainEntity = (IDomainEntity)_sut;
             var backToProjectTaskDTO = (IProjectTaskDTO)asDomainEntity;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(ReferenceEquals(_sut, asProjectTaskDTO), Is.True);
-            Assert.That(ReferenceEquals(_sut, asDomainEntity), Is.True);
-            Assert.That(ReferenceEquals(_sut, backToProjectTaskDTO), Is.True);
-            Assert.That(ReferenceEquals(asProjectTaskDTO, backToProjectTaskDTO), Is.True);
-        }
+        // Assert
+        Assert.That(ReferenceEquals(_sut, asProjectTaskDTO), Is.True);
+        Assert.That(ReferenceEquals(_sut, asDomainEntity), Is.True);
+        Assert.That(ReferenceEquals(_sut, backToProjectTaskDTO), Is.True);
+        Assert.That(ReferenceEquals(asProjectTaskDTO, backToProjectTaskDTO), Is.True);
+      });
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void NotImplementedMembers_ShouldThrowNotImplementedException()
         {
             // This test documents that specific casting-related members throw NotImplementedException
@@ -662,32 +674,38 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("DataTransferObjects")]
         public void TypeChecks_ShouldReturnCorrectTypes()
-        {
-            // Arrange & Act & Assert
-            Assert.That(_sut.GetType(), Is.EqualTo(typeof(ProjectTaskDTO)));
-            Assert.That(_sut.GetType().Name, Is.EqualTo("ProjectTaskDTO"));
-            Assert.That(_sut.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.DataTransferObject"));
-        }
+    {
+      // Arrange & Act & Assert
+      Assert.That(_sut.GetType(), Is.EqualTo(typeof(ProjectTaskDTO)));
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.GetType().Name, Is.EqualTo("ProjectTaskDTO"));
+        Assert.That(_sut.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.DataTransferObject"));
+      });
+    }
 
-        [Test, Category("DataTransferObjects")]
+    [Test, Category("DataTransferObjects")]
         public void InterfaceImplementations_ShouldBeVerifiable()
-        {
-            // Arrange & Act & Assert
-            Assert.That(_sut is IProjectTaskDTO, Is.True);
-            Assert.That(_sut is IDomainEntity, Is.True);
-            Assert.That(_sut is ProjectTaskDTO, Is.True);
-            
-            // Verify inheritance hierarchy
-            Assert.That(typeof(IProjectTaskDTO).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
-            Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
-            Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(IProjectTaskDTO)), Is.True);
-        }
+    {
+      Assert.Multiple(() =>
+      {
+        // Arrange & Act & Assert
+        Assert.That(_sut is IProjectTaskDTO, Is.True);
+        Assert.That(_sut is IDomainEntity, Is.True);
+        Assert.That(_sut is ProjectTaskDTO, Is.True);
 
-        #endregion
+        // Verify inheritance hierarchy
+        Assert.That(typeof(IProjectTaskDTO).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
+        Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
+        Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(IProjectTaskDTO)), Is.True);
+      });
+    }
 
-        #region Comprehensive Coverage Tests
+    #endregion
 
-        [Test, Category("Comprehensive")]
+    #region Comprehensive Coverage Tests
+
+    [Test, Category("Comprehensive")]
         public void JsonConstructor_WithAllNullValues_ShouldSetPropertiesCorrectly()
         {
             // Arrange
@@ -773,21 +791,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Unicode")]
         public void HandleUnicodeCharacters_ShouldWorkCorrectly()
-        {
-            // Arrange
-            var unicodeName = "任务名称 🚀 Task";
+    {
+      // Arrange
+      var unicodeName = "任务名称 🚀 Task";
             var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
 
             // Act
             _sut.Name = unicodeName;
             _sut.Description = unicodeDescription;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(_sut.Name, Is.EqualTo(unicodeName));
-            Assert.That(_sut.Description, Is.EqualTo(unicodeDescription));
-        }
+        // Assert
+        Assert.That(_sut.Name, Is.EqualTo(unicodeName));
+        Assert.That(_sut.Description, Is.EqualTo(unicodeDescription));
+      });
+    }
 
-        [Test, Category("DateTime")]
+    [Test, Category("DateTime")]
         public void HandleDateTimePrecision_ShouldWorkCorrectly()
         {
             // Arrange
@@ -864,58 +885,65 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Threading")]
         public void DateCreated_FromDifferentThreads_ShouldMaintainValue()
-        {
-            // Arrange
-            var originalDate = _sut.DateCreated;
+    {
+      // Arrange
+      var originalDate = _sut.DateCreated;
 
             // Act - Access from different contexts
             var date1 = _sut.DateCreated;
             var date2 = _sut.DateCreated;
+      Assert.Multiple(() =>
+      {
 
-            // Assert
-            Assert.That(date1, Is.EqualTo(originalDate));
-            Assert.That(date2, Is.EqualTo(originalDate));
-            Assert.That(date1, Is.EqualTo(date2));
-        }
+        // Assert
+        Assert.That(date1, Is.EqualTo(originalDate));
+        Assert.That(date2, Is.EqualTo(originalDate));
+      });
+      Assert.That(date1, Is.EqualTo(date2));
+    }
 
-        [Test, Category("Validation")]
+    [Test, Category("Validation")]
         public void AllRequiredProperties_ShouldHaveValidationAttributes()
-        {
-            // This test verifies that validation attributes are properly applied
-            var type = typeof(ProjectTaskDTO);
+    {
+      // This test verifies that validation attributes are properly applied
+      var type = typeof(ProjectTaskDTO);
             
             // Check that key properties have Required attributes
             var idProperty = type.GetProperty("Id");
             var nameProperty = type.GetProperty("Name");
             var descriptionProperty = type.GetProperty("Description");
-            
-            Assert.That(idProperty, Is.Not.Null);
-            Assert.That(nameProperty, Is.Not.Null);
-            Assert.That(descriptionProperty, Is.Not.Null);
-            
-            // Verify the properties exist and are accessible
-            Assert.That(idProperty!.CanRead, Is.True);
+      Assert.Multiple(() =>
+      {
+        Assert.That(idProperty, Is.Not.Null);
+        Assert.That(nameProperty, Is.Not.Null);
+        Assert.That(descriptionProperty, Is.Not.Null);
+      });
+
+      // Verify the properties exist and are accessible
+      Assert.That(idProperty!.CanRead, Is.True);
             Assert.That(idProperty.CanWrite, Is.True);
             Assert.That(nameProperty!.CanRead, Is.True);
             Assert.That(nameProperty.CanWrite, Is.True);
-        }
+    }
 
-        [Test, Category("String")]
+    [Test, Category("String")]
         public void HandleVeryLongStrings_ShouldWorkCorrectly()
-        {
-            // Arrange
-            var veryLongName = new string('A', 10000);
+    {
+      // Arrange
+      var veryLongName = new string('A', 10000);
             var veryLongDescription = new string('B', 50000);
 
             // Act & Assert - DTOs don't enforce validation, so very long strings should be accepted
             Assert.DoesNotThrow(() => _sut.Name = veryLongName);
             Assert.DoesNotThrow(() => _sut.Description = veryLongDescription);
-            
-            Assert.That(_sut.Name, Is.EqualTo(veryLongName));
-            Assert.That(_sut.Description, Is.EqualTo(veryLongDescription));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Name, Is.EqualTo(veryLongName));
+        Assert.That(_sut.Description, Is.EqualTo(veryLongDescription));
+      });
+    }
 
-        [Test, Category("Comprehensive")]
+    [Test, Category("Comprehensive")]
         public void ReadOnlyProperties_ShouldBehaveCorrectly()
         {
             // Arrange & Act - Test DateCompleted (readonly)

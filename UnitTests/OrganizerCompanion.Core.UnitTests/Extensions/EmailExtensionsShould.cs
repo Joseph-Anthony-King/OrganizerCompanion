@@ -99,7 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypeEmails_WithListOfDomainEmails_ShouldConvertToTypeEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home, true);
             var domainEmails = new List<IEmail?> { _sut, domainEmail2, null };
 
             // Act
@@ -134,7 +134,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil, true);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)
@@ -204,6 +204,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         {
             public string? EmailAddress { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            public bool IsPrimary { get; set; }
         }
     }
 }

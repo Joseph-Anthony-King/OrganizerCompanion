@@ -183,7 +183,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id{0}.EmailAddress{1}.IsPrimary", _id, _emailAddress, _isPrimary);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.EmailAddress:{1}.IsPrimary:{2}", _id, _emailAddress, _isPrimary);
         #endregion
     }
 }

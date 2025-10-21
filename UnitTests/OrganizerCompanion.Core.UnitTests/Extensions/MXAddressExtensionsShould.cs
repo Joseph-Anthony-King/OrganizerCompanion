@@ -299,6 +299,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
             public string? PostalCode { get; set; }
             public string? City { get; set; }
             public Interfaces.Type.INationalSubdivision? State { get; set; }
+            public bool IsPrimary { get; set; }
             public string? Country { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
         }

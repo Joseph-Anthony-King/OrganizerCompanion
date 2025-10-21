@@ -47,6 +47,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.ZipCode, Is.Null);
                 Assert.That(caAddress.Country, Is.EqualTo(Countries.Canada.GetName()));
                 Assert.That(caAddress.Type, Is.Null);
+                Assert.That(caAddress.IsPrimary, Is.False);
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(caAddress.LinkedEntity, Is.Null);
                 Assert.That(caAddress.LinkedEntityType, Is.Null);
@@ -68,6 +69,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var zipCode = "M5V 3A8";
             var country = "Canada";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var isPrimary = true;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -81,6 +83,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: zipCode,
                 country: country,
                 type: type,
+                isPrimary: isPrimary,
                 dateCreated: dateCreated,
                 dateModified: dateModified
             );
@@ -96,6 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.ZipCode, Is.EqualTo(zipCode));
                 Assert.That(caAddress.Country, Is.EqualTo(country));
                 Assert.That(caAddress.Type, Is.EqualTo(type));
+                Assert.That(caAddress.IsPrimary, Is.EqualTo(isPrimary));
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(caAddress.LinkedEntity, Is.Null);
                 Assert.That(caAddress.LinkedEntityType, Is.Null);
@@ -250,6 +254,84 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void IsPrimary_Setter_UpdatesDateModified()
+        {
+            // Arrange
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.IsPrimary = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.IsPrimary, Is.True);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldGetAndSetCorrectly()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test setting to true
+                _sut.IsPrimary = true;
+                Assert.That(_sut.IsPrimary, Is.True);
+
+                // Test setting to false
+                _sut.IsPrimary = false;
+                Assert.That(_sut.IsPrimary, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldDefaultToFalse()
+        {
+            // Arrange & Act
+            var newAddress = new CAAddress();
+
+            // Assert
+            Assert.That(newAddress.IsPrimary, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldHandleBooleanToggling()
+        {
+            // Arrange
+            Assert.That(_sut.IsPrimary, Is.False, "Should start as false");
+
+            // Act & Assert - Toggle multiple times
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.True, "Should be true after first toggle");
+
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.False, "Should be false after second toggle");
+
+            _sut.IsPrimary = !_sut.IsPrimary;
+            Assert.That(_sut.IsPrimary, Is.True, "Should be true after third toggle");
+        }
+
+        [Test, Category("Models")]
+        public void IsPrimary_ShouldMaintainValueAfterOtherPropertyChanges()
+        {
+            // Arrange
+            _sut.IsPrimary = true;
+
+            // Act - Change other properties
+            _sut.Id = 999;
+            _sut.Street1 = "Test Street";
+            _sut.City = "Test City";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.True,
+                "IsPrimary should maintain its value when other properties change");
+        }
+
+        [Test, Category("Models")]
         public void LinkedEntityId_Setter_UpdatesDateModified()
         {
             // Arrange
@@ -329,6 +411,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "T2P 1M7";
             _sut.Country = "Canada";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.IsPrimary = true;
             _sut.DateModified = new DateTime(2023, 1, 1, 12, 0, 0);
 
             // Act
@@ -345,27 +428,30 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Verify JSON contains expected properties
             var jsonDocument = JsonDocument.Parse(json);
             var root = jsonDocument.RootElement;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
                 Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
-                
+
                 Assert.That(root.TryGetProperty("street1", out var street1Property), Is.True);
                 Assert.That(street1Property.GetString(), Is.EqualTo("456 Maple Avenue"));
-                
+
                 Assert.That(root.TryGetProperty("city", out var cityProperty), Is.True);
                 Assert.That(cityProperty.GetString(), Is.EqualTo("Calgary"));
-                
+
                 Assert.That(root.TryGetProperty("zipCode", out var zipCodeProperty), Is.True);
                 Assert.That(zipCodeProperty.GetString(), Is.EqualTo("T2P 1M7"));
-                
+
                 Assert.That(root.TryGetProperty("country", out var countryProperty), Is.True);
                 Assert.That(countryProperty.GetString(), Is.EqualTo("Canada"));
-                
+
+                Assert.That(root.TryGetProperty("isPrimary", out var isPrimaryProperty), Is.True);
+                Assert.That(isPrimaryProperty.GetBoolean(), Is.True);
+
                 Assert.That(root.TryGetProperty("dateCreated", out var dateCreatedProperty), Is.True);
                 Assert.That(dateCreatedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
-                
+
                 Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
                 Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
             });
@@ -382,6 +468,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Province = null;
             _sut.ZipCode = null;
             _sut.Type = null;
+            _sut.IsPrimary = false;
             _sut.DateModified = null;
 
             // Act
@@ -397,27 +484,51 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             var jsonDocument = JsonDocument.Parse(json);
             var root = jsonDocument.RootElement;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
                 Assert.That(idProperty.GetInt32(), Is.EqualTo(2));
-                
+
                 Assert.That(root.TryGetProperty("street1", out var street1Property), Is.True);
                 Assert.That(street1Property.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
+
+                Assert.That(root.TryGetProperty("isPrimary", out var isPrimaryProperty), Is.True);
+                Assert.That(isPrimaryProperty.GetBoolean(), Is.False);
+
                 Assert.That(root.TryGetProperty("linkedEntityId", out var linkedEntityIdProperty), Is.True);
                 Assert.That(linkedEntityIdProperty.GetInt32(), Is.EqualTo(0));
-                
+
                 Assert.That(root.TryGetProperty("linkedEntity", out var linkedEntityProperty), Is.True);
                 Assert.That(linkedEntityProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
+
                 Assert.That(root.TryGetProperty("linkedEntityType", out var linkedEntityTypeProperty), Is.True);
                 Assert.That(linkedEntityTypeProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
+
                 Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
                 Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_ShouldSerializeBooleanValuesCorrectly()
+        {
+            // Arrange & Act & Assert for true
+            _sut.IsPrimary = true;
+            var jsonTrue = _sut.ToJson();
+            var documentTrue = JsonDocument.Parse(jsonTrue);
+            Assert.Multiple(() =>
+            {
+                Assert.That(documentTrue.RootElement.TryGetProperty("isPrimary", out var isPrimaryTrueProperty), Is.True);
+                Assert.That(isPrimaryTrueProperty.GetBoolean(), Is.True);
+            });
+
+            // Arrange & Act & Assert for false
+            _sut.IsPrimary = false;
+            var jsonFalse = _sut.ToJson();
+            var documentFalse = JsonDocument.Parse(jsonFalse);
+            Assert.That(documentFalse.RootElement.TryGetProperty("isPrimary", out var isPrimaryFalseProperty), Is.True);
+            Assert.That(isPrimaryFalseProperty.GetBoolean(), Is.False);
         }
 
         [Test, Category("Models")]
@@ -588,6 +699,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "T1T 1T1",
                 country: "Canada",
                 type: Enums.Types.Home,
+                isPrimary: true,
                 dateCreated: testDate,
                 dateModified: testDate
             );
@@ -655,7 +767,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var mockEntity1 = new MockDomainEntity();
             var mockEntity2 = new AnotherMockEntity();
-            
+
             _sut.LinkedEntity = mockEntity1;
             var firstType = _sut.LinkedEntityType;
 
@@ -684,6 +796,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "M5V 3A8";
             _sut.Country = "Canada";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            _sut.IsPrimary = true;
 
             // Act
             var result = _sut.Cast<CAAddressDTO>();
@@ -701,6 +814,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
+                Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
@@ -718,6 +832,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = "V6B 4N8";
             _sut.Country = "Canada";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _sut.IsPrimary = false;
 
             // Act
             var result = _sut.Cast<ICAAddressDTO>();
@@ -735,6 +850,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo(_sut.ZipCode));
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
+                Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
@@ -752,6 +868,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = null;
             _sut.Country = null;
             _sut.Type = null;
+            _sut.IsPrimary = false;
             _sut.DateModified = null;
 
             // Act
@@ -769,6 +886,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.Null);
                 Assert.That(result.Country, Is.Null);
                 Assert.That(result.Type, Is.Null);
+                Assert.That(result.IsPrimary, Is.False);
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.Null);
             });
@@ -828,6 +946,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "H1A 0A1",
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
+                isPrimary: true,
                 dateCreated: dateCreated,
                 dateModified: dateModified
             );
@@ -935,7 +1054,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act - Test that unused parameters (isCast, castId, castType) are ignored
             var testDate = DateTime.Now;
             var province = CAProvinces.Ontario.ToStateModel();
-            
+
             var caAddress = new CAAddress(
                 id: 999,
                 street1: "Test Street",
@@ -945,11 +1064,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "M1M 1M1",
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
+                isPrimary: true,
                 dateCreated: testDate,
-                dateModified: testDate,
-                isCast: true,        // These parameters are not used by the constructor
-                castId: 123,         // but should be handled gracefully
-                castType: "TestType"
+                dateModified: testDate
             );
 
             // Assert - Verify that the object is created correctly and unused parameters don't affect it
@@ -991,12 +1108,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_WithProvinceHavingOnlyName_ShouldUseNameForDisplay()
         {
             // Arrange - Create a province mock that has Name but null Abbreviation
-            var mockProvince = new MockNationalSubdivision 
-            { 
-                Name = "Full Province Name", 
-                Abbreviation = null 
+            var mockProvince = new MockNationalSubdivision
+            {
+                Name = "Full Province Name",
+                Abbreviation = null
             };
-            
+
             _sut.Id = 100;
             _sut.Street1 = "Name Test Street";
             _sut.City = "Name Test City";
@@ -1022,12 +1139,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_WithProvinceHavingBothNameAndAbbreviation_ShouldUseAbbreviation()
         {
             // Arrange - Test that abbreviation takes precedence over name
-            var mockProvince = new MockNationalSubdivision 
-            { 
-                Name = "Full Province Name", 
-                Abbreviation = "FPN" 
+            var mockProvince = new MockNationalSubdivision
+            {
+                Name = "Full Province Name",
+                Abbreviation = "FPN"
             };
-            
+
             _sut.Id = 200;
             _sut.Street1 = "Abbrev Test Street";
             _sut.City = "Abbrev Test City";
@@ -1054,12 +1171,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToString_WithProvinceHavingEmptyStrings_ShouldUseEmptyString()
         {
             // Arrange - Test edge case where province has empty strings instead of null
-            var mockProvince = new MockNationalSubdivision 
-            { 
-                Name = "", 
-                Abbreviation = "" 
+            var mockProvince = new MockNationalSubdivision
+            {
+                Name = "",
+                Abbreviation = ""
             };
-            
+
             _sut.Id = 300;
             _sut.Street1 = "Empty Test Street";
             _sut.City = "Empty Test City";
@@ -1108,7 +1225,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var mockEntity = new MockDomainEntity();
             _sut.LinkedEntity = mockEntity; // First set to non-null
             Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity")); // Confirm it's set
-            
+
             var originalDateModified = _sut.DateModified;
 
             // Act
@@ -1128,15 +1245,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CAAddress_ComprehensiveFunctionalityTest()
         {
             // This comprehensive test verifies all major functionality works together correctly
-            
+
             // Arrange - Test default constructor
             var defaultAddress = new CAAddress();
             Assert.That(defaultAddress, Is.Not.Null);
-            
+
             // Test JsonConstructor with all parameters
             var testDate = DateTime.Now;
             var province = CAProvinces.Manitoba.ToStateModel();
-            
+
             var parameterizedAddress = new CAAddress(
                 id: 12345,
                 street1: "Comprehensive Test Street",
@@ -1146,10 +1263,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "R3C 0V8",
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
+                isPrimary: false,
                 dateCreated: testDate,
                 dateModified: testDate
             );
-            
+
             // Test all property setters and getters
             defaultAddress.Id = 54321;
             defaultAddress.Street1 = "Setter Test Street";
@@ -1162,7 +1280,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultAddress.LinkedEntityId = 999;
             defaultAddress.LinkedEntity = new MockDomainEntity();
             defaultAddress.DateModified = testDate;
-            
+
             // Act & Assert - Verify all properties are set correctly
             Assert.Multiple(() =>
             {
@@ -1177,7 +1295,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(parameterizedAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
                 Assert.That(parameterizedAddress.DateCreated, Is.EqualTo(testDate));
                 Assert.That(parameterizedAddress.DateModified, Is.EqualTo(testDate));
-                
+
                 // Test property setter results
                 Assert.That(defaultAddress.Id, Is.EqualTo(54321));
                 Assert.That(defaultAddress.Street1, Is.EqualTo("Setter Test Street"));
@@ -1193,11 +1311,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultAddress.DateModified, Is.EqualTo(testDate));
                 Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
             });
-            
+
             // Test Cast functionality
             var caAddressDto = defaultAddress.Cast<CAAddressDTO>();
             var iCaAddressDto = defaultAddress.Cast<ICAAddressDTO>();
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(caAddressDto, Is.InstanceOf<CAAddressDTO>());
@@ -1205,15 +1323,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddressDto.Id, Is.EqualTo(defaultAddress.Id));
                 Assert.That(iCaAddressDto.Id, Is.EqualTo(defaultAddress.Id));
             });
-            
+
             // Test JSON serialization
             var json = defaultAddress.ToJson();
             Assert.That(json, Is.Not.Null.And.Not.Empty);
-            
+
             // Test ToString functionality
             var stringResult = defaultAddress.ToString();
             Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
-            
+
             // Test exception scenarios
             Assert.Throws<InvalidCastException>(() => defaultAddress.Cast<AnotherMockEntity>());
         }
@@ -1224,7 +1342,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act - Test constructor with minimal valid parameters (using empty strings where needed)
             var testDate = DateTime.Now;
             var province = CAProvinces.Ontario.ToStateModel();
-            
+
             var caAddress = new CAAddress(
                 id: 777,
                 street1: "",
@@ -1234,6 +1352,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "",
                 country: "",
                 type: OrganizerCompanion.Core.Enums.Types.Other,
+                isPrimary: false,
                 dateCreated: testDate,
                 dateModified: null
             );
@@ -1302,7 +1421,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Street1 = "Test Street";
             var firstDateModified = _sut.DateModified;
-            
+
             // Small delay to ensure different timestamp
             System.Threading.Thread.Sleep(1);
 
@@ -1325,7 +1444,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDateCreated = new DateTime(2023, 6, 15, 9, 30, 0);
             var specificDateModified = new DateTime(2023, 6, 16, 14, 45, 30);
             var province = CAProvinces.Yukon.ToStateModel();
-            
+
             var completeAddress = new CAAddress(
                 id: 555,
                 street1: "555 Complete Street",
@@ -1335,6 +1454,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "Y1A 1A1",
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
+                isPrimary: false,
                 dateCreated: specificDateCreated,
                 dateModified: specificDateModified
             );

@@ -1297,9 +1297,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void AllProperties_GettersAndSetters_WorkCorrectly()
-        {
-            // Arrange
-            var account = new Account();
+    {
+      // Arrange
+      var account = new Account();
             var databaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
             {
                 ConnectionString = "comprehensive-test",
@@ -1336,13 +1336,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(account.Accounts, Is.EqualTo(testSubAccounts));
 
             account.DateModified = testDate;
-            Assert.That(account.DateModified, Is.EqualTo(testDate));
+      Assert.Multiple(() =>
+      {
+        Assert.That(account.DateModified, Is.EqualTo(testDate));
 
-            // DateCreated is read-only, just verify it's set
-            Assert.That(account.DateCreated, Is.Not.EqualTo(default(DateTime)));
-        }
+        // DateCreated is read-only, just verify it's set
+        Assert.That(account.DateCreated, Is.Not.EqualTo(default(DateTime)));
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void DateCreated_PropertyInfo_IsReadOnly()
         {
             // Arrange & Act

@@ -531,9 +531,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void ITask_Assignments_WhenSet_ShouldConvertAndSetCorrectly()
-        {
-            // Arrange 
-            var task = (IProjectTask)_sut;
+    {
+      // Arrange 
+      var task = (IProjectTask)_sut;
             var assignment1 = new ProjectAssignment { Id = 1, Name = "Assignment 1" };
             var assignment2 = new ProjectAssignment { Id = 2, Name = "Assignment 2" };
             var assignments = new List<IProjectAssignment> { assignment1, assignment2 };
@@ -544,11 +544,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert - Check that the assignments were set on the concrete implementation
             Assert.That(_sut.Assignments, Is.Not.Null);
             Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
-            Assert.That(_sut.Assignments[0].Id, Is.EqualTo(1));
-            Assert.That(_sut.Assignments[1].Id, Is.EqualTo(2));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(_sut.Assignments[0].Id, Is.EqualTo(1));
+        Assert.That(_sut.Assignments[1].Id, Is.EqualTo(2));
+      });
+    }
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void ITask_Assignments_WhenGetWithAssignments_ShouldThrowInvalidCastException()
         {
             // Arrange
@@ -585,9 +588,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void JsonDeserialization_WithJsonConstructor_ShouldCreateCorrectObject()
-        {
-            // Arrange
-            var json = @"{
+    {
+      // Arrange
+      var json = @"{
                 ""id"": 1,
                 ""name"": ""JSON Task"",
                 ""description"": ""JSON Description"",
@@ -604,18 +607,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(task, Is.Not.Null);
-            Assert.That(task.Id, Is.EqualTo(1));
-            Assert.That(task.Name, Is.EqualTo("JSON Task"));
-            Assert.That(task.Description, Is.EqualTo("JSON Description"));
-            Assert.That(task.IsCompleted, Is.True);
-            Assert.That(task.DateDue, Is.EqualTo(new DateTime(2025, 12, 31)));
-        }
+      Assert.Multiple(() =>
+      {
+        Assert.That(task.Id, Is.EqualTo(1));
+        Assert.That(task.Name, Is.EqualTo("JSON Task"));
+        Assert.That(task.Description, Is.EqualTo("JSON Description"));
+        Assert.That(task.IsCompleted, Is.True);
+        Assert.That(task.DateDue, Is.EqualTo(new DateTime(2025, 12, 31)));
+      });
+    }
 
-        #endregion
+    #endregion
 
-        #region Edge Case Tests
+    #region Edge Case Tests
 
-        [Test, Category("Models")]
+    [Test, Category("Models")]
         public void MultiplePropertyChanges_ShouldUpdateDateModifiedEachTime()
         {
             // Arrange

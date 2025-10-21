@@ -1731,9 +1731,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             DateTime? dateModified = DateTime.Now.AddHours(-1);
 
             // Act & Assert - Constructor should work normally
-            Assert.DoesNotThrow(() =>
-            {
-                var organization = new Organization(
+            Assert.DoesNotThrow(() => {
+              var organization = new Organization(
                     id,
                     organizationName,
                     emails,
@@ -1744,9 +1743,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     accounts,
                     dateCreated,
                     dateModified);
-
+              Assert.Multiple(() =>
+              {
                 Assert.That(organization.Id, Is.EqualTo(id));
                 Assert.That(organization.OrganizationName, Is.EqualTo(organizationName));
+              });
             });
         }
 
