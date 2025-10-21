@@ -8,13 +8,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class OrganizationDTO : IOrganizationDTO, IDomainEntity
     {
         #region IDomainEntity Implementation
-        [JsonIgnore]
-        public bool IsCast { get; set; } = false;
-        [JsonIgnore]
-        public int CastId { get; set; } = 0;
-        [JsonIgnore]
-        public string? CastType { get; set; } = null;
-
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException("Cast method not implemented for OrganizationDTO.");
@@ -59,25 +52,36 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
+        #region Properties
         [Required, JsonPropertyName("id")]
         public int Id { get; set; } = 0;
+
         [Required, JsonPropertyName("organizationName")]
         public string? OrganizationName { get; set; } = null;
+
         [Required, JsonPropertyName("emails")]
         public List<EmailDTO> Emails { get; set; } = [];
+
         [Required, JsonPropertyName("phoneNumbers")]
         public List<PhoneNumberDTO> PhoneNumbers { get; set; } = [];
+
         [Required, JsonPropertyName("addresses")]
         public List<IAddressDTO> Addresses { get; set; } = [];
+
         [Required, JsonPropertyName("members")]
         public List<ContactDTO> Members { get; set; } = [];
+
         [Required, JsonPropertyName("contacts")]
         public List<ContactDTO> Contacts { get; set; } = [];
+
         [Required, JsonPropertyName("accounts")]
         public List<AccountDTO> Accounts { get; set; } = [];
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
+        #endregion
     }
 }

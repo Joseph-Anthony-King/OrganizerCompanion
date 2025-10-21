@@ -4,7 +4,7 @@
     {
         Home,
         Work,
-        Cell,
+        Mobil,
         Fax,
         Billing,
         Other

@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
-using System.Text.Json;
+﻿using System.Text.Json;
+using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -578,120 +579,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(result, Is.Null);
         }
 
-        [Test, Category("Models")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "TestType");
-        }
-
-        #endregion
-
-        #region Method Tests
-
-        [Test, Category("Models")]
-        public void ToJson_ShouldThrowNotImplementedException_DueToIsCastProperty()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.Name = "Test Task";
-            _sut.Description = "Test Description";
-            _sut.IsCompleted = true;
-            _sut.DateDue = new DateTime(2025, 12, 31);
-
-            // Act & Assert
-            // The ToJson method will throw NotImplementedException because 
-            // JSON serialization tries to access the IsCast property
-            Assert.Throws<NotImplementedException>(() => _sut.ToJson());
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithNullValues_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            _sut.Id = 2;
-            _sut.Name = "Another Task";
-            // Description remains null
-            // Assignments remains null
-            _sut.IsCompleted = false;
-            // DateDue remains null
-
-            // Act & Assert
-            // The ToJson method will throw NotImplementedException because 
-            // JSON serialization tries to access the IsCast property
-            Assert.Throws<NotImplementedException>(() => _sut.ToJson());
-        }
-
-        [Test, Category("Models")]
-        public void ToJson_WithAssignments_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            _sut.Id = 3;
-            _sut.Name = "Task with Assignments";
-            _sut.Assignments = new List<ProjectAssignment>
-            {
-                new ProjectAssignment { Id = 1, Name = "Assignment 1" }
-            };
-
-            // Act & Assert
-            // The ToJson method will throw NotImplementedException because 
-            // JSON serialization tries to access the IsCast property
-            Assert.Throws<NotImplementedException>(() => _sut.ToJson());
-        }
-
         #endregion
 
         #region JSON Serialization Tests
-
-        [Test, Category("Models")]
-        public void JsonSerialization_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            _sut.Id = 1;
-            _sut.Name = "Test Task";
-            _sut.Description = "Test Description";
-            _sut.IsCompleted = true;
-            _sut.DateDue = new DateTime(2025, 12, 31);
-
-            // Act & Assert
-            // JSON serialization fails because the IsCast property throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _sut.ToJson());
-        }
 
         [Test, Category("Models")]
         public void JsonDeserialization_WithJsonConstructor_ShouldCreateCorrectObject()
@@ -813,6 +703,141 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             _sut.Description = new string('D', 1000); // Maximum length
             Assert.That(_sut.Description, Is.EqualTo(new string('D', 1000)));
+        }
+
+        [Test, Category("Models")]
+        public void Assignments_WhenSetToNullWithInitialization_ShouldTriggerNullCoalescingAssignment()
+        {
+            // Arrange - Make sure _assignments starts as null
+            _sut.Assignments = null;
+            Assert.That(_sut.Assignments, Is.Null);
+
+            // Act - Set again to trigger the ??= logic
+            var newAssignments = new List<ProjectAssignment> { new ProjectAssignment { Id = 1, Name = "Test" } };
+            _sut.Assignments = newAssignments;
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.EqualTo(newAssignments));
+        }
+
+        [Test, Category("Models")]
+        public void ITask_Assignments_WhenSetToNull_ShouldSetCorrectly()
+        {
+            // Arrange
+            var task = (IProjectTask)_sut;
+
+            // Act
+            task.Assignments = null;
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.Null);
+        }
+
+        #endregion
+
+        #region Cast Method Tests
+
+        [Test, Category("Models")]
+        public void Cast_ToProjectTaskDTO_ShouldReturnCorrectType()
+        {
+            // Arrange & Act
+            var dto = _sut.Cast<ProjectTaskDTO>();
+
+            // Assert
+            Assert.That(dto, Is.Not.Null);
+            Assert.That(dto, Is.TypeOf<ProjectTaskDTO>());
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIProjectTaskDTO_ShouldReturnCorrectType()
+        {
+            // Arrange & Act
+            var dto = _sut.Cast<Interfaces.DataTransferObject.IProjectTaskDTO>();
+
+            // Assert
+            Assert.That(dto, Is.Not.Null);
+            Assert.That(dto, Is.TypeOf<ProjectTaskDTO>());
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToUnsupportedType_ShouldThrowInvalidCastException()
+        {
+            // Arrange & Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<ProjectAssignment>());
+            Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type ProjectAssignment"));
+        }
+
+        [Test, Category("Models")]
+        public void Cast_HandlesExceptionCorrectly()
+        {
+            // Arrange - Test the try-catch block in Cast method
+            _sut.Id = 1;
+            _sut.Name = "Test Task";
+
+            // Act & Assert - Should not throw for valid types
+            Assert.DoesNotThrow(() => _sut.Cast<OrganizerCompanion.Core.Models.DataTransferObject.ProjectTaskDTO>());
+        }
+
+        #endregion
+
+        #region ToJson Method Tests
+
+        [Test, Category("Models")]
+        public void ToJson_ShouldSerializeToValidJson()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Name = "Test Task";
+            _sut.Description = "Test Description";
+            _sut.IsCompleted = false;
+            _sut.DateDue = new DateTime(2025, 12, 31);
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.That(json, Is.Not.Null);
+            Assert.That(json, Is.Not.Empty);
+            Assert.That(json, Does.Contain("\"id\":1"));
+            Assert.That(json, Does.Contain("\"name\":\"Test Task\""));
+            Assert.That(json, Does.Contain("\"description\":\"Test Description\""));
+            Assert.That(json, Does.Contain("\"isCompleted\":false"));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithNullValues_ShouldSerializeCorrectly()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.Name = "Minimal Task";
+            _sut.Description = "Simple Description";
+            // Leave other properties as default/null
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.That(json, Is.Not.Null);
+            Assert.That(json, Is.Not.Empty);
+            Assert.That(json, Does.Contain("\"id\":0"));
+            Assert.That(json, Does.Contain("\"name\":\"Minimal Task\""));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithAssignments_ShouldHandleCircularReferences()
+        {
+            // Arrange
+            _sut.Id = 1;
+            _sut.Name = "Task with Assignments";
+            _sut.Description = "Test Description";
+            _sut.Assignments =
+            [
+                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
+                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
+            ];
+
+            // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles
+            Assert.DoesNotThrow(() => _sut.ToJson());
         }
 
         #endregion

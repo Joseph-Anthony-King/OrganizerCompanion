@@ -26,15 +26,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Properties
-        #region Explicit Interface Implementations
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        #endregion
-
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {

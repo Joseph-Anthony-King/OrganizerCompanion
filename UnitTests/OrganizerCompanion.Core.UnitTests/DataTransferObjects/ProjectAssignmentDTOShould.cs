@@ -48,63 +48,79 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test]
-        public void ThrowExceptionWhenUsingJsonConstructor()
+        public void HaveJsonConstructorWithAllParameters()
         {
-            // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignmentDTO(
-                1, "Test Assignment", "Test Description", _testGroups, 
-                1, null, true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
+            // Arrange
+            var id = 1;
+            var name = "Test Assignment";
+            var description = "Test Description";
+            var groups = _testGroups;
+            var taskId = 10;
+            var task = new Task();
+            var isCompleted = true;
+            var dateDue = DateTime.Now.AddDays(7);
+            var dateCompleted = DateTime.Now.AddDays(-1);
+            var dateCreated = DateTime.Now.AddDays(-10);
+            var dateModified = DateTime.Now.AddDays(-2);
+
+            // Act
+            var projectAssignmentDTO = new ProjectAssignmentDTO(
+                id, name, description, groups, taskId, task, isCompleted, 
+                dateDue, dateCompleted, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
+                Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
+                Assert.That(projectAssignmentDTO.Description, Is.EqualTo(description));
+                Assert.That(projectAssignmentDTO.Groups, Is.EqualTo(groups));
+                Assert.That(projectAssignmentDTO.TaskId, Is.EqualTo(taskId));
+                Assert.That(projectAssignmentDTO.Task, Is.EqualTo(task));
+                Assert.That(projectAssignmentDTO.IsCompleted, Is.EqualTo(isCompleted));
+                Assert.That(projectAssignmentDTO.DateDue, Is.EqualTo(dateDue));
+                Assert.That(projectAssignmentDTO.DateCompleted, Is.EqualTo(dateCompleted));
+                Assert.That(projectAssignmentDTO.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(projectAssignmentDTO.DateModified, Is.EqualTo(dateModified));
+            });
         }
 
         [Test]
-        public void ThrowExceptionWhenUsingJsonConstructorWithNullCollections()
+        public void HaveJsonConstructorWithNullValues()
         {
-            // Act & Assert - The JSON constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignmentDTO(
-                1, "Test", "Description", null,
-                null, null, false, null, null, DateTime.Now, null));
-        }
+            // Arrange
+            var id = 0;
+            var name = "Minimal Assignment";
+            string? description = null;
+            List<GroupDTO>? groups = null;
+            int? taskId = null;
+            Task? task = null;
+            var isCompleted = false;
+            DateTime? dateDue = null;
+            DateTime? dateCompleted = null;
+            var dateCreated = DateTime.Now;
+            DateTime? dateModified = null;
 
-        [Test]
-        public void ThrowExceptionWhenConstructorTriesToSetIsCast()
-        {
-            // Act & Assert - The constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignmentDTO(
-                id: 1,
-                name: "Test",
-                description: "Description",
-                groups: null,
-                taskId: null,
-                task: null,
-                isCompleted: false,
-                dateDue: null,
-                dateCompleted: null,
-                dateCreated: DateTime.Now,
-                dateModified: null,
-                isCast: true,
-                castId: 42,
-                castType: "TestType"));
-        }
+            // Act
+            var projectAssignmentDTO = new ProjectAssignmentDTO(
+                id, name, description, groups, taskId, task, isCompleted, 
+                dateDue, dateCompleted, dateCreated, dateModified);
 
-        [Test]
-        public void JsonConstructorWithNullIsCastParameters()
-        {
-            // Act & Assert - Test the null coalescing paths in constructor
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignmentDTO(
-                id: 1,
-                name: "Test",
-                description: "Description", 
-                groups: null,
-                taskId: null,
-                task: null,
-                isCompleted: false,
-                dateDue: null,
-                dateCompleted: null,
-                dateCreated: DateTime.Now,
-                dateModified: null,
-                isCast: null, // This should trigger ?? false
-                castId: null, // This should trigger ?? 0
-                castType: null));
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
+                Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
+                Assert.That(projectAssignmentDTO.Description, Is.Null);
+                Assert.That(projectAssignmentDTO.Groups, Is.Null);
+                Assert.That(projectAssignmentDTO.TaskId, Is.Null);
+                Assert.That(projectAssignmentDTO.Task, Is.Null);
+                Assert.That(projectAssignmentDTO.IsCompleted, Is.False);
+                Assert.That(projectAssignmentDTO.DateDue, Is.Null);
+                Assert.That(projectAssignmentDTO.DateCompleted, Is.Null);
+                Assert.That(projectAssignmentDTO.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(projectAssignmentDTO.DateModified, Is.Null);
+            });
         }
 
         #endregion
@@ -301,30 +317,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region Interface Implementation Tests
 
         [Test]
-        public void ThrowNotImplementedExceptionForIsCast()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var isCast = _projectAssignmentDTO.IsCast; });
-            Assert.Throws<NotImplementedException>(() => _projectAssignmentDTO.IsCast = true);
-        }
-
-        [Test]
-        public void ThrowNotImplementedExceptionForCastId()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var castId = _projectAssignmentDTO.CastId; });
-            Assert.Throws<NotImplementedException>(() => _projectAssignmentDTO.CastId = 1);
-        }
-
-        [Test]
-        public void ThrowNotImplementedExceptionForCastType()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var castType = _projectAssignmentDTO.CastType; });
-            Assert.Throws<NotImplementedException>(() => _projectAssignmentDTO.CastType = "test");
-        }
-
-        [Test]
         public void CoverExplicitInterfaceImplementations()
         {
             // Arrange
@@ -342,6 +334,62 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             iAssignmentDTO.Groups = testIGroups;
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
             Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
+        }
+
+        [Test]
+        public void CoverGroupsInterfacePropertyWithNullGroups()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            _projectAssignmentDTO.Groups = null;
+
+            // Act & Assert - This should trigger ArgumentNullException in the Cast method
+            Assert.Throws<ArgumentNullException>(() => { var _ = iAssignmentDTO.Groups; });
+        }
+
+        [Test]
+        public void CoverGroupsInterfacePropertyWithEmptyGroups()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            _projectAssignmentDTO.Groups = [];
+
+            // Act
+            var retrievedGroups = iAssignmentDTO.Groups;
+
+            // Assert
+            Assert.That(retrievedGroups, Is.Not.Null);
+            Assert.That(retrievedGroups, Is.Empty);
+        }
+
+        [Test]
+        public void CoverGroupsInterfacePropertySetter()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            var testIGroups = _testGroups.Cast<IGroupDTO>().ToList();
+
+            // Act - This covers the ConvertAll casting logic in the interface setter
+            iAssignmentDTO.Groups = testIGroups;
+
+            // Assert
+            Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
+            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
+            Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
+        }
+
+        [Test]
+        public void CoverGroupsInterfacePropertySetterWithNull()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            _projectAssignmentDTO.Groups = _testGroups; // Set to non-null first
+
+            // Act & Assert - Setting null should trigger NullReferenceException in ConvertAll
+            Assert.Throws<NullReferenceException>(() =>
+            {
+                iAssignmentDTO.Groups = null;
+            });
         }
 
         [Test]
@@ -562,6 +610,166 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_projectAssignmentDTO.Groups, Is.EqualTo(_testGroups));
+        }
+
+        [Test, Category("Comprehensive")]
+        public void CoverAllJsonConstructorParameters()
+        {
+            // Arrange
+            var id = 999;
+            var name = "Comprehensive Test Assignment";
+            var description = "This tests all constructor parameters thoroughly";
+            var groups = new List<GroupDTO>
+            {
+                new() { Id = 100, Name = "Special Group 1" },
+                new() { Id = 200, Name = "Special Group 2" },
+                new() { Id = 300, Name = "Special Group 3" }
+            };
+            var taskId = 555;
+            var task = new Task();
+            var isCompleted = true;
+            var dateDue = new DateTime(2025, 12, 31, 23, 59, 59);
+            var dateCompleted = new DateTime(2025, 10, 15, 14, 30, 0);
+            var dateCreated = new DateTime(2025, 10, 1, 9, 0, 0);
+            var dateModified = new DateTime(2025, 10, 16, 16, 45, 30);
+
+            // Act
+            var dto = new ProjectAssignmentDTO(
+                id, name, description, groups, taskId, task, 
+                isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+
+            // Assert - Verify all properties are set correctly
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.Id, Is.EqualTo(id));
+                Assert.That(dto.Name, Is.EqualTo(name));
+                Assert.That(dto.Description, Is.EqualTo(description));
+                Assert.That(dto.Groups, Is.EqualTo(groups));
+                Assert.That(dto.Groups!.Count, Is.EqualTo(3));
+                Assert.That(dto.TaskId, Is.EqualTo(taskId));
+                Assert.That(dto.Task, Is.EqualTo(task));
+                Assert.That(dto.IsCompleted, Is.EqualTo(isCompleted));
+                Assert.That(dto.DateDue, Is.EqualTo(dateDue));
+                Assert.That(dto.DateCompleted, Is.EqualTo(dateCompleted));
+                Assert.That(dto.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(dto.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Interface")]
+        public void CoverGroupsInterfaceGetterCastingLogic()
+        {
+            // Arrange
+            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+            var groupA = new GroupDTO { Id = 10, Name = "Group A" };
+            var groupB = new GroupDTO { Id = 20, Name = "Group B" };
+            _projectAssignmentDTO.Groups = [groupA, groupB];
+
+            // Act - This covers the [.. Groups!.Cast<IGroupDTO>()] logic
+            var interfaceGroups = iDTO.Groups;
+
+            // Assert
+            Assert.That(interfaceGroups, Is.Not.Null);
+            Assert.That(interfaceGroups.Count, Is.EqualTo(2));
+            Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
+            Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
+            Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
+            Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
+        }
+
+        [Test, Category("Interface")]
+        public void CoverGroupsInterfaceSetterConversionLogic()
+        {
+            // Arrange
+            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+            var group1 = new GroupDTO { Id = 100, Name = "Interface Group 1" };
+            var group2 = new GroupDTO { Id = 200, Name = "Interface Group 2" };
+            var interfaceGroups = new List<IGroupDTO> { group1, group2 };
+
+            // Act - This covers the value!.ConvertAll(group => (GroupDTO)group) logic
+            iDTO.Groups = interfaceGroups;
+
+            // Assert
+            Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
+            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(2));
+            Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
+            Assert.That(_projectAssignmentDTO.Groups[0].Id, Is.EqualTo(100));
+            Assert.That(_projectAssignmentDTO.Groups[1], Is.InstanceOf<GroupDTO>());
+            Assert.That(_projectAssignmentDTO.Groups[1].Id, Is.EqualTo(200));
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleVeryLargeCollections()
+        {
+            // Arrange
+            var largeGroupsList = new List<GroupDTO>();
+            for (int i = 0; i < 1000; i++)
+            {
+                largeGroupsList.Add(new GroupDTO { Id = i, Name = $"Group {i}" });
+            }
+
+            // Act
+            _projectAssignmentDTO.Groups = largeGroupsList;
+
+            // Assert
+            Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
+            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(1000));
+            Assert.That(_projectAssignmentDTO.Groups[999].Name, Is.EqualTo("Group 999"));
+        }
+
+        [Test, Category("DateTime")]
+        public void HandleDateTimePrecision()
+        {
+            // Arrange
+            var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 123);
+
+            // Act & Assert for DateDue
+            _projectAssignmentDTO.DateDue = preciseDateTime;
+            Assert.That(_projectAssignmentDTO.DateDue, Is.EqualTo(preciseDateTime));
+
+            // Act & Assert for DateModified
+            _projectAssignmentDTO.DateModified = preciseDateTime;
+            Assert.That(_projectAssignmentDTO.DateModified, Is.EqualTo(preciseDateTime));
+        }
+
+        [Test, Category("Unicode")]
+        public void HandleUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeName = "项目分配 🚀";
+            var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
+
+            // Act
+            _projectAssignmentDTO.Name = unicodeName;
+            _projectAssignmentDTO.Description = unicodeDescription;
+
+            // Assert
+            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
+            Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleMaximumIntegerValues()
+        {
+            // Act & Assert for Id
+            _projectAssignmentDTO.Id = int.MaxValue;
+            Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(int.MaxValue));
+
+            // Act & Assert for TaskId
+            _projectAssignmentDTO.TaskId = int.MaxValue;
+            Assert.That(_projectAssignmentDTO.TaskId, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleMinimumIntegerValues()
+        {
+            // Act & Assert for Id
+            _projectAssignmentDTO.Id = int.MinValue;
+            Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(int.MinValue));
+
+            // Act & Assert for TaskId
+            _projectAssignmentDTO.TaskId = int.MinValue;
+            Assert.That(_projectAssignmentDTO.TaskId, Is.EqualTo(int.MinValue));
         }
 
         #endregion

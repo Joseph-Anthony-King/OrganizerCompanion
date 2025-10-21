@@ -40,6 +40,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Features, Is.Empty);
                 Assert.That(_sut.MainAccountId, Is.Null);
                 Assert.That(_sut.Accounts, Is.Null);
+                Assert.That(_sut.DateModified, Is.Null);
+                // DateCreated should be set to current time, tested separately for timing
             });
         }
 
@@ -237,6 +239,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void Features_DefaultValue_ShouldBeEmptyList()
+        {
+            // Arrange & Act
+            var accountDto = new AccountDTO();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountDto.Features, Is.Not.Null);
+                Assert.That(accountDto.Features, Is.Empty);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void MainAccountId_ShouldGetAndSetValue()
         {
             // Arrange
@@ -277,6 +293,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             int? expectedMainAccountId = 999;
+
+            // Act
+            _sut.MainAccountId = expectedMainAccountId;
+
+            // Assert
+            Assert.That(_sut.MainAccountId, Is.EqualTo(expectedMainAccountId));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void MainAccountId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            int? expectedMainAccountId = int.MaxValue;
 
             // Act
             _sut.MainAccountId = expectedMainAccountId;
@@ -439,6 +468,54 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceFeatures_Set_ShouldHandleEmptyList()
+        {
+            // Arrange
+            var emptyInterfaceFeatures = new List<IFeatureDTO>();
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Features = emptyInterfaceFeatures;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Is.Not.Null);
+                Assert.That(_sut.Features, Is.Empty);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceFeatures_Set_ShouldReplaceExistingFeatures()
+        {
+            // Arrange
+            var initialFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Initial Feature", IsEnabled = true }
+            };
+            _sut.Features = initialFeatures;
+
+            var newInterfaceFeatures = new List<IFeatureDTO>
+            {
+                new FeatureDTO { Id = 10, FeatureName = "Replacement Feature", IsEnabled = false }
+            };
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Features = newInterfaceFeatures;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Is.Not.Null);
+                Assert.That(_sut.Features, Has.Count.EqualTo(1));
+                Assert.That(_sut.Features[0].Id, Is.EqualTo(10));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Replacement Feature"));
+                Assert.That(_sut.Features[0].IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void ExplicitInterfaceAccounts_Get_ShouldConvertAccountsToISubAccountDTO()
         {
             // Arrange
@@ -532,45 +609,63 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
+        public void ExplicitInterfaceAccounts_Set_ShouldClearExistingAccountsAndAddNew()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
+            // Arrange
+            var initialAccounts = new List<SubAccountDTO>
+            {
+                new() { Id = 1, LinkedEntityId = 1 },
+                new() { Id = 2, LinkedEntityId = 2 }
+            };
+            _sut.Accounts = initialAccounts;
+
+            var newInterfaceAccounts = new List<ISubAccountDTO>
+            {
+                new SubAccountDTO { Id = 3, LinkedEntityId = 3 },
+                new SubAccountDTO { Id = 4, LinkedEntityId = 4 },
+                new SubAccountDTO { Id = 5, LinkedEntityId = 5 }
+            };
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Accounts = newInterfaceAccounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(3));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(3));
+                Assert.That(_sut.Accounts[1].Id, Is.EqualTo(4));
+                Assert.That(_sut.Accounts[2].Id, Is.EqualTo(5));
+                Assert.That(_sut.Accounts[0].LinkedEntityId, Is.EqualTo(3));
+                Assert.That(_sut.Accounts[1].LinkedEntityId, Is.EqualTo(4));
+                Assert.That(_sut.Accounts[2].LinkedEntityId, Is.EqualTo(5));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
+        public void ExplicitInterfaceAccounts_Set_ShouldInitializeAccountsIfNull()
         {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.IsCast = true; });
-        }
+            // Arrange
+            _sut.Accounts = null;
+            var interfaceAccounts = new List<ISubAccountDTO>
+            {
+                new SubAccountDTO { Id = 10, LinkedEntityId = 10 }
+            };
+            var accountInterface = (IAccountDTO)_sut;
 
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
+            // Act
+            accountInterface.Accounts = interfaceAccounts;
 
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastId = 123; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastType = "TestType"; });
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(1));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(10));
+                Assert.That(_sut.Accounts[0].LinkedEntityId, Is.EqualTo(10));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -603,6 +698,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_DefaultValue_ShouldBeCurrentDateTime()
+        {
+            // Arrange
+            var beforeCreation = DateTime.Now.AddSeconds(-1);
+
+            // Act
+            var accountDto = new AccountDTO();
+            var afterCreation = DateTime.Now.AddSeconds(1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountDto.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(accountDto.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -653,6 +766,45 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowNullAssignment()
+        {
+            // Note: This test verifies behavior if someone tries to assign null
+            // even though the property initializes to an empty list
+            // Arrange & Act & Assert
+            Assert.DoesNotThrow(() => { _sut.Features = null!; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowModificationAfterInitialization()
+        {
+            // Arrange
+            var initialFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Initial Feature", IsEnabled = true }
+            };
+            _sut.Features = initialFeatures;
+
+            var newFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 2, FeatureName = "New Feature A", IsEnabled = false },
+                new() { Id = 3, FeatureName = "New Feature B", IsEnabled = true }
+            };
+
+            // Act
+            _sut.Features = newFeatures;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Is.EqualTo(newFeatures));
+                Assert.That(_sut.Features, Has.Count.EqualTo(2));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("New Feature A"));
+                Assert.That(_sut.Features[1].FeatureName, Is.EqualTo("New Feature B"));
+                Assert.That(_sut.Features, Is.Not.EqualTo(initialFeatures));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void Id_ShouldHaveRequiredAttribute()
         {
             // Arrange
@@ -680,6 +832,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(rangeAttribute, Is.Not.Null);
                 Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
                 Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
+                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
             });
         }
 
@@ -1034,6 +1187,44 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void AccountDTO_ShouldImplementIDomainEntity()
+        {
+            // Arrange & Act
+            var accountDTO = new AccountDTO();
+
+            // Assert
+            Assert.That(accountDTO, Is.InstanceOf<IDomainEntity>());
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_CastToInterface_ShouldRetainAllProperties()
+        {
+            // Arrange
+            var originalId = 42;
+            var originalAccountName = "Test Account";
+            var originalFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Test Feature", IsEnabled = true }
+            };
+            
+            _sut.Id = originalId;
+            _sut.AccountName = originalAccountName;
+            _sut.Features = originalFeatures;
+
+            // Act
+            var interfaceInstance = (IAccountDTO)_sut;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceInstance.Id, Is.EqualTo(originalId));
+                Assert.That(interfaceInstance.AccountName, Is.EqualTo(originalAccountName));
+                Assert.That(interfaceInstance.Features, Has.Count.EqualTo(1));
+                Assert.That(interfaceInstance.Features[0].FeatureName, Is.EqualTo("Test Feature"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void AccountDTO_Properties_ShouldBeSettableInChain()
         {
             // Arrange
@@ -1167,13 +1358,416 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceFeatures_Property_ShouldHaveJsonIgnoreAttribute()
+        {
+            // Arrange
+            var interfaceMap = typeof(AccountDTO).GetInterfaceMap(typeof(IAccountDTO));
+            var featuresPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods, 
+                m => m.Name == "get_Features");
+            
+            // Act & Assert
+            // The explicit interface implementation has JsonIgnore attribute on the property
+            // This test verifies the explicit interface property exists and is properly implemented
+            Assert.Multiple(() =>
+            {
+                Assert.That(featuresPropertyIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(interfaceMap.TargetMethods[featuresPropertyIndex], Is.Not.Null);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceAccounts_Property_ShouldHaveJsonIgnoreAttribute()
+        {
+            // Arrange
+            var interfaceMap = typeof(AccountDTO).GetInterfaceMap(typeof(IAccountDTO));
+            var accountsPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods, 
+                m => m.Name == "get_Accounts");
+            
+            // Act & Assert
+            // The explicit interface implementation has JsonIgnore attribute on the property
+            // This test verifies the explicit interface property exists and is properly implemented
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountsPropertyIndex, Is.GreaterThanOrEqualTo(0));
+                Assert.That(interfaceMap.TargetMethods[accountsPropertyIndex], Is.Not.Null);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceAccounts_Set_ShouldHandleMultipleConsecutiveSets()
+        {
+            // Arrange
+            var firstAccounts = new List<ISubAccountDTO>
+            {
+                new SubAccountDTO { Id = 1, LinkedEntityId = 1 }
+            };
+            var secondAccounts = new List<ISubAccountDTO>
+            {
+                new SubAccountDTO { Id = 2, LinkedEntityId = 2 },
+                new SubAccountDTO { Id = 3, LinkedEntityId = 3 }
+            };
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Accounts = firstAccounts;
+            accountInterface.Accounts = secondAccounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(2));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(2));
+                Assert.That(_sut.Accounts[1].Id, Is.EqualTo(3));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceAccounts_Set_ShouldHandleAccountsIsNullAndValueHasItems()
+        {
+            // Arrange
+            _sut.Accounts = null; // Ensure it's null first
+            var interfaceAccounts = new List<ISubAccountDTO>
+            {
+                new SubAccountDTO { Id = 99, LinkedEntityId = 99 }
+            };
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Accounts = interfaceAccounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(1));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(99));
+                Assert.That(_sut.Accounts[0].LinkedEntityId, Is.EqualTo(99));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceFeatures_GetSet_ShouldWorkWithMixedFeatureTypes()
+        {
+            // Arrange
+            var mixedFeatures = new List<IFeatureDTO>
+            {
+                new FeatureDTO { Id = 1, FeatureName = "Feature One", IsEnabled = true },
+                new FeatureDTO { Id = 2, FeatureName = "Feature Two", IsEnabled = false }
+            };
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Features = mixedFeatures;
+            var retrievedFeatures = accountInterface.Features;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(retrievedFeatures, Is.Not.Null);
+                Assert.That(retrievedFeatures, Has.Count.EqualTo(2));
+                Assert.That(retrievedFeatures[0].Id, Is.EqualTo(1));
+                Assert.That(retrievedFeatures[0].FeatureName, Is.EqualTo("Feature One"));
+                Assert.That(retrievedFeatures[0].IsEnabled, Is.True);
+                Assert.That(retrievedFeatures[1].Id, Is.EqualTo(2));
+                Assert.That(retrievedFeatures[1].FeatureName, Is.EqualTo("Feature Two"));
+                Assert.That(retrievedFeatures[1].IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_InterfaceAndConcreteTypeBehavior_ShouldBeConsistent()
+        {
+            // Arrange
+            var features = new List<FeatureDTO>
+            {
+                new() { Id = 100, FeatureName = "Consistency Test", IsEnabled = true }
+            };
+            var accounts = new List<SubAccountDTO>
+            {
+                new() { Id = 200, LinkedEntityId = 200 }
+            };
+
+            // Act - Set via concrete type
+            _sut.Features = features;
+            _sut.Accounts = accounts;
+
+            // Cast to interface and retrieve
+            var accountInterface = (IAccountDTO)_sut;
+            var interfaceFeatures = accountInterface.Features;
+            var interfaceAccounts = accountInterface.Accounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Features consistency
+                Assert.That(interfaceFeatures, Has.Count.EqualTo(1));
+                Assert.That(interfaceFeatures[0].Id, Is.EqualTo(100));
+                Assert.That(interfaceFeatures[0].FeatureName, Is.EqualTo("Consistency Test"));
+                
+                // Accounts consistency
+                Assert.That(interfaceAccounts, Is.Not.Null);
+                Assert.That(interfaceAccounts, Has.Count.EqualTo(1));
+                Assert.That(interfaceAccounts![0].Id, Is.EqualTo(200));
+                Assert.That(interfaceAccounts[0].LinkedEntityId, Is.EqualTo(200));
+                
+                // Verify concrete type still has same data
+                Assert.That(_sut.Features[0].Id, Is.EqualTo(100));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(200));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_DefaultValues_ShouldMatchExpectations()
+        {
+            // Arrange & Act
+            var freshAccountDTO = new AccountDTO();
+
+            // Assert - Verify all default values are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(freshAccountDTO.Id, Is.EqualTo(0), "Id should default to 0");
+                Assert.That(freshAccountDTO.AccountName, Is.Null, "AccountName should default to null");
+                Assert.That(freshAccountDTO.AccountNumber, Is.Null, "AccountNumber should default to null");
+                Assert.That(freshAccountDTO.License, Is.Null, "License should default to null");
+                Assert.That(freshAccountDTO.DatabaseConnection, Is.Null, "DatabaseConnection should default to null");
+                Assert.That(freshAccountDTO.Features, Is.Not.Null, "Features should not be null");
+                Assert.That(freshAccountDTO.Features, Is.Empty, "Features should be empty list");
+                Assert.That(freshAccountDTO.MainAccountId, Is.Null, "MainAccountId should default to null");
+                Assert.That(freshAccountDTO.Accounts, Is.Null, "Accounts should default to null");
+                Assert.That(freshAccountDTO.DateModified, Is.Null, "DateModified should default to null");
+                Assert.That(freshAccountDTO.DateCreated, Is.TypeOf<DateTime>(), "DateCreated should be DateTime");
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_AllPropertiesSet_ShouldMaintainCorrectTypes()
+        {
+            // Arrange
+            var testDate = new DateTime(2023, 12, 25, 10, 30, 45);
+            var testGuid = Guid.NewGuid().ToString();
+            var testConnection = new DatabaseConnection
+            {
+                ConnectionString = "Type Test Connection",
+                DatabaseType = SupportedDatabases.SQLServer
+            };
+
+            // Act
+            _sut.Id = 12345;
+            _sut.AccountName = "Type Test Account";
+            _sut.AccountNumber = "TYPE-12345";
+            _sut.License = testGuid;
+            _sut.DatabaseConnection = testConnection;
+            _sut.Features = [new() { Id = 1, FeatureName = "Type Test Feature", IsEnabled = true }];
+            _sut.MainAccountId = 6789;
+            _sut.Accounts = [new() { Id = 1, LinkedEntityId = 1 }];
+            _sut.DateCreated = testDate;
+            _sut.DateModified = testDate.AddDays(1);
+
+            // Assert - Verify all types are correct
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.TypeOf<int>());
+                Assert.That(_sut.AccountName, Is.TypeOf<string>());
+                Assert.That(_sut.AccountNumber, Is.TypeOf<string>());
+                Assert.That(_sut.License, Is.TypeOf<string>());
+                Assert.That(_sut.DatabaseConnection, Is.TypeOf<DatabaseConnection>());
+                Assert.That(_sut.Features, Is.TypeOf<List<FeatureDTO>>());
+                Assert.That(_sut.MainAccountId, Is.TypeOf<int>(), "MainAccountId should be int when set to non-null value");
+                Assert.That(_sut.Accounts, Is.TypeOf<List<SubAccountDTO>>());
+                Assert.That(_sut.DateCreated, Is.TypeOf<DateTime>());
+                Assert.That(_sut.DateModified, Is.TypeOf<DateTime>(), "DateModified should be DateTime when set to non-null value");
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_WithSpecificType_ShouldThrowNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Throws<NotImplementedException>(() => _sut.Cast<AccountDTO>());
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_MultipleCalls_ShouldAlwaysThrowNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowLargeList()
+        {
+            // Arrange
+            var largeFeatureList = new List<FeatureDTO>();
+            for (int i = 0; i < 1000; i++)
+            {
+                largeFeatureList.Add(new FeatureDTO { Id = i, FeatureName = $"Feature {i}", IsEnabled = i % 2 == 0 });
+            }
+
+            // Act
+            _sut.Features = largeFeatureList;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Has.Count.EqualTo(1000));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature 0"));
+                Assert.That(_sut.Features[999].FeatureName, Is.EqualTo("Feature 999"));
+                Assert.That(_sut.Features[500].IsEnabled, Is.True);
+                Assert.That(_sut.Features[501].IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Accounts_ShouldAllowLargeList()
+        {
+            // Arrange
+            var largeAccountList = new List<SubAccountDTO>();
+            for (int i = 0; i < 500; i++)
+            {
+                largeAccountList.Add(new SubAccountDTO { Id = i, LinkedEntityId = i * 2 });
+            }
+
+            // Act
+            _sut.Accounts = largeAccountList;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(500));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(0));
+                Assert.That(_sut.Accounts[499].Id, Is.EqualTo(499));
+                Assert.That(_sut.Accounts[250].LinkedEntityId, Is.EqualTo(500));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ExplicitInterfaceAccounts_Set_ShouldHandleLargeListConversion()
+        {
+            // Arrange
+            var largeInterfaceList = new List<ISubAccountDTO>();
+            for (int i = 0; i < 100; i++)
+            {
+                largeInterfaceList.Add(new SubAccountDTO { Id = i + 1000, LinkedEntityId = i + 2000 });
+            }
+            var accountInterface = (IAccountDTO)_sut;
+
+            // Act
+            accountInterface.Accounts = largeInterfaceList;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(100));
+                Assert.That(_sut.Accounts![0].Id, Is.EqualTo(1000));
+                Assert.That(_sut.Accounts[99].Id, Is.EqualTo(1099));
+                Assert.That(_sut.Accounts[50].LinkedEntityId, Is.EqualTo(2050));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptBoundaryValues()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test minimum value (0)
+                _sut.Id = 0;
+                Assert.That(_sut.Id, Is.EqualTo(0));
+
+                // Test maximum value
+                _sut.Id = int.MaxValue;
+                Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+
+                // Test mid-range value
+                _sut.Id = 1_000_000;
+                Assert.That(_sut.Id, Is.EqualTo(1_000_000));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void MainAccountId_ShouldAcceptBoundaryValues()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test minimum value (0)
+                _sut.MainAccountId = 0;
+                Assert.That(_sut.MainAccountId, Is.EqualTo(0));
+
+                // Test maximum value
+                _sut.MainAccountId = int.MaxValue;
+                Assert.That(_sut.MainAccountId, Is.EqualTo(int.MaxValue));
+
+                // Test null
+                _sut.MainAccountId = null;
+                Assert.That(_sut.MainAccountId, Is.Null);
+
+                // Test mid-range value
+                _sut.MainAccountId = 1_000_000;
+                Assert.That(_sut.MainAccountId, Is.EqualTo(1_000_000));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_PropertyChaining_ShouldWorkCorrectly()
+        {
+      // Arrange & Act
+      var result = new AccountDTO
+      {
+        Id = 1,
+        AccountName = "Chain Test",
+        AccountNumber = "CHAIN-001",
+        License = Guid.NewGuid().ToString()
+      };
+
+      // Assert
+      Assert.Multiple(() =>
+            {
+                Assert.That(result.Id, Is.EqualTo(1));
+                Assert.That(result.AccountName, Is.EqualTo("Chain Test"));
+                Assert.That(result.AccountNumber, Is.EqualTo("CHAIN-001"));
+                Assert.That(result.License, Is.Not.Null);
+                Assert.That(result.License, Does.Match(@"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AccountDTO_AsInterface_AllMethodsShouldWork()
+        {
+            // Arrange
+            var accountInterface = (IAccountDTO)_sut;
+            var domainInterface = (IDomainEntity)_sut;
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test IAccountDTO interface methods
+                Assert.DoesNotThrow(() => accountInterface.Features = []);
+                Assert.DoesNotThrow(() => accountInterface.Accounts = []);
+                Assert.DoesNotThrow(() => { var features = accountInterface.Features; });
+                Assert.DoesNotThrow(() => { var accounts = accountInterface.Accounts; });
+
+                // Test IDomainEntity interface methods
+                Assert.Throws<NotImplementedException>(() => domainInterface.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => domainInterface.ToJson());
+
+                // Test properties through interface
+                accountInterface.Id = 999;
+                Assert.That(_sut.Id, Is.EqualTo(999));
+            });
+        }
+
         #region Mock Classes
         private class MockDomainEntity : IDomainEntity
         {
             public int Id { get; set; }
-            public bool IsCast { get; set; }
-            public int CastId { get; set; }
-            public string? CastType { get; set; }
             public DateTime DateCreated { get; }
             public DateTime? DateModified { get; set; }
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();

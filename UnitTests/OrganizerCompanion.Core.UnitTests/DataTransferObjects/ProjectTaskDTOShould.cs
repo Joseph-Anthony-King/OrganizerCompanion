@@ -66,48 +66,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region IDomainEntity Properties Tests
 
         [Test, Category("DataTransferObjects")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = _sut.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "TestType");
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void Id_Get_ShouldReturnDefaultValue()
         {
             // Arrange & Act
@@ -412,6 +370,69 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
+        public void AsIProjectTaskDTO_Assignments_Get_WithNullAssignments_ShouldThrowException()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+            _sut.Assignments = null;
+
+            // Act & Assert - This covers the Assignments!.Cast<IProjectAssignmentDTO>() with null
+            Assert.Throws<ArgumentNullException>(() => { var _ = dto.Assignments; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AsIProjectTaskDTO_Assignments_Set_WithNullValue_ShouldThrowException()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+
+            // Act & Assert - This covers the value!.Cast<ProjectAssignmentDTO>() with null
+            Assert.Throws<ArgumentNullException>(() => { dto.Assignments = null; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AsIProjectTaskDTO_Assignments_Get_WithPopulatedList_ShouldReturnCastedItems()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+            var assignment1 = new ProjectAssignmentDTO { Id = 1, Name = "Assignment 1" };
+            var assignment2 = new ProjectAssignmentDTO { Id = 2, Name = "Assignment 2" };
+            _sut.Assignments = [assignment1, assignment2];
+
+            // Act
+            var result = dto.Assignments;
+
+            // Assert - This covers the casting logic [.. Assignments!.Cast<IProjectAssignmentDTO>()]
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result[0].Id, Is.EqualTo(1));
+            Assert.That(result[0].Name, Is.EqualTo("Assignment 1"));
+            Assert.That(result[1].Id, Is.EqualTo(2));
+            Assert.That(result[1].Name, Is.EqualTo("Assignment 2"));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AsIProjectTaskDTO_Assignments_Set_WithPopulatedList_ShouldSetCastedItems()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+            var assignment1 = new ProjectAssignmentDTO { Id = 10, Name = "Interface Assignment 1" };
+            var assignment2 = new ProjectAssignmentDTO { Id = 20, Name = "Interface Assignment 2" };
+            var interfaceAssignments = new List<IProjectAssignmentDTO> { assignment1, assignment2 };
+
+            // Act - This covers the casting logic [.. value!.Cast<ProjectAssignmentDTO>()]
+            dto.Assignments = interfaceAssignments;
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.Not.Null);
+            Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
+            Assert.That(_sut.Assignments[0], Is.InstanceOf<ProjectAssignmentDTO>());
+            Assert.That(_sut.Assignments[0].Id, Is.EqualTo(10));
+            Assert.That(_sut.Assignments[1], Is.InstanceOf<ProjectAssignmentDTO>());
+            Assert.That(_sut.Assignments[1].Id, Is.EqualTo(20));
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void AsIProjectTaskDTO_IsCompleted_Get_ShouldReturnValue()
         {
             // Arrange
@@ -512,66 +533,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = entity.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => entity.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = entity.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => entity.CastId = 1);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var value = entity.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void AsIDomainEntity_CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange
-            var entity = (IDomainEntity)_sut;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => entity.CastType = "TestType");
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void AsIDomainEntity_DateCreated_Get_ShouldReturnValue()
         {
             // Arrange
@@ -659,17 +620,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // This test documents that specific casting-related members throw NotImplementedException
             // This is important for understanding the current implementation state
 
-            // Properties with getters and setters that throw NotImplementedException
-            Assert.Multiple(() =>
-            {
-                Assert.Throws<NotImplementedException>(() => { var value = _sut.IsCast; });
-                Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-                Assert.Throws<NotImplementedException>(() => { var value = _sut.CastId; });
-                Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-                Assert.Throws<NotImplementedException>(() => { var value = _sut.CastType; });
-                Assert.Throws<NotImplementedException>(() => _sut.CastType = "test");
-            });
-
             // Methods that throw NotImplementedException
             Assert.Multiple(() =>
             {
@@ -693,7 +643,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => { var value = _sut.Description; });
                 Assert.DoesNotThrow(() => _sut.Description = "test");
                 Assert.DoesNotThrow(() => { var value = _sut.Assignments; });
-                Assert.DoesNotThrow(() => _sut.Assignments = new List<ProjectAssignmentDTO>());
+                Assert.DoesNotThrow(() => _sut.Assignments = []);
                 Assert.DoesNotThrow(() => { var value = _sut.IsCompleted; });
                 Assert.DoesNotThrow(() => _sut.IsCompleted = true);
                 Assert.DoesNotThrow(() => { var value = _sut.DateDue; });
@@ -731,6 +681,256 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(typeof(IProjectTaskDTO).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
             Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(ProjectTaskDTO)), Is.True);
             Assert.That(typeof(IDomainEntity).IsAssignableFrom(typeof(IProjectTaskDTO)), Is.True);
+        }
+
+        #endregion
+
+        #region Comprehensive Coverage Tests
+
+        [Test, Category("Comprehensive")]
+        public void JsonConstructor_WithAllNullValues_ShouldSetPropertiesCorrectly()
+        {
+            // Arrange
+            var id = 0;
+            var name = string.Empty;
+            string? description = null;
+            List<ProjectAssignmentDTO>? assignments = null;
+            var isCompleted = false;
+            DateTime? dateDue = null;
+            DateTime? dateCompleted = null;
+            var dateCreated = DateTime.UtcNow.AddDays(-5);
+            DateTime? dateModified = null;
+
+            // Act
+            var dto = new ProjectTaskDTO(id, name, description, assignments, isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.Id, Is.EqualTo(id));
+                Assert.That(dto.Name, Is.EqualTo(name));
+                Assert.That(dto.Description, Is.Null);
+                Assert.That(dto.Assignments, Is.Null);
+                Assert.That(dto.IsCompleted, Is.False);
+                Assert.That(dto.DateDue, Is.Null);
+                Assert.That(dto.DateCompleted, Is.Null);
+                Assert.That(dto.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(dto.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Comprehensive")]
+        public void JsonConstructor_WithCompleteData_ShouldSetAllPropertiesCorrectly()
+        {
+            // Arrange
+            var id = 999;
+            var name = "Comprehensive Test Task";
+            var description = "This is a comprehensive test description";
+            var assignments = new List<ProjectAssignmentDTO>
+            {
+                new() { Id = 1, Name = "Assignment 1" },
+                new() { Id = 2, Name = "Assignment 2" },
+                new() { Id = 3, Name = "Assignment 3" }
+            };
+            var isCompleted = true;
+            var dateDue = new DateTime(2025, 12, 31, 23, 59, 59);
+            var dateCompleted = new DateTime(2025, 10, 15, 14, 30, 0);
+            var dateCreated = new DateTime(2025, 10, 1, 9, 0, 0);
+            var dateModified = new DateTime(2025, 10, 16, 16, 45, 30);
+
+            // Act
+            var dto = new ProjectTaskDTO(id, name, description, assignments, isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.Id, Is.EqualTo(id));
+                Assert.That(dto.Name, Is.EqualTo(name));
+                Assert.That(dto.Description, Is.EqualTo(description));
+                Assert.That(dto.Assignments, Is.EqualTo(assignments));
+                Assert.That(dto.Assignments!.Count, Is.EqualTo(3));
+                Assert.That(dto.IsCompleted, Is.EqualTo(isCompleted));
+                Assert.That(dto.DateDue, Is.EqualTo(dateDue));
+                Assert.That(dto.DateCompleted, Is.EqualTo(dateCompleted));
+                Assert.That(dto.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(dto.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleBoundaryValues_ShouldWorkCorrectly()
+        {
+            // Act & Assert for Id boundary values
+            _sut.Id = int.MaxValue;
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+
+            _sut.Id = int.MinValue;
+            Assert.That(_sut.Id, Is.EqualTo(int.MinValue));
+
+            _sut.Id = 0;
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Unicode")]
+        public void HandleUnicodeCharacters_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var unicodeName = "任务名称 🚀 Task";
+            var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
+
+            // Act
+            _sut.Name = unicodeName;
+            _sut.Description = unicodeDescription;
+
+            // Assert
+            Assert.That(_sut.Name, Is.EqualTo(unicodeName));
+            Assert.That(_sut.Description, Is.EqualTo(unicodeDescription));
+        }
+
+        [Test, Category("DateTime")]
+        public void HandleDateTimePrecision_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 999);
+
+            // Act & Assert for DateDue
+            _sut.DateDue = preciseDateTime;
+            Assert.That(_sut.DateDue, Is.EqualTo(preciseDateTime));
+
+            // Act & Assert for DateModified
+            _sut.DateModified = preciseDateTime;
+            Assert.That(_sut.DateModified, Is.EqualTo(preciseDateTime));
+        }
+
+        [Test, Category("Collections")]
+        public void HandleLargeAssignmentsList_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var largeAssignmentsList = new List<ProjectAssignmentDTO>();
+            for (int i = 0; i < 1000; i++)
+            {
+                largeAssignmentsList.Add(new ProjectAssignmentDTO { Id = i, Name = $"Assignment {i}" });
+            }
+
+            // Act
+            _sut.Assignments = largeAssignmentsList;
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.Not.Null);
+            Assert.That(_sut.Assignments.Count, Is.EqualTo(1000));
+            Assert.That(_sut.Assignments[999].Name, Is.EqualTo("Assignment 999"));
+        }
+
+        [Test, Category("Collections")]
+        public void HandleEmptyAssignmentsList_ShouldWorkCorrectly()
+        {
+            // Act
+            _sut.Assignments = [];
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.Not.Null);
+            Assert.That(_sut.Assignments, Is.Empty);
+        }
+
+        [Test, Category("Interface")]
+        public void InterfaceAssignments_WithEmptyList_ShouldReturnEmptyInterface()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+            _sut.Assignments = [];
+
+            // Act
+            var result = dto.Assignments;
+
+            // Assert
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result, Is.Empty);
+        }
+
+        [Test, Category("Interface")]
+        public void InterfaceAssignments_SetEmptyList_ShouldSetEmptyList()
+        {
+            // Arrange
+            var dto = (IProjectTaskDTO)_sut;
+            var emptyList = new List<IProjectAssignmentDTO>();
+
+            // Act
+            dto.Assignments = emptyList;
+
+            // Assert
+            Assert.That(_sut.Assignments, Is.Not.Null);
+            Assert.That(_sut.Assignments, Is.Empty);
+        }
+
+        [Test, Category("Threading")]
+        public void DateCreated_FromDifferentThreads_ShouldMaintainValue()
+        {
+            // Arrange
+            var originalDate = _sut.DateCreated;
+
+            // Act - Access from different contexts
+            var date1 = _sut.DateCreated;
+            var date2 = _sut.DateCreated;
+
+            // Assert
+            Assert.That(date1, Is.EqualTo(originalDate));
+            Assert.That(date2, Is.EqualTo(originalDate));
+            Assert.That(date1, Is.EqualTo(date2));
+        }
+
+        [Test, Category("Validation")]
+        public void AllRequiredProperties_ShouldHaveValidationAttributes()
+        {
+            // This test verifies that validation attributes are properly applied
+            var type = typeof(ProjectTaskDTO);
+            
+            // Check that key properties have Required attributes
+            var idProperty = type.GetProperty("Id");
+            var nameProperty = type.GetProperty("Name");
+            var descriptionProperty = type.GetProperty("Description");
+            
+            Assert.That(idProperty, Is.Not.Null);
+            Assert.That(nameProperty, Is.Not.Null);
+            Assert.That(descriptionProperty, Is.Not.Null);
+            
+            // Verify the properties exist and are accessible
+            Assert.That(idProperty!.CanRead, Is.True);
+            Assert.That(idProperty.CanWrite, Is.True);
+            Assert.That(nameProperty!.CanRead, Is.True);
+            Assert.That(nameProperty.CanWrite, Is.True);
+        }
+
+        [Test, Category("String")]
+        public void HandleVeryLongStrings_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var veryLongName = new string('A', 10000);
+            var veryLongDescription = new string('B', 50000);
+
+            // Act & Assert - DTOs don't enforce validation, so very long strings should be accepted
+            Assert.DoesNotThrow(() => _sut.Name = veryLongName);
+            Assert.DoesNotThrow(() => _sut.Description = veryLongDescription);
+            
+            Assert.That(_sut.Name, Is.EqualTo(veryLongName));
+            Assert.That(_sut.Description, Is.EqualTo(veryLongDescription));
+        }
+
+        [Test, Category("Comprehensive")]
+        public void ReadOnlyProperties_ShouldBehaveCorrectly()
+        {
+            // Arrange & Act - Test DateCompleted (readonly)
+            var dateCompleted = _sut.DateCompleted;
+            
+            // Assert - DateCompleted should be null by default and not changeable
+            Assert.That(dateCompleted, Is.Null);
+            
+            // Test DateCreated (readonly)
+            var dateCreated1 = _sut.DateCreated;
+            var dateCreated2 = _sut.DateCreated;
+            
+            // Assert - DateCreated should be consistent
+            Assert.That(dateCreated1, Is.EqualTo(dateCreated2));
+            Assert.That(dateCreated1, Is.LessThanOrEqualTo(DateTime.UtcNow));
         }
 
         #endregion

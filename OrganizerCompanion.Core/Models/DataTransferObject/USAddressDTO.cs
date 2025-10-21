@@ -10,12 +10,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class USAddressDTO : IUSAddressDTO
     {
         #region Explicit Interface Implementations
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();

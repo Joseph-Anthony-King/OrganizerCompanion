@@ -17,8 +17,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private int _accountId = 0;
         private Account? _account = null;
-        private bool _isCast = false;
-        private int _castId = 0;
+        private bool? _isCast = null;
+        private int? _castId = null;
         private string? _castType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
@@ -47,7 +47,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId
         {
             get => _accountId;
@@ -58,7 +58,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [Required, JsonPropertyName("account")]
         public Account? Account
         {
             get => _account;
@@ -69,8 +69,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("isCast")]
-        public bool IsCast
+        [JsonPropertyName("isCast"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public bool? IsCast
         {
             get => _isCast;
             set
@@ -80,8 +80,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int CastId
+        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? CastId
         {
             get => _castId;
             set
@@ -121,19 +121,12 @@ namespace OrganizerCompanion.Core.Models.Domain
             int? castId = null,
             string? castType = null)
         {
-            try
-            {
-                _id = id;
-                _isCast = isCast != null && (bool)isCast;
-                _castId = castId != null ? (int)castId : 0;
-                _castType = castType;
-                _dateCreated = dateCreated;
-                DateModified = dateModified;
-            }
-            catch (Exception ex)
-            {
-                throw new ArgumentException("Error creating AnnonymousUser object.", ex);
-            }
+            _id = id;
+            _isCast = isCast != null && (bool)isCast;
+            _castId = castId != null ? (int)castId : 0;
+            _castType = castType;
+            _dateCreated = dateCreated;
+            DateModified = dateModified;
         }
         #endregion
 

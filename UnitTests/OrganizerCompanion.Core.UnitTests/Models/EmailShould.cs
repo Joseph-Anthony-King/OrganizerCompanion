@@ -183,14 +183,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Type_WhenSetToNull_ShouldAcceptNullValue()
         {
-            // Arrange
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work);
+      // Arrange
+      _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
+      {
+        // Act
+        Type = null
+      };
 
-            // Act
-            _sut.Type = null;
-
-            // Assert
-            Assert.That(_sut.Type, Is.Null);
+      // Assert
+      Assert.That(_sut.Type, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -215,10 +216,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void IsConfirmed_WhenSetToFalse_ShouldUpdateDateModified()
         {
-            // Arrange
-            _sut = new Email();
-            _sut.IsConfirmed = true; // Set to true first
-            var beforeSet = DateTime.Now;
+      // Arrange
+      _sut = new Email
+      {
+        IsConfirmed = true // Set to true first
+      };
+      var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsConfirmed = false;
@@ -470,12 +473,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_WithIsConfirmedTrue_ShouldSerializeCorrectly()
         {
-            // Arrange
-            _sut = new Email();
-            _sut.IsConfirmed = true;
+      // Arrange
+      _sut = new Email
+      {
+        IsConfirmed = true
+      };
 
-            // Act
-            var json = _sut.ToJson();
+      // Act
+      var json = _sut.ToJson();
 
             // Assert
             Assert.Multiple(() =>
@@ -491,12 +496,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ToJson_WithIsConfirmedFalse_ShouldSerializeCorrectly()
         {
-            // Arrange
-            _sut = new Email();
-            _sut.IsConfirmed = false;
+      // Arrange
+      _sut = new Email
+      {
+        IsConfirmed = false
+      };
 
-            // Act
-            var json = _sut.ToJson();
+      // Act
+      var json = _sut.ToJson();
 
             // Assert
             Assert.Multiple(() =>
@@ -586,7 +593,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1, 
                 "test@example.com", 
-                OrganizerCompanion.Core.Enums.Types.Cell,
+                OrganizerCompanion.Core.Enums.Types.Mobil,
                 0,
                 null,
                 null,
@@ -615,7 +622,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonSerialization_WithAllTypesEnum_ShouldProduceValidJson()
         {
             // Test all enum values
-            var enumValues = new[] { OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Types.Work, OrganizerCompanion.Core.Enums.Types.Cell, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Types.Billing, OrganizerCompanion.Core.Enums.Types.Other };
+            var enumValues = new[] { OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Types.Work, OrganizerCompanion.Core.Enums.Types.Mobil, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Types.Billing, OrganizerCompanion.Core.Enums.Types.Other };
 
             foreach (var enumValue in enumValues)
             {
@@ -745,48 +752,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 var json = _sut.ToJson();
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
             });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Getter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 123);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "TestType");
         }
 
         [Test, Category("Models")]
@@ -999,14 +964,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             foreach (var enumValue in enumValues)
             {
-                // Arrange
-                _sut = new Email();
+        // Arrange
+        _sut = new Email
+        {
+          // Act
+          Type = enumValue
+        };
 
-                // Act
-                _sut.Type = enumValue;
-
-                // Assert
-                Assert.That(_sut.Type, Is.EqualTo(enumValue), $"Failed for enum value: {enumValue}");
+        // Assert
+        Assert.That(_sut.Type, Is.EqualTo(enumValue), $"Failed for enum value: {enumValue}");
             }
         }
 
@@ -1408,7 +1374,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var fullEmail = new Email(
                 id: 999,
                 emailAddress: "complete@test.com",
-                type: OrganizerCompanion.Core.Enums.Types.Cell,
+                type: OrganizerCompanion.Core.Enums.Types.Mobil,
                 linkedEntityId: 42,
                 linkedEntity: new MockDomainEntity { Id = 42 },
                 linkedEntityType: "MockDomainEntity",
@@ -1427,7 +1393,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.InstanceOf<EmailDTO>());
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.EmailAddress, Is.EqualTo("complete@test.com"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
                 Assert.That(result.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(dateModified));
                 // Note: LinkedEntity, LinkedEntityId, IsConfirmed, etc. are not part of EmailDTO
@@ -1577,7 +1543,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = int.MaxValue;
             _sut.EmailAddress = "maxint@test.com";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
 
             // Act
             var result = _sut.Cast<EmailDTO>();
@@ -1613,6 +1579,454 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
             });
+        }
+
+        #endregion
+
+        #region Additional Comprehensive Coverage Tests
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
+        {
+            // Test that JsonConstructor handles parameters correctly and doesn't have issues with edge cases
+            
+            // Arrange & Act
+            var testDate = DateTime.Now;
+            var email = new Email(
+                id: 999,
+                emailAddress: "comprehensive@test.com",
+                type: OrganizerCompanion.Core.Enums.Types.Work,
+                linkedEntityId: 456,
+                linkedEntity: new MockDomainEntity(),
+                linkedEntityType: "CustomType", // This parameter should be respected in JsonConstructor
+                isConfirmed: true,
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate
+            );
+
+            // Assert - Verify that all properties are set correctly
+            Assert.Multiple(() =>
+            {
+                Assert.That(email.Id, Is.EqualTo(999));
+                Assert.That(email.EmailAddress, Is.EqualTo("comprehensive@test.com"));
+                Assert.That(email.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(email.LinkedEntityId, Is.EqualTo(456));
+                Assert.That(email.LinkedEntity, Is.Not.Null);
+                Assert.That(email.LinkedEntityType, Is.EqualTo("CustomType")); // Should be from parameter, not derived
+                Assert.That(email.IsConfirmed, Is.True);
+                Assert.That(email.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(email.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionHandling_RethrowsCorrectly()
+        {
+            // This test verifies that the catch block in the Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut.Id = 1;
+            _sut.EmailAddress = "test@example.com";
+
+            // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Email to type MockDomainEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_WithComplexEntityTypeChange_ShouldUpdateLinkedEntityTypeCorrectly()
+        {
+            // Test comprehensive LinkedEntity behavior with type changes
+            
+            // Arrange
+            var entity1 = new MockDomainEntity();
+            var entity2 = new AnotherMockEntity();
+            var originalDateModified = _sut.DateModified;
+
+            // Act & Assert - Test multiple entity changes
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = entity1;
+            var firstModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity1));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(firstModified, Is.GreaterThan(originalDateModified));
+            });
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = entity2;
+            var secondModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity2));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+                Assert.That(secondModified, Is.GreaterThan(firstModified));
+            });
+
+            System.Threading.Thread.Sleep(1);
+            _sut.LinkedEntity = null;
+            var thirdModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(thirdModified, Is.GreaterThan(secondModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithExtremeValues_ShouldHandleAllScenarios()
+        {
+            // Test ToString with various extreme value combinations
+            
+            // Case 1: Maximum values
+            _sut.Id = int.MaxValue;
+            _sut.EmailAddress = new string('a', 1000) + "@verylongdomain.com";
+            var maxResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(maxResult, Is.Not.Null);
+                Assert.That(maxResult, Does.Contain(int.MaxValue.ToString()));
+                Assert.That(maxResult, Does.Contain("Id" + int.MaxValue));
+                Assert.That(maxResult, Does.Contain(_sut.EmailAddress));
+            });
+
+            // Case 2: Minimum/Zero values
+            _sut.Id = 0;
+            _sut.EmailAddress = "";
+            var minResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(minResult, Is.Not.Null);
+                Assert.That(minResult, Does.Contain("Id0"));
+                Assert.That(minResult, Does.Contain("EmailAddress"));
+            });
+
+            // Case 3: Null email address
+            _sut.Id = 42;
+            _sut.EmailAddress = null;
+            var nullResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(nullResult, Is.Not.Null);
+                Assert.That(nullResult, Does.Contain("Id42"));
+                Assert.That(nullResult, Does.Contain("EmailAddress"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
+        {
+            // Test that the serialization options handle complex scenarios correctly
+            
+            // Arrange - Create email with LinkedEntity that could cause cycles
+            var mockEntity = new MockDomainEntity { Id = 123 };
+            _sut = new Email(
+                id: 1,
+                emailAddress: "cycle@test.com",
+                type: OrganizerCompanion.Core.Enums.Types.Work,
+                linkedEntityId: 123,
+                linkedEntity: mockEntity,
+                linkedEntityType: "MockDomainEntity",
+                isConfirmed: true,
+                dateCreated: DateTime.Now.AddHours(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act & Assert - Multiple serialization calls should work consistently
+            string json1, json2, json3;
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => json1 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json2 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json3 = _sut.ToJson());
+            });
+
+            // All serializations should produce valid JSON
+            json1 = _sut.ToJson();
+            json2 = _sut.ToJson();
+            json3 = _sut.ToJson();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(json1, Is.Not.Null.And.Not.Empty);
+                Assert.That(json2, Is.Not.Null.And.Not.Empty);
+                Assert.That(json3, Is.Not.Null.And.Not.Empty);
+                Assert.That(json1, Is.EqualTo(json2));
+                Assert.That(json2, Is.EqualTo(json3));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
+        {
+            // Test that multiple Cast calls create independent DTO instances
+            
+            // Arrange
+            _sut = new Email(
+                id: 100,
+                emailAddress: "multi@cast.com",
+                type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                linkedEntityId: 0,
+                linkedEntity: null,
+                linkedEntityType: null,
+                isConfirmed: false,
+                dateCreated: DateTime.Now.AddDays(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act - Cast to different supported types
+            var emailDto1 = _sut.Cast<EmailDTO>();
+            var emailDto2 = _sut.Cast<EmailDTO>();
+            var iEmailDto = _sut.Cast<IEmailDTO>();
+
+            // Assert - All should be different instances but with same data
+            Assert.Multiple(() =>
+            {
+                Assert.That(emailDto1, Is.Not.SameAs(emailDto2));
+                Assert.That(emailDto1, Is.Not.SameAs(iEmailDto));
+                Assert.That(emailDto2, Is.Not.SameAs(iEmailDto));
+                
+                // All should have same data
+                Assert.That(emailDto1.Id, Is.EqualTo(100));
+                Assert.That(emailDto2.Id, Is.EqualTo(100));
+                Assert.That(iEmailDto.Id, Is.EqualTo(100));
+                
+                Assert.That(emailDto1.EmailAddress, Is.EqualTo("multi@cast.com"));
+                Assert.That(emailDto2.EmailAddress, Is.EqualTo("multi@cast.com"));
+                Assert.That(iEmailDto.EmailAddress, Is.EqualTo("multi@cast.com"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AllEnumTypes_ComprehensiveCastAndSerializationTest()
+        {
+            // Test all enum values with Cast and serialization operations
+            
+            var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
+            
+            foreach (var enumValue in enumValues)
+            {
+                // Arrange
+                _sut = new Email(
+                    id: (int)enumValue,
+                    emailAddress: $"test{enumValue}@example.com",
+                    type: enumValue,
+                    linkedEntityId: 0,
+                    linkedEntity: null,
+                    linkedEntityType: null,
+                    isConfirmed: (int)enumValue % 2 == 0,
+                    dateCreated: DateTime.Now.AddDays(-(int)enumValue),
+                    dateModified: DateTime.Now
+                );
+
+                // Act & Assert - Cast should work for all enum types
+                Assert.DoesNotThrow(() =>
+                {
+                    var dto = _sut.Cast<EmailDTO>();
+                    Assert.That(dto.Type, Is.EqualTo(enumValue));
+                });
+
+                // Act & Assert - Serialization should work for all enum types
+                Assert.DoesNotThrow(() =>
+                {
+                    var json = _sut.ToJson();
+                    Assert.That(json, Does.Contain(enumValue.ToString()));
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void DateModified_PropertyChangeCombinations_ShouldUpdateInSequence()
+        {
+            // Test that rapid sequential property changes all update DateModified correctly
+            
+            // Arrange
+            _sut = new Email();
+            var timestamps = new List<DateTime?>
+            {
+              _sut.DateModified // Initial state
+            };
+
+            // Act & Assert - Test sequential property changes
+            System.Threading.Thread.Sleep(2);
+            _sut.Id = 1;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.EmailAddress = "sequence@test.com";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.LinkedEntityId = 999;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.LinkedEntity = new MockDomainEntity();
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.IsConfirmed = true;
+            timestamps.Add(_sut.DateModified);
+
+            // Assert - Each timestamp should be greater than the previous
+            for (int i = 1; i < timestamps.Count; i++)
+            {
+                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]), 
+                    $"Timestamp at index {i} should be greater than timestamp at index {i - 1}");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Email_ComprehensiveFunctionalityIntegrationTest()
+        {
+            // Comprehensive test that exercises all major functionality together
+            
+            // Test default constructor
+            var defaultEmail = new Email();
+            Assert.That(defaultEmail, Is.Not.Null);
+            Assert.That(defaultEmail.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            
+            // Test simple constructor
+            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work);
+            Assert.Multiple(() =>
+            {
+                Assert.That(simpleEmail.EmailAddress, Is.EqualTo("simple@test.com"));
+                Assert.That(simpleEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(simpleEmail.IsConfirmed, Is.False);
+            });
+            
+            // Test JsonConstructor with comprehensive data
+            var testDate = DateTime.Now;
+            var linkedEntity = new MockDomainEntity { Id = 456 };
+            var comprehensiveEmail = new Email(
+                id: 12345,
+                emailAddress: "comprehensive@test.com",
+                type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                linkedEntityId: 456,
+                linkedEntity: linkedEntity,
+                linkedEntityType: "MockDomainEntity",
+                isConfirmed: true,
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate
+            );
+            
+            // Verify comprehensive properties
+            Assert.Multiple(() =>
+            {
+                Assert.That(comprehensiveEmail.Id, Is.EqualTo(12345));
+                Assert.That(comprehensiveEmail.EmailAddress, Is.EqualTo("comprehensive@test.com"));
+                Assert.That(comprehensiveEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
+                Assert.That(comprehensiveEmail.LinkedEntityId, Is.EqualTo(456));
+                Assert.That(comprehensiveEmail.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(comprehensiveEmail.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(comprehensiveEmail.IsConfirmed, Is.True);
+                Assert.That(comprehensiveEmail.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(comprehensiveEmail.DateModified, Is.EqualTo(testDate));
+            });
+            
+            // Test all property setters
+            defaultEmail.Id = 54321;
+            defaultEmail.EmailAddress = "updated@test.com";
+            defaultEmail.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            defaultEmail.LinkedEntityId = 789;
+            defaultEmail.LinkedEntity = new AnotherMockEntity();
+            defaultEmail.IsConfirmed = true;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultEmail.Id, Is.EqualTo(54321));
+                Assert.That(defaultEmail.EmailAddress, Is.EqualTo("updated@test.com"));
+                Assert.That(defaultEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
+                Assert.That(defaultEmail.LinkedEntityId, Is.EqualTo(789));
+                Assert.That(defaultEmail.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+                Assert.That(defaultEmail.IsConfirmed, Is.True);
+            });
+            
+            // Test Cast functionality
+            var emailDto = defaultEmail.Cast<EmailDTO>();
+            var iEmailDto = defaultEmail.Cast<IEmailDTO>();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(emailDto, Is.InstanceOf<EmailDTO>());
+                Assert.That(iEmailDto, Is.InstanceOf<EmailDTO>());
+                Assert.That(emailDto.Id, Is.EqualTo(defaultEmail.Id));
+                Assert.That(iEmailDto.Id, Is.EqualTo(defaultEmail.Id));
+            });
+            
+            // Test JSON serialization
+            var json = defaultEmail.ToJson();
+            Assert.That(json, Is.Not.Null.And.Not.Empty);
+            
+            // Test ToString functionality
+            var stringResult = defaultEmail.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
+                Assert.That(stringResult, Does.Contain("updated@test.com"));
+                Assert.That(stringResult, Does.Contain("54321"));
+            });
+            
+            // Test exception scenarios
+            Assert.Throws<InvalidCastException>(() => defaultEmail.Cast<MockDomainEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_ReadOnlyProperty_ComprehensiveBehaviorTest()
+        {
+            // Comprehensive test of LinkedEntityType read-only behavior
+            
+            // Verify property is read-only
+            var property = typeof(Email).GetProperty("LinkedEntityType");
+            Assert.That(property?.SetMethod, Is.Null, "LinkedEntityType should be read-only");
+            
+            // Test behavior with null LinkedEntity
+            _sut.LinkedEntity = null;
+            Assert.That(_sut.LinkedEntityType, Is.Null);
+            
+            // Test behavior with various entity types
+            var mockEntity = new MockDomainEntity();
+            _sut.LinkedEntity = mockEntity;
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+            
+            var anotherEntity = new AnotherMockEntity();
+            _sut.LinkedEntity = anotherEntity;
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+            
+            // Test that setting back to null clears the type
+            _sut.LinkedEntity = null;
+            Assert.That(_sut.LinkedEntityType, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionRethrowing_ShouldPreserveOriginalException()
+        {
+            // Test that the catch block in Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work);
+            
+            // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Email to type MockDomainEntity"));
+                Assert.That(ex.InnerException, Is.Null); // Should be the original exception, not wrapped
+            });
+            
+            // Test multiple unsupported types
+            Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
         }
 
         #endregion

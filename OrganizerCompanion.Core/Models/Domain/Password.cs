@@ -97,15 +97,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public DateTime DateCreated { get => _dateCreated; }
 
         public DateTime? DateModified { get; set; } = default(DateTime);
@@ -123,10 +114,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int accountId,
             IAccount? account,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
             _passwordValue = passwordValue;

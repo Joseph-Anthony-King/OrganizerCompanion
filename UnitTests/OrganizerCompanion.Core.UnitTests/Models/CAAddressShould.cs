@@ -318,48 +318,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
@@ -968,6 +926,437 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(specificDateModified));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
+        {
+            // Arrange & Act - Test that unused parameters (isCast, castId, castType) are ignored
+            var testDate = DateTime.Now;
+            var province = CAProvinces.Ontario.ToStateModel();
+            
+            var caAddress = new CAAddress(
+                id: 999,
+                street1: "Test Street",
+                street2: "Test Unit",
+                city: "Test City",
+                province: province,
+                zipCode: "M1M 1M1",
+                country: "Canada",
+                type: OrganizerCompanion.Core.Enums.Types.Home,
+                dateCreated: testDate,
+                dateModified: testDate,
+                isCast: true,        // These parameters are not used by the constructor
+                castId: 123,         // but should be handled gracefully
+                castType: "TestType"
+            );
+
+            // Assert - Verify that the object is created correctly and unused parameters don't affect it
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Id, Is.EqualTo(999));
+                Assert.That(caAddress.Street1, Is.EqualTo("Test Street"));
+                Assert.That(caAddress.Street2, Is.EqualTo("Test Unit"));
+                Assert.That(caAddress.City, Is.EqualTo("Test City"));
+                Assert.That(caAddress.Province, Is.EqualTo(province));
+                Assert.That(caAddress.ZipCode, Is.EqualTo("M1M 1M1"));
+                Assert.That(caAddress.Country, Is.EqualTo("Canada"));
+                Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(caAddress.DateCreated, Is.EqualTo(testDate));
+                Assert.That(caAddress.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionHandling_RethrowsCorrectly()
+        {
+            // This test verifies that the catch block in the Cast method properly rethrows exceptions.
+            // We test this by attempting to cast to an unsupported type, which triggers the exception handling path.
+
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street1 = "Test Street";
+
+            // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast CAAddress to type MockDomainEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithProvinceHavingOnlyName_ShouldUseNameForDisplay()
+        {
+            // Arrange - Create a province mock that has Name but null Abbreviation
+            var mockProvince = new MockNationalSubdivision 
+            { 
+                Name = "Full Province Name", 
+                Abbreviation = null 
+            };
+            
+            _sut.Id = 100;
+            _sut.Street1 = "Name Test Street";
+            _sut.City = "Name Test City";
+            _sut.Province = mockProvince;
+            _sut.ZipCode = "N1N 1N1";
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("Id:100"));
+                Assert.That(result, Does.Contain("Street1:Name Test Street"));
+                Assert.That(result, Does.Contain("City:Name Test City"));
+                Assert.That(result, Does.Contain("Province:Full Province Name"));
+                Assert.That(result, Does.Contain("Zip:N1N 1N1"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithProvinceHavingBothNameAndAbbreviation_ShouldUseAbbreviation()
+        {
+            // Arrange - Test that abbreviation takes precedence over name
+            var mockProvince = new MockNationalSubdivision 
+            { 
+                Name = "Full Province Name", 
+                Abbreviation = "FPN" 
+            };
+            
+            _sut.Id = 200;
+            _sut.Street1 = "Abbrev Test Street";
+            _sut.City = "Abbrev Test City";
+            _sut.Province = mockProvince;
+            _sut.ZipCode = "A1A 1A1";
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("Id:200"));
+                Assert.That(result, Does.Contain("Street1:Abbrev Test Street"));
+                Assert.That(result, Does.Contain("City:Abbrev Test City"));
+                Assert.That(result, Does.Contain("Province:FPN"));
+                Assert.That(result, Does.Not.Contain("Full Province Name"));
+                Assert.That(result, Does.Contain("Zip:A1A 1A1"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithProvinceHavingEmptyStrings_ShouldUseEmptyString()
+        {
+            // Arrange - Test edge case where province has empty strings instead of null
+            var mockProvince = new MockNationalSubdivision 
+            { 
+                Name = "", 
+                Abbreviation = "" 
+            };
+            
+            _sut.Id = 300;
+            _sut.Street1 = "Empty Test Street";
+            _sut.City = "Empty Test City";
+            _sut.Province = mockProvince;
+            _sut.ZipCode = "E1E 1E1";
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("Id:300"));
+                Assert.That(result, Does.Contain("Street1:Empty Test Street"));
+                Assert.That(result, Does.Contain("City:Empty Test City"));
+                Assert.That(result, Does.Contain("Province:"));  // Empty abbreviation is used
+                Assert.That(result, Does.Contain("Zip:E1E 1E1"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_UpdatesLinkedEntityTypeCorrectly()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity();
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.LinkedEntity = mockEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_WhenSetToNull_ClearsLinkedEntityType()
+        {
+            // Arrange
+            var mockEntity = new MockDomainEntity();
+            _sut.LinkedEntity = mockEntity; // First set to non-null
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity")); // Confirm it's set
+            
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.LinkedEntity = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
+                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CAAddress_ComprehensiveFunctionalityTest()
+        {
+            // This comprehensive test verifies all major functionality works together correctly
+            
+            // Arrange - Test default constructor
+            var defaultAddress = new CAAddress();
+            Assert.That(defaultAddress, Is.Not.Null);
+            
+            // Test JsonConstructor with all parameters
+            var testDate = DateTime.Now;
+            var province = CAProvinces.Manitoba.ToStateModel();
+            
+            var parameterizedAddress = new CAAddress(
+                id: 12345,
+                street1: "Comprehensive Test Street",
+                street2: "Suite 987",
+                city: "Winnipeg",
+                province: province,
+                zipCode: "R3C 0V8",
+                country: "Canada",
+                type: OrganizerCompanion.Core.Enums.Types.Billing,
+                dateCreated: testDate,
+                dateModified: testDate
+            );
+            
+            // Test all property setters and getters
+            defaultAddress.Id = 54321;
+            defaultAddress.Street1 = "Setter Test Street";
+            defaultAddress.Street2 = "Unit 123";
+            defaultAddress.City = "Test City";
+            defaultAddress.Province = CAProvinces.NovaScotia.ToStateModel();
+            defaultAddress.ZipCode = "B1B 1B1";
+            defaultAddress.Country = "Canada";
+            defaultAddress.Type = OrganizerCompanion.Core.Enums.Types.Other;
+            defaultAddress.LinkedEntityId = 999;
+            defaultAddress.LinkedEntity = new MockDomainEntity();
+            defaultAddress.DateModified = testDate;
+            
+            // Act & Assert - Verify all properties are set correctly
+            Assert.Multiple(() =>
+            {
+                // Test parameterized constructor results
+                Assert.That(parameterizedAddress.Id, Is.EqualTo(12345));
+                Assert.That(parameterizedAddress.Street1, Is.EqualTo("Comprehensive Test Street"));
+                Assert.That(parameterizedAddress.Street2, Is.EqualTo("Suite 987"));
+                Assert.That(parameterizedAddress.City, Is.EqualTo("Winnipeg"));
+                Assert.That(parameterizedAddress.Province, Is.EqualTo(province));
+                Assert.That(parameterizedAddress.ZipCode, Is.EqualTo("R3C 0V8"));
+                Assert.That(parameterizedAddress.Country, Is.EqualTo("Canada"));
+                Assert.That(parameterizedAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(parameterizedAddress.DateCreated, Is.EqualTo(testDate));
+                Assert.That(parameterizedAddress.DateModified, Is.EqualTo(testDate));
+                
+                // Test property setter results
+                Assert.That(defaultAddress.Id, Is.EqualTo(54321));
+                Assert.That(defaultAddress.Street1, Is.EqualTo("Setter Test Street"));
+                Assert.That(defaultAddress.Street2, Is.EqualTo("Unit 123"));
+                Assert.That(defaultAddress.City, Is.EqualTo("Test City"));
+                Assert.That(defaultAddress.Province?.Name, Is.EqualTo("Nova Scotia"));
+                Assert.That(defaultAddress.ZipCode, Is.EqualTo("B1B 1B1"));
+                Assert.That(defaultAddress.Country, Is.EqualTo("Canada"));
+                Assert.That(defaultAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(defaultAddress.LinkedEntityId, Is.EqualTo(999));
+                Assert.That(defaultAddress.LinkedEntity, Is.Not.Null);
+                Assert.That(defaultAddress.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(defaultAddress.DateModified, Is.EqualTo(testDate));
+                Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            });
+            
+            // Test Cast functionality
+            var caAddressDto = defaultAddress.Cast<CAAddressDTO>();
+            var iCaAddressDto = defaultAddress.Cast<ICAAddressDTO>();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddressDto, Is.InstanceOf<CAAddressDTO>());
+                Assert.That(iCaAddressDto, Is.InstanceOf<CAAddressDTO>());
+                Assert.That(caAddressDto.Id, Is.EqualTo(defaultAddress.Id));
+                Assert.That(iCaAddressDto.Id, Is.EqualTo(defaultAddress.Id));
+            });
+            
+            // Test JSON serialization
+            var json = defaultAddress.ToJson();
+            Assert.That(json, Is.Not.Null.And.Not.Empty);
+            
+            // Test ToString functionality
+            var stringResult = defaultAddress.ToString();
+            Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
+            
+            // Test exception scenarios
+            Assert.Throws<InvalidCastException>(() => defaultAddress.Cast<AnotherMockEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithMinimalValidParameters_ShouldSetPropertiesCorrectly()
+        {
+            // Arrange & Act - Test constructor with minimal valid parameters (using empty strings where needed)
+            var testDate = DateTime.Now;
+            var province = CAProvinces.Ontario.ToStateModel();
+            
+            var caAddress = new CAAddress(
+                id: 777,
+                street1: "",
+                street2: "",
+                city: "",
+                province: province,
+                zipCode: "",
+                country: "",
+                type: OrganizerCompanion.Core.Enums.Types.Other,
+                dateCreated: testDate,
+                dateModified: null
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Id, Is.EqualTo(777));
+                Assert.That(caAddress.Street1, Is.EqualTo(""));
+                Assert.That(caAddress.Street2, Is.EqualTo(""));
+                Assert.That(caAddress.City, Is.EqualTo(""));
+                Assert.That(caAddress.Province, Is.EqualTo(province));
+                Assert.That(caAddress.ZipCode, Is.EqualTo(""));
+                Assert.That(caAddress.Country, Is.EqualTo(""));
+                Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(caAddress.DateCreated, Is.EqualTo(testDate));
+                Assert.That(caAddress.DateModified, Is.Null);
+                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(caAddress.LinkedEntity, Is.Null);
+                Assert.That(caAddress.LinkedEntityType, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithNullStreetAndCity_ShouldHandleNullsCorrectly()
+        {
+            // Arrange - Test ToString with null street and city values
+            _sut.Id = 999;
+            _sut.Street1 = null;
+            _sut.City = null;
+            _sut.Province = CAProvinces.PrinceEdwardIsland.ToStateModel();
+            _sut.ZipCode = null;
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("Id:999"));
+                Assert.That(result, Does.Contain("Street1:"));  // Should show empty after colon
+                Assert.That(result, Does.Contain("City:"));     // Should show empty after colon
+                Assert.That(result, Does.Contain("Province:PE"));
+                Assert.That(result, Does.Contain("Zip:"));      // Should show empty after colon
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DefaultConstructor_Country_ShouldDefaultToCanada()
+        {
+            // Arrange & Act
+            var defaultAddress = new CAAddress();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultAddress.Country, Is.EqualTo(Countries.Canada.GetName()));
+                Assert.That(defaultAddress.Country, Is.EqualTo("Canada"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Properties_SetToSameValue_ShouldStillUpdateDateModified()
+        {
+            // Arrange
+            _sut.Street1 = "Test Street";
+            var firstDateModified = _sut.DateModified;
+            
+            // Small delay to ensure different timestamp
+            System.Threading.Thread.Sleep(1);
+
+            // Act - Set to the same value
+            _sut.Street1 = "Test Street";
+            var secondDateModified = _sut.DateModified;
+
+            // Assert - DateModified should still be updated even when setting the same value
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Street1, Is.EqualTo("Test Street"));
+                Assert.That(secondDateModified, Is.GreaterThan(firstDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToCAAddressDTO_PreservesAllFieldsIncludingDates()
+        {
+            // Arrange - Set up a complete CAAddress with all fields populated
+            var specificDateCreated = new DateTime(2023, 6, 15, 9, 30, 0);
+            var specificDateModified = new DateTime(2023, 6, 16, 14, 45, 30);
+            var province = CAProvinces.Yukon.ToStateModel();
+            
+            var completeAddress = new CAAddress(
+                id: 555,
+                street1: "555 Complete Street",
+                street2: "Unit 555",
+                city: "Whitehorse",
+                province: province,
+                zipCode: "Y1A 1A1",
+                country: "Canada",
+                type: OrganizerCompanion.Core.Enums.Types.Work,
+                dateCreated: specificDateCreated,
+                dateModified: specificDateModified
+            );
+
+            // Act
+            var dto = completeAddress.Cast<CAAddressDTO>();
+
+            // Assert - Verify ALL fields are preserved correctly
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.Id, Is.EqualTo(555));
+                Assert.That(dto.Street1, Is.EqualTo("555 Complete Street"));
+                Assert.That(dto.Street2, Is.EqualTo("Unit 555"));
+                Assert.That(dto.City, Is.EqualTo("Whitehorse"));
+                Assert.That(dto.Province, Is.EqualTo(province));
+                Assert.That(dto.Province?.Name, Is.EqualTo("Yukon"));
+                Assert.That(dto.Province?.Abbreviation, Is.EqualTo("YT"));
+                Assert.That(dto.ZipCode, Is.EqualTo("Y1A 1A1"));
+                Assert.That(dto.Country, Is.EqualTo("Canada"));
+                Assert.That(dto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(dto.DateCreated, Is.EqualTo(specificDateCreated));
+                Assert.That(dto.DateModified, Is.EqualTo(specificDateModified));
             });
         }
 

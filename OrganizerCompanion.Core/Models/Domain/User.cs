@@ -67,6 +67,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
         #endregion
+
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
@@ -249,15 +250,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 DateModified = DateTime.Now;
             }
         }
-
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }

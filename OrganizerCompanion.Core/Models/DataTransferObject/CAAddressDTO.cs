@@ -10,12 +10,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class CAAddressDTO : ICAAddressDTO
     {
         #region Explicit Interface Implementations
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
@@ -26,27 +20,39 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
+        #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
+
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];
+
         [Required, JsonPropertyName("street")]
         public string? Street1 { get; set; } = null;
+
         [Required, JsonPropertyName("street2")]
         public string? Street2 { get; set; } = null;
+
         [Required, JsonPropertyName("city")]
         public string? City { get; set; } = null;
+
         [Required, JsonPropertyName("province")]
         public INationalSubdivision? Province { get; set; } = null;
+
         [Required, JsonPropertyName("zipCode")]
         public string? ZipCode { get; set; } = null;
+
         [Required, JsonPropertyName("country")]
         public string? Country { get; set; } = null;
+
         [Required, JsonPropertyName("type")]
         public Types? Type { get; set; } = null;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
+        #endregion
     }
 }

@@ -168,7 +168,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
-            var newType = OrganizerCompanion.Core.Enums.Types.Cell;
+            var newType = OrganizerCompanion.Core.Enums.Types.Mobil;
             var beforeSet = DateTime.Now;
 
             // Act
@@ -579,7 +579,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
@@ -760,8 +760,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
-                // Cast properties still throw exceptions despite constructor parameters
-                Assert.Throws<NotImplementedException>(() => { var _ = phoneNumber.IsCast; });
             });
         }
 
@@ -899,7 +897,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
             _sut.LinkedEntityId = 0;
             _sut.LinkedEntity = null;
 
@@ -1022,29 +1020,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void JsonIgnore_Attributes_ShouldBePresent()
-        {
-            // Arrange & Act - Verify that JsonIgnore attributes are correctly applied to Cast properties
-            var type = typeof(PhoneNumber);
-            
-            // Assert - Check that Cast properties have JsonIgnore attributes
-            var isCastProperty = type.GetProperty("IsCast");
-            var castIdProperty = type.GetProperty("CastId");
-            var castTypeProperty = type.GetProperty("CastType");
-
-            Assert.Multiple(() =>
-            {
-                // Verify JsonIgnore attributes exist on Cast properties
-                Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
-                    Is.Not.Empty, "IsCast should have JsonIgnore attribute");
-                Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
-                    Is.Not.Empty, "CastId should have JsonIgnore attribute");
-                Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), 
-                    Is.Not.Empty, "CastType should have JsonIgnore attribute");
-            });
-        }
-
-        [Test, Category("Models")]
         public void JsonConstructor_WithNullParameters_ShouldHandleCorrectly()
         {
             // Arrange & Act
@@ -1125,9 +1100,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(complexMockEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(_sut.LinkedEntity.Id, Is.EqualTo(999));
-                Assert.That(_sut.LinkedEntity.IsCast, Is.True);
-                Assert.That(_sut.LinkedEntity.CastId, Is.EqualTo(123));
-                Assert.That(_sut.LinkedEntity.CastType, Is.EqualTo("TestCast"));
             });
         }
 
@@ -1200,7 +1172,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 456;
             _sut.Phone = "+1-800-CALL-NOW";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
@@ -1213,7 +1185,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.InstanceOf<PhoneNumberDTO>());
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.Phone, Is.EqualTo("+1-800-CALL-NOW"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
                 Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
@@ -1367,7 +1339,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 (OrganizerCompanion.Core.Enums.Types.Home, 1),
                 (OrganizerCompanion.Core.Enums.Types.Work, 2),
-                (OrganizerCompanion.Core.Enums.Types.Cell, 3),
+                (OrganizerCompanion.Core.Enums.Types.Mobil, 3),
                 (OrganizerCompanion.Core.Enums.Types.Fax, 4),
                 (OrganizerCompanion.Core.Enums.Types.Billing, 5),
                 (OrganizerCompanion.Core.Enums.Types.Other, 6)
@@ -1425,7 +1397,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = int.MinValue;
             _sut.Phone = "+1-555-MIN-VALUE";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
 
             // Act
@@ -1437,7 +1409,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(int.MinValue));
                 Assert.That(result.Phone, Is.EqualTo("+1-555-MIN-VALUE"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
                 Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Mexico));
             });
         }

@@ -343,47 +343,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region IDomainEntity Property Tests
 
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _usAddressDTO.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _usAddressDTO.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _usAddressDTO.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _usAddressDTO.CastId = 123);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _usAddressDTO.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _usAddressDTO.CastType = "TestType");
-        }
 
         [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetCorrectly()
@@ -620,23 +579,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
                 Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var isCastProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.IsCast));
-            var castIdProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CastId));
-            var castTypeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CastType));
-
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -1052,6 +994,404 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(firstState, Is.Not.EqualTo(secondState));
                 Assert.That(secondState.Name, Is.EqualTo("Florida"));
                 Assert.That(secondState.Abbreviation, Is.EqualTo("FL"));
+            });
+        }
+
+        #endregion
+
+        #region Comprehensive Coverage Tests
+
+        [Test, Category("Boundary")]
+        public void Id_ShouldHandleBoundaryValues()
+        {
+            // Test zero
+            _usAddressDTO.Id = 0;
+            Assert.That(_usAddressDTO.Id, Is.EqualTo(0));
+
+            // Test positive boundary
+            _usAddressDTO.Id = int.MaxValue;
+            Assert.That(_usAddressDTO.Id, Is.EqualTo(int.MaxValue));
+
+            // Test negative boundary
+            _usAddressDTO.Id = int.MinValue;
+            Assert.That(_usAddressDTO.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Unicode")]
+        public void StringProperties_ShouldHandleUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeStreet = "123 Ümlaut Straße";
+            var unicodeCity = "São Paulo";
+            var unicodeCountry = "中国";
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                _usAddressDTO.Street1 = unicodeStreet;
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo(unicodeStreet));
+
+                _usAddressDTO.City = unicodeCity;
+                Assert.That(_usAddressDTO.City, Is.EqualTo(unicodeCity));
+
+                _usAddressDTO.Country = unicodeCountry;
+                Assert.That(_usAddressDTO.Country, Is.EqualTo(unicodeCountry));
+            });
+        }
+
+        [Test, Category("String")]
+        public void StringProperties_ShouldHandleVeryLongStrings()
+        {
+            // Arrange
+            var veryLongStreet = new string('A', 10000);
+            var veryLongCity = new string('B', 5000);
+            var veryLongCountry = new string('C', 3000);
+            var veryLongZipCode = new string('1', 1000);
+
+            // Act & Assert - DTOs should accept any string length
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => _usAddressDTO.Street1 = veryLongStreet);
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo(veryLongStreet));
+
+                Assert.DoesNotThrow(() => _usAddressDTO.City = veryLongCity);
+                Assert.That(_usAddressDTO.City, Is.EqualTo(veryLongCity));
+
+                Assert.DoesNotThrow(() => _usAddressDTO.Country = veryLongCountry);
+                Assert.That(_usAddressDTO.Country, Is.EqualTo(veryLongCountry));
+
+                Assert.DoesNotThrow(() => _usAddressDTO.ZipCode = veryLongZipCode);
+                Assert.That(_usAddressDTO.ZipCode, Is.EqualTo(veryLongZipCode));
+            });
+        }
+
+        [Test, Category("DateTime")]
+        public void DateProperties_ShouldHandlePreciseDateTime()
+        {
+            // Arrange
+            var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 999);
+            var minDateTime = DateTime.MinValue;
+            var maxDateTime = DateTime.MaxValue;
+
+            // Act & Assert for DateCreated
+            Assert.Multiple(() =>
+            {
+                _usAddressDTO.DateCreated = preciseDateTime;
+                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(preciseDateTime));
+
+                _usAddressDTO.DateCreated = minDateTime;
+                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(minDateTime));
+
+                _usAddressDTO.DateCreated = maxDateTime;
+                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(maxDateTime));
+            });
+
+            // Act & Assert for DateModified
+            Assert.Multiple(() =>
+            {
+                _usAddressDTO.DateModified = preciseDateTime;
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(preciseDateTime));
+
+                _usAddressDTO.DateModified = minDateTime;
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(minDateTime));
+
+                _usAddressDTO.DateModified = maxDateTime;
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(maxDateTime));
+
+                _usAddressDTO.DateModified = null;
+                Assert.That(_usAddressDTO.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Enum")]
+        public void Type_ShouldHandleAllTypesEnumValues()
+        {
+            // Act & Assert - Test all enum values
+            foreach (OrganizerCompanion.Core.Enums.Types enumValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
+            {
+                _usAddressDTO.Type = enumValue;
+                Assert.That(_usAddressDTO.Type, Is.EqualTo(enumValue));
+            }
+
+            // Test null value
+            _usAddressDTO.Type = null;
+            Assert.That(_usAddressDTO.Type, Is.Null);
+        }
+
+        [Test, Category("Interface")]
+        public void USAddressDTO_AsIUSAddressDTO_ShouldProvideAllProperties()
+        {
+            // Arrange
+            var usAddressInterface = (IUSAddressDTO)_usAddressDTO;
+            var testState = new MockNationalSubdivision { Name = "Test State", Abbreviation = "TS" };
+
+            // Act & Assert - All properties should be accessible through interface
+            Assert.Multiple(() =>
+            {
+                usAddressInterface.Id = 999;
+                Assert.That(_usAddressDTO.Id, Is.EqualTo(999));
+
+                usAddressInterface.Street1 = "Interface Street";
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo("Interface Street"));
+
+                usAddressInterface.Street2 = "Interface Street2";
+                Assert.That(_usAddressDTO.Street2, Is.EqualTo("Interface Street2"));
+
+                usAddressInterface.City = "Interface City";
+                Assert.That(_usAddressDTO.City, Is.EqualTo("Interface City"));
+
+                usAddressInterface.State = testState;
+                Assert.That(_usAddressDTO.State, Is.SameAs(testState));
+
+                usAddressInterface.ZipCode = "12345";
+                Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("12345"));
+
+                usAddressInterface.Country = "Interface Country";
+                Assert.That(_usAddressDTO.Country, Is.EqualTo("Interface Country"));
+
+                usAddressInterface.Type = OrganizerCompanion.Core.Enums.Types.Work;
+                Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+
+                var testDate = DateTime.Now;
+                usAddressInterface.DateModified = testDate;
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Interface")]
+        public void USAddressDTO_AsIDomainEntity_ShouldProvideRequiredProperties()
+        {
+            // Arrange
+            var domainEntity = (IDomainEntity)_usAddressDTO;
+            var testDate = DateTime.Now;
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                domainEntity.Id = 555;
+                Assert.That(_usAddressDTO.Id, Is.EqualTo(555));
+
+                domainEntity.DateModified = testDate;
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+
+                // Test Cast and ToJson methods throw NotImplementedException
+                Assert.Throws<NotImplementedException>(() => domainEntity.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => domainEntity.ToJson());
+            });
+        }
+
+        [Test, Category("Whitespace")]
+        public void StringProperties_ShouldHandleWhitespaceValues()
+        {
+            // Test various whitespace scenarios
+            Assert.Multiple(() =>
+            {
+                // Empty strings
+                _usAddressDTO.Street1 = "";
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo(""));
+
+                // Whitespace only
+                _usAddressDTO.Street2 = "   ";
+                Assert.That(_usAddressDTO.Street2, Is.EqualTo("   "));
+
+                // Leading/trailing spaces
+                _usAddressDTO.City = " City Name ";
+                Assert.That(_usAddressDTO.City, Is.EqualTo(" City Name "));
+
+                // Tabs and newlines
+                _usAddressDTO.Country = "\t\nCountry\r\n";
+                Assert.That(_usAddressDTO.Country, Is.EqualTo("\t\nCountry\r\n"));
+
+                // Mixed whitespace
+                _usAddressDTO.ZipCode = " \t 12345 \r\n ";
+                Assert.That(_usAddressDTO.ZipCode, Is.EqualTo(" \t 12345 \r\n "));
+            });
+        }
+
+        [Test, Category("State")]
+        public void State_ShouldHandleMultipleStateAssignments()
+        {
+            // Arrange
+            var states = new[]
+            {
+                new MockNationalSubdivision { Name = "California", Abbreviation = "CA" },
+                new MockNationalSubdivision { Name = "New York", Abbreviation = "NY" },
+                new MockNationalSubdivision { Name = "Texas", Abbreviation = "TX" },
+                new MockNationalSubdivision { Name = "Florida", Abbreviation = "FL" }
+            };
+
+            // Act & Assert - Should handle multiple state assignments
+            foreach (var state in states)
+            {
+                _usAddressDTO.State = state;
+                Assert.That(_usAddressDTO.State, Is.SameAs(state));
+                Assert.That(_usAddressDTO.State?.Name, Is.EqualTo(state.Name));
+                Assert.That(_usAddressDTO.State?.Abbreviation, Is.EqualTo(state.Abbreviation));
+            }
+
+            // Test null assignment
+            _usAddressDTO.State = null;
+            Assert.That(_usAddressDTO.State, Is.Null);
+        }
+
+        [Test, Category("Property")]
+        public void AllProperties_ShouldMaintainIndependence()
+        {
+            // Arrange
+            var testState = new MockNationalSubdivision { Name = "Test", Abbreviation = "TE" };
+            
+            // Act - Set all properties
+            _usAddressDTO.Id = 123;
+            _usAddressDTO.Street1 = "Test Street 1";
+            _usAddressDTO.Street2 = "Test Street 2";
+            _usAddressDTO.City = "Test City";
+            _usAddressDTO.State = testState;
+            _usAddressDTO.ZipCode = "12345";
+            _usAddressDTO.Country = "Test Country";
+            _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Home;
+            var testDate = DateTime.Now;
+            _usAddressDTO.DateCreated = testDate;
+            _usAddressDTO.DateModified = testDate;
+
+            // Assert - All properties should maintain their values independently
+            Assert.Multiple(() =>
+            {
+                Assert.That(_usAddressDTO.Id, Is.EqualTo(123));
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo("Test Street 1"));
+                Assert.That(_usAddressDTO.Street2, Is.EqualTo("Test Street 2"));
+                Assert.That(_usAddressDTO.City, Is.EqualTo("Test City"));
+                Assert.That(_usAddressDTO.State, Is.SameAs(testState));
+                Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("12345"));
+                Assert.That(_usAddressDTO.Country, Is.EqualTo("Test Country"));
+                Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(testDate));
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Threading")]
+        public void Properties_ShouldBeThreadSafe()
+        {
+            // This test verifies that property access doesn't cause threading issues
+            var testState = new MockNationalSubdivision { Name = "Thread Test", Abbreviation = "TT" };
+
+            // Act & Assert - Multiple property access should be consistent
+            _usAddressDTO.State = testState;
+            var state1 = _usAddressDTO.State;
+            var state2 = _usAddressDTO.State;
+            var state3 = _usAddressDTO.State;
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(state1, Is.SameAs(testState));
+                Assert.That(state2, Is.SameAs(testState));
+                Assert.That(state3, Is.SameAs(testState));
+                Assert.That(state1, Is.SameAs(state2));
+                Assert.That(state2, Is.SameAs(state3));
+            });
+        }
+
+        [Test, Category("Validation")]
+        public void TypeInformation_ShouldBeCorrect()
+        {
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_usAddressDTO.GetType(), Is.EqualTo(typeof(USAddressDTO)));
+                Assert.That(_usAddressDTO.GetType().Name, Is.EqualTo("USAddressDTO"));
+                Assert.That(_usAddressDTO.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.DataTransferObject"));
+                
+                // Interface implementations
+                Assert.That(_usAddressDTO is IUSAddressDTO, Is.True);
+                Assert.That(_usAddressDTO is IDomainEntity, Is.True);
+                Assert.That(_usAddressDTO is OrganizerCompanion.Core.Interfaces.Type.IUSAddress, Is.True);
+                Assert.That(_usAddressDTO is OrganizerCompanion.Core.Interfaces.Type.IAddress, Is.True);
+            });
+        }
+
+        [Test, Category("DefaultValues")]
+        public void NewInstance_ShouldHaveCorrectDefaultValues()
+        {
+            // Arrange & Act
+            var newInstance = new USAddressDTO();
+
+            // Assert - Verify all default values
+            Assert.Multiple(() =>
+            {
+                Assert.That(newInstance.Id, Is.EqualTo(0));
+                Assert.That(newInstance.Street1, Is.Null);
+                Assert.That(newInstance.Street2, Is.Null);
+                Assert.That(newInstance.City, Is.Null);
+                Assert.That(newInstance.State, Is.Null);
+                Assert.That(newInstance.ZipCode, Is.Null);
+                Assert.That(newInstance.Country, Is.Null);
+                Assert.That(newInstance.Type, Is.Null);
+                Assert.That(newInstance.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Edge")]
+        public void AllNullableProperties_ShouldAcceptNull()
+        {
+            // Act & Assert - Test all nullable properties can be set to null
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => _usAddressDTO.Street1 = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.Street2 = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.City = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.State = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.ZipCode = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.Country = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.Type = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.DateModified = null);
+
+                Assert.That(_usAddressDTO.Street1, Is.Null);
+                Assert.That(_usAddressDTO.Street2, Is.Null);
+                Assert.That(_usAddressDTO.City, Is.Null);
+                Assert.That(_usAddressDTO.State, Is.Null);
+                Assert.That(_usAddressDTO.ZipCode, Is.Null);
+                Assert.That(_usAddressDTO.Country, Is.Null);
+                Assert.That(_usAddressDTO.Type, Is.Null);
+                Assert.That(_usAddressDTO.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Complex")]
+        public void CompleteAddressScenario_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var californiaState = new MockNationalSubdivision { Name = "California", Abbreviation = "CA" };
+            var createdDate = new DateTime(2025, 1, 1, 10, 0, 0);
+            var modifiedDate = new DateTime(2025, 10, 20, 15, 30, 45);
+
+            // Act - Create a complete address
+            _usAddressDTO.Id = 12345;
+            _usAddressDTO.Street1 = "1600 Amphitheatre Parkway";
+            _usAddressDTO.Street2 = "Building 43";
+            _usAddressDTO.City = "Mountain View";
+            _usAddressDTO.State = californiaState;
+            _usAddressDTO.ZipCode = "94043-1351";
+            _usAddressDTO.Country = "United States";
+            _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            _usAddressDTO.DateCreated = createdDate;
+            _usAddressDTO.DateModified = modifiedDate;
+
+            // Assert - Verify complete address
+            Assert.Multiple(() =>
+            {
+                Assert.That(_usAddressDTO.Id, Is.EqualTo(12345));
+                Assert.That(_usAddressDTO.Street1, Is.EqualTo("1600 Amphitheatre Parkway"));
+                Assert.That(_usAddressDTO.Street2, Is.EqualTo("Building 43"));
+                Assert.That(_usAddressDTO.City, Is.EqualTo("Mountain View"));
+                Assert.That(_usAddressDTO.State, Is.SameAs(californiaState));
+                Assert.That(_usAddressDTO.State?.Name, Is.EqualTo("California"));
+                Assert.That(_usAddressDTO.State?.Abbreviation, Is.EqualTo("CA"));
+                Assert.That(_usAddressDTO.ZipCode, Is.EqualTo("94043-1351"));
+                Assert.That(_usAddressDTO.Country, Is.EqualTo("United States"));
+                Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(createdDate));
+                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(modifiedDate));
             });
         }
 

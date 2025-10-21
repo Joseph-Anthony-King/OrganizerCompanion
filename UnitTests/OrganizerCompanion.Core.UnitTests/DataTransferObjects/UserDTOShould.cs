@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
+using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
@@ -506,95 +507,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_userDTO, Is.InstanceOf<IDomainEntity>());
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void UserDTO_ShouldImplementIPerson()
-        {
-            Assert.That(_userDTO, Is.InstanceOf<OrganizerCompanion.Core.Interfaces.Type.IPerson>());
-        }
-
         #endregion
 
         #region Explicit Interface Implementation Tests - IDomainEntity
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_Id_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = domainEntity.Id; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_Id_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => domainEntity.Id = 123);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_IsCast_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = domainEntity.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_IsCast_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => domainEntity.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_CastId_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = domainEntity.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_CastId_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => domainEntity.CastId = 123);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_CastType_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = domainEntity.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntity_CastType_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            IDomainEntity domainEntity = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => domainEntity.CastType = "TestType");
-        }
 
         [Test, Category("DataTransferObjects")]
         public void IDomainEntity_Cast_ShouldThrowNotImplementedException()
@@ -618,263 +533,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #endregion
 
-        #region Explicit Interface Implementation Tests - IPerson
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_FirstName_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.FirstName; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_FirstName_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.FirstName = "Test");
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_MiddleName_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.MiddleName; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_MiddleName_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.MiddleName = "Test");
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_LastName_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.LastName; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_LastName_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.LastName = "Test");
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_FullName_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.FullName; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Pronouns_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.Pronouns; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Pronouns_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.Pronouns = OrganizerCompanion.Core.Enums.Pronouns.HeHim);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_BirthDate_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.BirthDate; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_BirthDate_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.BirthDate = DateTime.Now);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_DeceasedDate_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.DeceasedDate; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_DeceasedDate_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.DeceasedDate = DateTime.Now);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_JoinedDate_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.JoinedDate; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_JoinedDate_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.JoinedDate = DateTime.Now);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Emails_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.Emails; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Emails_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.Emails = []);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_PhoneNumbers_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.PhoneNumbers; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_PhoneNumbers_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.PhoneNumbers = []);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Addresses_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = person.Addresses; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IPerson_Addresses_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Arrange
-            OrganizerCompanion.Core.Interfaces.Type.IPerson person = _userDTO;
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => person.Addresses = []);
-        }
-
-        #endregion
-
         #region Public Interface Implementation Tests
 
-        [Test, Category("DataTransferObjects")]
-        public void PublicIsCast_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _userDTO.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void PublicIsCast_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _userDTO.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void PublicCastId_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _userDTO.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void PublicCastId_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _userDTO.CastId = 123);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void PublicCastType_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _userDTO.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void PublicCastType_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _userDTO.CastType = "TestType");
-        }
 
         [Test, Category("DataTransferObjects")]
         public void PublicCast_ShouldThrowNotImplementedException()
@@ -1361,6 +1021,428 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(deserializedUser.IsAdmin, Is.True);
                 Assert.That(deserializedUser.IsSuperUser, Is.False);
                 Assert.That(deserializedUser.Emails, Has.Count.EqualTo(1));
+            });
+        }
+
+        #endregion
+
+        #region Explicit Interface Implementation Tests - IUserDTO
+
+        [Test, Category("DataTransferObjects")]
+        public void IUserDTO_Emails_Get_ShouldThrowNotImplementedException()
+        {
+            // Arrange
+            IUserDTO userInterface = _userDTO;
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = userInterface.Emails; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IUserDTO_Emails_Set_ShouldThrowNotImplementedException()
+        {
+            // Arrange
+            IUserDTO userInterface = _userDTO;
+            var mockEmails = new List<IEmailDTO>();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { userInterface.Emails = mockEmails; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IUserDTO_PhoneNumbers_Get_ShouldThrowNotImplementedException()
+        {
+            // Arrange
+            IUserDTO userInterface = _userDTO;
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { var _ = userInterface.PhoneNumbers; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IUserDTO_PhoneNumbers_Set_ShouldThrowNotImplementedException()
+        {
+            // Arrange
+            IUserDTO userInterface = _userDTO;
+            var mockPhoneNumbers = new List<IPhoneNumberDTO>();
+
+            // Act & Assert
+            Assert.Throws<NotImplementedException>(() => { userInterface.PhoneNumbers = mockPhoneNumbers; });
+        }
+
+        #endregion
+
+        #region Comprehensive Coverage Tests
+
+        [Test, Category("Boundary")]
+        public void Id_ShouldHandleBoundaryValues()
+        {
+            // Test zero
+            _userDTO.Id = 0;
+            Assert.That(_userDTO.Id, Is.EqualTo(0));
+
+            // Test positive boundary
+            _userDTO.Id = int.MaxValue;
+            Assert.That(_userDTO.Id, Is.EqualTo(int.MaxValue));
+
+            // Test negative boundary
+            _userDTO.Id = int.MinValue;
+            Assert.That(_userDTO.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Unicode")]
+        public void StringProperties_ShouldHandleUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeFirstName = "José";
+            var unicodeMiddleName = "María";
+            var unicodeLastName = "Ñuñez";
+            var unicodeFullName = "José María Ñuñez";
+            var unicodeUserName = "josé.maría";
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                _userDTO.FirstName = unicodeFirstName;
+                Assert.That(_userDTO.FirstName, Is.EqualTo(unicodeFirstName));
+
+                _userDTO.MiddleName = unicodeMiddleName;
+                Assert.That(_userDTO.MiddleName, Is.EqualTo(unicodeMiddleName));
+
+                _userDTO.LastName = unicodeLastName;
+                Assert.That(_userDTO.LastName, Is.EqualTo(unicodeLastName));
+
+                _userDTO.FullName = unicodeFullName;
+                Assert.That(_userDTO.FullName, Is.EqualTo(unicodeFullName));
+
+                _userDTO.UserName = unicodeUserName;
+                Assert.That(_userDTO.UserName, Is.EqualTo(unicodeUserName));
+            });
+        }
+
+        [Test, Category("String")]
+        public void StringProperties_ShouldHandleVeryLongStrings()
+        {
+            // Arrange
+            var veryLongFirstName = new string('A', 10000);
+            var veryLongLastName = new string('B', 5000);
+            var veryLongUserName = new string('C', 3000);
+
+            // Act & Assert - DTOs should accept any string length
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => _userDTO.FirstName = veryLongFirstName);
+                Assert.That(_userDTO.FirstName, Is.EqualTo(veryLongFirstName));
+
+                Assert.DoesNotThrow(() => _userDTO.LastName = veryLongLastName);
+                Assert.That(_userDTO.LastName, Is.EqualTo(veryLongLastName));
+
+                Assert.DoesNotThrow(() => _userDTO.UserName = veryLongUserName);
+                Assert.That(_userDTO.UserName, Is.EqualTo(veryLongUserName));
+            });
+        }
+
+        [Test, Category("DateTime")]
+        public void DateProperties_ShouldHandlePreciseDateTime()
+        {
+            // Arrange
+            var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 999);
+            var minDateTime = DateTime.MinValue;
+            var maxDateTime = DateTime.MaxValue;
+
+            // Act & Assert for DateCreated
+            Assert.Multiple(() =>
+            {
+                _userDTO.DateCreated = preciseDateTime;
+                Assert.That(_userDTO.DateCreated, Is.EqualTo(preciseDateTime));
+
+                _userDTO.DateCreated = minDateTime;
+                Assert.That(_userDTO.DateCreated, Is.EqualTo(minDateTime));
+
+                _userDTO.DateCreated = maxDateTime;
+                Assert.That(_userDTO.DateCreated, Is.EqualTo(maxDateTime));
+            });
+
+            // Act & Assert for DateModified, BirthDate, DeceasedDate, JoinedDate
+            Assert.Multiple(() =>
+            {
+                _userDTO.DateModified = preciseDateTime;
+                Assert.That(_userDTO.DateModified, Is.EqualTo(preciseDateTime));
+
+                _userDTO.BirthDate = preciseDateTime;
+                Assert.That(_userDTO.BirthDate, Is.EqualTo(preciseDateTime));
+
+                _userDTO.DeceasedDate = preciseDateTime;
+                Assert.That(_userDTO.DeceasedDate, Is.EqualTo(preciseDateTime));
+
+                _userDTO.JoinedDate = preciseDateTime;
+                Assert.That(_userDTO.JoinedDate, Is.EqualTo(preciseDateTime));
+            });
+        }
+
+        [Test, Category("Collections")]
+        public void Collections_ShouldHandleLargeCollections()
+        {
+            // Arrange
+            var largeEmailList = new List<EmailDTO>();
+            for (int i = 0; i < 1000; i++)
+            {
+                largeEmailList.Add(new EmailDTO { Id = i, EmailAddress = $"user{i}@example.com" });
+            }
+
+            var largePhoneList = new List<PhoneNumberDTO>();
+            for (int i = 0; i < 500; i++)
+            {
+                largePhoneList.Add(new PhoneNumberDTO { Id = i, Phone = $"555-{i:D4}" });
+            }
+
+            var largeAddressList = new List<IAddressDTO>();
+            for (int i = 0; i < 100; i++)
+            {
+                largeAddressList.Add(new MockAddressDTO { Id = i });
+            }
+
+            // Act
+            _userDTO.Emails = largeEmailList;
+            _userDTO.PhoneNumbers = largePhoneList;
+            _userDTO.Addresses = largeAddressList;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_userDTO.Emails, Has.Count.EqualTo(1000));
+                Assert.That(_userDTO.PhoneNumbers, Has.Count.EqualTo(500));
+                Assert.That(_userDTO.Addresses, Has.Count.EqualTo(100));
+                Assert.That(_userDTO.Emails[999].EmailAddress, Is.EqualTo("user999@example.com"));
+                Assert.That(_userDTO.PhoneNumbers[499].Phone, Is.EqualTo("555-0499"));
+            });
+        }
+
+        [Test, Category("Interface")]
+        public void UserDTO_AsIUserDTO_ShouldProvideAccessibleProperties()
+        {
+            // Arrange
+            var userInterface = (IUserDTO)_userDTO;
+            var testDate = DateTime.Now;
+
+            // Act & Assert - Test accessible properties through interface
+            Assert.Multiple(() =>
+            {
+                userInterface.Id = 999;
+                Assert.That(_userDTO.Id, Is.EqualTo(999));
+
+                userInterface.FirstName = "Interface First";
+                Assert.That(_userDTO.FirstName, Is.EqualTo("Interface First"));
+
+                userInterface.LastName = "Interface Last";
+                Assert.That(_userDTO.LastName, Is.EqualTo("Interface Last"));
+
+                userInterface.UserName = "interface.user";
+                Assert.That(_userDTO.UserName, Is.EqualTo("interface.user"));
+
+                userInterface.IsActive = true;
+                Assert.That(_userDTO.IsActive, Is.True);
+
+                userInterface.DateModified = testDate;
+                Assert.That(_userDTO.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Interface")]
+        public void UserDTO_AsIDomainEntity_ShouldProvideRequiredProperties()
+        {
+            // Arrange
+            var domainEntity = (IDomainEntity)_userDTO;
+            var testDate = DateTime.Now;
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                domainEntity.Id = 555;
+                Assert.That(_userDTO.Id, Is.EqualTo(555));
+
+                domainEntity.DateModified = testDate;
+                Assert.That(_userDTO.DateModified, Is.EqualTo(testDate));
+
+                // Test Cast and ToJson methods throw NotImplementedException
+                Assert.Throws<NotImplementedException>(() => domainEntity.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => domainEntity.ToJson());
+            });
+        }
+
+        [Test, Category("Enum")]
+        public void Pronouns_ShouldHandleAllPronounEnumValues()
+        {
+            // Act & Assert - Test all enum values
+            foreach (Pronouns enumValue in Enum.GetValues<Pronouns>())
+            {
+                _userDTO.Pronouns = enumValue;
+                Assert.That(_userDTO.Pronouns, Is.EqualTo(enumValue));
+            }
+
+            // Test null value
+            _userDTO.Pronouns = null;
+            Assert.That(_userDTO.Pronouns, Is.Null);
+        }
+
+        [Test, Category("Validation")]
+        public void TypeInformation_ShouldBeCorrect()
+        {
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_userDTO.GetType(), Is.EqualTo(typeof(UserDTO)));
+                Assert.That(_userDTO.GetType().Name, Is.EqualTo("UserDTO"));
+                Assert.That(_userDTO.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.DataTransferObject"));
+                
+                // Interface implementations
+                Assert.That(_userDTO is IUserDTO, Is.True);
+                Assert.That(_userDTO is IDomainEntity, Is.True);
+            });
+        }
+
+        [Test, Category("DefaultValues")]
+        public void NewInstance_ShouldHaveCorrectDefaultValues()
+        {
+            // Arrange & Act
+            var newInstance = new UserDTO();
+
+            // Assert - Verify all default values
+            Assert.Multiple(() =>
+            {
+                Assert.That(newInstance.Id, Is.EqualTo(0));
+                Assert.That(newInstance.FirstName, Is.Null);
+                Assert.That(newInstance.MiddleName, Is.Null);
+                Assert.That(newInstance.LastName, Is.Null);
+                Assert.That(newInstance.FullName, Is.Null);
+                Assert.That(newInstance.UserName, Is.Null);
+                Assert.That(newInstance.Emails, Is.Not.Null);
+                Assert.That(newInstance.Emails, Is.Empty);
+                Assert.That(newInstance.PhoneNumbers, Is.Not.Null);
+                Assert.That(newInstance.PhoneNumbers, Is.Empty);
+                Assert.That(newInstance.Addresses, Is.Not.Null);
+                Assert.That(newInstance.Addresses, Is.Empty);
+                Assert.That(newInstance.Pronouns, Is.Null);
+                Assert.That(newInstance.BirthDate, Is.Null);
+                Assert.That(newInstance.DeceasedDate, Is.Null);
+                Assert.That(newInstance.JoinedDate, Is.Null);
+                Assert.That(newInstance.IsActive, Is.Null);
+                Assert.That(newInstance.IsDeceased, Is.Null);
+                Assert.That(newInstance.IsAdmin, Is.Null);
+                Assert.That(newInstance.IsSuperUser, Is.Null);
+                Assert.That(newInstance.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Complex")]
+        public void CompleteUserScenario_ShouldWorkCorrectly()
+        {
+            // Arrange
+            var createdDate = new DateTime(2025, 1, 1, 10, 0, 0);
+            var modifiedDate = new DateTime(2025, 10, 20, 15, 30, 45);
+            var birthDate = new DateTime(1990, 5, 15);
+            var joinedDate = new DateTime(2020, 1, 1);
+
+            var emails = new List<EmailDTO>
+            {
+                new() { Id = 1, EmailAddress = "primary@example.com" },
+                new() { Id = 2, EmailAddress = "secondary@example.com" }
+            };
+
+            var phoneNumbers = new List<PhoneNumberDTO>
+            {
+                new() { Id = 1, Phone = "555-0123" },
+                new() { Id = 2, Phone = "555-0456" }
+            };
+
+            var addresses = new List<IAddressDTO>
+            {
+                new MockAddressDTO { Id = 1 },
+                new MockAddressDTO { Id = 2 }
+            };
+
+            // Act - Create a complete user
+            _userDTO.Id = 12345;
+            _userDTO.FirstName = "John";
+            _userDTO.MiddleName = "Michael";
+            _userDTO.LastName = "Doe";
+            _userDTO.FullName = "John Michael Doe";
+            _userDTO.UserName = "john.doe";
+            _userDTO.Emails = emails;
+            _userDTO.PhoneNumbers = phoneNumbers;
+            _userDTO.Addresses = addresses;
+            _userDTO.Pronouns = OrganizerCompanion.Core.Enums.Pronouns.HeHim;
+            _userDTO.BirthDate = birthDate;
+            _userDTO.JoinedDate = joinedDate;
+            _userDTO.DeceasedDate = null;
+            _userDTO.IsActive = true;
+            _userDTO.IsDeceased = false;
+            _userDTO.IsAdmin = true;
+            _userDTO.IsSuperUser = false;
+            _userDTO.DateCreated = createdDate;
+            _userDTO.DateModified = modifiedDate;
+
+            // Assert - Verify complete user
+            Assert.Multiple(() =>
+            {
+                Assert.That(_userDTO.Id, Is.EqualTo(12345));
+                Assert.That(_userDTO.FirstName, Is.EqualTo("John"));
+                Assert.That(_userDTO.MiddleName, Is.EqualTo("Michael"));
+                Assert.That(_userDTO.LastName, Is.EqualTo("Doe"));
+                Assert.That(_userDTO.FullName, Is.EqualTo("John Michael Doe"));
+                Assert.That(_userDTO.UserName, Is.EqualTo("john.doe"));
+                Assert.That(_userDTO.Emails, Has.Count.EqualTo(2));
+                Assert.That(_userDTO.PhoneNumbers, Has.Count.EqualTo(2));
+                Assert.That(_userDTO.Addresses, Has.Count.EqualTo(2));
+                Assert.That(_userDTO.Pronouns, Is.EqualTo(OrganizerCompanion.Core.Enums.Pronouns.HeHim));
+                Assert.That(_userDTO.BirthDate, Is.EqualTo(birthDate));
+                Assert.That(_userDTO.JoinedDate, Is.EqualTo(joinedDate));
+                Assert.That(_userDTO.DeceasedDate, Is.Null);
+                Assert.That(_userDTO.IsActive, Is.True);
+                Assert.That(_userDTO.IsDeceased, Is.False);
+                Assert.That(_userDTO.IsAdmin, Is.True);
+                Assert.That(_userDTO.IsSuperUser, Is.False);
+                Assert.That(_userDTO.DateCreated, Is.EqualTo(createdDate));
+                Assert.That(_userDTO.DateModified, Is.EqualTo(modifiedDate));
+            });
+        }
+
+        [Test, Category("Edge")]
+        public void AllNullableProperties_ShouldAcceptNull()
+        {
+            // Act & Assert - Test all nullable properties can be set to null
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => _userDTO.FirstName = null);
+                Assert.DoesNotThrow(() => _userDTO.MiddleName = null);
+                Assert.DoesNotThrow(() => _userDTO.LastName = null);
+                Assert.DoesNotThrow(() => _userDTO.FullName = null);
+                Assert.DoesNotThrow(() => _userDTO.UserName = null);
+                Assert.DoesNotThrow(() => _userDTO.Pronouns = null);
+                Assert.DoesNotThrow(() => _userDTO.BirthDate = null);
+                Assert.DoesNotThrow(() => _userDTO.DeceasedDate = null);
+                Assert.DoesNotThrow(() => _userDTO.JoinedDate = null);
+                Assert.DoesNotThrow(() => _userDTO.IsActive = null);
+                Assert.DoesNotThrow(() => _userDTO.IsDeceased = null);
+                Assert.DoesNotThrow(() => _userDTO.IsAdmin = null);
+                Assert.DoesNotThrow(() => _userDTO.IsSuperUser = null);
+                Assert.DoesNotThrow(() => _userDTO.DateModified = null);
+
+                Assert.That(_userDTO.FirstName, Is.Null);
+                Assert.That(_userDTO.MiddleName, Is.Null);
+                Assert.That(_userDTO.LastName, Is.Null);
+                Assert.That(_userDTO.FullName, Is.Null);
+                Assert.That(_userDTO.UserName, Is.Null);
+                Assert.That(_userDTO.Pronouns, Is.Null);
+                Assert.That(_userDTO.BirthDate, Is.Null);
+                Assert.That(_userDTO.DeceasedDate, Is.Null);
+                Assert.That(_userDTO.JoinedDate, Is.Null);
+                Assert.That(_userDTO.IsActive, Is.Null);
+                Assert.That(_userDTO.IsDeceased, Is.Null);
+                Assert.That(_userDTO.IsAdmin, Is.Null);
+                Assert.That(_userDTO.IsSuperUser, Is.Null);
+                Assert.That(_userDTO.DateModified, Is.Null);
             });
         }
 

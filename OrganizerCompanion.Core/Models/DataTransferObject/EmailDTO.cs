@@ -9,12 +9,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class EmailDTO : IEmailDTO
     {
         #region Explicit Interface Implementations
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
@@ -25,15 +19,21 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
+        #region Properties
         [Required, JsonPropertyName("id")]
         public int Id { get; set; } = 0;
+
         [Required, JsonPropertyName("emailAddress")]
         public string? EmailAddress { get; set; } = null;
+
         [Required, JsonPropertyName("type")]
         public Types? Type { get; set; } = null;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
+        #endregion
     }
 }

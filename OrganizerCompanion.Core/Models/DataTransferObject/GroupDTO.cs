@@ -15,17 +15,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         };
         #endregion
 
-        #region Properties
         #region Explicit Interface Implementations
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         [JsonIgnore]
         List<IContactDTO> IGroupDTO.Members
         {
@@ -45,20 +35,28 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string ToJson() => throw new NotImplementedException();
         #endregion
 
+        #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
+
         [Required, JsonPropertyName("name")]
         public string? Name { get; set; } = null;
+
         [Required, JsonPropertyName("description")]
         public string? Description { get; set; } = null;
+
         [Required, JsonPropertyName("members")]
         public List<ContactDTO> Members { get; set; } = [];
+
         [JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int AccountId { get; set; } = 0;
+
         [JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AccountDTO? Account { get; set; } = null;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion

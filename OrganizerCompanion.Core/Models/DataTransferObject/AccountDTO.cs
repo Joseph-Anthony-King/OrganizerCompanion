@@ -40,12 +40,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
                 }
             }
         }
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
@@ -56,25 +50,36 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
+        #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
+
         [Required, JsonPropertyName("accountName")]
         public string? AccountName { get; set; } = null;
+
         [Required, JsonPropertyName("accountNumber")]
         public string? AccountNumber { get; set; } = null;
+
         [Required, JsonPropertyName("license"), GuidValidator]
         public string? License { get; set; } = null;
+
         [Required, JsonPropertyName("databaseConnection"), DatabaseConnectionValidator]
         public DatabaseConnection? DatabaseConnection { get; set; } = null;
+
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];
+
         [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? MainAccountId { get; set; } = null;
+
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<SubAccountDTO>? Accounts { get; set; } = null;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
+
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
+        #endregion
   }
 }

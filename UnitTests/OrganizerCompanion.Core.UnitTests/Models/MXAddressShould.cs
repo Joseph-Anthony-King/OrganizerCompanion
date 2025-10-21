@@ -400,64 +400,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
-    {
-      // Arrange
-      var originalDateCreated = _sut.DateCreated;
+        {
+            // Arrange
+            var originalDateCreated = _sut.DateCreated;
 
             // Act & Assert - DateCreated should not have a public setter
             var propertyInfo = typeof(MXAddress).GetProperty(nameof(MXAddress.DateCreated));
             Assert.That(propertyInfo, Is.Not.Null);
-      Assert.Multiple(() =>
-      {
-        Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
-        Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
-      });
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
+            });
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void DateModified_CanBeSetDirectly()
         {
             // Arrange
@@ -660,9 +618,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 property.Value.Invoke();
 
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified), 
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified),
                     $"Property {property.Key} should update DateModified");
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)),
                     $"Property {property.Key} should set DateModified to current time");
             }
         }
@@ -690,7 +648,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(() => JsonSerializer.Deserialize<object>(json), Throws.Nothing);
-                
+
                 // Verify key JSON properties exist
                 Assert.That(json, Does.Contain("\"id\":555"));
                 Assert.That(json, Does.Contain("\"street\":\"Calle Revoluci\\u00F3n 999\""));
@@ -760,15 +718,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             var jsonDocument = JsonDocument.Parse(json);
             var root = jsonDocument.RootElement;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
                 Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
-                
+
                 Assert.That(root.TryGetProperty("street", out var streetProperty), Is.True);
                 Assert.That(streetProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
+
                 Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
                 Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
@@ -868,7 +826,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var mockEntity1 = new MockDomainEntity();
             var mockEntity2 = new AnotherMockEntity();
-            
+
             _sut.LinkedEntity = mockEntity1;
             var firstType = _sut.LinkedEntityType;
 
@@ -1225,7 +1183,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = -100;
             _sut.Street = "Calle Negative";
             _sut.City = "Negative City";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
 
             // Act
             var result = _sut.Cast<MXAddressDTO>();
@@ -1319,6 +1277,622 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 // Assert
                 Assert.That(result.PostalCode, Is.EqualTo(postalCode), $"Postal code {postalCode} should be preserved");
             }
+        }
+
+        #endregion
+
+        #region Additional Comprehensive Coverage Tests
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
+        {
+            // Test that JsonConstructor handles unused parameters (isCast, castId, castType) correctly
+            
+            // Arrange & Act
+            var testDate = DateTime.Now;
+            var state = MXStates.Jalisco.ToStateModel();
+            var address = new MXAddress(
+                id: 999,
+                street: "Comprehensive Test Street 123",
+                neighborhood: "Test Neighborhood",
+                postalCode: "12345",
+                city: "Test City",
+                state: state,
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Home,
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate,
+                isCast: true,        // These parameters are unused by the constructor
+                castId: 12345,       // but should be handled gracefully
+                castType: "TestType"
+            );
+
+            // Assert - Verify that the object is created correctly and unused parameters don't affect it
+            Assert.Multiple(() =>
+            {
+                Assert.That(address.Id, Is.EqualTo(999));
+                Assert.That(address.Street, Is.EqualTo("Comprehensive Test Street 123"));
+                Assert.That(address.Neighborhood, Is.EqualTo("Test Neighborhood"));
+                Assert.That(address.PostalCode, Is.EqualTo("12345"));
+                Assert.That(address.City, Is.EqualTo("Test City"));
+                Assert.That(address.State, Is.EqualTo(state));
+                Assert.That(address.Country, Is.EqualTo("México"));
+                Assert.That(address.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(address.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(address.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionHandling_RethrowsCorrectly()
+        {
+            // This test verifies that the catch block in the Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut.Id = 1;
+            _sut.Street = "Test Street";
+            _sut.City = "Test City";
+
+            // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast MXAddress to type MockDomainEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DefaultConstructor_ShouldInitializeCountryToMexico()
+        {
+            // Test that default constructor sets Country to Mexico using extension method
+            
+            // Arrange & Act
+            var address = new MXAddress();
+
+            // Assert
+            Assert.That(address.Country, Is.EqualTo(Countries.Mexico.GetName()));
+        }
+
+        [Test, Category("Models")]
+        public void ToString_StateDisplayLogic_ComprehensiveTest()
+        {
+            // Test all ToString state display logic branches
+            
+            // Case 1: State with abbreviation (should use abbreviation)
+            _sut.Id = 1;
+            _sut.Street = "Test Street";
+            _sut.City = "Test City";
+            _sut.PostalCode = "12345";
+            _sut.State = new MXState { Name = "Jalisco", Abbreviation = "JA" };
+            
+            var result1 = _sut.ToString();
+            Assert.That(result1, Does.Contain(".State:JA"));
+            
+            // Case 2: State with name but null abbreviation (should use name)
+            _sut.State = new MXState { Name = "Yucatán", Abbreviation = null };
+            
+            var result2 = _sut.ToString();
+            Assert.That(result2, Does.Contain(".State:Yucatán"));
+            
+            // Case 3: State with both null (should use "Unknown")
+            _sut.State = new MXState { Name = null, Abbreviation = null };
+            
+            var result3 = _sut.ToString();
+            Assert.That(result3, Does.Contain(".State:Unknown"));
+            
+            // Case 4: Null state (should use "Unknown")
+            _sut.State = null;
+            
+            var result4 = _sut.ToString();
+            Assert.That(result4, Does.Contain(".State:Unknown"));
+        }
+
+        [Test, Category("Models")]
+        public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
+        {
+            // Test that the serialization options handle complex scenarios correctly
+            
+            // Arrange - Create address with complex data
+            _sut = new MXAddress(
+                id: 1,
+                street: "Serialization Test Street",
+                neighborhood: "Test Neighborhood",
+                postalCode: "01000",
+                city: "Ciudad de México",
+                state: MXStates.CiudadDeMéxico.ToStateModel(),
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Work,
+                dateCreated: DateTime.Now.AddHours(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act & Assert - Multiple serialization calls should work consistently
+            string json1, json2, json3;
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => json1 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json2 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json3 = _sut.ToJson());
+            });
+
+            // All serializations should produce valid JSON
+            json1 = _sut.ToJson();
+            json2 = _sut.ToJson();
+            json3 = _sut.ToJson();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(json1, Is.Not.Null.And.Not.Empty);
+                Assert.That(json2, Is.Not.Null.And.Not.Empty);
+                Assert.That(json3, Is.Not.Null.And.Not.Empty);
+                Assert.That(json1, Is.EqualTo(json2));
+                Assert.That(json2, Is.EqualTo(json3));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
+        {
+            // Test that multiple Cast calls create independent DTO instances
+            
+            // Arrange
+            _sut = new MXAddress(
+                id: 100,
+                street: "Multi Cast Street",
+                neighborhood: "Multi Neighborhood",
+                postalCode: "12345",
+                city: "Multi City",
+                state: MXStates.Jalisco.ToStateModel(),
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                dateCreated: DateTime.Now.AddDays(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act - Cast to different supported types
+            var addressDto1 = _sut.Cast<MXAddressDTO>();
+            var addressDto2 = _sut.Cast<MXAddressDTO>();
+            var iAddressDto = _sut.Cast<IMXAddressDTO>();
+
+            // Assert - All should be different instances but with same data
+            Assert.Multiple(() =>
+            {
+                Assert.That(addressDto1, Is.Not.SameAs(addressDto2));
+                Assert.That(addressDto1, Is.Not.SameAs(iAddressDto));
+                Assert.That(addressDto2, Is.Not.SameAs(iAddressDto));
+                
+                // All should have same data
+                Assert.That(addressDto1.Id, Is.EqualTo(100));
+                Assert.That(addressDto2.Id, Is.EqualTo(100));
+                Assert.That(iAddressDto.Id, Is.EqualTo(100));
+                
+                Assert.That(addressDto1.Street, Is.EqualTo("Multi Cast Street"));
+                Assert.That(addressDto2.Street, Is.EqualTo("Multi Cast Street"));
+                Assert.That(iAddressDto.Street, Is.EqualTo("Multi Cast Street"));
+                
+                Assert.That(addressDto1.Neighborhood, Is.EqualTo("Multi Neighborhood"));
+                Assert.That(addressDto2.Neighborhood, Is.EqualTo("Multi Neighborhood"));
+                Assert.That(iAddressDto.Neighborhood, Is.EqualTo("Multi Neighborhood"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_ComplexTypeOperations_ShouldUpdateLinkedEntityTypeCorrectly()
+        {
+            // Test comprehensive LinkedEntity behavior with type changes
+            
+            // Arrange
+            var entity1 = new MockDomainEntity();
+            var entity2 = new AnotherMockEntity();
+            var originalDateModified = _sut.DateModified;
+
+            // Act & Assert - Test multiple entity changes
+            System.Threading.Thread.Sleep(10);
+            _sut.LinkedEntity = entity1;
+            var firstModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity1));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(firstModified, Is.GreaterThan(originalDateModified));
+            });
+
+            System.Threading.Thread.Sleep(10);
+            _sut.LinkedEntity = entity2;
+            var secondModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity2));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+                Assert.That(secondModified, Is.GreaterThan(firstModified));
+            });
+
+            System.Threading.Thread.Sleep(10);
+            _sut.LinkedEntity = null;
+            var thirdModified = _sut.DateModified;
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(thirdModified, Is.GreaterThan(secondModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DateModified_PropertyChangeCombinations_ShouldUpdateInSequence()
+        {
+            // Test that rapid sequential property changes all update DateModified correctly
+            
+            // Arrange
+            _sut = new MXAddress();
+            var timestamps = new List<DateTime?>
+            {
+              _sut.DateModified // Initial state
+            };
+
+            // Act & Assert - Test sequential property changes
+            System.Threading.Thread.Sleep(2);
+            _sut.Id = 1;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.Street = "Sequential Street";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.Neighborhood = "Sequential Neighborhood";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.PostalCode = "12345";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.City = "Sequential City";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.State = MXStates.Jalisco.ToStateModel();
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.Country = "Updated México";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.LinkedEntityId = 999;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.LinkedEntity = new MockDomainEntity();
+            timestamps.Add(_sut.DateModified);
+
+            // Assert - Each timestamp should be greater than the previous
+            for (int i = 1; i < timestamps.Count; i++)
+            {
+                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]), 
+                    $"Timestamp at index {i} should be greater than timestamp at index {i - 1}");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerialization_WithSpecialCharactersAndUnicode_ShouldSerializeCorrectly()
+        {
+            // Test JSON serialization with special characters and Unicode
+            
+            // Arrange
+            _sut.Id = 888;
+            _sut.Street = "Calle José María Morelos y Pavón #123 (Esquina)";
+            _sut.Neighborhood = "Colonia Américas Unidas & Desarrollo";
+            _sut.PostalCode = "12345";
+            _sut.City = "Mérida de Yucatán";
+            _sut.State = MXStates.Yucatán.ToStateModel();
+            _sut.Country = "México 🇲🇽";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"id\":888"));
+                
+                // Verify JSON is valid by attempting to parse
+                Assert.DoesNotThrow(() =>
+                {
+                    var document = System.Text.Json.JsonDocument.Parse(json);
+                    Assert.That(document.RootElement.ValueKind, Is.EqualTo(System.Text.Json.JsonValueKind.Object));
+                    document.Dispose();
+                });
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AllMXStatesExtensions_ComprehensiveTest()
+        {
+            // Test all MX states from the enum work correctly with ToStateModel extension
+            
+            var allMXStates = Enum.GetValues<MXStates>();
+            
+            foreach (var state in allMXStates)
+            {
+                // Arrange
+                var stateModel = state.ToStateModel();
+                _sut.State = stateModel;
+                
+                // Act & Assert
+                Assert.Multiple(() =>
+                {
+                    Assert.That(_sut.State, Is.Not.Null);
+                    Assert.That(_sut.State.Name, Is.Not.Null.And.Not.Empty);
+                    Assert.That(_sut.State.Abbreviation, Is.Not.Null.And.Not.Empty);
+                });
+                
+                // Test ToString with each state
+                _sut.Id = (int)state;
+                _sut.Street = $"Test Street for {state}";
+                _sut.City = "Test City";
+                _sut.PostalCode = "12345";
+                
+                var toStringResult = _sut.ToString();
+                Assert.That(toStringResult, Does.Contain($".State:{stateModel.Abbreviation}"));
+            }
+        }
+
+        [Test, Category("Models")]
+        public void MXAddress_ComprehensiveFunctionalityIntegrationTest()
+        {
+            // Comprehensive test that exercises all major functionality together
+            
+            // Test default constructor
+            var defaultAddress = new MXAddress();
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultAddress, Is.Not.Null);
+                Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(defaultAddress.Country, Is.EqualTo(Countries.Mexico.GetName()));
+            });
+            
+            // Test JsonConstructor with comprehensive data
+            var testDate = DateTime.Now;
+            var state = MXStates.CiudadDeMéxico.ToStateModel();
+            var comprehensiveAddress = new MXAddress(
+                id: 12345,
+                street: "Comprehensive Test Address",
+                neighborhood: "Test Neighborhood",
+                postalCode: "01000",
+                city: "Ciudad de México",
+                state: state,
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Work,
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate
+            );
+            
+            // Verify comprehensive properties
+            Assert.Multiple(() =>
+            {
+                Assert.That(comprehensiveAddress.Id, Is.EqualTo(12345));
+                Assert.That(comprehensiveAddress.Street, Is.EqualTo("Comprehensive Test Address"));
+                Assert.That(comprehensiveAddress.Neighborhood, Is.EqualTo("Test Neighborhood"));
+                Assert.That(comprehensiveAddress.PostalCode, Is.EqualTo("01000"));
+                Assert.That(comprehensiveAddress.City, Is.EqualTo("Ciudad de México"));
+                Assert.That(comprehensiveAddress.State, Is.EqualTo(state));
+                Assert.That(comprehensiveAddress.Country, Is.EqualTo("México"));
+                Assert.That(comprehensiveAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(comprehensiveAddress.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(comprehensiveAddress.DateModified, Is.EqualTo(testDate));
+            });
+            
+            // Test all property setters
+            defaultAddress.Id = 54321;
+            defaultAddress.Street = "Updated Street";
+            defaultAddress.Neighborhood = "Updated Neighborhood";
+            defaultAddress.PostalCode = "54321";
+            defaultAddress.City = "Updated City";
+            defaultAddress.State = MXStates.Jalisco.ToStateModel();
+            defaultAddress.Country = "Updated México";
+            defaultAddress.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            defaultAddress.LinkedEntityId = 999;
+            defaultAddress.LinkedEntity = new MockDomainEntity();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultAddress.Id, Is.EqualTo(54321));
+                Assert.That(defaultAddress.Street, Is.EqualTo("Updated Street"));
+                Assert.That(defaultAddress.Neighborhood, Is.EqualTo("Updated Neighborhood"));
+                Assert.That(defaultAddress.PostalCode, Is.EqualTo("54321"));
+                Assert.That(defaultAddress.City, Is.EqualTo("Updated City"));
+                Assert.That(defaultAddress.Country, Is.EqualTo("Updated México"));
+                Assert.That(defaultAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(defaultAddress.LinkedEntityId, Is.EqualTo(999));
+                Assert.That(defaultAddress.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            });
+            
+            // Test Cast functionality
+            var addressDto = defaultAddress.Cast<MXAddressDTO>();
+            var iAddressDto = defaultAddress.Cast<IMXAddressDTO>();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(addressDto, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(iAddressDto, Is.InstanceOf<MXAddressDTO>());
+                Assert.That(addressDto.Id, Is.EqualTo(defaultAddress.Id));
+                Assert.That(iAddressDto.Id, Is.EqualTo(defaultAddress.Id));
+            });
+            
+            // Test JSON serialization
+            var json = defaultAddress.ToJson();
+            Assert.That(json, Is.Not.Null.And.Not.Empty);
+            
+            // Test ToString functionality
+            var stringResult = defaultAddress.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
+                Assert.That(stringResult, Does.Contain("Updated Street"));
+                Assert.That(stringResult, Does.Contain("54321"));
+                Assert.That(stringResult, Does.Contain("JA")); // Jalisco abbreviation
+            });
+            
+            // Test exception scenarios
+            Assert.Throws<InvalidCastException>(() => defaultAddress.Cast<MockDomainEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_ReadOnlyProperty_ComprehensiveBehaviorTest()
+        {
+            // Comprehensive test of LinkedEntityType read-only behavior
+            
+            // Verify property is read-only
+            var property = typeof(MXAddress).GetProperty("LinkedEntityType");
+            Assert.That(property?.SetMethod, Is.Null, "LinkedEntityType should be read-only");
+            
+            // Test behavior with null LinkedEntity
+            _sut.LinkedEntity = null;
+            Assert.That(_sut.LinkedEntityType, Is.Null);
+            
+            // Test behavior with various entity types
+            var mockEntity = new MockDomainEntity();
+            _sut.LinkedEntity = mockEntity;
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+            
+            var anotherEntity = new AnotherMockEntity();
+            _sut.LinkedEntity = anotherEntity;
+            Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+            
+            // Test that setting back to null clears the type
+            _sut.LinkedEntity = null;
+            Assert.That(_sut.LinkedEntityType, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionRethrowing_ShouldPreserveOriginalException()
+        {
+            // Test that the catch block in Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut = new MXAddress
+            {
+                Id = 1,
+                Street = "Exception Test Street",
+                City = "Exception City"
+            };
+            
+            // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast MXAddress to type MockDomainEntity"));
+                Assert.That(ex.InnerException, Is.Null); // Should be the original exception, not wrapped
+            });
+            
+            // Test multiple unsupported types
+            Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void DateCreated_ReadOnlyBehavior_ComprehensiveTest()
+        {
+            // Comprehensive test of DateCreated read-only behavior
+            
+            // Verify property is read-only
+            var property = typeof(MXAddress).GetProperty("DateCreated");
+            Assert.That(property?.SetMethod, Is.Null, "DateCreated should be read-only");
+            
+            // Test that DateCreated is set during construction and doesn't change
+            var beforeCreation = DateTime.Now;
+            var address1 = new MXAddress();
+            var afterCreation = DateTime.Now;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(address1.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(address1.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
+            
+            // Test that different instances have different DateCreated values
+            System.Threading.Thread.Sleep(1);
+            var address2 = new MXAddress();
+            Assert.That(address2.DateCreated, Is.GreaterThanOrEqualTo(address1.DateCreated));
+            
+            // Test JsonConstructor with specific DateCreated
+            var specificDate = DateTime.Now.AddDays(-5);
+            var address3 = new MXAddress(
+                id: 1,
+                street: "Date Test Street",
+                neighborhood: "Date Test",
+                postalCode: "12345",
+                city: "Date City",
+                state: MXStates.Jalisco.ToStateModel(),
+                country: "México",
+                type: OrganizerCompanion.Core.Enums.Types.Home,
+                dateCreated: specificDate,
+                dateModified: DateTime.Now
+            );
+            
+            Assert.That(address3.DateCreated, Is.EqualTo(specificDate));
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithExtremeValues_ShouldHandleAllScenarios()
+        {
+            // Test ToString with various extreme value combinations
+            
+            // Case 1: Maximum values
+            _sut.Id = int.MaxValue;
+            _sut.Street = new string('A', 1000);
+            _sut.City = new string('B', 500);
+            _sut.PostalCode = new string('1', 10);
+            _sut.State = new MXState { Name = "VeryLongStateName", Abbreviation = "VLSN" };
+            
+            var maxResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(maxResult, Is.Not.Null);
+                Assert.That(maxResult, Does.Contain(int.MaxValue.ToString()));
+                Assert.That(maxResult, Does.Contain(".Id:" + int.MaxValue));
+                Assert.That(maxResult, Does.Contain(".State:VLSN"));
+            });
+
+            // Case 2: Minimum/Zero values with empty strings
+            _sut.Id = 0;
+            _sut.Street = "";
+            _sut.City = "";
+            _sut.PostalCode = "";
+            _sut.State = new MXState { Name = "", Abbreviation = "" };
+            
+            var minResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(minResult, Is.Not.Null);
+                Assert.That(minResult, Does.Contain(".Id:0"));
+                Assert.That(minResult, Does.Contain(".State:")); // Empty abbreviation will be used, resulting in empty state display
+            });
+
+            // Case 3: Negative ID with null values
+            _sut.Id = -42;
+            _sut.Street = null;
+            _sut.City = null;
+            _sut.PostalCode = null;
+            _sut.State = null;
+            
+            var nullResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(nullResult, Is.Not.Null);
+                Assert.That(nullResult, Does.Contain(".Id:-42"));
+                Assert.That(nullResult, Does.Contain(".State:Unknown"));
+            });
         }
 
         #endregion

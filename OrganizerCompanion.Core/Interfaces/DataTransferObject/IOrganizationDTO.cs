@@ -1,8 +1,9 @@
-﻿namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
+﻿using OrganizerCompanion.Core.Interfaces.Domain;
+
+namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IOrganizationDTO
+    internal interface IOrganizationDTO : IDomainEntity
     {
-        int Id { get; set; }
         string? OrganizationName { get; set; }
         List<IEmailDTO> Emails { get; set; }
         List<IPhoneNumberDTO> PhoneNumbers { get; set; }

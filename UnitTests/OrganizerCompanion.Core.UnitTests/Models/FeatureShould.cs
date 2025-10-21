@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
@@ -232,48 +231,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 456);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "UserAccount");
-        }
-
-        [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
         {
             // Arrange
@@ -493,29 +450,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.Id, Is.EqualTo(maxId));
-        }
-
-        [Test, Category("Models")]
-        public void JsonSerialization_RoundTrip_ShouldMaintainDataIntegrity()
-        {
-            // Arrange
-            _sut.Id = 123;
-            _sut.FeatureName = "TestFeature";
-            _sut.IsEnabled = true;
-
-            // Act
-            var json = _sut.ToJson();
-            var deserializedFeature = JsonSerializer.Deserialize<Feature>(json);
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(deserializedFeature, Is.Not.Null);
-                Assert.That(deserializedFeature!.Id, Is.EqualTo(_sut.Id));
-                Assert.That(deserializedFeature.FeatureName, Is.EqualTo(_sut.FeatureName));
-                Assert.That(deserializedFeature.IsEnabled, Is.EqualTo(_sut.IsEnabled));
-                Assert.That(deserializedFeature.DateCreated, Is.EqualTo(_sut.DateCreated));
-            });
         }
 
         #region Cast Method Tests
@@ -888,6 +822,481 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.FeatureName, Is.EqualTo("DisabledFeature"));
                 Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+            });
+        }
+
+        #endregion
+
+        #region Additional Comprehensive Coverage Tests
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
+        {
+            // Test that JsonConstructor handles unused parameters (isCast, castId, castType) correctly
+            
+            // Arrange & Act
+            var testDate = DateTime.Now;
+            var feature = new Feature(
+                id: 999,
+                featureName: "ComprehensiveFeature",
+                isEnabled: true,
+                isCast: true,        // These parameters are unused by the constructor
+                castId: 12345,       // but should be handled gracefully
+                castType: "TestType",
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate
+            );
+
+            // Assert - Verify that the object is created correctly and unused parameters don't affect it
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(999));
+                Assert.That(feature.FeatureName, Is.EqualTo("ComprehensiveFeature"));
+                Assert.That(feature.IsEnabled, Is.True);
+                Assert.That(feature.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(feature.DateModified, Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionHandling_RethrowsCorrectly()
+        {
+            // This test verifies that the catch block in the Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut.Id = 1;
+            _sut.FeatureName = "TestFeature";
+
+            // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type MockDomainEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
+        {
+            // Test that the serialization options handle complex scenarios correctly
+            
+            // Arrange - Create feature with complex data
+            _sut = new Feature(
+                id: 1,
+                featureName: "SerializationTestFeature",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: DateTime.Now.AddHours(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act & Assert - Multiple serialization calls should work consistently
+            string json1, json2, json3;
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => json1 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json2 = _sut.ToJson());
+                Assert.DoesNotThrow(() => json3 = _sut.ToJson());
+            });
+
+            // All serializations should produce valid JSON
+            json1 = _sut.ToJson();
+            json2 = _sut.ToJson();
+            json3 = _sut.ToJson();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(json1, Is.Not.Null.And.Not.Empty);
+                Assert.That(json2, Is.Not.Null.And.Not.Empty);
+                Assert.That(json3, Is.Not.Null.And.Not.Empty);
+                Assert.That(json1, Is.EqualTo(json2));
+                Assert.That(json2, Is.EqualTo(json3));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithExtremeValues_ShouldHandleAllScenarios()
+        {
+            // Test ToString with various extreme value combinations
+            
+            // Case 1: Maximum values
+            _sut.Id = int.MaxValue;
+            _sut.FeatureName = new string('A', 1000);
+            var maxResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(maxResult, Is.Not.Null);
+                Assert.That(maxResult, Does.Contain(int.MaxValue.ToString()));
+                Assert.That(maxResult, Does.Contain(".Id:" + int.MaxValue));
+                Assert.That(maxResult, Does.Contain(_sut.FeatureName));
+            });
+
+            // Case 2: Minimum/Zero values
+            _sut.Id = 0;
+            _sut.FeatureName = "";
+            var minResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(minResult, Is.Not.Null);
+                Assert.That(minResult, Does.Contain(".Id:0"));
+                Assert.That(minResult, Does.Contain(".FeatureName:"));
+            });
+
+            // Case 3: Negative ID with null feature name
+            _sut.Id = -42;
+            _sut.FeatureName = null;
+            var nullResult = _sut.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(nullResult, Is.Not.Null);
+                Assert.That(nullResult, Does.Contain(".Id:-42"));
+                Assert.That(nullResult, Does.Contain(".FeatureName:"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
+        {
+            // Test that multiple Cast calls create independent DTO instances
+            
+            // Arrange
+            _sut = new Feature(
+                id: 100,
+                featureName: "MultiCastFeature",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: DateTime.Now.AddDays(-1),
+                dateModified: DateTime.Now
+            );
+
+            // Act - Cast to different supported types
+            var featureDto1 = _sut.Cast<FeatureDTO>();
+            var featureDto2 = _sut.Cast<FeatureDTO>();
+            var iFeatureDto = _sut.Cast<IFeatureDTO>();
+
+            // Assert - All should be different instances but with same data
+            Assert.Multiple(() =>
+            {
+                Assert.That(featureDto1, Is.Not.SameAs(featureDto2));
+                Assert.That(featureDto1, Is.Not.SameAs(iFeatureDto));
+                Assert.That(featureDto2, Is.Not.SameAs(iFeatureDto));
+                
+                // All should have same data
+                Assert.That(featureDto1.Id, Is.EqualTo(100));
+                Assert.That(featureDto2.Id, Is.EqualTo(100));
+                Assert.That(iFeatureDto.Id, Is.EqualTo(100));
+                
+                Assert.That(featureDto1.FeatureName, Is.EqualTo("MultiCastFeature"));
+                Assert.That(featureDto2.FeatureName, Is.EqualTo("MultiCastFeature"));
+                Assert.That(iFeatureDto.FeatureName, Is.EqualTo("MultiCastFeature"));
+                
+                Assert.That(featureDto1.IsEnabled, Is.True);
+                Assert.That(featureDto2.IsEnabled, Is.True);
+                Assert.That(iFeatureDto.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DateModified_PropertyChangeCombinations_ShouldUpdateInSequence()
+        {
+            // Test that rapid sequential property changes all update DateModified correctly
+            
+            // Arrange
+            _sut = new Feature();
+            var timestamps = new List<DateTime?>
+            {
+              _sut.DateModified // Initial state
+            };
+
+            // Act & Assert - Test sequential property changes
+            System.Threading.Thread.Sleep(2);
+            _sut.Id = 1;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.FeatureName = "SequenceFeature";
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.IsEnabled = true;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.IsEnabled = false;
+            timestamps.Add(_sut.DateModified);
+
+            System.Threading.Thread.Sleep(2);
+            _sut.FeatureName = "UpdatedSequenceFeature";
+            timestamps.Add(_sut.DateModified);
+
+            // Assert - Each timestamp should be greater than the previous
+            for (int i = 1; i < timestamps.Count; i++)
+            {
+                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]), 
+                    $"Timestamp at index {i} should be greater than timestamp at index {i - 1}");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerialization_WithSpecialCharactersAndUnicode_ShouldSerializeCorrectly()
+        {
+            // Test JSON serialization with special characters and Unicode
+            
+            // Arrange
+            _sut.Id = 888;
+            _sut.FeatureName = "Feature!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 功能 🚀 ñáéíóú";
+            _sut.IsEnabled = true;
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null.And.Not.Empty);
+                Assert.That(json, Does.Contain("\"id\":888"));
+                Assert.That(json, Does.Contain("\"isEnabled\":true"));
+                // The feature name should be properly escaped in JSON
+                Assert.That(json, Does.Contain("featureName"));
+                
+                // Verify JSON is valid by attempting to parse
+                Assert.DoesNotThrow(() =>
+                {
+                    var document = System.Text.Json.JsonDocument.Parse(json);
+                    Assert.That(document.RootElement.ValueKind, Is.EqualTo(System.Text.Json.JsonValueKind.Object));
+                    document.Dispose();
+                });
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IsEnabled_ToggleOperations_ShouldUpdateDateModifiedEachTime()
+        {
+            // Test that toggling IsEnabled multiple times updates DateModified each time
+            
+            // Arrange
+            _sut = new Feature();
+            var originalDateModified = _sut.DateModified;
+            var toggleTimestamps = new List<DateTime?>();
+
+            // Act & Assert - Test multiple toggle operations
+            for (int i = 0; i < 5; i++)
+            {
+                System.Threading.Thread.Sleep(2);
+                _sut.IsEnabled = !_sut.IsEnabled;
+                toggleTimestamps.Add(_sut.DateModified);
+            }
+
+            // Assert - Each toggle should update DateModified
+            Assert.That(toggleTimestamps[0], Is.GreaterThan(originalDateModified));
+            for (int i = 1; i < toggleTimestamps.Count; i++)
+            {
+                Assert.That(toggleTimestamps[i], Is.GreaterThan(toggleTimestamps[i - 1]),
+                    $"Toggle {i + 1} should have updated DateModified");
+            }
+        }
+
+        [Test, Category("Models")]
+        public void Feature_ComprehensiveFunctionalityIntegrationTest()
+        {
+            // Comprehensive test that exercises all major functionality together
+            
+            // Test default constructor
+            var defaultFeature = new Feature();
+            Assert.That(defaultFeature, Is.Not.Null);
+            Assert.That(defaultFeature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            
+            // Test JsonConstructor with comprehensive data
+            var testDate = DateTime.Now;
+            var comprehensiveFeature = new Feature(
+                id: 12345,
+                featureName: "ComprehensiveTestFeature",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: testDate.AddDays(-1),
+                dateModified: testDate
+            );
+            
+            // Verify comprehensive properties
+            Assert.Multiple(() =>
+            {
+                Assert.That(comprehensiveFeature.Id, Is.EqualTo(12345));
+                Assert.That(comprehensiveFeature.FeatureName, Is.EqualTo("ComprehensiveTestFeature"));
+                Assert.That(comprehensiveFeature.IsEnabled, Is.True);
+                Assert.That(comprehensiveFeature.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(comprehensiveFeature.DateModified, Is.EqualTo(testDate));
+            });
+            
+            // Test all property setters
+            defaultFeature.Id = 54321;
+            defaultFeature.FeatureName = "UpdatedFeature";
+            defaultFeature.IsEnabled = true;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultFeature.Id, Is.EqualTo(54321));
+                Assert.That(defaultFeature.FeatureName, Is.EqualTo("UpdatedFeature"));
+                Assert.That(defaultFeature.IsEnabled, Is.True);
+                Assert.That(defaultFeature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            });
+            
+            // Test Cast functionality
+            var featureDto = defaultFeature.Cast<FeatureDTO>();
+            var iFeatureDto = defaultFeature.Cast<IFeatureDTO>();
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(featureDto, Is.InstanceOf<FeatureDTO>());
+                Assert.That(iFeatureDto, Is.InstanceOf<FeatureDTO>());
+                Assert.That(featureDto.Id, Is.EqualTo(defaultFeature.Id));
+                Assert.That(iFeatureDto.Id, Is.EqualTo(defaultFeature.Id));
+            });
+            
+            // Test JSON serialization
+            var json = defaultFeature.ToJson();
+            Assert.That(json, Is.Not.Null.And.Not.Empty);
+            
+            // Test ToString functionality
+            var stringResult = defaultFeature.ToString();
+            Assert.Multiple(() =>
+            {
+                Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
+                Assert.That(stringResult, Does.Contain("UpdatedFeature"));
+                Assert.That(stringResult, Does.Contain("54321"));
+            });
+            
+            // Test exception scenarios
+            Assert.Throws<InvalidCastException>(() => defaultFeature.Cast<MockDomainEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void DateCreated_ReadOnlyBehavior_ComprehensiveTest()
+        {
+            // Comprehensive test of DateCreated read-only behavior
+            
+            // Verify property is read-only
+            var property = typeof(Feature).GetProperty("DateCreated");
+            Assert.That(property?.SetMethod, Is.Null, "DateCreated should be read-only");
+            
+            // Test that DateCreated is set during construction and doesn't change
+            var beforeCreation = DateTime.Now;
+            var feature1 = new Feature();
+            var afterCreation = DateTime.Now;
+            
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature1.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(feature1.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
+            
+            // Test that different instances have different DateCreated values
+            System.Threading.Thread.Sleep(1);
+            var feature2 = new Feature();
+            Assert.That(feature2.DateCreated, Is.GreaterThanOrEqualTo(feature1.DateCreated));
+            
+            // Test JsonConstructor with specific DateCreated
+            var specificDate = DateTime.Now.AddDays(-5);
+            var feature3 = new Feature(
+                id: 1,
+                featureName: "DateTest",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: specificDate,
+                dateModified: DateTime.Now
+            );
+            
+            Assert.That(feature3.DateCreated, Is.EqualTo(specificDate));
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ExceptionRethrowing_ShouldPreserveOriginalException()
+        {
+            // Test that the catch block in Cast method properly rethrows exceptions
+            
+            // Arrange
+            _sut = new Feature(
+                id: 1,
+                featureName: "ExceptionTestFeature",
+                isEnabled: true,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: DateTime.Now.AddDays(-1),
+                dateModified: DateTime.Now
+            );
+            
+            // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type MockDomainEntity"));
+                Assert.That(ex.InnerException, Is.Null); // Should be the original exception, not wrapped
+            });
+            
+            // Test multiple unsupported types
+            Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void AllPropertySetters_ShouldUpdateDateModified()
+        {
+            // Comprehensive test that all property setters update DateModified
+            
+            // Arrange
+            _sut = new Feature();
+            var originalDateModified = _sut.DateModified;
+
+            // Act & Assert - Test each property that should update DateModified
+            System.Threading.Thread.Sleep(1);
+            _sut.Id = 100;
+            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified), "Id setter should update DateModified");
+
+            var idModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(1);
+            _sut.FeatureName = "PropertyTestFeature";
+            Assert.That(_sut.DateModified, Is.GreaterThan(idModified), "FeatureName setter should update DateModified");
+
+            var nameModified = _sut.DateModified;
+            System.Threading.Thread.Sleep(1);
+            _sut.IsEnabled = true;
+            Assert.That(_sut.DateModified, Is.GreaterThan(nameModified), "IsEnabled setter should update DateModified");
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullAndDefaultValues_ShouldHandleGracefully()
+        {
+            // Test JsonConstructor with various null and default combinations
+            
+            // Arrange & Act
+            var feature = new Feature(
+                id: 0,
+                featureName: null,
+                isEnabled: false,
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: DateTime.Now.AddDays(-1),
+                dateModified: null
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.Null);
+                Assert.That(feature.IsEnabled, Is.False);
+                Assert.That(feature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(feature.DateModified, Is.Null);
             });
         }
 

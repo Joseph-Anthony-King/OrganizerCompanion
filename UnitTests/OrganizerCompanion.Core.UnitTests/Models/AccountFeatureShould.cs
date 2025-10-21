@@ -146,48 +146,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
@@ -883,5 +841,472 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.FeatureId = 300;
             Assert.That(_sut.DateModified, Is.Not.EqualTo(afterAccountIdChange));
         }
+
+        #region Comprehensive Coverage Tests
+
+        [Test, Category("Models")]
+        public void ImplementsIAccountFeature()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<IAccountFeature>());
+        }
+
+        [Test, Category("Models")]
+        public void ImplementsIDomainEntity()
+        {
+            // Act & Assert
+            Assert.That(_sut, Is.InstanceOf<IDomainEntity>());
+        }
+
+        [Test, Category("Models")]
+        public void TypeInformation_ShouldBeCorrect()
+        {
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.GetType(), Is.EqualTo(typeof(AccountFeature)));
+                Assert.That(_sut.GetType().Name, Is.EqualTo("AccountFeature"));
+                Assert.That(_sut.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.Domain"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithDateModifiedValue_SetsCorrectly()
+        {
+            // Arrange
+            var testDateCreated = new DateTime(2025, 1, 1, 10, 0, 0);
+            var testDateModified = new DateTime(2025, 10, 20, 15, 30, 45);
+
+            // Act
+            var accountFeature = new AccountFeature(
+                id: 555,
+                accountId: 666,
+                featureId: 777,
+                dateCreated: testDateCreated,
+                dateModified: testDateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Id, Is.EqualTo(555));
+                Assert.That(accountFeature.AccountId, Is.EqualTo(666));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(777));
+                Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
+                Assert.That(accountFeature.DateModified, Is.EqualTo(testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DefaultDateModified_IsDefault()
+        {
+            // Arrange & Act
+            var accountFeature = new AccountFeature();
+
+            // Assert
+            Assert.That(accountFeature.DateModified, Is.EqualTo(default(DateTime)));
+        }
+
+        [Test, Category("Models")]
+        public void DateCreated_IsReadOnlyAndSetAtConstruction()
+        {
+            // Arrange
+            var beforeCreation = DateTime.UtcNow;
+
+            // Act
+            var accountFeature = new AccountFeature();
+            var afterCreation = DateTime.UtcNow;
+
+            // Assert - Verify DateCreated is within the expected range
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(accountFeature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                
+                // Verify property doesn't have a public setter
+                var property = typeof(AccountFeature).GetProperty(nameof(AccountFeature.DateCreated));
+                Assert.That(property?.GetSetMethod(), Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_Exception_InTryCatch_ReThrowsOriginalException()
+        {
+            // Arrange
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
+            {
+                Feature = null // This will cause NullReferenceException
+            };
+
+            // Act & Assert - The try-catch block should re-throw the original exception
+            var ex = Assert.Throws<NullReferenceException>(() => _sut.Cast<FeatureDTO>());
+            Assert.That(ex, Is.Not.Null);
+        }
+
+        [Test, Category("Models")]
+        public void Cast_GenericException_ReThrowsCorrectly()
+        {
+            // Arrange - Create a scenario that might throw a different exception
+            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(
+                id: 789,
+                accountId: 123,
+                featureId: 456,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
+            {
+                Feature = feature
+            };
+
+            // Act & Assert - Test that unsupported types throw InvalidCastException
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<AccountFeature>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex, Is.Not.Null);
+                Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type AccountFeature"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitInterface_Feature_WithNull_AcceptsNull()
+        {
+            // Arrange
+            IAccountFeature accountFeature = _sut;
+            var initialFeature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            accountFeature.Feature = initialFeature;
+
+            // Act - Casting null to reference type succeeds in C#
+            accountFeature.Feature = null;
+
+            // Assert - Should accept null and reset FeatureId
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Feature, Is.Null);
+                Assert.That(_sut.Feature, Is.Null);
+                Assert.That(_sut.FeatureId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitInterface_Account_WithNull_AcceptsNull()
+        {
+            // Arrange
+            IAccountFeature accountFeature = _sut;
+            var initialAccount = new Account { Id = 123, AccountName = "Test" };
+            accountFeature.Account = initialAccount;
+
+            // Act - Casting null to reference type succeeds in C#
+            accountFeature.Account = null;
+
+            // Assert - Should accept null and reset AccountId
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Account, Is.Null);
+                Assert.That(_sut.Account, Is.Null);
+                Assert.That(_sut.AccountId, Is.EqualTo(0));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Account_Property_SetsAccountIdFromAccountId()
+        {
+            // Arrange
+            var account = new Account { Id = 999, AccountName = "Test Account" };
+
+            // Act
+            _sut.Account = account;
+
+            // Assert - Verify that setting Account also sets AccountId
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Account, Is.EqualTo(account));
+                Assert.That(_sut.AccountId, Is.EqualTo(999));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Feature_Property_SetsFeatureIdFromFeatureId()
+        {
+            // Arrange
+            var feature = new Feature(888, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+
+            // Act
+            _sut.Feature = feature;
+
+            // Assert - Verify that setting Feature also sets FeatureId
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Feature, Is.EqualTo(feature));
+                Assert.That(_sut.FeatureId, Is.EqualTo(888));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void MultiplePropertyChanges_UpdateDateModifiedEachTime()
+        {
+            // Arrange
+            var initialDateModified = _sut.DateModified;
+
+            // Act & Assert - Each property change should update DateModified
+            System.Threading.Thread.Sleep(1); // Ensure different timestamps
+            _sut.Id = 100;
+            var afterId = _sut.DateModified;
+            Assert.That(afterId, Is.Not.EqualTo(initialDateModified));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.AccountId = 200;
+            var afterAccountId = _sut.DateModified;
+            Assert.That(afterAccountId, Is.Not.EqualTo(afterId));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.FeatureId = 300;
+            var afterFeatureId = _sut.DateModified;
+            Assert.That(afterFeatureId, Is.Not.EqualTo(afterAccountId));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.Account = new Account { Id = 400 };
+            var afterAccount = _sut.DateModified;
+            Assert.That(afterAccount, Is.Not.EqualTo(afterFeatureId));
+
+            System.Threading.Thread.Sleep(1);
+            _sut.Feature = new Feature(500, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var afterFeature = _sut.DateModified;
+            Assert.That(afterFeature, Is.Not.EqualTo(afterAccount));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithComplexData_SerializesCorrectly()
+        {
+            // Arrange
+            _sut.Id = 12345;
+            _sut.AccountId = 67890;
+            _sut.FeatureId = 11111;
+            _sut.DateModified = new DateTime(2025, 10, 20, 14, 35, 42, 999);
+
+            // Act
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+
+                var jsonDocument = JsonDocument.Parse(json);
+                var root = jsonDocument.RootElement;
+
+                Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
+                Assert.That(idProperty.GetInt32(), Is.EqualTo(12345));
+
+                Assert.That(root.TryGetProperty("accountId", out var accountIdProperty), Is.True);
+                Assert.That(accountIdProperty.GetInt32(), Is.EqualTo(67890));
+
+                Assert.That(root.TryGetProperty("featureId", out var featureIdProperty), Is.True);
+                Assert.That(featureIdProperty.GetInt32(), Is.EqualTo(11111));
+
+                Assert.That(root.TryGetProperty("dateCreated", out var dateCreatedProperty), Is.True);
+                Assert.That(dateCreatedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+
+                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
+                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerializerOptions_HasIgnoreCyclesReferenceHandler()
+        {
+            // This test verifies that the serializer options are configured correctly
+            // by testing serialization doesn't fail with potential circular references
+
+            // Arrange
+            _sut.Id = 999;
+            _sut.AccountId = 888;
+            _sut.FeatureId = 777;
+
+            // Act - Should not throw due to ReferenceHandler.IgnoreCycles
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ExplicitInterface_Properties_WorkThroughInterface()
+        {
+            // Arrange
+            IAccountFeature accountFeature = _sut;
+            var feature = new Feature(123, "Interface Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var account = new Account { Id = 456, AccountName = "Interface Account" };
+
+            // Act & Assert - Test getting properties through interface
+            accountFeature.Feature = feature;
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Feature, Is.EqualTo(feature));
+                Assert.That(accountFeature.Feature, Is.SameAs(_sut.Feature));
+            });
+
+            accountFeature.Account = account;
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Account, Is.EqualTo(account));
+                Assert.That(accountFeature.Account, Is.SameAs(_sut.Account));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithEmptyFeatureName_HandlesCorrectly()
+        {
+            // Arrange
+            var feature = new Feature(1, "", false, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(
+                id: 777,
+                accountId: 555,
+                featureId: 666,
+                dateCreated: DateTime.UtcNow,
+                dateModified: null)
+            {
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(777));
+                Assert.That(dto.FeatureName, Is.EqualTo(""));
+                Assert.That(dto.IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithComplexFeature_PreservesAllProperties()
+        {
+            // Arrange
+            var feature = new Feature(999, "Complex Feature Name", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut = new AccountFeature(
+                id: 1000,
+                accountId: 2000,
+                featureId: 3000,
+                dateCreated: DateTime.UtcNow,
+                dateModified: DateTime.Now)
+            {
+                Feature = feature
+            };
+
+            // Act
+            var dto = _sut.Cast<FeatureDTO>();
+            var interfaceDto = _sut.Cast<IFeatureDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Test FeatureDTO cast
+                Assert.That(dto.Id, Is.EqualTo(1000));
+                Assert.That(dto.FeatureName, Is.EqualTo("Complex Feature Name"));
+                Assert.That(dto.IsEnabled, Is.True);
+
+                // Test IFeatureDTO cast
+                Assert.That(interfaceDto.Id, Is.EqualTo(1000));
+                Assert.That(interfaceDto.FeatureName, Is.EqualTo("Complex Feature Name"));
+                Assert.That(interfaceDto.IsEnabled, Is.True);
+
+                // Verify they're the same type but different instances
+                Assert.That(interfaceDto, Is.InstanceOf<FeatureDTO>());
+                Assert.That(dto, Is.Not.SameAs(interfaceDto));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void NegativeIds_AreAccepted()
+        {
+            // Arrange & Act - Domain models don't validate, they accept any int values
+            _sut.Id = -100;
+            _sut.AccountId = -200;
+            _sut.FeatureId = -300;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(-100));
+                Assert.That(_sut.AccountId, Is.EqualTo(-200));
+                Assert.That(_sut.FeatureId, Is.EqualTo(-300));
+                Assert.That(_sut.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CompleteIntegration_AllPropertiesAndMethods()
+        {
+            // Arrange
+            var feature = new Feature(1, "Integration Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var account = new Account { Id = 2, AccountName = "Integration Test Account" };
+            var createdDate = new DateTime(2025, 1, 1, 12, 0, 0);
+            var modifiedDate = new DateTime(2025, 10, 20, 18, 30, 45);
+
+      // Act - Create using JsonConstructor
+      var accountFeature = new AccountFeature(
+          id: 12345,
+          accountId: 67890,
+          featureId: 98765,
+          dateCreated: createdDate,
+          dateModified: modifiedDate)
+      {
+        // Set complex properties
+        Account = account,
+        Feature = feature
+      };
+
+      // Assert - Verify all properties
+      Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Id, Is.EqualTo(12345));
+                Assert.That(accountFeature.AccountId, Is.EqualTo(2)); // Should be overridden by Account.Id
+                Assert.That(accountFeature.Account, Is.EqualTo(account));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(1)); // Should be overridden by Feature.Id
+                Assert.That(accountFeature.Feature, Is.EqualTo(feature));
+                Assert.That(accountFeature.DateCreated, Is.EqualTo(createdDate));
+                Assert.That(accountFeature.DateModified, Is.Not.EqualTo(modifiedDate)); // Updated by property setters
+            });
+
+            // Test Cast method
+            var dto = accountFeature.Cast<FeatureDTO>();
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto.Id, Is.EqualTo(12345));
+                Assert.That(dto.FeatureName, Is.EqualTo("Integration Test Feature"));
+                Assert.That(dto.IsEnabled, Is.True);
+            });
+
+            // Test ToJson method
+            var json = accountFeature.ToJson();
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Contains.Substring("\"id\":12345"));
+                Assert.That(json, Contains.Substring("\"accountId\":2"));
+                Assert.That(json, Contains.Substring("\"featureId\":1"));
+            });
+        }
+
+        #endregion
     }
 }

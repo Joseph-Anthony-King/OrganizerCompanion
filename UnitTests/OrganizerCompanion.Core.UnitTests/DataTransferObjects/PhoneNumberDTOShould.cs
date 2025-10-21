@@ -211,48 +211,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region IDomainEntity Property Tests
 
         [Test, Category("DataTransferObjects")]
-        public void IsCast_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _phoneNumberDTO.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.IsCast = true);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _phoneNumberDTO.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.CastId = 123);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_ShouldThrowNotImplementedException_OnGet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _phoneNumberDTO.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_ShouldThrowNotImplementedException_OnSet()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.CastType = "TestType");
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetCorrectly()
         {
             // Arrange
@@ -415,23 +373,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
                 Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var isCastProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.IsCast));
-            var castIdProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CastId));
-            var castTypeProperty = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CastType));
-
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -732,13 +673,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange & Act
             IPhoneNumberDTO interfacePhone = _phoneNumberDTO;
             interfacePhone.Phone = "555-TYPE-TEST";
-            interfacePhone.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            interfacePhone.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("555-TYPE-TEST"));
-                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
                 Assert.That(interfacePhone.Phone, Is.EqualTo(_phoneNumberDTO.Phone));
                 Assert.That(interfacePhone.Type, Is.EqualTo(_phoneNumberDTO.Type));
             });
@@ -759,6 +700,566 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(deserialized!.Type, Is.EqualTo(type), 
                     $"Failed for type: {type}");
             }
+        }
+
+        #endregion
+
+        #region Additional Edge Case Tests
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldSupportSequentialAssignments()
+        {
+            // Arrange
+            var ids = new[] { 0, 1, -1, int.MaxValue, int.MinValue, 42, 999 };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var id in ids)
+                {
+                    _phoneNumberDTO.Id = id;
+                    Assert.That(_phoneNumberDTO.Id, Is.EqualTo(id));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.DateCreated = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.DateCreated = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.DateModified = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.DateModified = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
+
+            // Act
+            _phoneNumberDTO.DateCreated = preciseDate;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(preciseDate));
+            Assert.That(_phoneNumberDTO.DateCreated.Millisecond, Is.EqualTo(123));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
+
+            // Act
+            _phoneNumberDTO.DateModified = preciseDate;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(preciseDate));
+            Assert.That(_phoneNumberDTO.DateModified?.Millisecond, Is.EqualTo(456));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var unicodePhone = "电话: 123-456-7890 (测试)";
+
+            // Act
+            _phoneNumberDTO.Phone = unicodePhone;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(unicodePhone));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldAcceptVeryLongString()
+        {
+            // Arrange
+            var longPhone = new string('1', 10000) + " - Very Long Phone Number";
+
+            // Act
+            _phoneNumberDTO.Phone = longPhone;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(longPhone));
+            Assert.That(_phoneNumberDTO.Phone?.Length, Is.EqualTo(10025)); // 10000 + " - Very Long Phone Number".Length (25)
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldAcceptWhitespace()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                _phoneNumberDTO.Phone = "   ";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("   "));
+
+                _phoneNumberDTO.Phone = " 555-123-4567 ";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(" 555-123-4567 "));
+
+                _phoneNumberDTO.Phone = "\t\n\r";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("\t\n\r"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldHandleConsecutiveAssignments()
+        {
+            // Arrange
+            var phones = new[] { "555-0001", null, "", "555-0002", "   ", "555-FINAL" };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var phone in phones)
+                {
+                    _phoneNumberDTO.Phone = phone;
+                    Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(phone));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldSupportCastingFromInt()
+        {
+            // Arrange
+            var enumValue = (OrganizerCompanion.Core.Enums.Types)0;
+
+            // Act
+            _phoneNumberDTO.Type = enumValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Type, Is.EqualTo(enumValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldHandleNullToValueTransitions()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Start with null
+                _phoneNumberDTO.Type = null;
+                Assert.That(_phoneNumberDTO.Type, Is.Null);
+
+                // Assign each enum value
+                foreach (var enumValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
+                {
+                    _phoneNumberDTO.Type = enumValue;
+                    Assert.That(_phoneNumberDTO.Type, Is.EqualTo(enumValue));
+                    Assert.That(_phoneNumberDTO.Type.HasValue, Is.True);
+                    
+                    // Back to null
+                    _phoneNumberDTO.Type = null;
+                    Assert.That(_phoneNumberDTO.Type, Is.Null);
+                    Assert.That(_phoneNumberDTO.Type.HasValue, Is.False);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldSupportCastingFromInt()
+        {
+            // Arrange
+            var enumValue = (OrganizerCompanion.Core.Enums.Countries)0;
+
+            // Act
+            _phoneNumberDTO.Country = enumValue;
+
+            // Assert
+            Assert.That(_phoneNumberDTO.Country, Is.EqualTo(enumValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Country_ShouldHandleNullToValueTransitions()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Start with null
+                _phoneNumberDTO.Country = null;
+                Assert.That(_phoneNumberDTO.Country, Is.Null);
+
+                // Assign each enum value
+                foreach (var enumValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Countries>())
+                {
+                    _phoneNumberDTO.Country = enumValue;
+                    Assert.That(_phoneNumberDTO.Country, Is.EqualTo(enumValue));
+                    Assert.That(_phoneNumberDTO.Country.HasValue, Is.True);
+                    
+                    // Back to null
+                    _phoneNumberDTO.Country = null;
+                    Assert.That(_phoneNumberDTO.Country, Is.Null);
+                    Assert.That(_phoneNumberDTO.Country.HasValue, Is.False);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IPhoneNumberDTO_InterfaceConsistency_ShouldExposeAllProperties()
+        {
+            // Arrange
+            IPhoneNumberDTO interfaceDto = new PhoneNumberDTO();
+            var testModified = DateTime.Now.AddHours(-2);
+
+            // Act
+            interfaceDto.Id = 100;
+            interfaceDto.Phone = "555-INTERFACE";
+            interfaceDto.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            interfaceDto.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
+            interfaceDto.DateModified = testModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceDto.Id, Is.EqualTo(100));
+                Assert.That(interfaceDto.Phone, Is.EqualTo("555-INTERFACE"));
+                Assert.That(interfaceDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(interfaceDto.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
+                Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
+                Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHandleNullToDateTransitions()
+        {
+            // Arrange
+            var testDates = new DateTime[]
+            {
+                DateTime.Now,
+                DateTime.MinValue,
+                DateTime.MaxValue,
+                new DateTime(2020, 1, 1),
+                new DateTime(2030, 12, 31, 23, 59, 59)
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var date in testDates)
+                {
+                    // Start with null
+                    _phoneNumberDTO.DateModified = null;
+                    Assert.That(_phoneNumberDTO.DateModified, Is.Null);
+
+                    // Assign date
+                    _phoneNumberDTO.DateModified = date;
+                    Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(date));
+
+                    // Back to null
+                    _phoneNumberDTO.DateModified = null;
+                    Assert.That(_phoneNumberDTO.DateModified, Is.Null);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void PhoneNumberDTO_ShouldMaintainStateAcrossMultipleOperations()
+        {
+            // Arrange
+            var operations = new[]
+            {
+                new { Id = 1, Phone = (string?)"555-0001", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Home },
+                new { Id = 2, Phone = (string?)null, Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Work },
+                new { Id = 3, Phone = (string?)"", Type = (OrganizerCompanion.Core.Enums.Types?)null },
+                new { Id = 4, Phone = (string?)"555-0004", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Mobil }
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var op in operations)
+                {
+                    _phoneNumberDTO.Id = op.Id;
+                    _phoneNumberDTO.Phone = op.Phone;
+                    _phoneNumberDTO.Type = op.Type;
+
+                    Assert.That(_phoneNumberDTO.Id, Is.EqualTo(op.Id));
+                    Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(op.Phone));
+                    Assert.That(_phoneNumberDTO.Type, Is.EqualTo(op.Type));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void PhoneNumberDTO_PropertiesShouldBeIndependent()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.Id = 999;
+            _phoneNumberDTO.Phone = "555-INDEPENDENT";
+            _phoneNumberDTO.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
+            var testDate = DateTime.Now.AddDays(-5);
+            var testModified = DateTime.Now.AddHours(-3);
+            _phoneNumberDTO.DateCreated = testDate;
+            _phoneNumberDTO.DateModified = testModified;
+
+            // Store original values
+            var originalId = _phoneNumberDTO.Id;
+            var originalPhone = _phoneNumberDTO.Phone;
+            var originalType = _phoneNumberDTO.Type;
+            var originalCountry = _phoneNumberDTO.Country;
+            var originalCreated = _phoneNumberDTO.DateCreated;
+            var originalModified = _phoneNumberDTO.DateModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Change Id, verify others unchanged
+                _phoneNumberDTO.Id = 1000;
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(originalPhone));
+                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(originalType));
+                Assert.That(_phoneNumberDTO.Country, Is.EqualTo(originalCountry));
+                Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(originalModified));
+
+                // Change Phone, verify others unchanged
+                _phoneNumberDTO.Phone = "555-CHANGED";
+                Assert.That(_phoneNumberDTO.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(originalType));
+                Assert.That(_phoneNumberDTO.Country, Is.EqualTo(originalCountry));
+                Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(originalModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void PhoneNumberDTO_ShouldSupportObjectInitializerSyntax()
+        {
+            // Arrange
+            var testCreated = DateTime.Now.AddDays(-7);
+            var testModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var phoneDto = new PhoneNumberDTO
+            {
+                Id = 555,
+                Phone = "555-INITIALIZER",
+                Type = OrganizerCompanion.Core.Enums.Types.Billing,
+                Country = OrganizerCompanion.Core.Enums.Countries.UnitedKingdom,
+                DateCreated = testCreated,
+                DateModified = testModified
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneDto.Id, Is.EqualTo(555));
+                Assert.That(phoneDto.Phone, Is.EqualTo("555-INITIALIZER"));
+                Assert.That(phoneDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(phoneDto.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedKingdom));
+                Assert.That(phoneDto.DateCreated, Is.EqualTo(testCreated));
+                Assert.That(phoneDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.Cast<IDomainEntity>());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldConsistentlyThrowNotImplementedException()
+        {
+            // Arrange - Multiple calls should all throw
+            var exceptions = new List<NotImplementedException>();
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var ex = Assert.Throws<NotImplementedException>(() => _phoneNumberDTO.ToJson());
+                    Assert.That(ex, Is.Not.Null);
+                    if (ex != null)
+                    {
+                        exceptions.Add(ex);
+                    }
+                }
+                
+                // Verify all exceptions are separate instances
+                Assert.That(exceptions, Has.Count.EqualTo(3));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldAcceptSpecialPhoneNumberFormats()
+        {
+            // Arrange
+            var specialFormats = new[]
+            {
+                "555-1234",
+                "555.123.4567",
+                "(555) 123-4567",
+                "+1-555-123-4567",
+                "+44 20 7946 0958",
+                "555-123-4567 x1234",
+                "1-800-FLOWERS",
+                "800-GOT-JUNK?",
+                "+33 1 42 86 83 26",
+                "+81-3-3570-8000"
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var format in specialFormats)
+                {
+                    _phoneNumberDTO.Phone = format;
+                    Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(format));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Phone_ShouldAcceptComplexFormats()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Emergency numbers
+                _phoneNumberDTO.Phone = "911";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("911"));
+
+                // International with country codes
+                _phoneNumberDTO.Phone = "+86 138 0013 8000";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("+86 138 0013 8000"));
+
+                // Vanity numbers
+                _phoneNumberDTO.Phone = "1-800-BUY-CARS";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("1-800-BUY-CARS"));
+
+                // With extension and department
+                _phoneNumberDTO.Phone = "555-123-4567 ext. 890 (Sales)";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("555-123-4567 ext. 890 (Sales)"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Enums_ShouldSupportAllDefinedValues()
+        {
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test all Types enum values
+                foreach (var typeValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
+                {
+                    _phoneNumberDTO.Type = typeValue;
+                    Assert.That(_phoneNumberDTO.Type, Is.EqualTo(typeValue));
+                    Assert.That(_phoneNumberDTO.Type.HasValue, Is.True);
+                }
+
+                // Test all Countries enum values
+                foreach (var countryValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Countries>())
+                {
+                    _phoneNumberDTO.Country = countryValue;
+                    Assert.That(_phoneNumberDTO.Country, Is.EqualTo(countryValue));
+                    Assert.That(_phoneNumberDTO.Country.HasValue, Is.True);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void PhoneNumberDTO_ShouldHandleComplexScenarios()
+        {
+            // Arrange & Act
+            _phoneNumberDTO.Id = int.MaxValue;
+            _phoneNumberDTO.Phone = "Complex Phone with 特殊字符 and emojis 📞📱";
+            _phoneNumberDTO.Type = OrganizerCompanion.Core.Enums.Types.Other;
+            _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.China;
+            _phoneNumberDTO.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
+            _phoneNumberDTO.DateModified = DateTime.MinValue.AddMilliseconds(1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_phoneNumberDTO.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(_phoneNumberDTO.Phone, Contains.Substring("Complex Phone"));
+                Assert.That(_phoneNumberDTO.Phone, Contains.Substring("特殊字符"));
+                Assert.That(_phoneNumberDTO.Phone, Contains.Substring("📞📱"));
+                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(_phoneNumberDTO.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.China));
+                Assert.That(_phoneNumberDTO.DateCreated, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_phoneNumberDTO.DateModified, Is.GreaterThan(DateTime.MinValue));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void PhoneNumberDTO_ShouldSupportCountrySpecificFormats()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // US formats
+                _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+                _phoneNumberDTO.Phone = "+1 (555) 123-4567";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("+1 (555) 123-4567"));
+
+                // UK formats
+                _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.UnitedKingdom;
+                _phoneNumberDTO.Phone = "+44 20 7946 0958";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("+44 20 7946 0958"));
+
+                // French formats
+                _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.France;
+                _phoneNumberDTO.Phone = "+33 1 42 86 83 26";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("+33 1 42 86 83 26"));
+
+                // Japanese formats
+                _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.Japan;
+                _phoneNumberDTO.Phone = "+81-3-3570-8000";
+                Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("+81-3-3570-8000"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IPhoneNumber_Interface_ShouldBeImplemented()
+        {
+            // Arrange & Act
+            var phoneNumber = new PhoneNumberDTO();
+
+            // Assert
+            Assert.That(phoneNumber, Is.InstanceOf<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber>());
         }
 
         #endregion

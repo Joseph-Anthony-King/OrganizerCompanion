@@ -200,7 +200,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var enumValues = new[] { 
                 OrganizerCompanion.Core.Enums.Types.Home,
                 OrganizerCompanion.Core.Enums.Types.Work,
-                OrganizerCompanion.Core.Enums.Types.Cell,
+                OrganizerCompanion.Core.Enums.Types.Mobil,
                 OrganizerCompanion.Core.Enums.Types.Fax,
                 OrganizerCompanion.Core.Enums.Types.Billing,
                 OrganizerCompanion.Core.Enums.Types.Other
@@ -215,48 +215,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     Assert.That(_sut.Type, Is.EqualTo(enumValue));
                 }
             });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.IsCast = true; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastId = 123; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastType = "TestType"; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -472,28 +430,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void Interface_Properties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var properties = new[]
-            {
-                nameof(EmailDTO.IsCast),
-                nameof(EmailDTO.CastId),
-                nameof(EmailDTO.CastType)
-            };
-
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                foreach (var propertyName in properties)
-                {
-                    var property = typeof(EmailDTO).GetProperty(propertyName);
-                    var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();
-                    Assert.That(jsonIgnoreAttribute, Is.Not.Null, $"Property {propertyName} should have JsonIgnore attribute");
-                }
-            });
-        }
 
         [Test, Category("DataTransferObjects")]
         public void EmailAddress_ShouldAcceptLongString()
@@ -604,6 +540,407 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.DateModified, Is.EqualTo(secondModified));
                 _sut.DateModified = null;
                 Assert.That(_sut.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailAddress_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeEmail = "用户@测试.com";
+
+            // Act
+            _sut.EmailAddress = unicodeEmail;
+
+            // Assert
+            Assert.That(_sut.EmailAddress, Is.EqualTo(unicodeEmail));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailAddress_ShouldAcceptNumericDomains()
+        {
+            // Arrange
+            var numericEmail = "test@123.456.789.012";
+
+            // Act
+            _sut.EmailAddress = numericEmail;
+
+            // Assert
+            Assert.That(_sut.EmailAddress, Is.EqualTo(numericEmail));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _sut.DateCreated = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _sut.DateCreated = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldSupportCastingFromInt()
+        {
+            // Arrange
+            var enumValue = (OrganizerCompanion.Core.Enums.Types)0;
+
+            // Act
+            _sut.Type = enumValue;
+
+            // Assert
+            Assert.That(_sut.Type, Is.EqualTo(enumValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldSupportAllDefinedValues()
+        {
+            // Arrange
+            var allTypes = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var typeValue in allTypes)
+                {
+                    _sut.Type = typeValue;
+                    Assert.That(_sut.Type, Is.EqualTo(typeValue));
+                    Assert.That(_sut.Type.HasValue, Is.True);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailAddress_ShouldHandleConsecutiveAssignments()
+        {
+            // Arrange
+            var emails = new[] { "first@test.com", "second@test.com", null, "third@test.com", "" };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var email in emails)
+                {
+                    _sut.EmailAddress = email;
+                    Assert.That(_sut.EmailAddress, Is.EqualTo(email));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldSupportSequentialAssignments()
+        {
+            // Arrange
+            var ids = new[] { 0, 1, -1, int.MaxValue, int.MinValue, 42 };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var id in ids)
+                {
+                    _sut.Id = id;
+                    Assert.That(_sut.Id, Is.EqualTo(id));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]  
+        public void DateCreated_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
+
+            // Act
+            _sut.DateCreated = preciseDate;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(preciseDate));
+            Assert.That(_sut.DateCreated.Millisecond, Is.EqualTo(123));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
+
+            // Act
+            _sut.DateModified = preciseDate;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(preciseDate));
+            Assert.That(_sut.DateModified?.Millisecond, Is.EqualTo(456));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IEmailDTO_InterfaceConsistency_ShouldExposeAllProperties()
+        {
+            // Arrange
+            IEmailDTO interfaceDto = new EmailDTO();
+            var testModified = DateTime.Now.AddHours(-2);
+
+            // Act
+            interfaceDto.Id = 100;
+            interfaceDto.EmailAddress = "interface@test.com";
+            interfaceDto.Type = OrganizerCompanion.Core.Enums.Types.Work;
+            interfaceDto.DateModified = testModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceDto.Id, Is.EqualTo(100));
+                Assert.That(interfaceDto.EmailAddress, Is.EqualTo("interface@test.com"));
+                Assert.That(interfaceDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+                Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
+                Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailDTO_ShouldHandleComplexEmailFormats()
+        {
+            // Arrange
+            var complexEmails = new[]
+            {
+                "user.name+tag@example.co.uk",
+                "user_name@sub-domain.example.com", 
+                "123456@domain.org",
+                "user@domain-with-hyphens.net",
+                "first.last@very-long-domain-name.museum"
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var email in complexEmails)
+                {
+                    _sut.EmailAddress = email;
+                    Assert.That(_sut.EmailAddress, Is.EqualTo(email));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldHandleNullToValueTransitions()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Start with null
+                _sut.Type = null;
+                Assert.That(_sut.Type, Is.Null);
+
+                // Assign each enum value
+                foreach (var enumValue in Enum.GetValues<OrganizerCompanion.Core.Enums.Types>())
+                {
+                    _sut.Type = enumValue;
+                    Assert.That(_sut.Type, Is.EqualTo(enumValue));
+                    Assert.That(_sut.Type.HasValue, Is.True);
+                    
+                    // Back to null
+                    _sut.Type = null;
+                    Assert.That(_sut.Type, Is.Null);
+                    Assert.That(_sut.Type.HasValue, Is.False);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHandleNullToDateTransitions()
+        {
+            // Arrange
+            var testDates = new DateTime[]
+            {
+                DateTime.Now,
+                DateTime.MinValue,
+                DateTime.MaxValue,
+                new DateTime(2020, 1, 1),
+                new DateTime(2030, 12, 31, 23, 59, 59)
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var date in testDates)
+                {
+                    // Start with null
+                    _sut.DateModified = null;
+                    Assert.That(_sut.DateModified, Is.Null);
+
+                    // Assign date
+                    _sut.DateModified = date;
+                    Assert.That(_sut.DateModified, Is.EqualTo(date));
+
+                    // Back to null
+                    _sut.DateModified = null;
+                    Assert.That(_sut.DateModified, Is.Null);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailDTO_ShouldMaintainStateAcrossMultipleOperations()
+        {
+            // Arrange
+            var operations = new[]
+            {
+                new { Id = 1, Email = (string?)"first@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Home },
+                new { Id = 2, Email = (string?)"second@test.com", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Work },
+                new { Id = 3, Email = (string?)null, Type = (OrganizerCompanion.Core.Enums.Types?)null }
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var op in operations)
+                {
+                    _sut.Id = op.Id;
+                    _sut.EmailAddress = op.Email;
+                    _sut.Type = op.Type;
+
+                    Assert.That(_sut.Id, Is.EqualTo(op.Id));
+                    Assert.That(_sut.EmailAddress, Is.EqualTo(op.Email));
+                    Assert.That(_sut.Type, Is.EqualTo(op.Type));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailDTO_PropertiesShouldBeIndependent()
+        {
+            // Arrange & Act
+            _sut.Id = 999;
+            _sut.EmailAddress = "independent@test.com";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
+            var testDate = DateTime.Now.AddDays(-5);
+            var testModified = DateTime.Now.AddHours(-3);
+            _sut.DateCreated = testDate;
+            _sut.DateModified = testModified;
+
+            // Modify one property at a time and verify others remain unchanged
+            var originalId = _sut.Id;
+            var originalEmail = _sut.EmailAddress;
+            var originalType = _sut.Type;
+            var originalCreated = _sut.DateCreated;
+            var originalModified = _sut.DateModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Change Id, verify others unchanged
+                _sut.Id = 1000;
+                Assert.That(_sut.EmailAddress, Is.EqualTo(originalEmail));
+                Assert.That(_sut.Type, Is.EqualTo(originalType));
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+
+                // Change EmailAddress, verify others unchanged
+                _sut.EmailAddress = "changed@test.com";
+                Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_sut.Type, Is.EqualTo(originalType));
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+
+                // Change Type, verify others unchanged
+                _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+                Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_sut.EmailAddress, Is.EqualTo("changed@test.com")); // New value
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void EmailDTO_ShouldSupportObjectInitializerSyntax()
+        {
+            // Arrange
+            var testCreated = DateTime.Now.AddDays(-7);
+            var testModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var emailDto = new EmailDTO
+            {
+                Id = 555,
+                EmailAddress = "initializer@test.com",
+                Type = OrganizerCompanion.Core.Enums.Types.Billing,
+                DateCreated = testCreated,
+                DateModified = testModified
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(emailDto.Id, Is.EqualTo(555));
+                Assert.That(emailDto.EmailAddress, Is.EqualTo("initializer@test.com"));
+                Assert.That(emailDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
+                Assert.That(emailDto.DateCreated, Is.EqualTo(testCreated));
+                Assert.That(emailDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<IEmailDTO>());
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<IDomainEntity>());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldConsistentlyThrowNotImplementedException()
+        {
+            // Arrange - Multiple calls should all throw
+            var exceptions = new List<NotImplementedException>();
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var ex = Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                    Assert.That(ex, Is.Not.Null);
+                    if (ex != null)
+                    {
+                        exceptions.Add(ex);
+                    }
+                }
+                
+                // Verify all exceptions are separate instances
+                Assert.That(exceptions, Has.Count.EqualTo(3));
             });
         }
 

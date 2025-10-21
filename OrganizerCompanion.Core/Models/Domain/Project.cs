@@ -7,7 +7,7 @@ using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class ProjectAssignment : IProjectAssignment
+    internal class Project : IProject
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -19,27 +19,26 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string _name = string.Empty;
         private string? _description = null;
         private List<Group>? _groups = null;
-        private int? _taskId = null;
-        private ProjectTask? _task = null;
+        private List<ProjectTask>? _tasks = null;
         private bool _isCompleted = false;
         private DateTime? _dateDue = null;
         private DateTime? _dateCompleted = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IGroup>? IProjectAssignment.Groups
+        List<IGroup>? IProject.Groups
         {
-            get => [.. _groups!.Cast<IGroup>()];
-            set => _groups = value!.ConvertAll(group => (Group)group);
+            get => _groups?.Cast<IGroup>().ToList();
+            set => _groups = value?.Cast<Group>().ToList();
         }
         [JsonIgnore]
-        IProjectTask? IProjectAssignment.Task
+        List<IProjectTask>? IProject.Tasks
         {
-            get => _task;
-            set => _task = (ProjectTask?)value;
+            get => _tasks?.Cast<IProjectTask>().ToList();
+            set => _tasks = value?.Cast<ProjectTask>().ToList();
         }
         #endregion
 
@@ -52,7 +51,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 if (value < 0)
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 _id = value;
-                DateModified = DateTime.Now;
+                DateModified = DateTime.UtcNow;
             }
         }
 
@@ -62,23 +61,27 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _name;
             set
             {
-                if (value.Length < 1 || value.Length > 100)
-                    throw new ArgumentException("Name must be between 1 and 100 characters long.", nameof(Name));
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Name must be at least 1 character long.", nameof(Name));
+                if (value.Length > 100)
+                    throw new ArgumentException("Name cannot exceed 100 characters.", nameof(Name));
                 _name = value;
-                DateModified = DateTime.Now;
+                DateModified = DateTime.UtcNow;
             }
         }
 
-        [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
+        [Required, JsonPropertyName("description"), MinLength(1, ErrorMessage = "Description must be at least 1 character long"), MaxLength(1000, ErrorMessage = "Name cannot exceed 1000 characters.")]
         public string? Description
         {
-            get => _description!;
+            get => _description;
             set
             {
-                if (value!.Length > 1000)
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("Description must be at least 1 character long.", nameof(Description));
+                if (value.Length > 1000)
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
                 _description = value;
-                DateModified = DateTime.Now;
+                DateModified = DateTime.UtcNow;
             }
         }
 
@@ -90,31 +93,19 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _groups ??= [];
                 _groups = value;
-                DateModified = DateTime.Now;
+                DateModified = DateTime.UtcNow;
             }
         }
 
-        [JsonPropertyName("taskId"), Range(0, int.MaxValue, ErrorMessage = "Task Id must be a non-negative number.")]
-        public int? TaskId
+        [Required, JsonPropertyName("tasks")]
+        public List<ProjectTask>? Tasks
         {
-            get => _taskId;
+            get => _tasks;
             set
             {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(TaskId), "Task Id must be a non-negative number.");
-                _taskId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [JsonPropertyName("task")]
-        public ProjectTask? Task
-        {
-            get => _task;
-            set
-            {
-                _task = value;
-                DateModified = DateTime.Now;
+                _tasks ??= [];
+                _tasks = value;
+                DateModified = DateTime.UtcNow;
             }
         }
 
@@ -124,11 +115,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _isCompleted;
             set
             {
+                var now = DateTime.UtcNow;
+                _dateCompleted = value == true ? now : null;
                 _isCompleted = value;
-
-                _dateCompleted = value ? DateTime.Now : null;
-
-                DateModified = DateTime.Now;
+                DateModified = now;
             }
         }
 
@@ -139,47 +129,30 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _dateDue = value;
-                DateModified = DateTime.Now;
+                DateModified = DateTime.UtcNow;
             }
         }
 
         [Required, JsonPropertyName("dateCompleted")]
-        public DateTime? DateCompleted
-        {
-            get => _dateCompleted;
-            set
-            {
-                _dateCompleted = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        public DateTime? DateCompleted => _dateCompleted;
 
         [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated
-        {
-            get => _dateCreated;
-            set
-            {
-                _dateCreated = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        public DateTime DateCreated => _dateCreated;
 
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion
 
         #region Constructors
-        public ProjectAssignment() { }
+        public Project() { }
 
         [JsonConstructor]
-        public ProjectAssignment(
+        public Project(
             int id,
             string name,
             string? description,
             List<Group>? groups,
-            int? taskId,
-            ProjectTask? task,
+            List<ProjectTask>? tasks,
             bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,
@@ -189,9 +162,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
-            _groups = groups ?? [];
-            _taskId = taskId;
-            _task = task;
+            _groups = groups;
+            _tasks = tasks;
             _isCompleted = isCompleted;
             _dateDue = dateDue;
             _dateCompleted = dateCompleted;
@@ -205,25 +177,23 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                if (typeof(T) == typeof(ProjectAssignmentDTO) || typeof(T) == typeof(IProjectAssignmentDTO))
+                if (typeof(T) == typeof(ProjectDTO) || typeof(T) == typeof(IProjectDTO))
                 {
-                    var dto = new ProjectAssignmentDTO(
-                        Id,
-                        Name,
-                        Description,
-                        Groups?.ConvertAll(group => group.Cast<GroupDTO>()),
-                        TaskId,
-                        Task,
-                        IsCompleted,
-                        DateDue,
-                        DateCompleted,
-                        DateCreated,
-                        DateModified
+                    object obj = new ProjectDTO(
+                        id: _id,
+                        name: _name,
+                        description: _description,
+                        groups: _groups?.Select(g => g.Cast<GroupDTO>()).ToList(),
+                        tasks: _tasks?.Select(t => t.Cast<ProjectTaskDTO>()).ToList(),
+                        isCompleted: _isCompleted,
+                        dateDue: _dateDue,
+                        dateCompleted: _dateCompleted,
+                        dateCreated: _dateCreated,
+                        dateModified: DateModified
                     );
-                    
-                    return (T)(object)dto;
+                    return (T)obj;
                 }
-                else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                else throw new InvalidCastException($"Cannot cast Project to type {typeof(T).Name}.");
             }
             catch (Exception)
             {

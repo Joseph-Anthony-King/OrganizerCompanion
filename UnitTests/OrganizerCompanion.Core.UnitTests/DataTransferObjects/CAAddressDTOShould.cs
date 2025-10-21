@@ -296,7 +296,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var enumValues = new[] { 
                 OrganizerCompanion.Core.Enums.Types.Home, 
                 OrganizerCompanion.Core.Enums.Types.Work, 
-                OrganizerCompanion.Core.Enums.Types.Cell, 
+                OrganizerCompanion.Core.Enums.Types.Mobil, 
                 OrganizerCompanion.Core.Enums.Types.Fax, 
                 OrganizerCompanion.Core.Enums.Types.Billing, 
                 OrganizerCompanion.Core.Enums.Types.Other 
@@ -311,48 +311,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     Assert.That(_sut.Type, Is.EqualTo(enumValue));
                 }
             });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.IsCast = true; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastId = 123; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastType = "TestType"; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -795,29 +753,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void Interface_Properties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var properties = new[]
-            {
-                nameof(CAAddressDTO.IsCast),
-                nameof(CAAddressDTO.CastId),
-                nameof(CAAddressDTO.CastType)
-            };
-
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                foreach (var propertyName in properties)
-                {
-                    var property = typeof(CAAddressDTO).GetProperty(propertyName);
-                    var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();
-                    Assert.That(jsonIgnoreAttribute, Is.Not.Null, $"Property {propertyName} should have JsonIgnore attribute");
-                }
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void Province_ShouldAcceptDifferentINationalSubdivisionImplementations()
         {
             // Arrange
@@ -862,6 +797,486 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(dto.DateModified, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void CAAddressDTO_AsInterface_ShouldRetainAllProperties()
+        {
+            // Arrange
+            var testId = 100;
+            var testFeatures = new List<FeatureDTO> { new() { Id = 1, FeatureName = "Test", IsEnabled = true } };
+            var testStreet1 = "123 Interface St";
+            var testStreet2 = "Unit 200";
+            var testCity = "Toronto";
+            var testProvince = new CAProvince { Name = "Ontario", Abbreviation = "ON" };
+            var testZipCode = "M5V 1A1";
+            var testCountry = "Canada";
+            var testType = OrganizerCompanion.Core.Enums.Types.Home;
+            var testDateCreated = new DateTime(2023, 10, 1, 8, 0, 0);
+            var testDateModified = new DateTime(2023, 10, 2, 10, 0, 0);
+
+            _sut.Id = testId;
+            _sut.Features = testFeatures;
+            _sut.Street1 = testStreet1;
+            _sut.Street2 = testStreet2;
+            _sut.City = testCity;
+            _sut.Province = testProvince;
+            _sut.ZipCode = testZipCode;
+            _sut.Country = testCountry;
+            _sut.Type = testType;
+            _sut.DateCreated = testDateCreated;
+            _sut.DateModified = testDateModified;
+
+            // Act
+            var interfaceInstance = (ICAAddressDTO)_sut;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceInstance.Id, Is.EqualTo(testId));
+                Assert.That(interfaceInstance.Street1, Is.EqualTo(testStreet1));
+                Assert.That(interfaceInstance.Street2, Is.EqualTo(testStreet2));
+                Assert.That(interfaceInstance.City, Is.EqualTo(testCity));
+                Assert.That(interfaceInstance.Province, Is.EqualTo(testProvince));
+                Assert.That(interfaceInstance.ZipCode, Is.EqualTo(testZipCode));
+                Assert.That(interfaceInstance.Country, Is.EqualTo(testCountry));
+                Assert.That(interfaceInstance.Type, Is.EqualTo(testType));
+                Assert.That(interfaceInstance.DateCreated, Is.EqualTo(testDateCreated));
+                Assert.That(interfaceInstance.DateModified, Is.EqualTo(testDateModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void CAAddressDTO_InterfaceMethods_ShouldWork()
+        {
+            // Arrange
+            var domainInterface = (IDomainEntity)_sut;
+            var caAddressInterface = (ICAAddressDTO)_sut;
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test IDomainEntity interface methods
+                Assert.Throws<NotImplementedException>(() => domainInterface.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => domainInterface.ToJson());
+
+                // Test property access through interface
+                Assert.DoesNotThrow(() => caAddressInterface.Id = 500);
+                Assert.DoesNotThrow(() => caAddressInterface.Street1 = "Interface Street");
+                Assert.DoesNotThrow(() => caAddressInterface.Street2 = "Interface Unit");
+                Assert.DoesNotThrow(() => caAddressInterface.City = "Interface City");
+                Assert.DoesNotThrow(() => caAddressInterface.ZipCode = "M1M 1M1");
+                Assert.DoesNotThrow(() => caAddressInterface.Country = "Interface Country");
+                Assert.DoesNotThrow(() => caAddressInterface.Type = OrganizerCompanion.Core.Enums.Types.Work);
+
+                // Verify changes through interface are reflected in concrete type
+                Assert.That(_sut.Id, Is.EqualTo(500));
+                Assert.That(_sut.Street1, Is.EqualTo("Interface Street"));
+                Assert.That(_sut.Street2, Is.EqualTo("Interface Unit"));
+                Assert.That(_sut.City, Is.EqualTo("Interface City"));
+                Assert.That(_sut.ZipCode, Is.EqualTo("M1M 1M1"));
+                Assert.That(_sut.Country, Is.EqualTo("Interface Country"));
+                Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowLargeList()
+        {
+            // Arrange
+            var largeFeatureList = new List<FeatureDTO>();
+            for (int i = 0; i < 100; i++)
+            {
+                largeFeatureList.Add(new FeatureDTO { Id = i, FeatureName = $"Feature {i}", IsEnabled = i % 2 == 0 });
+            }
+
+            // Act
+            _sut.Features = largeFeatureList;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Has.Count.EqualTo(100));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature 0"));
+                Assert.That(_sut.Features[99].FeatureName, Is.EqualTo("Feature 99"));
+                Assert.That(_sut.Features[50].IsEnabled, Is.True);
+                Assert.That(_sut.Features[51].IsEnabled, Is.False);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowNullAssignment()
+        {
+            // Arrange & Act & Assert
+            Assert.DoesNotThrow(() => { _sut.Features = null!; });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void StringProperties_ShouldAcceptEmptyStrings()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => _sut.Street1 = "");
+                Assert.DoesNotThrow(() => _sut.Street2 = "");
+                Assert.DoesNotThrow(() => _sut.City = "");
+                Assert.DoesNotThrow(() => _sut.ZipCode = "");
+                Assert.DoesNotThrow(() => _sut.Country = "");
+
+                Assert.That(_sut.Street1, Is.EqualTo(""));
+                Assert.That(_sut.Street2, Is.EqualTo(""));
+                Assert.That(_sut.City, Is.EqualTo(""));
+                Assert.That(_sut.ZipCode, Is.EqualTo(""));
+                Assert.That(_sut.Country, Is.EqualTo(""));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void StringProperties_ShouldAcceptLongStrings()
+        {
+            // Arrange
+            var longString = new string('A', 1000);
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.Street1 = longString;
+                Assert.That(_sut.Street1, Is.EqualTo(longString));
+
+                _sut.Street2 = longString;
+                Assert.That(_sut.Street2, Is.EqualTo(longString));
+
+                _sut.City = longString;
+                Assert.That(_sut.City, Is.EqualTo(longString));
+
+                _sut.ZipCode = longString;
+                Assert.That(_sut.ZipCode, Is.EqualTo(longString));
+
+                _sut.Country = longString;
+                Assert.That(_sut.Country, Is.EqualTo(longString));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void StringProperties_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var specialChars = "!@#$%^&*()_+-=[]{}|;':\",./<>?`~";
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.Street1 = specialChars;
+                Assert.That(_sut.Street1, Is.EqualTo(specialChars));
+
+                _sut.Street2 = specialChars;
+                Assert.That(_sut.Street2, Is.EqualTo(specialChars));
+
+                _sut.City = specialChars;
+                Assert.That(_sut.City, Is.EqualTo(specialChars));
+
+                _sut.ZipCode = specialChars;
+                Assert.That(_sut.ZipCode, Is.EqualTo(specialChars));
+
+                _sut.Country = specialChars;
+                Assert.That(_sut.Country, Is.EqualTo(specialChars));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void StringProperties_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeString = "测试地址 ñáéíóú Müller 🏠🏢🏭";
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.Street1 = unicodeString;
+                Assert.That(_sut.Street1, Is.EqualTo(unicodeString));
+
+                _sut.Street2 = unicodeString;
+                Assert.That(_sut.Street2, Is.EqualTo(unicodeString));
+
+                _sut.City = unicodeString;
+                Assert.That(_sut.City, Is.EqualTo(unicodeString));
+
+                _sut.ZipCode = unicodeString;
+                Assert.That(_sut.ZipCode, Is.EqualTo(unicodeString));
+
+                _sut.Country = unicodeString;
+                Assert.That(_sut.Country, Is.EqualTo(unicodeString));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateTimeProperties_ShouldAcceptBoundaryValues()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test DateCreated with boundary values
+                _sut.DateCreated = DateTime.MinValue;
+                Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+
+                _sut.DateCreated = DateTime.MaxValue;
+                Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+
+                // Test DateModified with boundary values and null
+                _sut.DateModified = DateTime.MinValue;
+                Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+
+                _sut.DateModified = DateTime.MaxValue;
+                Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+
+                _sut.DateModified = null;
+                Assert.That(_sut.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptBoundaryValues()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test minimum value (0)
+                _sut.Id = 0;
+                Assert.That(_sut.Id, Is.EqualTo(0));
+
+                // Test maximum value
+                _sut.Id = int.MaxValue;
+                Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+
+                // Test mid-range value
+                _sut.Id = 1_000_000;
+                Assert.That(_sut.Id, Is.EqualTo(1_000_000));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AllPropertiesSet_ShouldMaintainCorrectTypes()
+        {
+            // Arrange
+            var testDate = new DateTime(2023, 11, 15, 14, 30, 45);
+
+            // Act
+            _sut.Id = 12345;
+            _sut.Features = [new() { Id = 1, FeatureName = "TypeTest", IsEnabled = true }];
+            _sut.Street1 = "Type Test Street";
+            _sut.Street2 = "Type Test Unit";
+            _sut.City = "Type Test City";
+            _sut.Province = new CAProvince { Name = "TypeTestProvince", Abbreviation = "TP" };
+            _sut.ZipCode = "T1T 1T1";
+            _sut.Country = "Type Test Country";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
+            _sut.DateCreated = testDate;
+            _sut.DateModified = testDate.AddHours(2);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.TypeOf<int>());
+                Assert.That(_sut.Features, Is.TypeOf<List<FeatureDTO>>());
+                Assert.That(_sut.Street1, Is.TypeOf<string>());
+                Assert.That(_sut.Street2, Is.TypeOf<string>());
+                Assert.That(_sut.City, Is.TypeOf<string>());
+                Assert.That(_sut.Province, Is.TypeOf<CAProvince>());
+                Assert.That(_sut.ZipCode, Is.TypeOf<string>());
+                Assert.That(_sut.Country, Is.TypeOf<string>());
+                Assert.That(_sut.Type, Is.TypeOf<OrganizerCompanion.Core.Enums.Types>());
+                Assert.That(_sut.DateCreated, Is.TypeOf<DateTime>());
+                Assert.That(_sut.DateModified, Is.TypeOf<DateTime>(), "DateModified should be DateTime when set to non-null value");
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void CAAddressDTO_DefaultValuesVerification()
+        {
+            // Arrange & Act
+            var freshDto = new CAAddressDTO();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(freshDto.Id, Is.EqualTo(0), "Id should default to 0");
+                Assert.That(freshDto.Features, Is.Not.Null, "Features should not be null");
+                Assert.That(freshDto.Features, Is.Empty, "Features should be empty list");
+                Assert.That(freshDto.Street1, Is.Null, "Street1 should default to null");
+                Assert.That(freshDto.Street2, Is.Null, "Street2 should default to null");
+                Assert.That(freshDto.City, Is.Null, "City should default to null");
+                Assert.That(freshDto.Province, Is.Null, "Province should default to null");
+                Assert.That(freshDto.ZipCode, Is.Null, "ZipCode should default to null");
+                Assert.That(freshDto.Country, Is.Null, "Country should default to null");
+                Assert.That(freshDto.Type, Is.Null, "Type should default to null");
+                Assert.That(freshDto.DateCreated, Is.TypeOf<DateTime>(), "DateCreated should be DateTime");
+                Assert.That(freshDto.DateModified, Is.Null, "DateModified should default to null");
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_WithDifferentTypes_ShouldAlwaysThrowNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<CAAddressDTO>());
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => ((IDomainEntity)_sut).Cast<ICAAddressDTO>());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_RepeatedCalls_ShouldAlwaysThrowNotImplementedException()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                Assert.Throws<NotImplementedException>(() => ((IDomainEntity)_sut).ToJson());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void CAAddressDTO_PropertyChaining_ShouldWorkCorrectly()
+        {
+      // Arrange & Act
+      var chainedDto = new CAAddressDTO
+      {
+        Id = 1,
+        Street1 = "Chain Street",
+        Street2 = "Chain Unit",
+        City = "Chain City",
+        Type = OrganizerCompanion.Core.Enums.Types.Other
+      };
+
+      // Assert
+      Assert.Multiple(() =>
+            {
+                Assert.That(chainedDto.Id, Is.EqualTo(1));
+                Assert.That(chainedDto.Street1, Is.EqualTo("Chain Street"));
+                Assert.That(chainedDto.Street2, Is.EqualTo("Chain Unit"));
+                Assert.That(chainedDto.City, Is.EqualTo("Chain City"));
+                Assert.That(chainedDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Type_ShouldAcceptAllEnumValuesByName()
+        {
+            // Arrange
+            var enumNames = Enum.GetNames(typeof(OrganizerCompanion.Core.Enums.Types));
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var enumName in enumNames)
+                {
+                    var enumValue = Enum.Parse<OrganizerCompanion.Core.Enums.Types>(enumName);
+                    _sut.Type = enumValue;
+                    Assert.That(_sut.Type, Is.EqualTo(enumValue), $"Enum value {enumName} should be settable");
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Province_ShouldSupportMultipleINationalSubdivisionTypes()
+        {
+            // Arrange
+            var mockSubdivision1 = new MockNationalSubdivision { Name = "Test Province 1", Abbreviation = "TP1" };
+            var mockSubdivision2 = new MockNationalSubdivision { Name = "Test Province 2", Abbreviation = "TP2" };
+            var caProvince = new CAProvince { Name = "British Columbia", Abbreviation = "BC" };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test first mock
+                _sut.Province = mockSubdivision1;
+                Assert.That(_sut.Province, Is.EqualTo(mockSubdivision1));
+                Assert.That(_sut.Province.Name, Is.EqualTo("Test Province 1"));
+
+                // Test second mock
+                _sut.Province = mockSubdivision2;
+                Assert.That(_sut.Province, Is.EqualTo(mockSubdivision2));
+                Assert.That(_sut.Province.Name, Is.EqualTo("Test Province 2"));
+
+                // Test CAProvince
+                _sut.Province = caProvince;
+                Assert.That(_sut.Province, Is.EqualTo(caProvince));
+                Assert.That(_sut.Province.Name, Is.EqualTo("British Columbia"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void CAAddressDTO_ComprehensiveAttributeValidation()
+        {
+            // Arrange
+            var type = typeof(CAAddressDTO);
+
+            // Act & Assert - Verify all expected attributes are present
+            Assert.Multiple(() =>
+            {
+                // Verify all properties have Required attributes
+                var requiredProperties = new[] { "Id", "Features", "Street1", "Street2", "City", "Province", "ZipCode", "Country", "Type", "DateCreated", "DateModified" };
+                foreach (var propName in requiredProperties)
+                {
+                    var property = type.GetProperty(propName);
+                    Assert.That(property?.GetCustomAttribute<RequiredAttribute>(), Is.Not.Null, $"{propName} should have Required attribute");
+                }
+
+                // Verify Id has Range attribute
+                var idProperty = type.GetProperty("Id");
+                var idRangeAttr = idProperty?.GetCustomAttribute<System.ComponentModel.DataAnnotations.RangeAttribute>();
+                Assert.That(idRangeAttr?.Minimum, Is.EqualTo(0));
+                Assert.That(idRangeAttr?.Maximum, Is.EqualTo(int.MaxValue));
+                Assert.That(idRangeAttr?.ErrorMessage, Is.EqualTo("Id must be a non-negative number."));
+
+                // Verify all properties have JsonPropertyName attributes
+                var jsonPropertyMappings = new Dictionary<string, string>
+                {
+                    { "Id", "id" }, { "Features", "features" }, { "Street1", "street" }, { "Street2", "street2" },
+                    { "City", "city" }, { "Province", "province" }, { "ZipCode", "zipCode" }, { "Country", "country" },
+                    { "Type", "type" }, { "DateCreated", "dateCreated" }, { "DateModified", "dateModified" }
+                };
+
+                foreach (var mapping in jsonPropertyMappings)
+                {
+                    var property = type.GetProperty(mapping.Key);
+                    var jsonAttr = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+                    Assert.That(jsonAttr?.Name, Is.EqualTo(mapping.Value), $"{mapping.Key} should have JsonPropertyName '{mapping.Value}'");
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Features_ShouldAllowModificationAfterInitialization()
+        {
+            // Arrange
+            var initialFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Initial Feature", IsEnabled = true }
+            };
+            _sut.Features = initialFeatures;
+
+            var newFeatures = new List<FeatureDTO>
+            {
+                new() { Id = 2, FeatureName = "New Feature A", IsEnabled = false },
+                new() { Id = 3, FeatureName = "New Feature B", IsEnabled = true }
+            };
+
+            // Act
+            _sut.Features = newFeatures;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Features, Is.EqualTo(newFeatures));
+                Assert.That(_sut.Features, Has.Count.EqualTo(2));
+                Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("New Feature A"));
+                Assert.That(_sut.Features[1].FeatureName, Is.EqualTo("New Feature B"));
+                Assert.That(_sut.Features, Is.Not.EqualTo(initialFeatures));
+            });
         }
 
         #region Mock Classes

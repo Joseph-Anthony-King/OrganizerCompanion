@@ -27,14 +27,12 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit ITaskDTO Implementation
+        [JsonIgnore]
         List<IProjectAssignment>? IProjectTask.Assignments
         {
             get => _assignments?.Select(a => a.Cast<IProjectAssignment>()).ToList();
             set => _assignments = value?.Select(a => (ProjectAssignment)a).ToList();
         }
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]

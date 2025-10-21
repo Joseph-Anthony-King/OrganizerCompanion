@@ -242,48 +242,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IsCast_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.IsCast = true; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastId = 123; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Get_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_Set_ShouldThrowNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { _sut.CastType = "TestType"; });
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetValue()
         {
             // Arrange
@@ -497,29 +455,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void Interface_Properties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var properties = new[]
-            {
-                nameof(FeatureDTO.IsCast),
-                nameof(FeatureDTO.CastId),
-                nameof(FeatureDTO.CastType)
-            };
-
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                foreach (var propertyName in properties)
-                {
-                    var property = typeof(FeatureDTO).GetProperty(propertyName);
-                    var jsonIgnoreAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>();
-                    Assert.That(jsonIgnoreAttribute, Is.Not.Null, $"Property {propertyName} should have JsonIgnore attribute");
-                }
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void Properties_ShouldAllowMultipleReassignments()
         {
             // Arrange & Act & Assert
@@ -635,6 +570,454 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.IsEnabled && true, Is.False);
                 Assert.That(_sut.IsEnabled || false, Is.False);
                 Assert.That(!_sut.IsEnabled, Is.True);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _sut.DateCreated = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _sut.DateCreated = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _sut.DateModified = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
+
+            // Act
+            _sut.DateCreated = preciseDate;
+
+            // Assert
+            Assert.That(_sut.DateCreated, Is.EqualTo(preciseDate));
+            Assert.That(_sut.DateCreated.Millisecond, Is.EqualTo(123));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
+
+            // Act
+            _sut.DateModified = preciseDate;
+
+            // Assert
+            Assert.That(_sut.DateModified, Is.EqualTo(preciseDate));
+            Assert.That(_sut.DateModified?.Millisecond, Is.EqualTo(456));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IFeatureDTO_InterfaceConsistency_ShouldExposeAllProperties()
+        {
+            // Arrange
+            IFeatureDTO interfaceDto = new FeatureDTO();
+            var testModified = DateTime.Now.AddHours(-2);
+
+            // Act
+            interfaceDto.Id = 100;
+            interfaceDto.FeatureName = "Interface Feature";
+            interfaceDto.IsEnabled = true;
+            interfaceDto.DateModified = testModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceDto.Id, Is.EqualTo(100));
+                Assert.That(interfaceDto.FeatureName, Is.EqualTo("Interface Feature"));
+                Assert.That(interfaceDto.IsEnabled, Is.True);
+                Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
+                Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureName_ShouldHandleConsecutiveAssignments()
+        {
+            // Arrange
+            var featureNames = new[] { "First Feature", "Second Feature", null, "Third Feature", "", "Fourth Feature" };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var featureName in featureNames)
+                {
+                    _sut.FeatureName = featureName;
+                    Assert.That(_sut.FeatureName, Is.EqualTo(featureName));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldSupportSequentialAssignments()
+        {
+            // Arrange
+            var ids = new[] { 0, 1, -1, int.MaxValue, int.MinValue, 42, 999 };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var id in ids)
+                {
+                    _sut.Id = id;
+                    Assert.That(_sut.Id, Is.EqualTo(id));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsEnabled_ShouldHandleConsecutiveToggling()
+        {
+            // Arrange
+            var booleanValues = new[] { true, false, true, false, true };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var value in booleanValues)
+                {
+                    _sut.IsEnabled = value;
+                    Assert.That(_sut.IsEnabled, Is.EqualTo(value));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureName_ShouldAcceptSpecialCharactersAndFormats()
+        {
+            // Arrange
+            var specialFeatureNames = new[]
+            {
+                "Feature@2023",
+                "Feature#1_Advanced",
+                "Feature (Version 2.0)",
+                "Multi-Line\nFeature",
+                "Tab\tSeparated\tFeature",
+                "Quote\"Feature\"Test",
+                "Apostrophe's Feature",
+                "Path\\Like\\Feature",
+                "URL-like://feature.com/test"
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var featureName in specialFeatureNames)
+                {
+                    _sut.FeatureName = featureName;
+                    Assert.That(_sut.FeatureName, Is.EqualTo(featureName));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHandleNullToDateTransitions()
+        {
+            // Arrange
+            var testDates = new DateTime[]
+            {
+                DateTime.Now,
+                DateTime.MinValue,
+                DateTime.MaxValue,
+                new DateTime(2020, 1, 1),
+                new DateTime(2030, 12, 31, 23, 59, 59)
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var date in testDates)
+                {
+                    // Start with null
+                    _sut.DateModified = null;
+                    Assert.That(_sut.DateModified, Is.Null);
+
+                    // Assign date
+                    _sut.DateModified = date;
+                    Assert.That(_sut.DateModified, Is.EqualTo(date));
+
+                    // Back to null
+                    _sut.DateModified = null;
+                    Assert.That(_sut.DateModified, Is.Null);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureDTO_ShouldMaintainStateAcrossMultipleOperations()
+        {
+            // Arrange
+            var operations = new[]
+            {
+                new { Id = 1, Name = (string?)"Feature One", Enabled = true },
+                new { Id = 2, Name = (string?)"Feature Two", Enabled = false },
+                new { Id = 3, Name = (string?)null, Enabled = true },
+                new { Id = 4, Name = (string?)"", Enabled = false }
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var op in operations)
+                {
+                    _sut.Id = op.Id;
+                    _sut.FeatureName = op.Name;
+                    _sut.IsEnabled = op.Enabled;
+
+                    Assert.That(_sut.Id, Is.EqualTo(op.Id));
+                    Assert.That(_sut.FeatureName, Is.EqualTo(op.Name));
+                    Assert.That(_sut.IsEnabled, Is.EqualTo(op.Enabled));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureDTO_PropertiesShouldBeIndependent()
+        {
+            // Arrange & Act
+            _sut.Id = 999;
+            _sut.FeatureName = "Independent Feature";
+            _sut.IsEnabled = true;
+            var testDate = DateTime.Now.AddDays(-5);
+            var testModified = DateTime.Now.AddHours(-3);
+            _sut.DateCreated = testDate;
+            _sut.DateModified = testModified;
+
+            // Store original values
+            var originalId = _sut.Id;
+            var originalName = _sut.FeatureName;
+            var originalEnabled = _sut.IsEnabled;
+            var originalCreated = _sut.DateCreated;
+            var originalModified = _sut.DateModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Change Id, verify others unchanged
+                _sut.Id = 1000;
+                Assert.That(_sut.FeatureName, Is.EqualTo(originalName));
+                Assert.That(_sut.IsEnabled, Is.EqualTo(originalEnabled));
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+
+                // Change FeatureName, verify others unchanged
+                _sut.FeatureName = "Changed Feature";
+                Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_sut.IsEnabled, Is.EqualTo(originalEnabled));
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+
+                // Change IsEnabled, verify others unchanged
+                _sut.IsEnabled = false;
+                Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_sut.FeatureName, Is.EqualTo("Changed Feature")); // New value
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureDTO_ShouldSupportObjectInitializerSyntax()
+        {
+            // Arrange
+            var testCreated = DateTime.Now.AddDays(-7);
+            var testModified = DateTime.Now.AddHours(-1);
+
+            // Act
+            var featureDto = new FeatureDTO
+            {
+                Id = 555,
+                FeatureName = "Initializer Feature",
+                IsEnabled = true,
+                DateCreated = testCreated,
+                DateModified = testModified
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(featureDto.Id, Is.EqualTo(555));
+                Assert.That(featureDto.FeatureName, Is.EqualTo("Initializer Feature"));
+                Assert.That(featureDto.IsEnabled, Is.True);
+                Assert.That(featureDto.DateCreated, Is.EqualTo(testCreated));
+                Assert.That(featureDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<IFeatureDTO>());
+                Assert.Throws<NotImplementedException>(() => _sut.Cast<IDomainEntity>());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldConsistentlyThrowNotImplementedException()
+        {
+            // Arrange - Multiple calls should all throw
+            var exceptions = new List<NotImplementedException>();
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    var ex = Assert.Throws<NotImplementedException>(() => _sut.ToJson());
+                    Assert.That(ex, Is.Not.Null);
+                    if (ex != null)
+                    {
+                        exceptions.Add(ex);
+                    }
+                }
+                
+                // Verify all exceptions are separate instances
+                Assert.That(exceptions, Has.Count.EqualTo(3));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureName_ShouldSupportVeryLongStrings()
+        {
+            // Arrange
+            var veryLongFeatureName = new string('F', 10000) + " Feature";
+
+            // Act
+            _sut.FeatureName = veryLongFeatureName;
+
+            // Assert
+            Assert.That(_sut.FeatureName, Is.EqualTo(veryLongFeatureName));
+            Assert.That(_sut.FeatureName?.Length, Is.EqualTo(10008)); // 10000 + " Feature".Length (8)
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureName_ShouldAcceptNumbersAndSymbols()
+        {
+            // Arrange
+            var numericFeatureName = "12345!@#$%^&*()_+-=[]{}|;':\",./<>?";
+
+            // Act
+            _sut.FeatureName = numericFeatureName;
+
+            // Assert
+            Assert.That(_sut.FeatureName, Is.EqualTo(numericFeatureName));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IsEnabled_ShouldSupportComparisonOperators()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                _sut.IsEnabled = true;
+                Assert.That(_sut.IsEnabled == true, Is.True);
+                Assert.That(_sut.IsEnabled != false, Is.True);
+                Assert.That(_sut.IsEnabled.Equals(true), Is.True);
+
+                _sut.IsEnabled = false;
+                Assert.That(_sut.IsEnabled == false, Is.True);
+                Assert.That(_sut.IsEnabled != true, Is.True);
+                Assert.That(_sut.IsEnabled.Equals(false), Is.True);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldSupportDateTimeOperations()
+        {
+            // Arrange
+            var baseDate = new DateTime(2023, 6, 15, 12, 0, 0);
+            _sut.DateCreated = baseDate;
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DateCreated.AddDays(1), Is.EqualTo(new DateTime(2023, 6, 16, 12, 0, 0)));
+                Assert.That(_sut.DateCreated.AddHours(-1), Is.EqualTo(new DateTime(2023, 6, 15, 11, 0, 0)));
+                Assert.That(_sut.DateCreated.Date, Is.EqualTo(new DateTime(2023, 6, 15)));
+                Assert.That(_sut.DateCreated.Year, Is.EqualTo(2023));
+                Assert.That(_sut.DateCreated.Month, Is.EqualTo(6));
+                Assert.That(_sut.DateCreated.Day, Is.EqualTo(15));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldSupportNullableOperations()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test null state
+                _sut.DateModified = null;
+                Assert.That(_sut.DateModified.HasValue, Is.False);
+                Assert.That(_sut.DateModified.GetValueOrDefault(), Is.EqualTo(default(DateTime)));
+
+                // Test with value
+                var testDate = new DateTime(2023, 5, 10, 15, 30, 45);
+                _sut.DateModified = testDate;
+                Assert.That(_sut.DateModified.HasValue, Is.True);
+                Assert.That(_sut.DateModified.Value, Is.EqualTo(testDate));
+                Assert.That(_sut.DateModified.GetValueOrDefault(), Is.EqualTo(testDate));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void FeatureDTO_ShouldHandleComplexScenarios()
+        {
+            // Arrange & Act
+            _sut.Id = int.MaxValue;
+            _sut.FeatureName = "Complex Feature with 特殊字符 and emojis 🚀✅";
+            _sut.IsEnabled = true;
+            _sut.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
+            _sut.DateModified = DateTime.MinValue.AddMilliseconds(1);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(_sut.FeatureName, Contains.Substring("Complex Feature"));
+                Assert.That(_sut.FeatureName, Contains.Substring("特殊字符"));
+                Assert.That(_sut.FeatureName, Contains.Substring("🚀✅"));
+                Assert.That(_sut.IsEnabled, Is.True);
+                Assert.That(_sut.DateCreated, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.MinValue));
             });
         }
 

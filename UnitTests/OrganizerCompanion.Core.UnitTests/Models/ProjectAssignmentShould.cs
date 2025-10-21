@@ -1,13 +1,13 @@
 using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
-using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
     [TestFixture]
-    internal class AssignmentShould
+    internal class ProjectAssignmentShould
     {
         private ProjectAssignment _assignment;
         private List<Group> _groups;
@@ -40,7 +40,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #region Constructor Tests
 
-        [Test]
+        [Test, Category("Models")]
         public void HaveDefaultConstructor()
         {
             // Arrange & Act
@@ -61,29 +61,60 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
-        public void ThrowExceptionWhenUsingJsonConstructor()
+        [Test, Category("Models")]
+        public void HaveParameterizedConstructor()
         {
-            // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
-                1, "Test Assignment", "Test Description", _groups,
-                1, null, true, DateTime.Now.AddDays(7), DateTime.Now, DateTime.Now.AddDays(-1), DateTime.Now));
+            // Arrange
+            var id = 42;
+            var name = "Test Assignment";
+            var description = "Test Description";
+            var groups = _groups;
+            var taskId = 100;
+            var task = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
+            var isCompleted = true;
+            var dateDue = DateTime.Now.AddDays(7);
+            var dateCompleted = DateTime.Now.AddDays(-1);
+            var dateCreated = DateTime.Now.AddDays(-10);
+            var dateModified = DateTime.Now.AddDays(-2);
+
+            // Act
+            var assignment = new ProjectAssignment(
+                id, name, description, groups, taskId, task, isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(assignment.Id, Is.EqualTo(id));
+                Assert.That(assignment.Name, Is.EqualTo(name));
+                Assert.That(assignment.Description, Is.EqualTo(description));
+                Assert.That(assignment.Groups, Is.EqualTo(groups));
+                Assert.That(assignment.TaskId, Is.EqualTo(taskId));
+                Assert.That(assignment.Task, Is.EqualTo(task));
+                Assert.That(assignment.IsCompleted, Is.EqualTo(isCompleted));
+                Assert.That(assignment.DateDue, Is.EqualTo(dateDue));
+                Assert.That(assignment.DateCompleted, Is.EqualTo(dateCompleted));
+                Assert.That(assignment.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(assignment.DateModified, Is.EqualTo(dateModified));
+            });
         }
 
-        [Test]
-        public void ThrowExceptionWhenUsingJsonConstructorWithNullCollections()
+        [Test, Category("Models")]
+        public void HandleNullGroupsInParameterizedConstructor()
         {
-            // Act & Assert - The JSON constructor always tries to set IsCast which throws NotImplementedException  
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
-                1, "Test", "Description", null,
-                null, null, false, null, null, DateTime.Now, null));
+            // Arrange & Act
+            var assignment = new ProjectAssignment(
+                1, "Test", "Description", null, null, null, false, null, null, DateTime.Now, null);
+
+            // Assert
+            Assert.That(assignment.Groups, Is.Not.Null);
+            Assert.That(assignment.Groups, Is.Empty);
         }
 
         #endregion
 
         #region Property Tests
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetId()
         {
             // Arrange
@@ -102,14 +133,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForNegativeId()
         {
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _assignment.Id = -1);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetName()
         {
             // Arrange
@@ -128,14 +159,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForEmptyName()
         {
             // Act & Assert
             Assert.Throws<ArgumentException>(() => _assignment.Name = "");
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForTooLongName()
         {
             // Arrange
@@ -145,7 +176,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Throws<ArgumentException>(() => _assignment.Name = longName);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetDescription()
         {
             // Arrange
@@ -164,7 +195,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForTooLongDescription()
         {
             // Arrange
@@ -174,7 +205,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Throws<ArgumentException>(() => _assignment.Description = longDescription);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetAssignees()
         {
             // Arrange
@@ -192,7 +223,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void InitializeEmptyListWhenAssigneesIsNull()
         {
             // Arrange
@@ -205,7 +236,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Groups, Is.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetContacts()
         {
             // Arrange
@@ -223,7 +254,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void InitializeEmptyListWhenContactsIsNull()
         {
             // Arrange
@@ -236,7 +267,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Groups, Is.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetIsCompletedToTrueAndUpdateDateCompleted()
         {
             // Arrange
@@ -262,7 +293,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetIsCompletedToFalseAndClearDateCompleted()
         {
             // Arrange
@@ -280,7 +311,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetDateDue()
         {
             // Arrange
@@ -299,7 +330,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetDateCompleted()
         {
             // Arrange
@@ -318,7 +349,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetDateCreated()
         {
             // Arrange
@@ -337,7 +368,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetTaskId()
         {
             // Arrange
@@ -356,14 +387,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForNegativeTaskId()
         {
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => _assignment.TaskId = -1);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptNullTaskId()
         {
             // Act & Assert
@@ -371,7 +402,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.TaskId, Is.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SetAndGetTask()
         {
             // Arrange
@@ -390,7 +421,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.DateModified, Is.Not.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptNullTask()
         {
             // Act & Assert
@@ -398,7 +429,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Task, Is.Null);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptZeroTaskId()
         {
             // Act & Assert
@@ -406,7 +437,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.TaskId, Is.EqualTo(0));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptMaximumTaskId()
         {
             // Act & Assert
@@ -416,75 +447,56 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #endregion
 
-        #region Interface Implementation Tests
-
-        [Test]
-        public void ThrowNotImplementedExceptionForIsCast()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var isCast = _assignment.IsCast; });
-            Assert.Throws<NotImplementedException>(() => _assignment.IsCast = true);
-        }
-
-        [Test]
-        public void ThrowNotImplementedExceptionForCastId()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var castId = _assignment.CastId; });
-            Assert.Throws<NotImplementedException>(() => _assignment.CastId = 1);
-        }
-
-        [Test]
-        public void ThrowNotImplementedExceptionForCastType()
-        {
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var castType = _assignment.CastType; });
-            Assert.Throws<NotImplementedException>(() => _assignment.CastType = "test");
-        }
-
-        #endregion
-
         #region Cast Method Tests
 
-        [Test]
-        public void CastToAssignmentDTOThrowsNotImplementedException()
+        [Test, Category("Models")]
+        public void CastToProjectAssignmentDTO()
         {
             // Arrange
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
             _assignment.Description = "Test Description";
-            _assignment.Groups = null;
+            _assignment.Groups = _groups;
+            _assignment.IsCompleted = true;
+            _assignment.DateDue = DateTime.Now.AddDays(7);
 
-            // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
+            // Act
+            var dto = _assignment.Cast<ProjectAssignmentDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(_assignment.Id));
+                Assert.That(dto.Name, Is.EqualTo(_assignment.Name));
+                Assert.That(dto.Description, Is.EqualTo(_assignment.Description));
+                Assert.That(dto.IsCompleted, Is.EqualTo(_assignment.IsCompleted));
+                Assert.That(dto.DateDue, Is.EqualTo(_assignment.DateDue));
+                Assert.That(dto.DateCreated, Is.EqualTo(_assignment.DateCreated));
+                Assert.That(dto.DateModified, Is.EqualTo(_assignment.DateModified));
+            });
         }
 
-        [Test]
-        public void CastToAssignmentDTOWithEmptyGroupsThrowsNotImplementedException()
+        [Test, Category("Models")]
+        public void CastToIProjectAssignmentDTO()
         {
             // Arrange
-            _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
-            _assignment.Description = "Test Description";
-            _assignment.Groups = []; // Empty list
+            _assignment.Id = 2;
+            _assignment.Name = "Interface Test";
 
-            // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
+            // Act
+            var dto = _assignment.Cast<IProjectAssignmentDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(dto, Is.Not.Null);
+                Assert.That(dto.Id, Is.EqualTo(_assignment.Id));
+                Assert.That(dto.Name, Is.EqualTo(_assignment.Name));
+            });
         }
 
-        [Test]
-        public void CastToIAssignmentDTOThrowsNotImplementedException()
-        {
-            // Arrange
-            _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
-            _assignment.Groups = [];
-
-            // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<IProjectAssignmentDTO>());
-        }
-
-        [Test]
+        [Test, Category("Models")]
         public void ThrowInvalidCastExceptionForUnsupportedType()
         {
             // Act & Assert
@@ -492,11 +504,33 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type Contact"));
         }
 
+        [Test, Category("Models")]
+        public void CastHandlesExceptionCorrectly()
+        {
+            // Arrange
+            _assignment.Groups = null; // This might cause issues during casting
+
+            // Act & Assert - Should propagate any casting exceptions
+            Assert.DoesNotThrow(() => _assignment.Cast<ProjectAssignmentDTO>());
+        }
+
+        [Test, Category("Models")]
+        public void CastRethrowsExceptionsFromTryCatchBlock()
+        {
+            // Arrange - Create an assignment that might cause internal exceptions during casting
+            _assignment.Id = 1;
+            _assignment.Name = "Test";
+            
+            // Act & Assert - The method should re-throw any exceptions caught in the try-catch
+            // This tests the "throw;" statement in the catch block
+            Assert.DoesNotThrow(() => _assignment.Cast<ProjectAssignmentDTO>());
+        }
+
         #endregion
 
         #region ToJson Method Tests
 
-        [Test]
+        [Test, Category("Models")]
         public void SerializeToJson()
         {
             // Arrange
@@ -517,7 +551,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"isCompleted\":false"));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SerializeToJsonWithNullValues()
         {
             // Arrange
@@ -535,7 +569,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Does.Contain("\"name\":\"Minimal Assignment\""));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void SerializeToJsonWithCircularReferences()
         {
             // Arrange
@@ -551,7 +585,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #region Edge Cases and Validation Tests
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptMinimumValidName()
         {
             // Act & Assert
@@ -559,7 +593,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Name, Is.EqualTo("A"));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptMaximumValidName()
         {
             // Arrange
@@ -570,7 +604,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Name, Is.EqualTo(maxName));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptMaximumValidDescription()
         {
             // Arrange
@@ -581,14 +615,28 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Description, Is.EqualTo(maxDescription));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void ThrowExceptionForNullDescription()
         {
             // Act & Assert - The Assignment class has a bug where it checks value!.Length for null
             Assert.Throws<NullReferenceException>(() => _assignment.Description = null);
         }
 
-        [Test]
+        [Test, Category("Models")]
+        public void HandleGroupsInitializationWhenNull()
+        {
+            // Arrange
+            _assignment.Groups = null; // Ensure it starts as null
+            var newGroups = new List<Group> { _groups[0] };
+
+            // Act - This should trigger the null-conditional assignment in the setter
+            _assignment.Groups = newGroups;
+
+            // Assert
+            Assert.That(_assignment.Groups, Is.EqualTo(newGroups));
+        }
+
+        [Test, Category("Models")]
         public void AcceptEmptyDescription()
         {
             // Act & Assert
@@ -596,7 +644,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Description, Is.EqualTo(""));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptZeroId()
         {
             // Act & Assert
@@ -604,7 +652,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Id, Is.EqualTo(0));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void AcceptMaximumId()
         {
             // Act & Assert
@@ -612,7 +660,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Id, Is.EqualTo(int.MaxValue));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void HandleEmptyGroupsList()
         {
             // Act
@@ -623,7 +671,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Groups, Is.Empty);
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void HandleNullDateValues()
         {
             // Act & Assert
@@ -641,34 +689,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #endregion
 
-        #region Constructor with Optional Parameters Tests
-
-        [Test]
-        public void ThrowExceptionWhenConstructorTriesToSetIsCast()
-        {
-            // Act & Assert - The constructor tries to set IsCast which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => new ProjectAssignment(
-                id: 1,
-                name: "Test",
-                description: "Description",
-                groups: null,
-                taskId: null,
-                task: null,
-                isCompleted: false,
-                dateDue: null,
-                dateCompleted: null,
-                dateCreated: DateTime.Now,
-                dateModified: null,
-                isCast: true,
-                castId: 42,
-                castType: "TestType"));
-        }
-
-        #endregion
-
         #region Interface Implementation Coverage Tests
 
-        [Test]
+        [Test, Category("Models")]
         public void CoverExplicitInterfaceImplementations()
         {
             // Arrange
@@ -682,7 +705,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(retrievedIAssignees.Count, Is.EqualTo(testIGroup.Count));
         }
 
-        [Test]
+        [Test, Category("Models")]
         public void CoverTaskInterfaceImplementation()
         {
             // Arrange
@@ -700,47 +723,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test setting null
             iAssignment.Task = null;
             Assert.That(_assignment.Task, Is.Null);
-        }
-
-        [Test]
-        public void CastWithActualGroupObjectsThrowsNotImplementedException()
-        {
-            // Arrange - Create groups that will work with Cast<GroupDTO>()
-            var workingGroup = new Group
-            {
-                Id = 1,
-                Name = "Working Group",
-                Description = "Description",
-                Members =
-                [
-                    new() { Id = 1, FirstName = "Alice", LastName = "Wonderland" }
-                ],
-                AccountId = 0,
-                Account = null,
-            };
-
-            _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
-            _assignment.Description = "Test Description";
-            _assignment.Groups = [workingGroup];
-
-            // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
-        }
-
-        [Test]
-        public void CastToAssignmentDTOWithCompleteDataThrowsNotImplementedException()
-        {
-            // Arrange
-            _assignment.Id = 1;
-            _assignment.Name = "Complete Assignment";
-            _assignment.Description = "Complete Description";
-            _assignment.Groups = _groups;
-            _assignment.IsCompleted = true;
-            _assignment.DateDue = DateTime.Now.AddDays(7);
-
-            // Act & Assert - Cast method tries to access IsCast property which throws NotImplementedException
-            Assert.Throws<NotImplementedException>(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         #endregion

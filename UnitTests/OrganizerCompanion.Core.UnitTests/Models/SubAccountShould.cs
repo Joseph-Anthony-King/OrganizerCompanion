@@ -308,14 +308,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void LinkedEntity_Setter_CanSetToNull()
         {
-            // Arrange
-            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+      // Arrange
+      var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
+      {
+        // Act
+        LinkedEntity = null
+      };
 
-            // Act
-            subAccount.LinkedEntity = null;
-
-            // Assert
-            Assert.That(subAccount.LinkedEntity, Is.Null);
+      // Assert
+      Assert.That(subAccount.LinkedEntity, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -340,14 +341,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void AccountId_Setter_AcceptsNull()
         {
-            // Arrange
-            var subAccount = new SubAccount();
+      // Arrange
+      var subAccount = new SubAccount
+      {
+        // Act
+        AccountId = null
+      };
 
-            // Act
-            subAccount.AccountId = null;
-
-            // Assert
-            Assert.That(subAccount.AccountId, Is.Null);
+      // Assert
+      Assert.That(subAccount.AccountId, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -387,14 +389,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void Account_Setter_CanSetToNull()
         {
-            // Arrange
-            var subAccount = new SubAccount(null, _testAccount);
+      // Arrange
+      var subAccount = new SubAccount(null, _testAccount)
+      {
+        // Act
+        Account = null
+      };
 
-            // Act
-            subAccount.Account = null;
-
-            // Assert
-            Assert.That(subAccount.Account, Is.Null);
+      // Assert
+      Assert.That(subAccount.Account, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -449,70 +452,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(subAccount.DateModified, Is.EqualTo(testDate));
-        }
-
-        #endregion
-
-        #region Explicit Interface Implementation Tests
-
-        [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = subAccount.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => subAccount.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = subAccount.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => subAccount.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = subAccount.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange
-            var subAccount = new SubAccount();
-
-            // Act & Assert
-            Assert.Throws<NotImplementedException>(() => subAccount.CastType = "SomeType");
         }
 
         #endregion
@@ -966,14 +905,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void LinkedEntity_Setter_AutomaticallyUpdatesLinkedEntityType()
         {
-            // Arrange
-            var subAccount = new SubAccount();
-            
-            // Act
-            subAccount.LinkedEntity = _testLinkedEntity;
+      // Arrange
+      var subAccount = new SubAccount
+      {
+        // Act
+        LinkedEntity = _testLinkedEntity
+      };
 
-            // Assert
-            Assert.Multiple(() =>
+      // Assert
+      Assert.Multiple(() =>
             {
                 Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testLinkedEntity));
                 Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
@@ -983,14 +923,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void LinkedEntity_Setter_SetsLinkedEntityTypeToNullWhenEntityIsNull()
         {
-            // Arrange
-            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
-            
-            // Act
-            subAccount.LinkedEntity = null;
+      // Arrange
+      var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
+      {
+        // Act
+        LinkedEntity = null
+      };
 
-            // Assert
-            Assert.Multiple(() =>
+      // Assert
+      Assert.Multiple(() =>
             {
                 Assert.That(subAccount.LinkedEntity, Is.Null);
                 Assert.That(subAccount.LinkedEntityType, Is.Null);
@@ -1186,12 +1127,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void DateModified_UpdatesIndependently_ForDifferentPropertyChanges()
         {
-            // Arrange
-            var subAccount = new SubAccount();
-            
-            // Act & Assert
-            subAccount.Id = 1;
-            var firstModification = subAccount.DateModified;
+      // Arrange
+      var subAccount = new SubAccount
+      {
+        // Act & Assert
+        Id = 1
+      };
+      var firstModification = subAccount.DateModified;
             
             Thread.Sleep(1); // Ensure time difference
             
@@ -1373,6 +1315,269 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.DateModified, Is.EqualTo(modifiedDate));
                 Assert.That(result.LinkedEntity, Is.Not.Null);
                 Assert.That(result.Account, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithReflectionFallback_WhenTypeRegistryReturnsNull()
+        {
+            // Arrange - Create a subaccount with a custom entity that might not be in TypeRegistry
+            var customEntity = new User { Id = 99, FirstName = "Custom", LastName = "Entity" };
+            var subAccount = new SubAccount(customEntity, _testAccount);
+
+            // Act - This should work even if TypeRegistry doesn't have the type
+            var result = subAccount.CastLinkedEntity<User>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<User>());
+                Assert.That(result.Id, Is.EqualTo(99));
+                Assert.That(result.FirstName, Is.EqualTo("Custom"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithReflectionFallback_ThrowsWhenTypeNotFound()
+        {
+            // Arrange - Create a SubAccount with a fake type name that doesn't exist
+            var subAccount = new SubAccount(
+                id: 1,
+                linkedEntityId: 100,
+                linkedEntityType: "NonExistentType",
+                linkedEntity: _testLinkedEntity,
+                accountId: 200,
+                account: _testAccount,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => subAccount.CastLinkedEntity<User>());
+            Assert.That(ex.Message, Does.Contain("Could not find type 'NonExistentType'"));
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithCastMethodInvocation_HandlesExceptionCorrectly()
+        {
+            // Arrange - Create a scenario where Cast method might fail
+            var customEntity = new User { Id = 100, FirstName = "Test", LastName = "User" };
+            var subAccount = new SubAccount(customEntity, _testAccount);
+
+            // Act - Try to cast to an incompatible type that should fail
+            var ex = Assert.Throws<InvalidCastException>(() => subAccount.CastLinkedEntity<Account>());
+
+            // Assert
+            Assert.That(ex.Message, Does.Contain("Cannot cast LinkedEntity"));
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithDirectCast_ReturnsCorrectResult()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+
+            // Act - This should use the direct cast path (if _linkedEntity is T directCast)
+            var result = subAccount.CastLinkedEntity<User>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.SameAs(_testLinkedEntity));
+                Assert.That(result.FirstName, Is.EqualTo("John"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithTypeRegistryEnhancement_WhenLinkedEntityCastFails()
+        {
+            // Arrange - Create a scenario where LinkedEntity casting might fail in the enhanced Cast method
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount) { Id = 6 };
+
+            // Act - The Cast method should handle LinkedEntity casting failures gracefully
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert - Should still return a valid DTO even if LinkedEntity casting fails
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<SubAccountDTO>());
+                Assert.That(result.Id, Is.EqualTo(6));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithTypeRegistryEnhancement_WithNullLinkedEntityType()
+        {
+            // Arrange - Create a SubAccount with null LinkedEntityType
+            var subAccount = new SubAccount(
+                id: 7,
+                linkedEntityId: 100,
+                linkedEntityType: null,
+                linkedEntity: _testLinkedEntity,
+                accountId: 200,
+                account: _testAccount,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<SubAccountDTO>());
+                Assert.That(result.Id, Is.EqualTo(7));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithTypeRegistryEnhancement_WithEmptyLinkedEntityType()
+        {
+            // Arrange - Create a SubAccount with empty LinkedEntityType
+            var subAccount = new SubAccount(
+                id: 8,
+                linkedEntityId: 100,
+                linkedEntityType: "",
+                linkedEntity: _testLinkedEntity,
+                accountId: 200,
+                account: _testAccount,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<SubAccountDTO>());
+                Assert.That(result.Id, Is.EqualTo(8));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithLinkedEntityReflectionInvocation_TestsCastMethodPath()
+        {
+            // This test specifically targets the reflection-based Cast method invocation path
+            // in the enhanced Cast method when TypeRegistry is involved
+
+            // Arrange
+            var organization = new Organization { Id = 300, OrganizationName = "Test Org" };
+            var subAccount = new SubAccount(organization, _testAccount) { Id = 9 };
+
+            // Act
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<SubAccountDTO>());
+                Assert.That(result.Id, Is.EqualTo(9));
+                Assert.That(result.LinkedEntityType, Is.EqualTo("Organization"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithNullLinkedEntityType_ThrowsInvalidOperationException()
+        {
+            // Arrange - Create a SubAccount with null LinkedEntityType but non-null LinkedEntity
+            var subAccount = new SubAccount(
+                id: 1,
+                linkedEntityId: 100,
+                linkedEntityType: null,
+                linkedEntity: _testLinkedEntity,
+                accountId: 200,
+                account: _testAccount,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            );
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidOperationException>(() => subAccount.CastLinkedEntity<User>());
+            Assert.That(ex.Message, Does.Contain("LinkedEntityType is not set"));
+        }
+
+        [Test, Category("Models")]
+        public void CanCastLinkedEntityTo_WithTypeRegistrySupport_ReturnsCorrectResult()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+
+            // Act & Assert - Should work with TypeRegistry lookup
+            Assert.That(subAccount.CanCastLinkedEntityTo<User>(), Is.True);
+            Assert.That(subAccount.CanCastLinkedEntityTo<Account>(), Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithCastMethodFailure_ThrowsInvalidCastExceptionWithInnerException()
+        {
+            // Arrange - Create an entity that will fail when trying to cast via reflection
+            var entity = new User { Id = 123, FirstName = "Test", LastName = "User" };
+            var subAccount = new SubAccount(entity, _testAccount);
+
+            // Act & Assert - Try to cast to completely incompatible type
+            var ex = Assert.Throws<InvalidCastException>(() => subAccount.CastLinkedEntity<Organization>());
+            Assert.That(ex.Message, Does.Contain("Cannot cast LinkedEntity"));
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_WithNoAvailableCastMethod_ThrowsInvalidCastException()
+        {
+            // Arrange - This tests the final fallback when no Cast method is available
+            var entity = new User { Id = 456, FirstName = "Another", LastName = "User" };
+            var subAccount = new SubAccount(entity, _testAccount);
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => subAccount.CastLinkedEntity<Account>());
+            Assert.That(ex.Message, Does.Contain("Cannot cast LinkedEntity"));
+        }
+
+        [Test, Category("Models")]
+        public void CastLinkedEntity_TestsAllReflectionPaths()
+        {
+            // This test specifically targets the reflection-based type resolution paths
+            // to ensure we cover all the Type.GetType fallback scenarios
+
+            // Arrange - Use an organization to test different type paths
+            var org = new Organization { Id = 999, OrganizationName = "Test Organization" };
+            var subAccount = new SubAccount(org, _testAccount);
+
+            // Act & Assert - This should work through the reflection system
+            var result = subAccount.CastLinkedEntity<Organization>();
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<Organization>());
+                Assert.That(result.Id, Is.EqualTo(999));
+                Assert.That(result.OrganizationName, Is.EqualTo("Test Organization"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_WithLinkedEntityTypeRegistryLookupFailure_UsesOriginalEntity()
+        {
+            // This test covers the scenario where TypeRegistry lookup fails but casting continues
+
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount) { Id = 10 };
+
+            // Act - Even if TypeRegistry methods fail, it should fall back gracefully
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.TypeOf<SubAccountDTO>());
+                Assert.That(result.Id, Is.EqualTo(10));
             });
         }
 

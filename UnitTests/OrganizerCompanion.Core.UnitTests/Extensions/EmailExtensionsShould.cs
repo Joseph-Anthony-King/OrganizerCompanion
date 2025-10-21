@@ -134,7 +134,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Cell);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)

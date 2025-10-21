@@ -2,29 +2,29 @@
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using ProjectTask = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
-    internal class ProjectAssignmentDTO : IProjectAssignmentDTO
+    internal class ProjectDTO : IProjectDTO
     {
         #region Fields
         private readonly DateTime? _dateCompleted = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<IGroupDTO>? IProjectAssignmentDTO.Groups
+        List<IGroupDTO>? IProjectDTO.Groups
         {
-            get => [.. Groups!.Cast<IGroupDTO>()];
-            set => Groups = value!.ConvertAll(group => (GroupDTO)group);
+            get => Groups?.Cast<IGroupDTO>().ToList();
+            set => Groups = value?.ConvertAll(group => (GroupDTO)group);
         }
+
         [JsonIgnore]
-        IProjectTask? IProjectAssignmentDTO.Task
+        List<IProjectTaskDTO>? IProjectDTO.Tasks
         {
-            get => Task;
-            set => Task = (ProjectTask?)value;
+            get => Tasks?.Cast<IProjectTaskDTO>().ToList();
+            set => Tasks = value?.ConvertAll(task => (ProjectTaskDTO)task);
         }
         #endregion
 
@@ -33,21 +33,18 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int Id { get; set; } = 0;
 
         [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name { set; get; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
 
-        [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
+        [Required, JsonPropertyName("description"), MinLength(1, ErrorMessage = "Description must be at least 1 character long"), MaxLength(1000, ErrorMessage = "Name cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
 
-        [Required, JsonPropertyName("groups")]
+        [JsonPropertyName("groups")]
         public List<GroupDTO>? Groups { get; set; } = null;
 
-        [Required, JsonPropertyName("taskId"), Range(0, int.MaxValue, ErrorMessage = "Task Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public int? TaskId { get; set; } = null;
-        
-        [Required, JsonPropertyName("task"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ProjectTask? Task { get; set; } = null;
+        [JsonPropertyName("tasks")]
+        public List<ProjectTaskDTO>? Tasks { get; set; } = null;
 
-        [Required, JsonPropertyName("isCompleted")]
+        [Required, JsonPropertyName("isCompleted")] 
         public bool IsCompleted { get; set; } = false;
 
         [Required, JsonPropertyName("dateDue")]
@@ -58,24 +55,21 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated => _dateCreated;
-
-        [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion
 
         #region Constructors
-        public ProjectAssignmentDTO() { }
+        public ProjectDTO() { }
 
         [JsonConstructor]
-        public ProjectAssignmentDTO(
-            int id,
+        public ProjectDTO(
+            int id, 
             string name, 
             string? description, 
-            List<GroupDTO>? groups,
-            int? taskId,
-            ProjectTask? task,
+            List<GroupDTO>? groups, 
+            List<ProjectTaskDTO>? tasks, 
             bool isCompleted, 
-            DateTime? dateDue,
+            DateTime? dateDue, 
             DateTime? dateCompleted,
             DateTime dateCreated,
             DateTime? dateModified)
@@ -84,8 +78,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             Name = name;
             Description = description;
             Groups = groups;
-            TaskId = taskId;
-            Task = task;
+            Tasks = tasks;
             IsCompleted = isCompleted;
             DateDue = dateDue;
             _dateCompleted = dateCompleted;
@@ -95,9 +88,15 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #endregion
 
         #region Methods
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+        public T Cast<T>() where T : IDomainEntity
+        {
+            throw new NotImplementedException();
+        }
 
-        public string ToJson() => throw new NotImplementedException();
+        public string ToJson()
+        {
+            throw new NotImplementedException();
+        }
         #endregion
     }
 }

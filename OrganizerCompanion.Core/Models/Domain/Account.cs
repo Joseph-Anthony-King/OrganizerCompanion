@@ -51,15 +51,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 DateModified = DateTime.Now;
             }
         }
-
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         #endregion
 
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
@@ -172,10 +163,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int? mainAccountId,
             List<SubAccount> accounts,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             try
             {

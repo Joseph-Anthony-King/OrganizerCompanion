@@ -464,64 +464,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
         public void DateCreated_ShouldBeReadOnly()
-    {
-      // Arrange
-      var originalDateCreated = _sut.DateCreated;
+        {
+            // Arrange
+            var originalDateCreated = _sut.DateCreated;
 
             // Act & Assert - DateCreated should not have a public setter
             var propertyInfo = typeof(USAddress).GetProperty(nameof(USAddress.DateCreated));
             Assert.That(propertyInfo, Is.Not.Null);
-      Assert.Multiple(() =>
-      {
-        Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
-        Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
-      });
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(propertyInfo!.CanWrite, Is.False, "DateCreated should be read-only");
+                Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
+            });
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
         public void DateModified_CanBeSetDirectly()
         {
             // Arrange
@@ -716,15 +674,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             var jsonDocument = JsonDocument.Parse(json);
             var root = jsonDocument.RootElement;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(root.TryGetProperty("id", out var idProperty), Is.True);
                 Assert.That(idProperty.GetInt32(), Is.EqualTo(1));
-                
+
                 Assert.That(root.TryGetProperty("street1", out var street1Property), Is.True);
                 Assert.That(street1Property.ValueKind, Is.EqualTo(JsonValueKind.Null));
-                
+
                 Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
                 Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
@@ -778,9 +736,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 property.Value.Invoke();
 
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified), 
+                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified),
                     $"Property {property.Key} should update DateModified");
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
+                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)),
                     $"Property {property.Key} should set DateModified to current time");
             }
         }
@@ -839,7 +797,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var mockEntity1 = new MockDomainEntity();
             var mockEntity2 = new AnotherMockEntity();
-            
+
             _sut.LinkedEntity = mockEntity1;
             var firstType = _sut.LinkedEntityType;
 
@@ -1070,7 +1028,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.State = new USState { Name = "Florida", Abbreviation = "FL" };
             _sut.ZipCode = string.Empty;
             _sut.Country = string.Empty;
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Cell;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
 
             // Act
             var result = _sut.Cast<USAddressDTO>();
@@ -1085,7 +1043,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.City, Is.EqualTo(string.Empty));
                 Assert.That(result.ZipCode, Is.EqualTo(string.Empty));
                 Assert.That(result.Country, Is.EqualTo(string.Empty));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Cell));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
             });
         }
 
@@ -1174,7 +1132,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 (OrganizerCompanion.Core.Enums.Types.Home, 1),
                 (OrganizerCompanion.Core.Enums.Types.Work, 2),
-                (OrganizerCompanion.Core.Enums.Types.Cell, 3),
+                (OrganizerCompanion.Core.Enums.Types.Mobil, 3),
                 (OrganizerCompanion.Core.Enums.Types.Fax, 4),
                 (OrganizerCompanion.Core.Enums.Types.Billing, 5),
                 (OrganizerCompanion.Core.Enums.Types.Other, 6)
@@ -1378,7 +1336,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Note: This test demonstrates the exception handling in the Cast method
             // The current implementation catches any exception and wraps it in InvalidCastException
-            
+
             // Arrange
             _sut.Id = 789;
             _sut.Street1 = "789 Exception Test Street";
@@ -1474,15 +1432,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.DoesNotThrow(() =>
             {
                 for (int i = 0; i < iterations; i++)
-              {
-                var dto = _sut.Cast<USAddressDTO>();
-                    var iDto = _sut.Cast<IUSAddressDTO>();
-                Assert.Multiple(() =>
                 {
-                  Assert.That(dto, Is.Not.Null);
-                  Assert.That(iDto, Is.Not.Null);
-                });
-              }
+                    var dto = _sut.Cast<USAddressDTO>();
+                    var iDto = _sut.Cast<IUSAddressDTO>();
+                    Assert.Multiple(() =>
+                    {
+                        Assert.That(dto, Is.Not.Null);
+                        Assert.That(iDto, Is.Not.Null);
+                    });
+                }
             });
         }
         #endregion

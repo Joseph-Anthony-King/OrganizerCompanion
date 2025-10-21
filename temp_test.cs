@@ -1,0 +1,1 @@
+using System; object nullValue = null; try { var result = (string)nullValue; Console.WriteLine("Cast succeeded: " + (result == null ? "null" : result)); } catch (Exception ex) { Console.WriteLine("Exception: " + ex.GetType().Name + " - " + ex.Message); }

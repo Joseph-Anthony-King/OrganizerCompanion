@@ -61,9 +61,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(organizationDTO.IsCast, Is.False);
-                Assert.That(organizationDTO.CastId, Is.EqualTo(0));
-                Assert.That(organizationDTO.CastType, Is.Null);
                 Assert.That(organizationDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
                 Assert.That(organizationDTO.DateModified, Is.Null);
             });
@@ -228,42 +225,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #endregion
 
         #region IDomainEntity Property Tests
-
-        [Test, Category("DataTransferObjects")]
-        public void IsCast_ShouldGetAndSetCorrectly()
-        {
-            // Act
-            _organizationDTO.IsCast = true;
-
-            // Assert
-            Assert.That(_organizationDTO.IsCast, Is.True);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastId_ShouldGetAndSetCorrectly()
-        {
-            // Arrange
-            const int expectedCastId = 999;
-
-            // Act
-            _organizationDTO.CastId = expectedCastId;
-
-            // Assert
-            Assert.That(_organizationDTO.CastId, Is.EqualTo(expectedCastId));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void CastType_ShouldGetAndSetCorrectly()
-        {
-            // Arrange
-            const string expectedCastType = "TestCastType";
-
-            // Act
-            _organizationDTO.CastType = expectedCastType;
-
-            // Assert
-            Assert.That(_organizationDTO.CastType, Is.EqualTo(expectedCastType));
-        }
 
         [Test, Category("DataTransferObjects")]
         public void DateCreated_ShouldGetAndSetCorrectly()
@@ -705,22 +666,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void IDomainEntityProperties_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var isCastProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.IsCast));
-            var castIdProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.CastId));
-            var castTypeProperty = typeof(OrganizationDTO).GetProperty(nameof(OrganizationDTO.CastType));
 
-            // Act & Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(isCastProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castIdProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-                Assert.That(castTypeProperty?.GetCustomAttributes(typeof(JsonIgnoreAttribute), false), Is.Not.Empty);
-            });
-        }
 
         #endregion
 
@@ -936,6 +882,585 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(0));
                 Assert.That(_organizationDTO.Addresses.Count, Is.EqualTo(0));
                 Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(0));
+            });
+        }
+
+        #endregion
+
+        #region Additional Edge Case Tests
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _organizationDTO.Id = int.MinValue;
+
+            // Assert
+            Assert.That(_organizationDTO.Id, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _organizationDTO.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_organizationDTO.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Id_ShouldSupportSequentialAssignments()
+        {
+            // Arrange
+            var ids = new[] { 0, 1, -1, int.MaxValue, int.MinValue, 42, 999 };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var id in ids)
+                {
+                    _organizationDTO.Id = id;
+                    Assert.That(_organizationDTO.Id, Is.EqualTo(id));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _organizationDTO.DateCreated = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_organizationDTO.DateCreated, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _organizationDTO.DateCreated = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_organizationDTO.DateCreated, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMinValue()
+        {
+            // Arrange & Act
+            _organizationDTO.DateModified = DateTime.MinValue;
+
+            // Assert
+            Assert.That(_organizationDTO.DateModified, Is.EqualTo(DateTime.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldAcceptMaxValue()
+        {
+            // Arrange & Act
+            _organizationDTO.DateModified = DateTime.MaxValue;
+
+            // Assert
+            Assert.That(_organizationDTO.DateModified, Is.EqualTo(DateTime.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateCreated_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
+
+            // Act
+            _organizationDTO.DateCreated = preciseDate;
+
+            // Assert
+            Assert.That(_organizationDTO.DateCreated, Is.EqualTo(preciseDate));
+            Assert.That(_organizationDTO.DateCreated.Millisecond, Is.EqualTo(123));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldMaintainPrecision()
+        {
+            // Arrange
+            var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
+
+            // Act
+            _organizationDTO.DateModified = preciseDate;
+
+            // Assert
+            Assert.That(_organizationDTO.DateModified, Is.EqualTo(preciseDate));
+            Assert.That(_organizationDTO.DateModified?.Millisecond, Is.EqualTo(456));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationName_ShouldAcceptVeryLongString()
+        {
+            // Arrange
+            var longName = new string('O', 10000) + " Organization";
+
+            // Act
+            _organizationDTO.OrganizationName = longName;
+
+            // Assert
+            Assert.That(_organizationDTO.OrganizationName, Is.EqualTo(longName));
+            Assert.That(_organizationDTO.OrganizationName?.Length, Is.EqualTo(10013));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationName_ShouldAcceptWhitespace()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                _organizationDTO.OrganizationName = "   ";
+                Assert.That(_organizationDTO.OrganizationName, Is.EqualTo("   "));
+
+                _organizationDTO.OrganizationName = " Organization Name ";
+                Assert.That(_organizationDTO.OrganizationName, Is.EqualTo(" Organization Name "));
+
+                _organizationDTO.OrganizationName = "\t\n\r";
+                Assert.That(_organizationDTO.OrganizationName, Is.EqualTo("\t\n\r"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationName_ShouldHandleConsecutiveAssignments()
+        {
+            // Arrange
+            var names = new[] { "Org 1", null, "", "Org 2", "   ", "Final Org" };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var name in names)
+                {
+                    _organizationDTO.OrganizationName = name;
+                    Assert.That(_organizationDTO.OrganizationName, Is.EqualTo(name));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Collections_ShouldHandleNullElements()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Test Emails with null elements
+                var emailsWithNull = new List<EmailDTO> { new() { Id = 1 }, null!, new() { Id = 2 } };
+                _organizationDTO.Emails = emailsWithNull;
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(emailsWithNull));
+                Assert.That(_organizationDTO.Emails[1], Is.Null);
+
+                // Test PhoneNumbers with null elements
+                var phonesWithNull = new List<PhoneNumberDTO> { new() { Id = 1 }, null!, new() { Id = 2 } };
+                _organizationDTO.PhoneNumbers = phonesWithNull;
+                Assert.That(_organizationDTO.PhoneNumbers, Is.EqualTo(phonesWithNull));
+                Assert.That(_organizationDTO.PhoneNumbers[1], Is.Null);
+
+                // Test Members with null elements  
+                var membersWithNull = new List<ContactDTO> { new() { Id = 1 }, null!, new() { Id = 2 } };
+                _organizationDTO.Members = membersWithNull;
+                Assert.That(_organizationDTO.Members, Is.EqualTo(membersWithNull));
+                Assert.That(_organizationDTO.Members[1], Is.Null);
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Collections_ShouldSupportConsecutiveAssignments()
+        {
+            // Arrange
+            var emptyEmails = new List<EmailDTO>();
+            var singleEmail = new List<EmailDTO> { new() { Id = 1, EmailAddress = "test@example.com" } };
+            var multipleEmails = new List<EmailDTO> 
+            { 
+                new() { Id = 1, EmailAddress = "test1@example.com" },
+                new() { Id = 2, EmailAddress = "test2@example.com" }
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Empty -> Single -> Multiple -> Empty
+                _organizationDTO.Emails = emptyEmails;
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(emptyEmails));
+
+                _organizationDTO.Emails = singleEmail;
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(singleEmail));
+
+                _organizationDTO.Emails = multipleEmails;
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(multipleEmails));
+
+                _organizationDTO.Emails = emptyEmails;
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(emptyEmails));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IOrganizationDTO_Collections_ShouldHandleEmptyToNonEmptyTransitions()
+        {
+            // Arrange
+            IOrganizationDTO interfaceOrg = _organizationDTO;
+            var emptyEmails = new List<IEmailDTO>();
+            var nonEmptyEmails = new List<IEmailDTO> { new EmailDTO { Id = 1, EmailAddress = "test@example.com" } };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                // Start with empty
+                interfaceOrg.Emails = emptyEmails;
+                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(0));
+
+                // Add items
+                interfaceOrg.Emails = nonEmptyEmails;
+                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(1));
+
+                // Back to empty
+                interfaceOrg.Emails = emptyEmails;
+                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void DateModified_ShouldHandleNullToDateTransitions()
+        {
+            // Arrange
+            var testDates = new DateTime[]
+            {
+                DateTime.Now,
+                DateTime.MinValue,
+                DateTime.MaxValue,
+                new DateTime(2020, 1, 1),
+                new DateTime(2030, 12, 31, 23, 59, 59)
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var date in testDates)
+                {
+                    // Start with null
+                    _organizationDTO.DateModified = null;
+                    Assert.That(_organizationDTO.DateModified, Is.Null);
+
+                    // Assign date
+                    _organizationDTO.DateModified = date;
+                    Assert.That(_organizationDTO.DateModified, Is.EqualTo(date));
+
+                    // Back to null
+                    _organizationDTO.DateModified = null;
+                    Assert.That(_organizationDTO.DateModified, Is.Null);
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationDTO_PropertiesShouldBeIndependent()
+        {
+            // Arrange & Act
+            _organizationDTO.Id = 999;
+            _organizationDTO.OrganizationName = "Independent Org";
+            _organizationDTO.Emails = [new() { Id = 1 }];
+            _organizationDTO.PhoneNumbers = [new() { Id = 1 }];
+            _organizationDTO.Addresses = [new MockAddressDTO { Id = 1 }];
+            _organizationDTO.Members = [new() { Id = 1 }];
+            _organizationDTO.Contacts = [new() { Id = 1 }];
+            _organizationDTO.Accounts = [new() { Id = 1 }];
+            var testDate = DateTime.Now.AddDays(-5);
+            var testModified = DateTime.Now.AddHours(-3);
+            _organizationDTO.DateCreated = testDate;
+            _organizationDTO.DateModified = testModified;
+
+            // Store original values
+            var originalId = _organizationDTO.Id;
+            var originalName = _organizationDTO.OrganizationName;
+            var originalEmails = _organizationDTO.Emails;
+            var originalPhones = _organizationDTO.PhoneNumbers;
+            var originalCreated = _organizationDTO.DateCreated;
+            var originalModified = _organizationDTO.DateModified;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // Change Id, verify others unchanged
+                _organizationDTO.Id = 1000;
+                Assert.That(_organizationDTO.OrganizationName, Is.EqualTo(originalName));
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(originalEmails));
+                Assert.That(_organizationDTO.PhoneNumbers, Is.EqualTo(originalPhones));
+                Assert.That(_organizationDTO.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_organizationDTO.DateModified, Is.EqualTo(originalModified));
+
+                // Change OrganizationName, verify others unchanged
+                _organizationDTO.OrganizationName = "Changed Name";
+                Assert.That(_organizationDTO.Id, Is.EqualTo(1000)); // New value
+                Assert.That(_organizationDTO.Emails, Is.EqualTo(originalEmails));
+                Assert.That(_organizationDTO.PhoneNumbers, Is.EqualTo(originalPhones));
+                Assert.That(_organizationDTO.DateCreated, Is.EqualTo(originalCreated));
+                Assert.That(_organizationDTO.DateModified, Is.EqualTo(originalModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationDTO_ShouldSupportObjectInitializerSyntax()
+        {
+            // Arrange
+            var testCreated = DateTime.Now.AddDays(-7);
+            var testModified = DateTime.Now.AddHours(-1);
+            var testEmails = new List<EmailDTO> { new() { Id = 1, EmailAddress = "init@example.com" } };
+
+            // Act
+            var orgDto = new OrganizationDTO
+            {
+                Id = 555,
+                OrganizationName = "Initializer Organization",
+                Emails = testEmails,
+                PhoneNumbers = [new() { Id = 1, Phone = "555-0123" }],
+                Addresses = [new MockAddressDTO { Id = 1 }],
+                Members = [new() { Id = 1, FirstName = "John" }],
+                Contacts = [new() { Id = 2, FirstName = "Jane" }],
+                Accounts = [new() { Id = 1, AccountName = "testuser" }],
+                DateCreated = testCreated,
+                DateModified = testModified
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(orgDto.Id, Is.EqualTo(555));
+                Assert.That(orgDto.OrganizationName, Is.EqualTo("Initializer Organization"));
+                Assert.That(orgDto.Emails, Is.EqualTo(testEmails));
+                Assert.That(orgDto.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(orgDto.Addresses.Count, Is.EqualTo(1));
+                Assert.That(orgDto.Members.Count, Is.EqualTo(1));
+                Assert.That(orgDto.Contacts.Count, Is.EqualTo(1));
+                Assert.That(orgDto.Accounts.Count, Is.EqualTo(1));
+                Assert.That(orgDto.DateCreated, Is.EqualTo(testCreated));
+                Assert.That(orgDto.DateModified, Is.EqualTo(testModified));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_ShouldThrowNotImplementedException_WithDifferentGenericTypes()
+        {
+            // Arrange & Act & Assert
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<NotImplementedException>(() => _organizationDTO.Cast<MockDomainEntity>());
+                Assert.Throws<NotImplementedException>(() => _organizationDTO.Cast<IDomainEntity>());
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void Cast_ShouldThrowWithSpecificMessage()
+        {
+            // Arrange & Act
+            var ex = Assert.Throws<NotImplementedException>(() => _organizationDTO.Cast<MockDomainEntity>());
+
+            // Assert
+            Assert.That(ex.Message, Is.EqualTo("Cast method not implemented for OrganizationDTO."));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldHandleEmptyCollections()
+        {
+            // Arrange
+            _organizationDTO.Id = 1;
+            _organizationDTO.OrganizationName = "Empty Collections Org";
+            _organizationDTO.Emails = [];
+            _organizationDTO.PhoneNumbers = [];
+            _organizationDTO.Addresses = [];
+            _organizationDTO.Members = [];
+            _organizationDTO.Contacts = [];
+            _organizationDTO.Accounts = [];
+
+            // Act
+            var json = _organizationDTO.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Contains.Substring("\"emails\":[]"));
+                Assert.That(json, Contains.Substring("\"phoneNumbers\":[]"));
+                Assert.That(json, Contains.Substring("\"addresses\":[]"));
+                Assert.That(json, Contains.Substring("\"members\":[]"));
+                Assert.That(json, Contains.Substring("\"contacts\":[]"));
+                Assert.That(json, Contains.Substring("\"accounts\":[]"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldHandleNullValues()
+        {
+            // Arrange
+            _organizationDTO.Id = 1;
+            _organizationDTO.OrganizationName = null;
+            _organizationDTO.DateModified = null;
+
+            // Act
+            var json = _organizationDTO.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Contains.Substring("\"organizationName\":null"));
+                Assert.That(json, Contains.Substring("\"dateModified\":null"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void ToJson_ShouldProduceValidJson()
+        {
+            // Arrange
+            _organizationDTO.Id = 42;
+            _organizationDTO.OrganizationName = "JSON Test Org";
+            _organizationDTO.Emails = [new() { Id = 1, EmailAddress = "json@test.com" }];
+
+            // Act
+            var json = _organizationDTO.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.DoesNotThrow(() => JsonDocument.Parse(json));
+                var document = JsonDocument.Parse(json);
+                Assert.That(document.RootElement.GetProperty("id").GetInt32(), Is.EqualTo(42));
+                Assert.That(document.RootElement.GetProperty("organizationName").GetString(), Is.EqualTo("JSON Test Org"));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationDTO_ShouldMaintainStateAcrossMultipleOperations()
+        {
+            // Arrange
+            var operations = new[]
+            {
+                new { Id = 1, Name = (string?)"Org One" },
+                new { Id = 2, Name = (string?)null },
+                new { Id = 3, Name = (string?)"" },
+                new { Id = 4, Name = (string?)"Org Four" }
+            };
+
+            // Act & Assert
+            Assert.Multiple(() =>
+            {
+                foreach (var op in operations)
+                {
+                    _organizationDTO.Id = op.Id;
+                    _organizationDTO.OrganizationName = op.Name;
+
+                    Assert.That(_organizationDTO.Id, Is.EqualTo(op.Id));
+                    Assert.That(_organizationDTO.OrganizationName, Is.EqualTo(op.Name));
+                }
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IOrganizationDTO_Collections_ShouldPreserveCastingBehavior()
+        {
+            // Arrange
+            var emails = new List<EmailDTO> { new() { Id = 1, EmailAddress = "casting@test.com" } };
+            _organizationDTO.Emails = emails;
+            IOrganizationDTO interfaceOrg = _organizationDTO;
+
+            // Act
+            var interfaceEmails = interfaceOrg.Emails;
+            var backToEmails = interfaceEmails.ConvertAll(e => (EmailDTO)e);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceEmails.Count, Is.EqualTo(emails.Count));
+                Assert.That(backToEmails.Count, Is.EqualTo(emails.Count));
+                Assert.That(interfaceEmails[0].Id, Is.EqualTo(emails[0].Id));
+                Assert.That(backToEmails[0].Id, Is.EqualTo(emails[0].Id));
+                Assert.That(interfaceEmails[0].EmailAddress, Is.EqualTo(emails[0].EmailAddress));
+                Assert.That(backToEmails[0].EmailAddress, Is.EqualTo(emails[0].EmailAddress));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void OrganizationDTO_ShouldHandleComplexScenarios()
+        {
+            // Arrange & Act
+            _organizationDTO.Id = int.MaxValue;
+            _organizationDTO.OrganizationName = "Complex Organization with 特殊字符 and emojis 🏢🏛️";
+            _organizationDTO.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
+            _organizationDTO.DateModified = DateTime.MinValue.AddMilliseconds(1);
+
+            // Create complex collections
+            var complexEmails = new List<EmailDTO>();
+            for (int i = 1; i <= 100; i++)
+            {
+                complexEmails.Add(new EmailDTO
+                {
+                    Id = i,
+                    EmailAddress = $"complex{i}_测试@example.com"
+                });
+            }
+            _organizationDTO.Emails = complexEmails;
+
+            var complexMembers = new List<ContactDTO>();
+            for (int i = 1; i <= 50; i++)
+            {
+                complexMembers.Add(new ContactDTO
+                {
+                    Id = i,
+                    FirstName = $"Member_{i}_测试",
+                    LastName = $"LastName_{i}_🚀"
+                });
+            }
+            _organizationDTO.Members = complexMembers;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_organizationDTO.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(_organizationDTO.OrganizationName, Contains.Substring("Complex Organization"));
+                Assert.That(_organizationDTO.OrganizationName, Contains.Substring("特殊字符"));
+                Assert.That(_organizationDTO.OrganizationName, Contains.Substring("🏢🏛️"));
+                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(100));
+                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(50));
+                Assert.That(_organizationDTO.DateCreated, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_organizationDTO.DateModified, Is.GreaterThan(DateTime.MinValue));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void IOrganizationDTO_AllCollections_ShouldWorkWithInterfaceCasting()
+        {
+            // Arrange
+            IOrganizationDTO interfaceOrg = _organizationDTO;
+            var emails = new List<IEmailDTO> { new EmailDTO { Id = 1, EmailAddress = "interface@test.com" } };
+            var phones = new List<IPhoneNumberDTO> { new PhoneNumberDTO { Id = 1, Phone = "555-0123" } };
+            var members = new List<IContactDTO> { new ContactDTO { Id = 1, FirstName = "Member" } };
+            var contacts = new List<IContactDTO> { new ContactDTO { Id = 2, FirstName = "Contact" } };
+            var accounts = new List<IAccountDTO> { new AccountDTO { Id = 1, AccountName = "account" } };
+
+            // Act
+            interfaceOrg.Emails = emails;
+            interfaceOrg.PhoneNumbers = phones;
+            interfaceOrg.Members = members;
+            interfaceOrg.Contacts = contacts;
+            interfaceOrg.Accounts = accounts;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceOrg.Emails.Count, Is.EqualTo(1));
+                Assert.That(interfaceOrg.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(interfaceOrg.Members.Count, Is.EqualTo(1));
+                Assert.That(interfaceOrg.Contacts.Count, Is.EqualTo(1));
+                Assert.That(interfaceOrg.Accounts.Count, Is.EqualTo(1));
+
+                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Contacts.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(1));
             });
         }
 

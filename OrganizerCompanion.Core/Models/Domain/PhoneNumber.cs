@@ -97,15 +97,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => _linkedEntityType;
 
-        [JsonIgnore]
-        public bool IsCast { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public int CastId { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        [JsonIgnore]
-        public string? CastType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
 

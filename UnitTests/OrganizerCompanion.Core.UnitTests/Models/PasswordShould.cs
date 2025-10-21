@@ -490,48 +490,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCast_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.IsCast; });
-        }
-
-        [Test, Category("Models")]
-        public void IsCast_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.IsCast = true);
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastId; });
-        }
-
-        [Test, Category("Models")]
-        public void CastId_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastId = 1);
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Getter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = _sut.CastType; });
-        }
-
-        [Test, Category("Models")]
-        public void CastType_Setter_ThrowsNotImplementedException()
-        {
-            // Arrange & Act & Assert
-            Assert.Throws<NotImplementedException>(() => _sut.CastType = "SomeType");
-        }
-
-        [Test, Category("Models")]
         public void Password_WithEmptyPasswordValue_ShouldBeAllowed()
         {
             // Act
@@ -901,13 +859,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PasswordValue_WhenGettingExpiredPassword_ShouldThrowInvalidOperationException()
         {
-            // Arrange - Due to bug in implementation, this test documents the incorrect behavior
-            // The condition in the getter is backwards: it throws when NOT expired
-            var passwordWithExpirationSet = new Password();
-            passwordWithExpirationSet.PasswordValue = "InitialPassword"; // This sets expiration to 3 months from now
-            
-            // Act & Assert - Due to the bug, this throws when password is NOT expired
-            var exception = Assert.Throws<InvalidOperationException>(() => 
+      // Arrange - Due to bug in implementation, this test documents the incorrect behavior
+      // The condition in the getter is backwards: it throws when NOT expired
+      var passwordWithExpirationSet = new Password
+      {
+        PasswordValue = "InitialPassword" // This sets expiration to 3 months from now
+      };
+
+      // Act & Assert - Due to the bug, this throws when password is NOT expired
+      var exception = Assert.Throws<InvalidOperationException>(() => 
             {
                 var value = passwordWithExpirationSet.PasswordValue;
             });
@@ -917,12 +877,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PasswordValue_WhenGettingExpiredPasswordWith5PreviousPasswords_ShouldRemoveOldestFromHistory()
         {
-            // Arrange - Create password with 5 previous passwords and test the exception behavior
-            var password = new Password();
-            
-            // Add 5 passwords to history first
-            password.PasswordValue = "Password1";
-            password.PasswordValue = "Password2";
+      // Arrange - Create password with 5 previous passwords and test the exception behavior
+      var password = new Password
+      {
+        // Add 5 passwords to history first
+        PasswordValue = "Password1"
+      };
+      password.PasswordValue = "Password2";
             password.PasswordValue = "Password3";
             password.PasswordValue = "Password4";
             password.PasswordValue = "Password5";
@@ -941,12 +902,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PasswordValue_WhenTrulyExpired_ShouldReturnValueWithoutException_DocumentingBug()
         {
-            // Arrange - Test the actual bug: when password is truly expired, it should return normally
-            var password = new Password();
-            password.PasswordValue = "TestPassword";
-            
-            // Use reflection to set expiration to past date
-            var expirationField = typeof(Password).GetField("_expirationDate", 
+      // Arrange - Test the actual bug: when password is truly expired, it should return normally
+      var password = new Password
+      {
+        PasswordValue = "TestPassword"
+      };
+
+      // Use reflection to set expiration to past date
+      var expirationField = typeof(Password).GetField("_expirationDate", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             expirationField?.SetValue(password, DateTime.Now.AddDays(-1));
 
@@ -960,10 +923,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PasswordValue_WhenTrulyExpiredAndHistoryManagement_ShouldModifyHistory()
         {
-            // Arrange - Test history modification when truly expired
-            var password = new Password();
-            password.PasswordValue = "Password1";
-            password.PasswordValue = "Password2";
+      // Arrange - Test history modification when truly expired
+      var password = new Password
+      {
+        PasswordValue = "Password1"
+      };
+      password.PasswordValue = "Password2";
             password.PasswordValue = "Password3";
             password.PasswordValue = "Password4";
             password.PasswordValue = "Password5";
@@ -1019,12 +984,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void PasswordValue_GetterWhenExpirationExactlyEqualsNow_ShouldThrowDueToBug()
         {
-            // Arrange - Test the exact edge case where expiration equals current time
-            var password = new Password();
-            password.PasswordValue = "TestPassword";
-            
-            // Use reflection to set expiration to slightly in the future to ensure <= condition is true
-            var expirationField = typeof(Password).GetField("_expirationDate", 
+      // Arrange - Test the exact edge case where expiration equals current time
+      var password = new Password
+      {
+        PasswordValue = "TestPassword"
+      };
+
+      // Use reflection to set expiration to slightly in the future to ensure <= condition is true
+      var expirationField = typeof(Password).GetField("_expirationDate", 
                 System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             expirationField?.SetValue(password, DateTime.Now.AddMilliseconds(100));
 
@@ -1144,10 +1111,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountId: 456,
                 account: null,
                 dateCreated: DateTime.Now.AddDays(-1),
-                dateModified: null,
-                isCast: null,
-                castId: null,
-                castType: null);
+                dateModified: null);
 
             // Assert
             Assert.Multiple(() =>
