@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using OrganizerCompanion.Core.Enums;
-using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.Validation.Attributes
 {

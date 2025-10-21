@@ -1,6 +1,6 @@
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
-using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Validation.Attributes;
 using System.ComponentModel.DataAnnotations;
 

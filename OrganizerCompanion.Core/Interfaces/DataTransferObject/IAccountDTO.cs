@@ -1,5 +1,4 @@
 ﻿using OrganizerCompanion.Core.Interfaces.Domain;
-using OrganizerCompanion.Core.Models.Type;
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
@@ -8,9 +7,8 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
         string? AccountName { get; set; }
         string? AccountNumber { get; set; }
         string? License { get; set; }
-        DatabaseConnection? DatabaseConnection { get; set; }
+        IDatabaseConnection? DatabaseConnection { get; set; }
         List<IFeatureDTO> Features { get; set; }
-        int? MainAccountId { get; set; }
         List<ISubAccountDTO>? Accounts { get; set; }
     }
 }

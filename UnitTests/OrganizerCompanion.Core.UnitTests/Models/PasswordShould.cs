@@ -1203,7 +1203,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? AccountName { get; set; }
             public string? AccountNumber { get; set; }
             public string? License { get; set; }
-            public OrganizerCompanion.Core.Models.Type.DatabaseConnection? DatabaseConnection { get; set; }
+            public IDatabaseConnection? DatabaseConnection { get; set; }
             public int LinkedEntityId { get; set; }
             public string? LinkedEntityType { get; }
             public IDomainEntity? LinkedEntity { get; set; }

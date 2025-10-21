@@ -8,6 +8,7 @@ using OrganizerCompanion.Core.Models.Type;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Validation.Attributes;
+using DatabaseConnection = OrganizerCompanion.Core.Models.Domain.DatabaseConnection;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -38,7 +39,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.DatabaseConnection, Is.Null);
                 Assert.That(_sut.Features, Is.Not.Null);
                 Assert.That(_sut.Features, Is.Empty);
-                Assert.That(_sut.MainAccountId, Is.Null);
                 Assert.That(_sut.Accounts, Is.Null);
                 Assert.That(_sut.DateModified, Is.Null);
                 // DateCreated should be set to current time, tested separately for timing
@@ -250,78 +250,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(accountDto.Features, Is.Not.Null);
                 Assert.That(accountDto.Features, Is.Empty);
             });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldGetAndSetValue()
-        {
-            // Arrange
-            int? expectedMainAccountId = 456;
-
-            // Act
-            _sut.MainAccountId = expectedMainAccountId;
-
-            // Assert
-            Assert.That(_sut.MainAccountId, Is.EqualTo(expectedMainAccountId));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldAcceptNullValue()
-        {
-            // Arrange & Act
-            _sut.MainAccountId = null;
-
-            // Assert
-            Assert.That(_sut.MainAccountId, Is.Null);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldAcceptZeroValue()
-        {
-            // Arrange
-            int? expectedMainAccountId = 0;
-
-            // Act
-            _sut.MainAccountId = expectedMainAccountId;
-
-            // Assert
-            Assert.That(_sut.MainAccountId, Is.EqualTo(expectedMainAccountId));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldAcceptPositiveValue()
-        {
-            // Arrange
-            int? expectedMainAccountId = 999;
-
-            // Act
-            _sut.MainAccountId = expectedMainAccountId;
-
-            // Assert
-            Assert.That(_sut.MainAccountId, Is.EqualTo(expectedMainAccountId));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldAcceptMaxValue()
-        {
-            // Arrange
-            int? expectedMainAccountId = int.MaxValue;
-
-            // Act
-            _sut.MainAccountId = expectedMainAccountId;
-
-            // Assert
-            Assert.That(_sut.MainAccountId, Is.EqualTo(expectedMainAccountId));
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_DefaultValue_ShouldBeNull()
-        {
-            // Arrange & Act
-            var accountDto = new AccountDTO();
-
-            // Assert
-            Assert.That(accountDto.MainAccountId, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -1090,59 +1018,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldHaveRangeAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.MainAccountId));
-
-            // Act
-            var rangeAttribute = property?.GetCustomAttribute<System.ComponentModel.DataAnnotations.RangeAttribute>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(rangeAttribute, Is.Not.Null);
-                Assert.That(rangeAttribute?.Minimum, Is.EqualTo(0));
-                Assert.That(rangeAttribute?.Maximum, Is.EqualTo(int.MaxValue));
-                Assert.That(rangeAttribute?.ErrorMessage, Is.EqualTo("MainAccountId must be a non-negative number."));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldHaveJsonPropertyNameAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.MainAccountId));
-
-            // Act
-            var jsonPropertyNameAttribute = property?.GetCustomAttribute<JsonPropertyNameAttribute>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("mainAccountId"));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldHaveJsonIgnoreAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.MainAccountId));
-
-            // Act
-            var jsonIgnoreAttribute = property?.GetCustomAttribute<JsonIgnoreAttribute>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(jsonIgnoreAttribute, Is.Not.Null);
-                Assert.That(jsonIgnoreAttribute?.Condition, Is.EqualTo(JsonIgnoreCondition.WhenWritingNull));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void Accounts_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
@@ -1206,7 +1081,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 new() { Id = 1, FeatureName = "Test Feature", IsEnabled = true }
             };
-            
+
             _sut.Id = originalId;
             _sut.AccountName = originalAccountName;
             _sut.Features = originalFeatures;
@@ -1251,7 +1126,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 [
                     new() { Id = 1, FeatureName = "Chained Feature", IsEnabled = true }
                 ],
-                MainAccountId = 100,
                 Accounts = testSubAccounts
             };
 
@@ -1262,12 +1136,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(accountDTO.AccountName, Is.EqualTo("Chained Account"));
                 Assert.That(accountDTO.AccountNumber, Is.EqualTo("CHAIN-999"));
                 Assert.That(accountDTO.License, Is.EqualTo(testGuid));
-                Assert.That(accountDTO.DatabaseConnection, Is.EqualTo(testConnection));
-                Assert.That(accountDTO.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=localhost;Database=test;"));
+                Assert.That(accountDTO.DatabaseConnection.ConnectionString, Is.EqualTo(testConnection.ConnectionString));
                 Assert.That(accountDTO.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
                 Assert.That(accountDTO.Features, Has.Count.EqualTo(1));
                 Assert.That(accountDTO.Features[0].FeatureName, Is.EqualTo("Chained Feature"));
-                Assert.That(accountDTO.MainAccountId, Is.EqualTo(100));
                 Assert.That(accountDTO.Accounts, Is.EqualTo(testSubAccounts));
                 Assert.That(accountDTO.Accounts, Has.Count.EqualTo(1));
                 Assert.That(accountDTO.Accounts![0].Id, Is.EqualTo(1));
@@ -1302,7 +1174,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.License = guid;
             _sut.DatabaseConnection = connection;
             _sut.Features = features;
-            _sut.MainAccountId = 250;
             _sut.Accounts = accounts;
 
             // Assert
@@ -1318,7 +1189,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Features, Has.Count.EqualTo(2));
                 Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature A"));
                 Assert.That(_sut.Features[1].FeatureName, Is.EqualTo("Feature B"));
-                Assert.That(_sut.MainAccountId, Is.EqualTo(250));
                 Assert.That(_sut.Accounts, Is.Not.Null);
                 Assert.That(_sut.Accounts, Has.Count.EqualTo(2));
                 Assert.That(_sut.Accounts![0].Id, Is.EqualTo(30));
@@ -1363,9 +1233,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var interfaceMap = typeof(AccountDTO).GetInterfaceMap(typeof(IAccountDTO));
-            var featuresPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods, 
+            var featuresPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods,
                 m => m.Name == "get_Features");
-            
+
             // Act & Assert
             // The explicit interface implementation has JsonIgnore attribute on the property
             // This test verifies the explicit interface property exists and is properly implemented
@@ -1381,9 +1251,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var interfaceMap = typeof(AccountDTO).GetInterfaceMap(typeof(IAccountDTO));
-            var accountsPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods, 
+            var accountsPropertyIndex = Array.FindIndex(interfaceMap.InterfaceMethods,
                 m => m.Name == "get_Accounts");
-            
+
             // Act & Assert
             // The explicit interface implementation has JsonIgnore attribute on the property
             // This test verifies the explicit interface property exists and is properly implemented
@@ -1505,13 +1375,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceFeatures, Has.Count.EqualTo(1));
                 Assert.That(interfaceFeatures[0].Id, Is.EqualTo(100));
                 Assert.That(interfaceFeatures[0].FeatureName, Is.EqualTo("Consistency Test"));
-                
+
                 // Accounts consistency
                 Assert.That(interfaceAccounts, Is.Not.Null);
                 Assert.That(interfaceAccounts, Has.Count.EqualTo(1));
                 Assert.That(interfaceAccounts![0].Id, Is.EqualTo(200));
                 Assert.That(interfaceAccounts[0].LinkedEntityId, Is.EqualTo(200));
-                
+
                 // Verify concrete type still has same data
                 Assert.That(_sut.Features[0].Id, Is.EqualTo(100));
                 Assert.That(_sut.Accounts![0].Id, Is.EqualTo(200));
@@ -1534,7 +1404,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(freshAccountDTO.DatabaseConnection, Is.Null, "DatabaseConnection should default to null");
                 Assert.That(freshAccountDTO.Features, Is.Not.Null, "Features should not be null");
                 Assert.That(freshAccountDTO.Features, Is.Empty, "Features should be empty list");
-                Assert.That(freshAccountDTO.MainAccountId, Is.Null, "MainAccountId should default to null");
                 Assert.That(freshAccountDTO.Accounts, Is.Null, "Accounts should default to null");
                 Assert.That(freshAccountDTO.DateModified, Is.Null, "DateModified should default to null");
                 Assert.That(freshAccountDTO.DateCreated, Is.TypeOf<DateTime>(), "DateCreated should be DateTime");
@@ -1560,7 +1429,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.License = testGuid;
             _sut.DatabaseConnection = testConnection;
             _sut.Features = [new() { Id = 1, FeatureName = "Type Test Feature", IsEnabled = true }];
-            _sut.MainAccountId = 6789;
             _sut.Accounts = [new() { Id = 1, LinkedEntityId = 1 }];
             _sut.DateCreated = testDate;
             _sut.DateModified = testDate.AddDays(1);
@@ -1574,7 +1442,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.License, Is.TypeOf<string>());
                 Assert.That(_sut.DatabaseConnection, Is.TypeOf<DatabaseConnection>());
                 Assert.That(_sut.Features, Is.TypeOf<List<FeatureDTO>>());
-                Assert.That(_sut.MainAccountId, Is.TypeOf<int>(), "MainAccountId should be int when set to non-null value");
                 Assert.That(_sut.Accounts, Is.TypeOf<List<SubAccountDTO>>());
                 Assert.That(_sut.DateCreated, Is.TypeOf<DateTime>());
                 Assert.That(_sut.DateModified, Is.TypeOf<DateTime>(), "DateModified should be DateTime when set to non-null value");
@@ -1692,50 +1559,26 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void MainAccountId_ShouldAcceptBoundaryValues()
-        {
-            // Arrange, Act & Assert
-            Assert.Multiple(() =>
-            {
-                // Test minimum value (0)
-                _sut.MainAccountId = 0;
-                Assert.That(_sut.MainAccountId, Is.EqualTo(0));
-
-                // Test maximum value
-                _sut.MainAccountId = int.MaxValue;
-                Assert.That(_sut.MainAccountId, Is.EqualTo(int.MaxValue));
-
-                // Test null
-                _sut.MainAccountId = null;
-                Assert.That(_sut.MainAccountId, Is.Null);
-
-                // Test mid-range value
-                _sut.MainAccountId = 1_000_000;
-                Assert.That(_sut.MainAccountId, Is.EqualTo(1_000_000));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
         public void AccountDTO_PropertyChaining_ShouldWorkCorrectly()
         {
-      // Arrange & Act
-      var result = new AccountDTO
-      {
-        Id = 1,
-        AccountName = "Chain Test",
-        AccountNumber = "CHAIN-001",
-        License = Guid.NewGuid().ToString()
-      };
-
-      // Assert
-      Assert.Multiple(() =>
+            // Arrange & Act
+            var result = new AccountDTO
             {
-                Assert.That(result.Id, Is.EqualTo(1));
-                Assert.That(result.AccountName, Is.EqualTo("Chain Test"));
-                Assert.That(result.AccountNumber, Is.EqualTo("CHAIN-001"));
-                Assert.That(result.License, Is.Not.Null);
-                Assert.That(result.License, Does.Match(@"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"));
-            });
+                Id = 1,
+                AccountName = "Chain Test",
+                AccountNumber = "CHAIN-001",
+                License = Guid.NewGuid().ToString()
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+                  {
+                      Assert.That(result.Id, Is.EqualTo(1));
+                      Assert.That(result.AccountName, Is.EqualTo("Chain Test"));
+                      Assert.That(result.AccountNumber, Is.EqualTo("CHAIN-001"));
+                      Assert.That(result.License, Is.Not.Null);
+                      Assert.That(result.License, Does.Match(@"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"));
+                  });
         }
 
         [Test, Category("DataTransferObjects")]

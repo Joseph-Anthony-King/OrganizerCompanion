@@ -1,11 +1,12 @@
-﻿using OrganizerCompanion.Core.Enums;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Interfaces.Type;
 
 namespace OrganizerCompanion.Core.Models.Type
 {
-    internal class DatabaseConnection
+    internal class DatabaseConnection : IDatabaseConnection
     {
         #region Fields
         private readonly static JsonSerializerOptions _serializerOptions = new()

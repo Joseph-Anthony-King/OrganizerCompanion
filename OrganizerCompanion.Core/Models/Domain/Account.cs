@@ -23,13 +23,23 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _license = null;
         private DatabaseConnection? _databaseConnection = null;
         private List<AccountFeature> _features = [];
-        private int? _mainAccountId = null;
         private List<SubAccount>? _subAccounts = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit Interface Implementations
+        [JsonIgnore]
+        IDatabaseConnection? IAccount.DatabaseConnection
+        {
+            get => _databaseConnection;
+            set
+            {
+                _databaseConnection = value as DatabaseConnection;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [JsonIgnore]
         List<IAccountFeature> IAccount.Features
         {
@@ -121,17 +131,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? MainAccountId
-        {
-            get => _mainAccountId;
-            set
-            {
-                _mainAccountId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<SubAccount>? Accounts
         {
@@ -162,7 +161,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? license,
             DatabaseConnection? databaseConnection,
             List<AccountFeature> features,
-            int? mainAccountId,
             List<SubAccount> accounts,
             DateTime dateCreated,
             DateTime? dateModified)
@@ -173,7 +171,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _license = license;
             _databaseConnection = databaseConnection;
             _features = features;
-            _mainAccountId = mainAccountId;
             _subAccounts = accounts;
             _dateCreated = dateCreated;
             DateModified = dateModified;
@@ -185,7 +182,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? license,
             DatabaseConnection? databaseConnection,
             List<AccountFeature> features,
-            int? mainAccountId,
             List<SubAccount>? accounts,
             DateTime dateCreated,
             DateTime? dateModified)
@@ -195,7 +191,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _license = license;
             _databaseConnection = databaseConnection;
             _features = features;
-            _mainAccountId = mainAccountId;
             _subAccounts = accounts;
             _dateCreated = dateCreated;
             DateModified = dateModified;
@@ -217,7 +212,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                         License = this.License,
                         DatabaseConnection = this.DatabaseConnection,
                         Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
-                        MainAccountId = this.MainAccountId,
                         Accounts = this.Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
                         DateCreated = this.DateCreated,
                         DateModified = this.DateModified

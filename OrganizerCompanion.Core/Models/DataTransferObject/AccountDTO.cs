@@ -2,7 +2,7 @@
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Validation.Attributes;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
@@ -10,6 +10,17 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class AccountDTO : IAccountDTO
     {
         #region Explicit Interface Implementations
+        [JsonIgnore]
+        IDatabaseConnection? IAccountDTO.DatabaseConnection
+        {
+            get => DatabaseConnection;
+            set
+            {
+                DatabaseConnection = (DatabaseConnection?)value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [JsonIgnore]
         List<IFeatureDTO> IAccountDTO.Features
         {
@@ -71,9 +82,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];
-
-        [JsonPropertyName("mainAccountId"), Range(0, int.MaxValue, ErrorMessage = "MainAccountId must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int? MainAccountId { get; set; } = null;
 
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<SubAccountDTO>? Accounts { get; set; } = null;

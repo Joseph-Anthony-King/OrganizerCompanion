@@ -42,7 +42,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "TestAccount",
                 AccountNumber = "ACC123",
                 License = Guid.NewGuid().ToString(),
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Type.DatabaseConnection
+                DatabaseConnection = new DatabaseConnection
                 {
                     ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
                     DatabaseType = SupportedDatabases.SQLServer
