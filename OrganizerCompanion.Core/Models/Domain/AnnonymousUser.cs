@@ -15,8 +15,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
+        private string _userName = string.Empty;
         private int _accountId = 0;
-        private Account? _account = null;
+        private SubAccount? _account = null;
         private bool? _isCast = null;
         private int? _castId = null;
         private string? _castType = null;
@@ -25,12 +26,12 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Implementations
-        IAccount? IAnnonymousUser.Account
+        ISubAccount? IAnnonymousUser.Account
         {
             get => _account;
             set
             {
-                _account = (Account?)value;
+                _account = (SubAccount?)value;
                 DateModified = DateTime.Now;
             }
         }
@@ -47,6 +48,21 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("userName"), MinLength(1, ErrorMessage = "User Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "User Name cannot exceed 100 characters.")]
+        public string UserName
+        {
+            get => _userName;
+            set
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                    throw new ArgumentException("User Name must be at least 1 character long.", nameof(UserName));
+                if (value.Length > 100)
+                    throw new ArgumentException("User Name cannot exceed 100 characters.", nameof(UserName));
+                _userName = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId
         {
@@ -59,7 +75,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("account")]
-        public Account? Account
+        public SubAccount? Account
         {
             get => _account;
             set
@@ -115,13 +131,17 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public AnnonymousUser(
             int id,
+            string userName,
+            SubAccount account,
+            bool? isCast,
+            int? castId,
+            string? castType,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool? isCast = null,
-            int? castId = null,
-            string? castType = null)
+            DateTime? dateModified)
         {
             _id = id;
+            _userName = userName;
+            _account = account;
             _isCast = isCast != null && (bool)isCast;
             _castId = castId != null ? (int)castId : 0;
             _castType = castType;
@@ -139,7 +159,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     var result = (T)(IDomainEntity)new Organization(
                         0,
-                        null,
+                        UserName,
                         [],
                         [],
                         [],
@@ -163,7 +183,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         null,
                         null,
                         null,
-                        null,
+                        UserName,
                         null,
                         null,
                         null,
@@ -189,10 +209,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     var result = (T)(IDomainEntity)new AnnonymousUserDTO
                     {
-                        Id = this.Id,
-                        AccountId = this.AccountId,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                      Id = this.Id,
+                      UserName = this.UserName,
+                      AccountId = this.AccountId,
+                      DateCreated = this.DateCreated,
+                      DateModified = this.DateModified
                     };
 
                     return result;

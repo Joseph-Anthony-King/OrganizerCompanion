@@ -32,6 +32,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
                 Assert.That(_sut.AccountId, Is.EqualTo(0));
                 Assert.That(_sut.IsCast, Is.EqualTo(false));
                 Assert.That(_sut.CastId, Is.EqualTo(0));
@@ -134,6 +135,159 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.AccountId, Is.EqualTo(negativeValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldGetAndSetValue()
+        {
+            // Arrange
+            string expectedUserName = "TestUser";
+
+            // Act
+            _sut.UserName = expectedUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(expectedUserName));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_DefaultValue_ShouldBeEmptyString()
+        {
+            // Arrange & Act
+            var dto = new AnnonymousUserDTO();
+
+            // Assert
+            Assert.That(dto.UserName, Is.EqualTo(string.Empty));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptEmptyString()
+        {
+            // Arrange & Act
+            _sut.UserName = "";
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(""));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptMaxLengthString()
+        {
+            // Arrange
+            var maxLengthUserName = new string('A', 100); // 100 characters
+
+            // Act
+            _sut.UserName = maxLengthUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(maxLengthUserName));
+            Assert.That(_sut.UserName.Length, Is.EqualTo(100));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptLongString()
+        {
+            // Arrange
+            var longUserName = new string('B', 150); // 150 characters (exceeds validation but property should still accept it)
+
+            // Act
+            _sut.UserName = longUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(longUserName));
+            Assert.That(_sut.UserName.Length, Is.EqualTo(150));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var specialCharsUserName = "user@domain.com_123-test!";
+
+            // Act
+            _sut.UserName = specialCharsUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(specialCharsUserName));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeUserName = "用户名_ñáéíóú_🌟";
+
+            // Act
+            _sut.UserName = unicodeUserName;
+
+            // Assert
+            Assert.That(_sut.UserName, Is.EqualTo(unicodeUserName));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldHaveRequiredAttribute()
+        {
+            // Arrange
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.UserName));
+
+            // Act
+            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
+
+            // Assert
+            Assert.That(requiredAttribute, Is.Not.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldHaveMinLengthAttribute()
+        {
+            // Arrange
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.UserName));
+
+            // Act
+            var minLengthAttribute = property?.GetCustomAttribute<System.ComponentModel.DataAnnotations.MinLengthAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(minLengthAttribute, Is.Not.Null);
+                Assert.That(minLengthAttribute?.Length, Is.EqualTo(1));
+                Assert.That(minLengthAttribute?.ErrorMessage, Is.EqualTo("User Name must be at least 1 character long."));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldHaveMaxLengthAttribute()
+        {
+            // Arrange
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.UserName));
+
+            // Act
+            var maxLengthAttribute = property?.GetCustomAttribute<System.ComponentModel.DataAnnotations.MaxLengthAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(maxLengthAttribute, Is.Not.Null);
+                Assert.That(maxLengthAttribute?.Length, Is.EqualTo(100));
+                Assert.That(maxLengthAttribute?.ErrorMessage, Is.EqualTo("User Name cannot exceed 100 characters."));
+            });
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void UserName_ShouldHaveJsonPropertyNameAttribute()
+        {
+            // Arrange
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.UserName));
+
+            // Act
+            var jsonPropertyNameAttribute = property?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
+                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("userName"));
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -461,6 +615,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var anonymousUserDTO = new AnnonymousUserDTO
             {
                 Id = 789,
+                UserName = "InitializerTestUser",
                 AccountId = 456,
                 IsCast = true,
                 CastId = 321,
@@ -473,6 +628,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(anonymousUserDTO.Id, Is.EqualTo(789));
+                Assert.That(anonymousUserDTO.UserName, Is.EqualTo("InitializerTestUser"));
                 Assert.That(anonymousUserDTO.AccountId, Is.EqualTo(456));
                 Assert.That(anonymousUserDTO.IsCast, Is.EqualTo(true));
                 Assert.That(anonymousUserDTO.CastId, Is.EqualTo(321));
@@ -527,6 +683,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var idProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.Id));
+            var userNameProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.UserName));
             var accountIdProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.AccountId));
             var isCastProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.IsCast));
             var castIdProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.CastId));
@@ -535,6 +692,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var idJsonAttribute = idProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+            var userNameJsonAttribute = userNameProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
             var accountIdJsonAttribute = accountIdProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
             var isCastJsonAttribute = isCastProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
             var castIdJsonAttribute = castIdProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
@@ -546,6 +704,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(idJsonAttribute, Is.Not.Null);
                 Assert.That(idJsonAttribute?.Name, Is.EqualTo("id"));
+                Assert.That(userNameJsonAttribute, Is.Not.Null);
+                Assert.That(userNameJsonAttribute?.Name, Is.EqualTo("userName"));
                 Assert.That(accountIdJsonAttribute, Is.Not.Null);
                 Assert.That(accountIdJsonAttribute?.Name, Is.EqualTo("accountId"));
                 Assert.That(isCastJsonAttribute, Is.Not.Null);
@@ -611,6 +771,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var testId = 999;
+            var testUserName = "ConsistencyTestUser";
             var testAccountId = 888;
             var testIsCast = true;
             var testCastId = 777;
@@ -620,6 +781,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             _sut.Id = testId;
+            _sut.UserName = testUserName;
             _sut.AccountId = testAccountId;
             _sut.IsCast = testIsCast;
             _sut.CastId = testCastId;
@@ -631,6 +793,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(testId));
+                Assert.That(_sut.UserName, Is.EqualTo(testUserName));
                 Assert.That(_sut.AccountId, Is.EqualTo(testAccountId));
                 Assert.That(_sut.IsCast, Is.EqualTo(testIsCast));
                 Assert.That(_sut.CastId, Is.EqualTo(testCastId));
@@ -645,6 +808,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var testId = 100;
+            var testUserName = "InterfaceTestUser";
             var testAccountId = 200;
             var testIsCast = true;
             var testCastId = 300;
@@ -653,6 +817,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var testDateModified = new DateTime(2023, 9, 2, 10, 0, 0);
 
             _sut.Id = testId;
+            _sut.UserName = testUserName;
             _sut.AccountId = testAccountId;
             _sut.IsCast = testIsCast;
             _sut.CastId = testCastId;
@@ -667,6 +832,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceInstance.Id, Is.EqualTo(testId));
+                Assert.That(interfaceInstance.UserName, Is.EqualTo(testUserName));
                 Assert.That(interfaceInstance.AccountId, Is.EqualTo(testAccountId));
                 Assert.That(interfaceInstance.DateCreated, Is.EqualTo(testDateCreated));
                 Assert.That(interfaceInstance.DateModified, Is.EqualTo(testDateModified));
@@ -694,10 +860,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
                 // Test property access through interface (only properties that exist in interface)
                 Assert.DoesNotThrow(() => anonymousUserInterface.Id = 500);
+                Assert.DoesNotThrow(() => anonymousUserInterface.UserName = "InterfaceTestUser");
                 Assert.DoesNotThrow(() => anonymousUserInterface.AccountId = 600);
 
                 // Verify changes through interface are reflected in concrete type
                 Assert.That(_sut.Id, Is.EqualTo(500));
+                Assert.That(_sut.UserName, Is.EqualTo("InterfaceTestUser"));
                 Assert.That(_sut.AccountId, Is.EqualTo(600));
                 
                 // Test concrete type properties directly
@@ -873,6 +1041,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(freshDto.Id, Is.EqualTo(0), "Id should default to 0");
+                Assert.That(freshDto.UserName, Is.EqualTo(string.Empty), "UserName should default to empty string");
                 Assert.That(freshDto.AccountId, Is.EqualTo(0), "AccountId should default to 0");
                 Assert.That(freshDto.IsCast, Is.EqualTo(false), "IsCast should default to false");
                 Assert.That(freshDto.CastId, Is.EqualTo(0), "CastId should default to 0");
@@ -913,6 +1082,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
       var chainedDto = new AnnonymousUserDTO
       {
         Id = 1,
+        UserName = "ChainTestUser",
         AccountId = 2,
         IsCast = true,
         CastId = 3,
@@ -923,6 +1093,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
       Assert.Multiple(() =>
             {
                 Assert.That(chainedDto.Id, Is.EqualTo(1));
+                Assert.That(chainedDto.UserName, Is.EqualTo("ChainTestUser"));
                 Assert.That(chainedDto.AccountId, Is.EqualTo(2));
                 Assert.That(chainedDto.IsCast, Is.True);
                 Assert.That(chainedDto.CastId, Is.EqualTo(3));

@@ -36,6 +36,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
                 Assert.That(_sut.AccountId, Is.EqualTo(0));
                 Assert.That(_sut.Account, Is.Null);
                 Assert.That(_sut.IsCast, Is.Null);
@@ -52,8 +53,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_SetsAllPropertiesCorrectly()
         {
             // Arrange & Act
+            var testAccount = new SubAccount();
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "TestUser",
+                account: testAccount,
                 isCast: true,
                 castId: 456,
                 castType: "Organization",
@@ -65,6 +69,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(123));
+                Assert.That(_sut.UserName, Is.EqualTo("TestUser"));
+                Assert.That(_sut.Account, Is.EqualTo(testAccount));
                 Assert.That(_sut.IsCast, Is.True);
                 Assert.That(_sut.CastId, Is.EqualTo(456));
                 Assert.That(_sut.CastType, Is.EqualTo("Organization"));
@@ -83,12 +89,130 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test with valid parameters
             Assert.DoesNotThrow(() => new AnnonymousUser(
                 id: 1,
+                userName: "TestUser",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             ));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_UpdatesValueAndDateModified()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var originalDateModified = _sut.DateModified;
+
+            // Act
+            _sut.UserName = "TestUser";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.UserName, Is.EqualTo("TestUser"));
+            });
+            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_ThrowsException_WhenNull()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.UserName = null!);
+            Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_ThrowsException_WhenEmpty()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.UserName = "");
+            Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_ThrowsException_WhenWhitespace()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.UserName = "   ");
+            Assert.That(ex.Message, Does.Contain("User Name must be at least 1 character long."));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_ThrowsException_WhenTooLong()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var longUserName = new string('A', 101); // 101 characters
+
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentException>(() => _sut.UserName = longUserName);
+            Assert.That(ex.Message, Does.Contain("User Name cannot exceed 100 characters."));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_AcceptsMaxLength()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+            var maxLengthUserName = new string('A', 100); // 100 characters
+
+            // Act & Assert
+            Assert.DoesNotThrow(() => _sut.UserName = maxLengthUserName);
+            Assert.That(_sut.UserName, Is.EqualTo(maxLengthUserName));
+        }
+
+        [Test]
+        [Category("Models")]
+        public void UserName_Setter_UpdatesDateModified_OnEachCall()
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
+
+            // Act & Assert - First update
+            var originalDateModified = _sut.DateModified;
+            _sut.UserName = "FirstName";
+            var firstUpdateTime = _sut.DateModified;
+
+            Assert.That(firstUpdateTime, Is.GreaterThan(originalDateModified));
+
+            // Small delay to ensure different timestamps
+            System.Threading.Thread.Sleep(1);
+
+            // Act & Assert - Second update
+            _sut.UserName = "SecondName";
+            var secondUpdateTime = _sut.DateModified;
+
+            Assert.That(secondUpdateTime, Is.GreaterThan(firstUpdateTime));
         }
 
         [Test]
@@ -278,6 +402,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "TestUser",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -325,6 +451,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 789,
+                userName: "JsonTestUser",
+                account: new SubAccount(),
                 isCast: true,
                 castId: 456,
                 castType: "Organization",
@@ -345,6 +473,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains expected properties
             Assert.That(json, Does.Contain("\"id\":789"));
+            Assert.That(json, Does.Contain("\"userName\":\"JsonTestUser\""));
             Assert.That(json, Does.Contain("\"dateCreated\""));
             Assert.That(json, Does.Contain("\"dateModified\""));
             Assert.That(json, Does.Contain("\"isCast\":true"));
@@ -372,6 +501,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains expected properties with default values
             Assert.That(json, Does.Contain("\"id\":0"));
+            Assert.That(json, Does.Contain("\"userName\":\"\""));
             Assert.That(json, Does.Contain("\"dateCreated\""));
             Assert.That(json, Does.Contain("\"dateModified\""));
         }
@@ -383,6 +513,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 100,
+                userName: "NullModifiedUser",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -403,6 +535,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains expected properties
             Assert.That(json, Does.Contain("\"id\":100"));
+            Assert.That(json, Does.Contain("\"userName\":\"NullModifiedUser\""));
             Assert.That(json, Does.Contain("\"dateCreated\""));
             Assert.That(json, Does.Contain("\"dateModified\":null"));
         }
@@ -414,6 +547,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 100,
+                userName: "CastTestUser",
+                account: new SubAccount(),
                 isCast: true,
                 castId: 456,
                 castType: "Organization",
@@ -434,6 +569,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON contains cast properties
             Assert.That(json, Does.Contain("\"isCast\":true"));
+            Assert.That(json, Does.Contain("\"userName\":\"CastTestUser\""));
             Assert.That(json, Does.Contain("\"castId\":456"));
             Assert.That(json, Does.Contain("\"castType\":\"Organization\""));
         }
@@ -445,6 +581,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 100,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -465,6 +603,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Verify JSON handles null cast properties correctly (should be omitted due to JsonIgnore condition)
             Assert.That(json, Does.Contain("\"isCast\""));
+            Assert.That(json, Does.Contain("\"userName\":\"Test User\""));
             Assert.That(json, Does.Contain("\"castId\""));
             Assert.That(json, Does.Not.Contain("\"castType\""));
         }
@@ -472,9 +611,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test]
         [Category("Models")]
         public void Properties_CanBeSetMultipleTimes()
-    {
-      // Arrange
-      _sut = new AnnonymousUser();
+        {
+            // Arrange
+            _sut = new AnnonymousUser();
             var firstDate = new DateTime(2023, 1, 1);
             var secondDate = new DateTime(2023, 2, 1);
 
@@ -511,16 +650,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.DateModified, Is.EqualTo(firstDate));
 
             _sut.DateModified = secondDate;
-      Assert.Multiple(() =>
-      {
-        Assert.That(_sut.DateModified, Is.EqualTo(secondDate));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.DateModified, Is.EqualTo(secondDate));
 
-        // DateCreated is set during construction and cannot be modified afterward
-        Assert.That(_sut.DateCreated, Is.Not.EqualTo(default(DateTime)));
-      });
-    }
+                // DateCreated is set during construction and cannot be modified afterward
+                Assert.That(_sut.DateCreated, Is.Not.EqualTo(default(DateTime)));
+            });
+        }
 
-    [Test]
+        [Test]
         [Category("Models")]
         public void Id_Setter_UpdatesDateModified_OnEachCall()
         {
@@ -623,6 +762,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             _sut = new AnnonymousUser(
                 id: int.MaxValue,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: true,
                 castId: int.MaxValue,
                 castType: "MaxValue",
@@ -646,6 +787,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -662,7 +805,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(organization, Is.Not.Null);
                 Assert.That(organization, Is.InstanceOf<Organization>());
                 Assert.That(organization.Id, Is.EqualTo(0)); // Cast creates new Organization with Id = 0
-                Assert.That(organization.OrganizationName, Is.Null);
+                Assert.That(organization.OrganizationName, Is.EqualTo("Test User"));
                 Assert.That(organization.Addresses, Is.Not.Null);
                 Assert.That(organization.Addresses, Is.Empty);
                 Assert.That(organization.PhoneNumbers, Is.Not.Null);
@@ -685,6 +828,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -711,6 +856,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 456,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -730,7 +877,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.FirstName, Is.Null);
                 Assert.That(person.MiddleName, Is.Null);
                 Assert.That(person.LastName, Is.Null);
-                Assert.That(person.UserName, Is.Null);
+                Assert.That(person.UserName, Is.EqualTo("Test User"));
                 Assert.That(person.Pronouns, Is.Null);
                 Assert.That(person.BirthDate, Is.Null);
                 Assert.That(person.DeceasedDate, Is.Null);
@@ -757,6 +904,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 456,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -827,6 +976,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 789,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -860,6 +1011,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 0,
                 castType: null,
@@ -896,21 +1049,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ToAnnonymousUserDTO_ReturnsAnnonymousUserDTOWithCorrectProperties()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 789,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: _testDateModified
-      )
-      {
-        // Set AccountId for DTO mapping
-        AccountId = 456
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 789,
+                userName: "DTOTestUser",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            )
+            {
+                // Set AccountId for DTO mapping
+                AccountId = 456
+            };
 
-      var beforeCast = DateTime.Now.AddSeconds(-1);
+            var beforeCast = DateTime.Now.AddSeconds(-1);
 
             // Act
             var dto = _sut.Cast<AnnonymousUserDTO>();
@@ -922,6 +1077,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(dto, Is.Not.Null);
                 Assert.That(dto, Is.InstanceOf<AnnonymousUserDTO>());
                 Assert.That(dto.Id, Is.EqualTo(789));
+                Assert.That(dto.UserName, Is.EqualTo("DTOTestUser"));
                 Assert.That(dto.AccountId, Is.EqualTo(456));
                 Assert.That(dto.DateCreated, Is.EqualTo(_testDateCreated));
                 // DateModified is set to DateTime.Now when the object is created/modified
@@ -934,20 +1090,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ToAnnonymousUserDTO_DoesNotUpdateSourceCastProperties()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 123,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: _testDateModified
-      )
-      {
-        AccountId = 999
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            )
+            {
+                AccountId = 999
+            };
 
-      var originalIsCast = _sut.IsCast;
+            var originalIsCast = _sut.IsCast;
             var originalCastId = _sut.CastId;
             var originalCastType = _sut.CastType;
 
@@ -990,20 +1148,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ToAnnonymousUserDTO_WithNullDateModified_HandlesCorrectly()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 555,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: null
-      )
-      {
-        AccountId = 777
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 555,
+                userName: "Test User",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: null
+            )
+            {
+                AccountId = 777
+            };
 
-      var beforeCast = DateTime.Now.AddSeconds(-1);
+            var beforeCast = DateTime.Now.AddSeconds(-1);
 
             // Act
             var dto = _sut.Cast<AnnonymousUserDTO>();
@@ -1026,28 +1186,30 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ToAnnonymousUserDTO_ReturnsDifferentInstanceEachTime()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 999,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: _testDateModified
-      )
-      {
-        AccountId = 888
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 999,
+                userName: "Test User",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            )
+            {
+                AccountId = 888
+            };
 
-      // Act
-      var dto1 = _sut.Cast<AnnonymousUserDTO>();
+            // Act
+            var dto1 = _sut.Cast<AnnonymousUserDTO>();
             var dto2 = _sut.Cast<AnnonymousUserDTO>();
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(dto1, Is.Not.SameAs(dto2));
-                
+
                 // Verify they have the same property values but are different instances
                 Assert.That(dto1.Id, Is.EqualTo(dto2.Id));
                 Assert.That(dto1.AccountId, Is.EqualTo(dto2.AccountId));
@@ -1060,21 +1222,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ToIAnnonymousUserDTO_ThrowsArgumentException_NotSupported()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 555,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: _testDateModified
-      )
-      {
-        AccountId = 777
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 555,
+                userName: "Test User",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            )
+            {
+                AccountId = 777
+            };
 
-      // Act & Assert
-      var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<IAnnonymousUserDTO>());
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<IAnnonymousUserDTO>());
             Assert.Multiple(() =>
             {
                 Assert.That(ex, Is.Not.Null);
@@ -1086,21 +1250,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Category("Models")]
         public void Cast_ReturnsNewInstanceEachTime()
         {
-      // Arrange
-      _sut = new AnnonymousUser(
-          id: 999,
-          isCast: false,
-          castId: 0,
-          castType: null,
-          dateCreated: _testDateCreated,
-          dateModified: _testDateModified
-      )
-      {
-        AccountId = 888
-      };
+            // Arrange
+            _sut = new AnnonymousUser(
+                id: 999,
+                userName: "Test User",
+                account: new SubAccount(),
+                isCast: false,
+                castId: 0,
+                castType: null,
+                dateCreated: _testDateCreated,
+                dateModified: _testDateModified
+            )
+            {
+                AccountId = 888
+            };
 
-      // Act
-      var organization1 = _sut.Cast<Organization>();
+            // Act
+            var organization1 = _sut.Cast<Organization>();
             var organization2 = _sut.Cast<Organization>();
             var person1 = _sut.Cast<User>();
             var person2 = _sut.Cast<User>();
@@ -1113,7 +1279,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(organization1, Is.Not.SameAs(organization2));
                 Assert.That(person1, Is.Not.SameAs(person2));
                 Assert.That(dto1, Is.Not.SameAs(dto2));
-                
+
                 // Verify they have the same property values but are different instances
                 Assert.That(organization1.DateCreated, Is.EqualTo(organization2.DateCreated));
                 Assert.That(person1.DateCreated, Is.EqualTo(person2.DateCreated));
@@ -1194,7 +1360,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser();
             var originalDateModified = _sut.DateModified;
-            var testAccount = new Account();
+            var testAccount = new SubAccount();
 
             // Act
             _sut.Account = testAccount;
@@ -1215,7 +1381,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser
             {
-                Account = new Account()
+                Account = new SubAccount()
             };
 
             // Act
@@ -1231,8 +1397,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new AnnonymousUser();
-            var testAccount1 = new Account();
-            var testAccount2 = new Account();
+            var testAccount1 = new SubAccount();
+            var testAccount2 = new SubAccount();
 
             // Act & Assert - First update
             var originalDateModified = _sut.DateModified;
@@ -1271,7 +1437,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new AnnonymousUser();
             var interfaceReference = (OrganizerCompanion.Core.Interfaces.Domain.IAnnonymousUser)_sut;
             var originalDateModified = _sut.DateModified;
-            var testAccount = new Account();
+            var testAccount = new SubAccount();
 
             // Act
             interfaceReference.Account = testAccount;
@@ -1293,7 +1459,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser
             {
-                Account = new Account()
+                Account = new SubAccount()
             };
             var interfaceReference = (OrganizerCompanion.Core.Interfaces.Domain.IAnnonymousUser)_sut;
 
@@ -1315,7 +1481,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new AnnonymousUser();
             var interfaceReference = (OrganizerCompanion.Core.Interfaces.Domain.IAnnonymousUser)_sut;
-            var testAccount = new Account();
+            var testAccount = new SubAccount();
 
             // Act
             interfaceReference.Account = testAccount;
@@ -1323,8 +1489,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert - Verify that the casting works correctly in both directions
             Assert.Multiple(() =>
             {
-                Assert.That(interfaceReference.Account, Is.InstanceOf<Account>());
-                Assert.That(_sut.Account, Is.InstanceOf<Account>());
+                Assert.That(interfaceReference.Account, Is.InstanceOf<SubAccount>());
+                Assert.That(_sut.Account, Is.InstanceOf<SubAccount>());
                 Assert.That(interfaceReference.Account, Is.SameAs(testAccount));
                 Assert.That(_sut.Account, Is.SameAs(testAccount));
             });
@@ -1358,6 +1524,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             _sut = new AnnonymousUser(
                 id: 0,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: null,
                 castId: null,
                 castType: null,
@@ -1384,6 +1552,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             _sut = new AnnonymousUser(
                 id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
                 isCast: false,
                 castId: 456,
                 castType: "Test",
@@ -1413,13 +1583,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 var extremeTest = new AnnonymousUser(
                     id: int.MaxValue,
+                    userName: "Test User",
+                    account: new SubAccount(),
                     isCast: true,
                     castId: int.MaxValue,
                     castType: new string('A', 1000), // Very long string
                     dateCreated: DateTime.MinValue,
                     dateModified: DateTime.MaxValue
                 );
-                
+
                 // Verify the extreme values are set correctly
                 Assert.Multiple(() =>
                 {
@@ -1440,14 +1612,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // This test ensures comprehensive coverage of the JsonConstructor with
             // various parameter combinations to exercise all code paths in the
             // simplified constructor implementation.
-            
+
             Assert.DoesNotThrow(() =>
             {
                 // Test multiple scenarios to ensure all branches are covered
-                var test1 = new AnnonymousUser(0, DateTime.Now, null, null, null, null);
-                var test2 = new AnnonymousUser(1, DateTime.Now, DateTime.Now, true, 1, "test");
-                var test3 = new AnnonymousUser(-1, DateTime.Now, DateTime.Now, false, -1, "");
-                
+                var test1 = new AnnonymousUser(0, "Test User", new SubAccount(), null, null, null, DateTime.Now, null);
+                var test2 = new AnnonymousUser(1, "Test User", new SubAccount(), true, 42, "Test Type", DateTime.Now, null);
+                var test3 = new AnnonymousUser(int.MaxValue, "Test User", new SubAccount(), null, null, null, DateTime.Now, null);
+
                 Assert.Multiple(() =>
                 {
                     Assert.That(test1, Is.Not.Null);
@@ -1463,14 +1635,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // This test verifies comprehensive coverage of all major functionality
             // in the AnnonymousUser class including edge cases and different scenarios.
-            
+
             // Test default constructor
             var defaultUser = new AnnonymousUser();
             Assert.That(defaultUser, Is.Not.Null);
-            
+
             // Test JsonConstructor with various parameter combinations
             var parameterizedUser = new AnnonymousUser(
                 id: 123,
+                userName: "Test User",
+                account: new SubAccount(),
                 dateCreated: DateTime.Now,
                 dateModified: DateTime.Now,
                 isCast: true,
@@ -1478,16 +1652,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 castType: "TestType"
             );
             Assert.That(parameterizedUser, Is.Not.Null);
-            
+
             // Test all property setters and getters
             defaultUser.Id = 789;
             defaultUser.AccountId = 101112;
-            defaultUser.Account = new Account();
+            defaultUser.Account = new SubAccount();
             defaultUser.IsCast = true;
             defaultUser.CastId = 131415;
             defaultUser.CastType = "CoverageTest";
             defaultUser.DateModified = DateTime.Now;
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(defaultUser.Id, Is.EqualTo(789));
@@ -1499,29 +1673,29 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultUser.DateModified, Is.Not.Null);
                 Assert.That(defaultUser.DateCreated, Is.Not.EqualTo(default(DateTime)));
             });
-            
+
             // Test explicit interface implementation
             var interfaceRef = (OrganizerCompanion.Core.Interfaces.Domain.IAnnonymousUser)defaultUser;
-            var testAccount = new Account();
+            var testAccount = new SubAccount();
             interfaceRef.Account = testAccount;
             Assert.That(interfaceRef.Account, Is.SameAs(testAccount));
-            
+
             // Test Cast methods for all supported types
             var orgCast = defaultUser.Cast<Organization>();
             var userCast = defaultUser.Cast<User>();
             var dtoCast = defaultUser.Cast<AnnonymousUserDTO>();
-            
+
             Assert.Multiple(() =>
             {
                 Assert.That(orgCast, Is.InstanceOf<Organization>());
                 Assert.That(userCast, Is.InstanceOf<User>());
                 Assert.That(dtoCast, Is.InstanceOf<AnnonymousUserDTO>());
             });
-            
+
             // Test ToJson functionality
             var json = defaultUser.ToJson();
             Assert.That(json, Is.Not.Null.And.Not.Empty);
-            
+
             // Test exception scenarios
             Assert.Throws<InvalidCastException>(() => defaultUser.Cast<Account>());
         }

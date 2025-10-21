@@ -21,6 +21,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
+        
+        [Required, JsonPropertyName("userName"), MinLength(1, ErrorMessage = "User Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "User Name cannot exceed 100 characters.")]
+        public string UserName { get; set; } = string.Empty;
 
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId { get; set; } = 0;
