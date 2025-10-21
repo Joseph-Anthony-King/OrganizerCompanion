@@ -2,7 +2,7 @@
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IAddressDTO : Type.IAddress
+    internal interface IAddressDTO : IDomainEntity, Type.IAddress
     {
         int LinkedEntityId { get; set; }
         IDomainEntity? LinkedEntity { get; set; }

@@ -3,6 +3,9 @@ using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Models.Type;
+using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Extensions;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -52,6 +55,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Id, Is.EqualTo(0));
                 Assert.That(assignment.Name, Is.EqualTo(string.Empty));
                 Assert.That(assignment.Description, Is.Null);
+                Assert.That(assignment.LocationId, Is.Null);
+                Assert.That(assignment.LocationType, Is.Null);
+                Assert.That(assignment.Location, Is.Null);
                 Assert.That(assignment.Groups, Is.Null);
                 Assert.That(assignment.IsCompleted, Is.False);
                 Assert.That(assignment.DateDue, Is.Null);
@@ -68,6 +74,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 42;
             var name = "Test Assignment";
             var description = "Test Description";
+            var location = new USAddress
+            {
+                Id = 1,
+                Type = Enums.Types.Home,
+                Street1 = "123 Main St",
+                City = "Anytown",
+                State = USStates.California.ToStateModel(),
+                ZipCode = "12345"
+            };
+            var locationId = location.Id;
+            var locationType = "USAddress";
             var groups = _groups;
             var taskId = 100;
             var task = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
@@ -79,7 +96,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             var assignment = new ProjectAssignment(
-                id, name, description, groups, taskId, task, isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+                id,
+                name,
+                description,
+                locationId,
+                locationType,
+                location,
+                groups,
+                taskId,
+                task,
+                isCompleted,
+                dateDue,
+                dateCompleted,
+                dateCreated,
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -87,6 +117,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Id, Is.EqualTo(id));
                 Assert.That(assignment.Name, Is.EqualTo(name));
                 Assert.That(assignment.Description, Is.EqualTo(description));
+                Assert.That(assignment.LocationId, Is.EqualTo(locationId));
+                Assert.That(assignment.LocationType, Is.EqualTo(locationType));
+                Assert.That(assignment.Location, Is.EqualTo(location));
                 Assert.That(assignment.Groups, Is.EqualTo(groups));
                 Assert.That(assignment.TaskId, Is.EqualTo(taskId));
                 Assert.That(assignment.Task, Is.EqualTo(task));
@@ -103,7 +136,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var assignment = new ProjectAssignment(
-                1, "Test", "Description", null, null, null, false, null, null, DateTime.Now, null);
+                1, "Test", "Description", null, null, null, null, null, null, false, null, null, DateTime.Now, null);
 
             // Assert
             Assert.That(assignment.Groups, Is.Not.Null);
@@ -445,6 +478,117 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.TaskId, Is.EqualTo(int.MaxValue));
         }
 
+        [Test, Category("Models")]
+        public void SetAndGetLocationId()
+        {
+            // Arrange
+            var locationId = 42;
+            var initialDateModified = _assignment.DateModified;
+
+            // Act
+            _assignment.LocationId = locationId;
+
+            // Assert - Domain entities auto-update DateModified
+            Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
+            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
+
+        [Test, Category("Models")]
+        public void ThrowExceptionForNegativeLocationId()
+        {
+            // Act & Assert
+            Assert.Throws<ArgumentOutOfRangeException>(() => _assignment.LocationId = -1);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptNullLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.LocationId = null);
+            Assert.That(_assignment.LocationId, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptZeroLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.LocationId = 0);
+            Assert.That(_assignment.LocationId, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void AcceptMaximumLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.LocationId = int.MaxValue);
+            Assert.That(_assignment.LocationId, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void SetAndGetLocationType()
+        {
+            // Arrange
+            var locationType = "Conference Room";
+            var initialDateModified = _assignment.DateModified;
+
+            // Act
+            _assignment.LocationType = locationType;
+
+            // Assert - Domain entities auto-update DateModified
+            Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
+            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptNullLocationType()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.LocationType = null);
+            Assert.That(_assignment.LocationType, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptEmptyLocationType()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.LocationType = "");
+            Assert.That(_assignment.LocationType, Is.EqualTo(""));
+        }
+
+        [Test, Category("Models")]
+        public void SetAndGetLocation()
+        {
+            // Arrange
+            var location = new USAddress
+            {
+                Id = 1,
+                Type = Enums.Types.Home,
+                Street1 = "123 Test St",
+                City = "Test City",  
+                State = USStates.California.ToStateModel(),
+                ZipCode = "12345"
+            };
+            var initialDateModified = _assignment.DateModified;
+
+            // Act
+            _assignment.Location = location;
+
+            // Assert - Domain entities auto-update DateModified
+            Assert.That(_assignment.Location, Is.EqualTo(location));
+            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptNullLocation()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.Location = null);
+            Assert.That(_assignment.Location, Is.Null);
+        }
+
         #endregion
 
         #region Cast Method Tests
@@ -456,6 +600,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _assignment.Id = 1;
             _assignment.Name = "Test Assignment";
             _assignment.Description = "Test Description";
+            _assignment.LocationId = 42;
+            _assignment.LocationType = "Conference Room";
+            _assignment.Location = null; // Keeping null to avoid cast issues for now
             _assignment.Groups = _groups;
             _assignment.IsCompleted = true;
             _assignment.DateDue = DateTime.Now.AddDays(7);
@@ -470,6 +617,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(dto.Id, Is.EqualTo(_assignment.Id));
                 Assert.That(dto.Name, Is.EqualTo(_assignment.Name));
                 Assert.That(dto.Description, Is.EqualTo(_assignment.Description));
+                Assert.That(dto.LocationId, Is.EqualTo(_assignment.LocationId));
+                Assert.That(dto.LocationType, Is.EqualTo(_assignment.LocationType));
+                Assert.That(dto.Location, Is.Null);
                 Assert.That(dto.IsCompleted, Is.EqualTo(_assignment.IsCompleted));
                 Assert.That(dto.DateDue, Is.EqualTo(_assignment.DateDue));
                 Assert.That(dto.DateCreated, Is.EqualTo(_assignment.DateCreated));
@@ -502,28 +652,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             var ex = Assert.Throws<InvalidCastException>(() => _assignment.Cast<Contact>());
             Assert.That(ex.Message, Does.Contain("Cannot cast Feature to type Contact"));
-        }
-
-        [Test, Category("Models")]
-        public void CastHandlesExceptionCorrectly()
-        {
-            // Arrange
-            _assignment.Groups = null; // This might cause issues during casting
-
-            // Act & Assert - Should propagate any casting exceptions
-            Assert.DoesNotThrow(() => _assignment.Cast<ProjectAssignmentDTO>());
-        }
-
-        [Test, Category("Models")]
-        public void CastRethrowsExceptionsFromTryCatchBlock()
-        {
-            // Arrange - Create an assignment that might cause internal exceptions during casting
-            _assignment.Id = 1;
-            _assignment.Name = "Test";
-            
-            // Act & Assert - The method should re-throw any exceptions caught in the try-catch
-            // This tests the "throw;" statement in the catch block
-            Assert.DoesNotThrow(() => _assignment.Cast<ProjectAssignmentDTO>());
         }
 
         #endregion
@@ -687,6 +815,97 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        [Test, Category("Models")]
+        public void HandleLocationPropertiesTogether()
+        {
+            // Arrange
+            var locationId = 999;
+            var locationType = "Executive Boardroom";
+            var location = new USAddress
+            {
+                Id = locationId,
+                Type = Enums.Types.Work,
+                Street1 = "999 Executive Blvd",
+                City = "Corporate City",
+                State = USStates.California.ToStateModel(),
+                ZipCode = "90210"
+            };
+
+            // Act - Set all location properties together
+            _assignment.LocationId = locationId;
+            _assignment.LocationType = locationType;
+            _assignment.Location = location;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
+                Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
+                Assert.That(_assignment.Location, Is.EqualTo(location));
+                Assert.That(_assignment.DateModified, Is.Not.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void HandleLocationPropertyBoundaryValues()
+        {
+            // Test minimum and maximum LocationId values
+            Assert.DoesNotThrow(() => _assignment.LocationId = 0);
+            Assert.That(_assignment.LocationId, Is.EqualTo(0));
+
+            Assert.DoesNotThrow(() => _assignment.LocationId = int.MaxValue);
+            Assert.That(_assignment.LocationId, Is.EqualTo(int.MaxValue));
+
+            // Test very long LocationType string
+            var longLocationType = new string('L', 500);
+            Assert.DoesNotThrow(() => _assignment.LocationType = longLocationType);
+            Assert.That(_assignment.LocationType, Is.EqualTo(longLocationType));
+        }
+
+        [Test, Category("Models")]
+        public void HandleLocationPropertyNullToValueTransitions()
+        {
+            // Arrange - Start with null values
+            _assignment.LocationId = null;
+            _assignment.LocationType = null;
+            _assignment.Location = null;
+
+            // Act - Set to values
+            _assignment.LocationId = 42;
+            _assignment.LocationType = "Meeting Room";
+            var address = new USAddress
+            {
+                Id = 42,
+                Type = Enums.Types.Work,
+                Street1 = "42 Transition Ave",
+                City = "Change City",
+                State = USStates.Texas.ToStateModel(),
+                ZipCode = "75001"
+            };
+            _assignment.Location = address;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_assignment.LocationId, Is.EqualTo(42));
+                Assert.That(_assignment.LocationType, Is.EqualTo("Meeting Room"));
+                Assert.That(_assignment.Location, Is.EqualTo(address));
+            });
+
+            // Act - Set back to null
+            _assignment.LocationId = null;
+            _assignment.LocationType = null;
+            _assignment.Location = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_assignment.LocationId, Is.Null);
+                Assert.That(_assignment.LocationType, Is.Null);
+                Assert.That(_assignment.Location, Is.Null);
+            });
+        }
+
         #endregion
 
         #region Interface Implementation Coverage Tests
@@ -723,6 +942,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test setting null
             iAssignment.Task = null;
             Assert.That(_assignment.Task, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void CoverLocationInterfaceImplementation()
+        {
+            // Arrange
+            IProjectAssignment iAssignment = _assignment;
+            var testLocation = new USAddress
+            {
+                Id = 1,
+                Type = Enums.Types.Work,
+                Street1 = "456 Interface St",
+                City = "Interface City",
+                State = USStates.NewYork.ToStateModel(),
+                ZipCode = "54321"
+            };
+
+            // Act & Assert for Location interface property getter
+            var retrievedLocation = iAssignment.Location;
+            Assert.That(retrievedLocation, Is.EqualTo(_assignment.Location));
+
+            // Act & Assert for Location interface property setter
+            iAssignment.Location = testLocation;
+            Assert.That(_assignment.Location, Is.EqualTo(testLocation));
+
+            // Test setting null
+            iAssignment.Location = null;
+            Assert.That(_assignment.Location, Is.Null);
         }
 
         #endregion

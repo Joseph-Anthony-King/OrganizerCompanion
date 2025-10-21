@@ -1773,11 +1773,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         private class MockAddressDTO : IAddressDTO
         {
+            public int Id { get; set; }
             public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
             public string? LinkedEntityType { get; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
             bool OrganizerCompanion.Core.Interfaces.Type.IAddress.IsPrimary { get; set; }
+            public DateTime DateCreated { get; set; }
+            public DateTime? DateModified { get; set; }
+
+            public T Cast<T>() where T : IDomainEntity
+            {
+                throw new NotImplementedException();
+            }
+
+            public string ToJson()
+            {
+                throw new NotImplementedException();
+            }
         }
         #endregion
     }

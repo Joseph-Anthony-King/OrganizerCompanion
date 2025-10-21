@@ -6,6 +6,9 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
     {
         string Name { get; set; }
         string? Description { get; set; }
+        int? LocationId { get; set; }
+        string? LocationType { get; set; }
+        IAddressDTO? Location { get; set; }
         List<IGroupDTO>? Groups { get; set; }
         int? TaskId { get; set; }
         IProjectTask? Task { get; set; }

@@ -26,7 +26,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region Constructor Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HaveDefaultConstructor()
         {
             // Arrange & Act
@@ -38,6 +38,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(0));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(string.Empty));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
+                Assert.That(projectAssignmentDTO.LocationId, Is.Null);
+                Assert.That(projectAssignmentDTO.LocationType, Is.Null);
+                Assert.That(projectAssignmentDTO.Location, Is.Null);
                 Assert.That(projectAssignmentDTO.Groups, Is.Null);
                 Assert.That(projectAssignmentDTO.IsCompleted, Is.False);
                 Assert.That(projectAssignmentDTO.DateDue, Is.Null);
@@ -47,13 +50,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HaveJsonConstructorWithAllParameters()
         {
             // Arrange
             var id = 1;
             var name = "Test Assignment";
             var description = "Test Description";
+            var locationId = 5;
+            var locationType = "Office";
+            IAddressDTO? location = null; // Mock address would be needed for full test
             var groups = _testGroups;
             var taskId = 10;
             var task = new Task();
@@ -65,7 +71,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, groups, taskId, task, isCompleted, 
+                id, name, description, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -74,6 +80,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.EqualTo(description));
+                Assert.That(projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
+                Assert.That(projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
+                Assert.That(projectAssignmentDTO.Location, Is.EqualTo(location));
                 Assert.That(projectAssignmentDTO.Groups, Is.EqualTo(groups));
                 Assert.That(projectAssignmentDTO.TaskId, Is.EqualTo(taskId));
                 Assert.That(projectAssignmentDTO.Task, Is.EqualTo(task));
@@ -85,13 +94,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HaveJsonConstructorWithNullValues()
         {
             // Arrange
             var id = 0;
             var name = "Minimal Assignment";
             string? description = null;
+            int? locationId = null;
+            string? locationType = null;
+            IAddressDTO? location = null;
             List<GroupDTO>? groups = null;
             int? taskId = null;
             Task? task = null;
@@ -103,7 +115,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, groups, taskId, task, isCompleted, 
+                id, name, description, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -112,6 +124,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
+                Assert.That(projectAssignmentDTO.LocationId, Is.Null);
+                Assert.That(projectAssignmentDTO.LocationType, Is.Null);
+                Assert.That(projectAssignmentDTO.Location, Is.Null);
                 Assert.That(projectAssignmentDTO.Groups, Is.Null);
                 Assert.That(projectAssignmentDTO.TaskId, Is.Null);
                 Assert.That(projectAssignmentDTO.Task, Is.Null);
@@ -127,7 +142,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region Property Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetId()
         {
             // Arrange
@@ -140,7 +155,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(id));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptNegativeId()
         {
             // Act & Assert - DTOs don't validate, only domain entities do
@@ -148,7 +163,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(-1));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetName()
         {
             // Arrange
@@ -161,7 +176,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(name));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptEmptyName()
         {
             // Act & Assert - DTOs don't validate, only domain entities do
@@ -169,7 +184,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(""));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptTooLongName()
         {
             // Arrange
@@ -180,7 +195,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(longName));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetDescription()
         {
             // Arrange
@@ -193,7 +208,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(description));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptTooLongDescription()
         {
             // Arrange
@@ -204,7 +219,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(longDescription));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptNullDescription()
         {
             // Act & Assert
@@ -212,7 +227,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Description, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptEmptyDescription()
         {
             // Act & Assert
@@ -220,7 +235,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(""));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetGroups()
         {
             // Act
@@ -230,7 +245,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups, Is.EqualTo(_testGroups));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void InitializeEmptyListWhenGroupsIsNull()
         {
             // Arrange
@@ -243,21 +258,135 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
+        public void SetAndGetLocationId()
+        {
+            // Arrange
+            var locationId = 42;
+
+            // Act
+            _projectAssignmentDTO.LocationId = locationId;
+
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNullLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = null);
+            Assert.That(_projectAssignmentDTO.LocationId, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNegativeLocationId()
+        {
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = -1);
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(-1));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptZeroLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = 0);
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(0));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptMaximumLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = int.MaxValue);
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptMinimumLocationId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = int.MinValue);
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void SetAndGetLocationType()
+        {
+            // Arrange
+            var locationType = "Conference Room";
+
+            // Act
+            _projectAssignmentDTO.LocationType = locationType;
+
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNullLocationType()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationType = null);
+            Assert.That(_projectAssignmentDTO.LocationType, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptEmptyLocationType()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationType = "");
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(""));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptTooLongLocationType()
+        {
+            // Arrange
+            var longLocationType = new string('a', 101);
+
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationType = longLocationType);
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(longLocationType));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void SetAndGetLocation()
+        {
+            // Arrange
+            IAddressDTO? testLocation = null; // Mock would be needed for full test
+
+            // Act
+            _projectAssignmentDTO.Location = testLocation;
+
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(testLocation));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNullLocation()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.Location = null);
+            Assert.That(_projectAssignmentDTO.Location, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
         public void SetIsCompletedToTrue()
-    {
-      // Act
-      _projectAssignmentDTO.IsCompleted = true;
-      Assert.Multiple(() =>
-      {
+        {
+            // Act
+            _projectAssignmentDTO.IsCompleted = true;
+            Assert.Multiple(() =>
+            {
 
-        // Assert - DTOs don't auto-update DateCompleted or DateModified
-        Assert.That(_projectAssignmentDTO.IsCompleted, Is.True);
-        Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
-      });
-    }
+                // Assert - DTOs don't auto-update DateCompleted or DateModified
+                Assert.That(_projectAssignmentDTO.IsCompleted, Is.True);
+                Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
+            });
+        }
 
-    [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetIsCompletedToFalse()
         {
             // Arrange
@@ -275,7 +404,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetDateDue()
         {
             // Arrange
@@ -288,7 +417,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.DateDue, Is.EqualTo(dateDue));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void GetDateCompletedReadOnly()
         {
             // Arrange
@@ -301,7 +430,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(retrievedValue, Is.EqualTo(initialValue));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void GetDateCreatedReadOnly()
         {
             // Arrange
@@ -319,7 +448,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region Interface Implementation Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverExplicitInterfaceImplementations()
         {
             // Arrange
@@ -339,7 +468,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverGroupsInterfacePropertyWithNullGroups()
         {
             // Arrange
@@ -350,7 +479,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Throws<ArgumentNullException>(() => { var _ = iAssignmentDTO.Groups; });
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverGroupsInterfacePropertyWithEmptyGroups()
         {
             // Arrange
@@ -365,7 +494,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(retrievedGroups, Is.Empty);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverGroupsInterfacePropertySetter()
         {
             // Arrange
@@ -381,7 +510,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverGroupsInterfacePropertySetterWithNull()
         {
             // Arrange
@@ -395,7 +524,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void CoverTaskInterfaceImplementation()
         {
             // Arrange
@@ -415,11 +544,46 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Task, Is.Null);
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void CoverLocationInterfaceImplementations()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            var testLocationId = 123;
+            var testLocationType = "Meeting Room";
+            IAddressDTO? testLocation = null; // Mock would be needed for full test
+
+            // Act & Assert for LocationId interface property
+            iAssignmentDTO.LocationId = testLocationId;
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
+            Assert.That(iAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
+
+            // Act & Assert for LocationType interface property
+            iAssignmentDTO.LocationType = testLocationType;
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
+            Assert.That(iAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
+
+            // Act & Assert for Location interface property
+            iAssignmentDTO.Location = testLocation;
+            Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(testLocation));
+            Assert.That(iAssignmentDTO.Location, Is.EqualTo(testLocation));
+
+            // Test setting null values via interface
+            iAssignmentDTO.LocationId = null;
+            Assert.That(_projectAssignmentDTO.LocationId, Is.Null);
+            
+            iAssignmentDTO.LocationType = null;
+            Assert.That(_projectAssignmentDTO.LocationType, Is.Null);
+            
+            iAssignmentDTO.Location = null;
+            Assert.That(_projectAssignmentDTO.Location, Is.Null);
+        }
+
         #endregion
 
         #region Cast Method Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void ThrowNotImplementedExceptionForCastMethod()
         {
             // Act & Assert
@@ -430,7 +594,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region ToJson Method Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void ToJson_ThrowsNotImplementedException()
         {
             // Arrange
@@ -443,7 +607,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Throws<NotImplementedException>(() => _projectAssignmentDTO.ToJson());
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void ToJsonWithNullValues_ThrowsNotImplementedException()
         {
             // Arrange
@@ -455,7 +619,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Throws<NotImplementedException>(() => _projectAssignmentDTO.ToJson());
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void ToJsonWithCircularReferences_ThrowsNotImplementedException()
         {
             // Arrange
@@ -471,7 +635,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #region Edge Cases and Validation Tests
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptSingleCharacterName()
         {
             // Act & Assert
@@ -479,7 +643,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Name, Is.EqualTo("A"));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptLongName()
         {
             // Arrange
@@ -490,7 +654,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(longName));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptLongDescription()
         {
             // Arrange
@@ -501,7 +665,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(longDescription));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptZeroId()
         {
             // Act & Assert
@@ -509,7 +673,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(0));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptMaximumId()
         {
             // Act & Assert
@@ -517,7 +681,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(int.MaxValue));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HandleEmptyGroupsList()
         {
             // Act
@@ -528,7 +692,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups, Is.Empty);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HandleNullDateValues()
         {
             // Act & Assert
@@ -536,7 +700,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.DateDue, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetTaskId()
         {
             // Act
@@ -546,7 +710,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.TaskId, Is.EqualTo(42));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetTask()
         {
             // Arrange
@@ -559,7 +723,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Task, Is.EqualTo(testTask));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptNullTask()
         {
             // Act
@@ -569,7 +733,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Task, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void AcceptNullTaskId()
         {
             // Act
@@ -579,7 +743,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.TaskId, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetAndGetDateModified()
         {
             // Arrange
@@ -592,7 +756,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.DateModified, Is.EqualTo(dateTime));
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void SetDateModifiedToNull()
         {
             // Act
@@ -602,7 +766,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.DateModified, Is.Null);
         }
 
-        [Test]
+        [Test, Category("DataTransferObjects")]
         public void HandleGroupsNullToEmptyListConversion()
         {
             // Arrange - Start with null
@@ -622,6 +786,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var id = 999;
             var name = "Comprehensive Test Assignment";
             var description = "This tests all constructor parameters thoroughly";
+            var locationId = 123;
+            var locationType = "Conference Room";
+            IAddressDTO? location = null; // Mock address would be needed for full test
             var groups = new List<GroupDTO>
             {
                 new() { Id = 100, Name = "Special Group 1" },
@@ -638,7 +805,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var dto = new ProjectAssignmentDTO(
-                id, name, description, groups, taskId, task, 
+                id, name, description, locationId, locationType, location, groups, taskId, task,
                 isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert - Verify all properties are set correctly
@@ -647,6 +814,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.Id, Is.EqualTo(id));
                 Assert.That(dto.Name, Is.EqualTo(name));
                 Assert.That(dto.Description, Is.EqualTo(description));
+                Assert.That(dto.LocationId, Is.EqualTo(locationId));
+                Assert.That(dto.LocationType, Is.EqualTo(locationType));
+                Assert.That(dto.Location, Is.EqualTo(location));
                 Assert.That(dto.Groups, Is.EqualTo(groups));
                 Assert.That(dto.Groups!.Count, Is.EqualTo(3));
                 Assert.That(dto.TaskId, Is.EqualTo(taskId));
@@ -661,9 +831,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Interface")]
         public void CoverGroupsInterfaceGetterCastingLogic()
-    {
-      // Arrange
-      IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+        {
+            // Arrange
+            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
             var groupA = new GroupDTO { Id = 10, Name = "Group A" };
             var groupB = new GroupDTO { Id = 20, Name = "Group B" };
             _projectAssignmentDTO.Groups = [groupA, groupB];
@@ -674,20 +844,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.That(interfaceGroups, Is.Not.Null);
             Assert.That(interfaceGroups.Count, Is.EqualTo(2));
-      Assert.Multiple(() =>
-      {
-        Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
-        Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
-        Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
-        Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
-      });
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
+                Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
+                Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
+                Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
+            });
+        }
 
-    [Test, Category("Interface")]
+        [Test, Category("Interface")]
         public void CoverGroupsInterfaceSetterConversionLogic()
-    {
-      // Arrange
-      IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
+        {
+            // Arrange
+            IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
             var group1 = new GroupDTO { Id = 100, Name = "Interface Group 1" };
             var group2 = new GroupDTO { Id = 200, Name = "Interface Group 2" };
             var interfaceGroups = new List<IGroupDTO> { group1, group2 };
@@ -699,15 +869,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
             Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(2));
             Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
-      Assert.Multiple(() =>
-      {
-        Assert.That(_projectAssignmentDTO.Groups[0].Id, Is.EqualTo(100));
-        Assert.That(_projectAssignmentDTO.Groups[1], Is.InstanceOf<GroupDTO>());
-      });
-      Assert.That(_projectAssignmentDTO.Groups[1].Id, Is.EqualTo(200));
-    }
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.Groups[0].Id, Is.EqualTo(100));
+                Assert.That(_projectAssignmentDTO.Groups[1], Is.InstanceOf<GroupDTO>());
+            });
+            Assert.That(_projectAssignmentDTO.Groups[1].Id, Is.EqualTo(200));
+        }
 
-    [Test, Category("Boundary")]
+        [Test, Category("Boundary")]
         public void HandleVeryLargeCollections()
         {
             // Arrange
@@ -743,24 +913,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         [Test, Category("Unicode")]
         public void HandleUnicodeCharacters()
-    {
-      // Arrange
-      var unicodeName = "项目分配 🚀";
+        {
+            // Arrange
+            var unicodeName = "项目分配 🚀";
             var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
 
             // Act
             _projectAssignmentDTO.Name = unicodeName;
             _projectAssignmentDTO.Description = unicodeDescription;
-      Assert.Multiple(() =>
-      {
+            Assert.Multiple(() =>
+            {
 
-        // Assert
-        Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
-        Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
-      });
-    }
+                // Assert
+                Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
+                Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
+            });
+        }
 
-    [Test, Category("Boundary")]
+        [Test, Category("Boundary")]
         public void HandleMaximumIntegerValues()
         {
             // Act & Assert for Id
@@ -770,6 +940,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert for TaskId
             _projectAssignmentDTO.TaskId = int.MaxValue;
             Assert.That(_projectAssignmentDTO.TaskId, Is.EqualTo(int.MaxValue));
+
+            // Act & Assert for LocationId
+            _projectAssignmentDTO.LocationId = int.MaxValue;
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(int.MaxValue));
         }
 
         [Test, Category("Boundary")]
@@ -782,6 +956,89 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert for TaskId
             _projectAssignmentDTO.TaskId = int.MinValue;
             Assert.That(_projectAssignmentDTO.TaskId, Is.EqualTo(int.MinValue));
+
+            // Act & Assert for LocationId
+            _projectAssignmentDTO.LocationId = int.MinValue;
+            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("Unicode")]
+        public void HandleUnicodeLocationTypes()
+        {
+            // Arrange
+            var unicodeLocationType = "会议室 🏢 Sală de întâlniri";
+
+            // Act
+            _projectAssignmentDTO.LocationType = unicodeLocationType;
+
+            // Assert
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(unicodeLocationType));
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleVeryLongLocationTypes()
+        {
+            // Arrange
+            var veryLongLocationType = new string('L', 500); // Beyond typical limit
+
+            // Act & Assert - DTOs don't validate
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationType = veryLongLocationType);
+            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(veryLongLocationType));
+        }
+
+        [Test, Category("Comprehensive")]
+        public void HandleLocationPropertiesTogether()
+        {
+            // Arrange
+            var locationId = 999;
+            var locationType = "Executive Boardroom";
+            IAddressDTO? location = null; // Mock would be needed for comprehensive test
+
+            // Act
+            _projectAssignmentDTO.LocationId = locationId;
+            _projectAssignmentDTO.LocationType = locationType;
+            _projectAssignmentDTO.Location = location;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
+                Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
+                Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(location));
+            });
+        }
+
+        [Test, Category("Edge")]
+        public void HandleLocationPropertyNullToValueTransitions()
+        {
+            // Arrange - Start with null values
+            _projectAssignmentDTO.LocationId = null;
+            _projectAssignmentDTO.LocationType = null;
+            _projectAssignmentDTO.Location = null;
+
+            // Act - Set to values
+            _projectAssignmentDTO.LocationId = 42;
+            _projectAssignmentDTO.LocationType = "Office";
+            // Location stays null as we don't have a mock
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(42));
+                Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo("Office"));
+                Assert.That(_projectAssignmentDTO.Location, Is.Null);
+            });
+
+            // Act - Set back to null
+            _projectAssignmentDTO.LocationId = null;
+            _projectAssignmentDTO.LocationType = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.LocationId, Is.Null);
+                Assert.That(_projectAssignmentDTO.LocationType, Is.Null);
+            });
         }
 
         #endregion

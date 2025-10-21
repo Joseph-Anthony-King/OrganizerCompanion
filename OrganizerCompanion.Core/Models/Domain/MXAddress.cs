@@ -204,7 +204,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             try
             {
-                if (typeof(T) == typeof(MXAddressDTO) || typeof(T) == typeof(IMXAddressDTO))
+                if (typeof(T) == typeof(MXAddressDTO) || typeof(T) == typeof(IMXAddressDTO) || typeof(T) == typeof(IAddressDTO))
                 {
                     object dto = new MXAddressDTO
                     {

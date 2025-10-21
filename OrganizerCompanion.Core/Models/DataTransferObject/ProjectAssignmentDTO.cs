@@ -38,6 +38,15 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
 
+        [JsonPropertyName("locationId"), Range(0, int.MaxValue, ErrorMessage = "Location Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+        public int? LocationId { get; set; } = null;
+
+        [JsonPropertyName("locationType"), MaxLength(100, ErrorMessage = "Location Type cannot exceed 100 characters."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationType { get; set; } = null;
+
+        [JsonPropertyName("location"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IAddressDTO? Location { get; set; } = null;
+
         [Required, JsonPropertyName("groups")]
         public List<GroupDTO>? Groups { get; set; } = null;
 
@@ -70,7 +79,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public ProjectAssignmentDTO(
             int id,
             string name, 
-            string? description, 
+            string? description,
+            int? locationId,
+            string? locationType,
+            IAddressDTO? location,
             List<GroupDTO>? groups,
             int? taskId,
             ProjectTask? task,
@@ -83,6 +95,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             Id = id;
             Name = name;
             Description = description;
+            LocationId = locationId;
+            LocationType = locationType;
+            Location = location;
             Groups = groups;
             TaskId = taskId;
             Task = task;

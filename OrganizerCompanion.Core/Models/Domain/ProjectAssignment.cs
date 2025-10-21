@@ -18,6 +18,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
+        private int? _locationId = null;
+        private string? _locationType = null;
+        private IAddress? _location = null;
         private List<Group>? _groups = null;
         private int? _taskId = null;
         private ProjectTask? _task = null;
@@ -29,6 +32,16 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Implementations
+        [JsonIgnore]
+        IAddress? IProjectAssignment.Location
+        {
+            get => _location;
+            set
+            {
+                _location = value!;
+                DateModified = DateTime.UtcNow;
+            }
+        }           
         [JsonIgnore]
         List<IGroup>? IProjectAssignment.Groups
         {
@@ -78,6 +91,41 @@ namespace OrganizerCompanion.Core.Models.Domain
                 if (value!.Length > 1000)
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
                 _description = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("locationId"), Range(0, int.MaxValue, ErrorMessage = "Location Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? LocationId
+        {
+            get => _locationId;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(LocationId), "Location Id must be a non-negative number.");
+                _locationId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("locationType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public string? LocationType
+        {
+            get => _locationType;
+            set
+            {
+                _locationType = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("location"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public IAddress? Location
+        {
+            get => _location;
+            set
+            {
+                _location = value!;
                 DateModified = DateTime.Now;
             }
         }
@@ -177,6 +225,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
+            int? locationId,
+            string? locationType,
+            IAddress? location,
             List<Group>? groups,
             int? taskId,
             ProjectTask? task,
@@ -189,6 +240,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
+            _locationId = locationId;
+            _locationType = locationType;
+            _location = location!;
             _groups = groups ?? [];
             _taskId = taskId;
             _task = task;
@@ -211,6 +265,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id,
                         Name,
                         Description,
+                        LocationId,
+                        LocationType,
+                        Location?.Cast<IAddressDTO>(),
                         Groups?.ConvertAll(group => group.Cast<GroupDTO>()),
                         TaskId,
                         Task,
