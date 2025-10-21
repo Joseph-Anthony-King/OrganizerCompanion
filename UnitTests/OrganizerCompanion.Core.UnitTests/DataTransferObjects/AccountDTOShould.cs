@@ -587,7 +587,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             accountInterface.Accounts = null;
 
             // Assert
-            Assert.That(_sut.Accounts, Has.Count.EqualTo(0));
+            Assert.Throws<NullReferenceException>(() => { var count = _sut.Accounts!.Count; });
         }
 
         [Test, Category("DataTransferObjects")]

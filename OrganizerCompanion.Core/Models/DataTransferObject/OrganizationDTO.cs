@@ -26,24 +26,28 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             get => Emails.ConvertAll(email => (IEmailDTO)email);
             set => Emails = value.ConvertAll(email => (EmailDTO)email);
         }
+
         [JsonIgnore]
         List<IPhoneNumberDTO> IOrganizationDTO.PhoneNumbers
         {
             get => PhoneNumbers.ConvertAll(phone => (IPhoneNumberDTO)phone);
             set => PhoneNumbers = value.ConvertAll(phone => (PhoneNumberDTO)phone);
         }
+
         [JsonIgnore]
         List<IContactDTO> IOrganizationDTO.Members
         {
             get => Members.ConvertAll(member => (IContactDTO)member);
             set => Members = value.ConvertAll(member => (ContactDTO)member);
         }
+
         [JsonIgnore]
         List<IContactDTO> IOrganizationDTO.Contacts
         {
             get => Contacts.ConvertAll(contact => (IContactDTO)contact);
             set => Contacts = value.ConvertAll(contact => (ContactDTO)contact);
         }
+
         [JsonIgnore]
         List<IAccountDTO> IOrganizationDTO.Accounts
         {

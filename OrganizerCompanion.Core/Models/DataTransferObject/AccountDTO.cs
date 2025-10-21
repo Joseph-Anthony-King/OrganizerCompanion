@@ -19,6 +19,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
                 Features = value.ConvertAll(feature => (FeatureDTO)feature);
             }
         }
+
         [JsonIgnore]
         List<ISubAccountDTO>? IAccountDTO.Accounts
         {
@@ -27,7 +28,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             {
                 if (value == null)
                 {
-                    Accounts = [];
+                    Accounts = null;
                     return;
                 }
 
@@ -40,10 +41,12 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
                 }
             }
         }
+
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
         }
+
         public string ToJson()
         {
             throw new NotImplementedException();

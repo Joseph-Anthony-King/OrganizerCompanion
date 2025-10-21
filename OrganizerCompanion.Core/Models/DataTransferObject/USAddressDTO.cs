@@ -7,6 +7,7 @@ using OrganizerCompanion.Core.Interfaces.Type;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
+    #region Properties
     internal class USAddressDTO : IUSAddressDTO
     {
         #region Explicit Interface Implementations
@@ -14,13 +15,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         {
             throw new NotImplementedException();
         }
+
         public string ToJson()
         {
             throw new NotImplementedException();
         }
         #endregion
 
-        #region Properties
         [Required, JsonPropertyName("id")]
         public int Id { get; set; } = 0;
 

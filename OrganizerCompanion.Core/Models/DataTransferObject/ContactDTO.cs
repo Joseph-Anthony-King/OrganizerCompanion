@@ -11,15 +11,55 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     {
         #region Explicit Interface Implementations
         [JsonIgnore]
-        List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
+        {
+            get => Emails.ConvertAll(email => (Interfaces.Type.IEmail)email);
+            set
+            {
+                Emails ??= [];
+                Emails.Clear();
+                foreach (var email in value)
+                {
+                    Emails.Add((EmailDTO)email);
+                }
+            }
+        }
+
         [JsonIgnore]
-        List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
+        {
+            get => PhoneNumbers.ConvertAll(phoneNumber => (Interfaces.Type.IPhoneNumber)phoneNumber);
+            set
+            {
+                PhoneNumbers ??= [];
+                PhoneNumbers.Clear();
+                foreach (var phoneNumber in value)
+                {
+                    PhoneNumbers.Add((PhoneNumberDTO)phoneNumber);
+                }
+            }
+        }
+
         [JsonIgnore]
-        List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
+        {
+            get => Addresses.ConvertAll(address => (Interfaces.Type.IAddress)address);
+            set
+            {
+                Addresses ??= [];
+                Addresses.Clear();
+                foreach (var address in value)
+                {
+                    Addresses.Add((IAddressDTO)address);
+                }
+            }
+        }
+
         public T Cast<T>() where T : IDomainEntity
         {
             throw new NotImplementedException();
         }
+
         public string ToJson()
         {
             throw new NotImplementedException();
@@ -42,6 +82,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("fullName")]
         public string? FullName { get; set; } = null;
 
+        [Required, JsonPropertyName("userName")]
+        public string? UserName { get; set; } = null;
+
         [Required, JsonPropertyName("pronouns")]
         public Pronouns? Pronouns { get; set; } = null;
 
@@ -50,9 +93,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [JsonPropertyName("deceasedDate"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public DateTime? DeceasedDate { get; set; } = null;
-
-        [Required, JsonPropertyName("userName")]
-        public string? UserName { get; set; } = null;
 
         [Required, JsonPropertyName("isActive")]
         public bool? IsActive { get; set; } = null;

@@ -12,6 +12,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
+        #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
         List<IGroupDTO>? IProjectDTO.Groups
@@ -28,7 +29,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         }
         #endregion
 
-        #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
 

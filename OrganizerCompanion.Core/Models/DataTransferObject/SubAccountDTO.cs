@@ -11,6 +11,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
+        #region Properties
         #region Explicit Interface Implementations
         public T Cast<T>() where T : IDomainEntity
         {
@@ -39,6 +40,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public DateTime DateCreated { get => _dateCreated; }
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
+        #endregion
 
         #region Constructors
         public SubAccountDTO() { }

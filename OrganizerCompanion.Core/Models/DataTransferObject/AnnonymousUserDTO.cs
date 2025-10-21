@@ -12,6 +12,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         {
             throw new NotImplementedException();
         }
+
         public string ToJson()
         {
             throw new NotImplementedException();

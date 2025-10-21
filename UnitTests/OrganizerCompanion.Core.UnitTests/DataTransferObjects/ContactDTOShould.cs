@@ -520,7 +520,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var personInterface = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = personInterface.Emails; });
+            Assert.DoesNotThrow(() => { var _ = personInterface.Emails; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -531,7 +531,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var emails = new List<OrganizerCompanion.Core.Interfaces.Type.IEmail>();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { personInterface.Emails = emails; });
+            Assert.DoesNotThrow(() => { personInterface.Emails = emails; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -541,7 +541,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var personInterface = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = personInterface.PhoneNumbers; });
+            Assert.DoesNotThrow(() => { var _ = personInterface.PhoneNumbers; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -552,7 +552,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var phoneNumbers = new List<OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber>();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { personInterface.PhoneNumbers = phoneNumbers; });
+            Assert.DoesNotThrow(() => { personInterface.PhoneNumbers = phoneNumbers; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -562,7 +562,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var personInterface = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { var _ = personInterface.Addresses; });
+            Assert.DoesNotThrow(() => { var _ = personInterface.Addresses; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -573,7 +573,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var addresses = new List<OrganizerCompanion.Core.Interfaces.Type.IAddress>();
 
             // Act & Assert
-            Assert.Throws<NotImplementedException>(() => { personInterface.Addresses = addresses; });
+            Assert.DoesNotThrow(() => { personInterface.Addresses = addresses; });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -1697,27 +1697,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 var phoneNumbersProperty = type.GetProperty("PhoneNumbers");
                 var phoneNumbersValidator = phoneNumbersProperty?.GetCustomAttribute<OrganizerCompanion.Core.Validation.Attributes.PhoneNumbersValidator>();
                 Assert.That(phoneNumbersValidator, Is.Not.Null, "PhoneNumbers property should have PhoneNumbersValidator attribute");
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void ExplicitInterfaceProperties_ShouldHaveJsonIgnoreAttributes()
-        {
-            // Arrange & Act & Assert
-            // The explicit interface implementations should have JsonIgnore attributes
-            // This test verifies the explicit interface implementations exist and are properly configured
-            Assert.Multiple(() =>
-            {
-                var personInterface = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
-                
-                // All explicit interface property implementations should throw NotImplementedException
-                Assert.Throws<NotImplementedException>(() => { var emails = personInterface.Emails; });
-                Assert.Throws<NotImplementedException>(() => { var phones = personInterface.PhoneNumbers; });
-                Assert.Throws<NotImplementedException>(() => { var addresses = personInterface.Addresses; });
-                
-                Assert.Throws<NotImplementedException>(() => personInterface.Emails = []);
-                Assert.Throws<NotImplementedException>(() => personInterface.PhoneNumbers = []);
-                Assert.Throws<NotImplementedException>(() => personInterface.Addresses = []);
             });
         }
 
