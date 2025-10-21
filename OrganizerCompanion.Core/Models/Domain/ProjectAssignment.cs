@@ -18,6 +18,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
+        private int? _assigneeId = null;
+        private SubAccount? _assignee = null;
         private int? _locationId = null;
         private string? _locationType = null;
         private IAddress? _location = null;
@@ -41,18 +43,27 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _location = value!;
                 DateModified = DateTime.UtcNow;
             }
-        }           
+        }
+        
         [JsonIgnore]
         List<IGroup>? IProjectAssignment.Groups
         {
             get => [.. _groups!.Cast<IGroup>()];
             set => _groups = value!.ConvertAll(group => (Group)group);
         }
+
         [JsonIgnore]
         IProjectTask? IProjectAssignment.Task
         {
             get => _task;
             set => _task = (ProjectTask?)value;
+        }
+
+        [JsonIgnore]
+        ISubAccount? IProjectAssignment.Assignee
+        {
+            get => _assignee;
+            set => _assignee = (SubAccount?)value;
         }
         #endregion
 
@@ -91,6 +102,30 @@ namespace OrganizerCompanion.Core.Models.Domain
                 if (value!.Length > 1000)
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
                 _description = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("assigneeId"), Range(0, int.MaxValue, ErrorMessage = "Assignee Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? AssigneeId
+        {
+            get => _assigneeId;
+            set
+            {
+                if (value < 0)
+                    throw new ArgumentOutOfRangeException(nameof(AssigneeId), "Assignee Id must be a non-negative number.");
+                _assigneeId = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("assignee"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public SubAccount? Assignee
+        {
+            get => _assignee;
+            set
+            {
+                _assignee = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -225,6 +260,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
+            int? assigneeId,
+            SubAccount? assignee,
             int? locationId,
             string? locationType,
             IAddress? location,
@@ -240,6 +277,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
+            _assigneeId = assigneeId;
+            _assignee = assignee;
             _locationId = locationId;
             _locationType = locationType;
             _location = location!;
@@ -265,6 +304,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id,
                         Name,
                         Description,
+                        AssigneeId,
+                        Assignee?.Cast<SubAccountDTO>(),
                         LocationId,
                         LocationType,
                         Location?.Cast<IAddressDTO>(),

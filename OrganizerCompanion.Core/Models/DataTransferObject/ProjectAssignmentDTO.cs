@@ -15,6 +15,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
+        ISubAccountDTO? IProjectAssignmentDTO.Assignee
+        {
+            get => Assignee;
+            set => Assignee = (SubAccountDTO?)value;
+        }
+
+        [JsonIgnore]
         List<IGroupDTO>? IProjectAssignmentDTO.Groups
         {
             get => [.. Groups!.Cast<IGroupDTO>()];
@@ -37,6 +44,12 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
+
+        [JsonPropertyName("assigneeId"), Range(0, int.MaxValue, ErrorMessage = "Assignee Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? AssigneeId { get; set; } = null;
+
+        [JsonPropertyName("subAccount"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public SubAccountDTO? Assignee { get; set; } = null;
 
         [JsonPropertyName("locationId"), Range(0, int.MaxValue, ErrorMessage = "Location Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int? LocationId { get; set; } = null;
@@ -80,6 +93,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             int id,
             string name, 
             string? description,
+            int? assingeeId,
+            SubAccountDTO? assignee,
             int? locationId,
             string? locationType,
             IAddressDTO? location,
@@ -95,6 +110,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             Id = id;
             Name = name;
             Description = description;
+            AssigneeId = assingeeId;
+            Assignee = assignee;
             LocationId = locationId;
             LocationType = locationType;
             Location = location;

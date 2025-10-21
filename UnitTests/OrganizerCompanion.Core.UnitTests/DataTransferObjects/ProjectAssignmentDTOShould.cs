@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
-using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Models.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -56,6 +57,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var id = 1;
             var name = "Test Assignment";
             var description = "Test Description";
+            var userDTO = new UserDTO
+            {
+                Id = 1,
+                FirstName = "Alice",
+                LastName = "Wonderland"
+            };
+            var subAccountDTO = new SubAccountDTO
+            {
+                Id = 42,
+                LinkedEntityId = userDTO.Id,
+                LinkedEntity = userDTO
+            };
             var locationId = 5;
             var locationType = "Office";
             IAddressDTO? location = null; // Mock address would be needed for full test
@@ -70,7 +83,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, locationId, locationType, location, groups, taskId, task, isCompleted,
+                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -79,6 +92,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.EqualTo(description));
+                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(subAccountDTO.Id));
+                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(subAccountDTO));
                 Assert.That(projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
                 Assert.That(projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
                 Assert.That(projectAssignmentDTO.Location, Is.EqualTo(location));
@@ -100,6 +115,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var id = 0;
             var name = "Minimal Assignment";
             string? description = null;
+            var userDTO = new UserDTO
+            {
+                Id = 1,
+                FirstName = "Alice",
+                LastName = "Wonderland"
+            };
+            var subAccountDTO = new SubAccountDTO
+            {
+                Id = 42,
+                LinkedEntityId = userDTO.Id,
+                LinkedEntity = userDTO
+            };
             int? locationId = null;
             string? locationType = null;
             IAddressDTO? location = null;
@@ -114,7 +141,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, locationId, locationType, location, groups, taskId, task, isCompleted,
+                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -123,6 +150,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
+                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(subAccountDTO.Id));
+                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(subAccountDTO));
                 Assert.That(projectAssignmentDTO.LocationId, Is.Null);
                 Assert.That(projectAssignmentDTO.LocationType, Is.Null);
                 Assert.That(projectAssignmentDTO.Location, Is.Null);
@@ -785,6 +814,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var id = 999;
             var name = "Comprehensive Test Assignment";
             var description = "This tests all constructor parameters thoroughly";
+            var userDTO = new UserDTO
+            {
+                Id = 1,
+                FirstName = "Alice",
+                LastName = "Wonderland"
+            };
+            var subAccountDTO = new SubAccountDTO
+            {
+                Id = 42,
+                LinkedEntityId = userDTO.Id,
+                LinkedEntity = userDTO
+            };
             var locationId = 123;
             var locationType = "Conference Room";
             IAddressDTO? location = null; // Mock address would be needed for full test
@@ -804,7 +845,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var dto = new ProjectAssignmentDTO(
-                id, name, description, locationId, locationType, location, groups, taskId, task,
+                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task,
                 isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert - Verify all properties are set correctly
@@ -813,6 +854,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.Id, Is.EqualTo(id));
                 Assert.That(dto.Name, Is.EqualTo(name));
                 Assert.That(dto.Description, Is.EqualTo(description));
+                Assert.That(dto.AssigneeId, Is.EqualTo(subAccountDTO.Id));
+                Assert.That(dto.Assignee, Is.EqualTo(subAccountDTO));
                 Assert.That(dto.LocationId, Is.EqualTo(locationId));
                 Assert.That(dto.LocationType, Is.EqualTo(locationType));
                 Assert.That(dto.Location, Is.EqualTo(location));

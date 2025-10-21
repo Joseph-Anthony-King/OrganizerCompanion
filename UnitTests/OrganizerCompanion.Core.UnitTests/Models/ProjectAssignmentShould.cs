@@ -71,6 +71,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 42;
             var name = "Test Assignment";
             var description = "Test Description";
+            var user = new User
+            {
+                Id = 1,
+                FirstName = "Alice",
+                LastName = "Wonderland"
+            };
+            var subAccount = new SubAccount 
+            {
+                Id = 42,
+                LinkedEntityId = user.Id,
+                LinkedEntity = user
+            };
             var location = new USAddress
             {
                 Id = 1,
@@ -96,6 +108,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id,
                 name,
                 description,
+                subAccount.Id,
+                subAccount,
                 locationId,
                 locationType,
                 location,
@@ -133,7 +147,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var assignment = new ProjectAssignment(
-                1, "Test", "Description", null, null, null, null, null, null, false, null, null, DateTime.Now, null);
+                1, "Test", "Description", null, null, null, null, null, null, null, null, false, null, null, DateTime.Now, null);
 
             // Assert
             Assert.That(assignment.Groups, Is.Not.Null);
