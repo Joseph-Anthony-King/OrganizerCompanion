@@ -1,6 +1,6 @@
 ﻿namespace OrganizerCompanion.Core.Interfaces.Type
 {
-    internal interface ICAAddress
+    internal interface ICAAddress : IAddress
     {
         string? Street1 { get; set; }
         string? Street2 { get; set; }

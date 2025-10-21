@@ -48,6 +48,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("type")]
         public Types? Type { get; set; } = null;
 
+        [Required, JsonPropertyName("isPrimary")]
+        public bool IsPrimary { get; set; } = false;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
 

@@ -14,7 +14,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [SetUp]
         public void SetUp()
         {
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
             {
                 Id = 1
             };

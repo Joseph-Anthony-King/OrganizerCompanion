@@ -19,6 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _emailAddress = null;
         private Types? _type = null;
+        private bool _isPrimary = false;
         private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
         private string? _linkedEntityType = null;
@@ -56,6 +57,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _type = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [Required, JsonPropertyName("isPrimary")]
+        public bool IsPrimary
+        {
+            get => _isPrimary;
+            set
+            {
+                _isPrimary = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -112,6 +124,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? emailAddress,
             Types? type,
+            bool isPrimary,
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             string? linkedEntityType,
@@ -122,6 +135,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _emailAddress = emailAddress;
             _type = type;
+            _isPrimary = isPrimary;
             _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
             _linkedEntityType = linkedEntityType;
@@ -132,10 +146,12 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public Email(
             string? emailAddress,
-            Types? type)
+            Types? type,
+            bool isPrimary)
         {
             _emailAddress = emailAddress;
             _type = type;
+            _isPrimary = isPrimary;
         }
         #endregion
 
@@ -151,6 +167,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = this.Id,
                         EmailAddress = this.EmailAddress,
                         Type = this.Type,
+                        IsPrimary = this.IsPrimary,
                         DateCreated = this.DateCreated,
                         DateModified = this.DateModified,
                     };
@@ -166,7 +183,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id{0}.EmailAddress{1}", _id, _emailAddress);
+        public override string? ToString() => string.Format(base.ToString() + ".Id{0}.EmailAddress{1}.IsPrimary", _id, _emailAddress, _isPrimary);
         #endregion
     }
 }

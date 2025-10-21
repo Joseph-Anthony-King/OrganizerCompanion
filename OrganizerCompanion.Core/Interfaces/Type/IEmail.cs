@@ -6,5 +6,6 @@ namespace OrganizerCompanion.Core.Interfaces.Type
     {
         string? EmailAddress { get; set; }
         Types? Type { get; set; }
+        bool IsPrimary { get; set; }
     }
 }

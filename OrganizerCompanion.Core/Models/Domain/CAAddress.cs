@@ -25,6 +25,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _zipCode = null;
         private string? _country = Countries.Canada.GetName();
         private Types? _type = null;
+        private bool _isPrimary = false;
         private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
         private string? _linkedEntityType = null;
@@ -120,6 +121,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("isPrimary")]
+        public bool IsPrimary
+        {
+            get => _isPrimary;
+            set
+            {
+                _isPrimary = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
         public int LinkedEntityId
         {
@@ -166,6 +178,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string zipCode, 
             string country, 
             Types type,
+            bool isPrimary,
             DateTime dateCreated, 
             DateTime? dateModified,
             bool? isCast = null,
@@ -180,6 +193,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _zipCode = zipCode;
             _country = country;
             _type = type;
+            _isPrimary = isPrimary;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
@@ -192,7 +206,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (typeof(T) == typeof(CAAddressDTO) || typeof(T) == typeof(ICAAddressDTO))
                 {
-                    object dto = new CAAddressDTO()
+                    object dto = new CAAddressDTO
                     {
                         Id = this.Id,
                         Street1 = this.Street1,
@@ -202,6 +216,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         ZipCode = this.ZipCode,
                         Country = this.Country,
                         Type = this.Type,
+                        IsPrimary = this.IsPrimary,
                         DateCreated = this.DateCreated,
                         DateModified = this.DateModified
                     };
