@@ -18,6 +18,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
+        private SubAccount? _assignee = null;
         private int? _locationId = null;
         private string? _locationType = null;
         private IAddress? _location = null;
@@ -33,6 +34,17 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
+        ISubAccount? IProjectAssignment.Assignee
+        {
+            get => _assignee;
+            set
+            {
+                _assignee = (SubAccount?)value;
+                DateModified = DateTime.UtcNow;
+            }
+        }
+
+        [JsonIgnore]
         IAddress? IProjectAssignment.Location
         {
             get => _location;
@@ -41,13 +53,15 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _location = value!;
                 DateModified = DateTime.UtcNow;
             }
-        }           
+        }
+
         [JsonIgnore]
         List<IGroup>? IProjectAssignment.Groups
         {
             get => [.. _groups!.Cast<IGroup>()];
             set => _groups = value!.ConvertAll(group => (Group)group);
         }
+
         [JsonIgnore]
         IProjectTask? IProjectAssignment.Task
         {
@@ -91,6 +105,23 @@ namespace OrganizerCompanion.Core.Models.Domain
                 if (value!.Length > 1000)
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
                 _description = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
+        [JsonPropertyName("assigneeId"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public int? AssigneeId
+        {
+            get => _assignee?.Id;
+        }
+
+        [JsonPropertyName("assignee"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public SubAccount? Assignee
+        {
+            get => _assignee;
+            set
+            {
+                _assignee = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -225,6 +256,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
+            SubAccount? assignee,
             int? locationId,
             string? locationType,
             IAddress? location,
@@ -240,6 +272,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
+            Assignee = assignee;
             _locationId = locationId;
             _locationType = locationType;
             _location = location!;
@@ -265,6 +298,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id,
                         Name,
                         Description,
+                        Assignee?.Id,
+                        Assignee?.Cast<SubAccountDTO>(),
                         LocationId,
                         LocationType,
                         Location?.Cast<IAddressDTO>(),
@@ -277,7 +312,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         DateCreated,
                         DateModified
                     );
-                    
+
                     return (T)(object)dto;
                 }
                 else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");

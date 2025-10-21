@@ -6,6 +6,8 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
     {
         string Name { get; set; }
         string? Description { get; set; }
+        int? AssigneeId { get; set; }
+        ISubAccountDTO? Assignee { get; set; }
         int? LocationId { get; set; }
         string? LocationType { get; set; }
         IAddressDTO? Location { get; set; }

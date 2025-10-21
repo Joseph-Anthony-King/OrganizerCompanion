@@ -52,6 +52,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Id, Is.EqualTo(0));
                 Assert.That(assignment.Name, Is.EqualTo(string.Empty));
                 Assert.That(assignment.Description, Is.Null);
+                Assert.That(assignment.AssigneeId, Is.Null);
+                Assert.That(assignment.Assignee, Is.Null);
                 Assert.That(assignment.LocationId, Is.Null);
                 Assert.That(assignment.LocationType, Is.Null);
                 Assert.That(assignment.Location, Is.Null);
@@ -71,6 +73,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 42;
             var name = "Test Assignment";
             var description = "Test Description";
+            var assignee = new SubAccount { Id = 5 };
             var location = new USAddress
             {
                 Id = 1,
@@ -96,6 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id,
                 name,
                 description,
+                assignee,
                 locationId,
                 locationType,
                 location,
@@ -114,6 +118,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Id, Is.EqualTo(id));
                 Assert.That(assignment.Name, Is.EqualTo(name));
                 Assert.That(assignment.Description, Is.EqualTo(description));
+                Assert.That(assignment.AssigneeId, Is.EqualTo(assignee.Id));
+                Assert.That(assignment.Assignee, Is.EqualTo(assignee));
                 Assert.That(assignment.LocationId, Is.EqualTo(locationId));
                 Assert.That(assignment.LocationType, Is.EqualTo(locationType));
                 Assert.That(assignment.Location, Is.EqualTo(location));
@@ -133,7 +139,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var assignment = new ProjectAssignment(
-                1, "Test", "Description", null, null, null, null, null, null, false, null, null, DateTime.Now, null);
+                1,
+                "Test",
+                "Description",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                false,
+                null,
+                null,
+                DateTime.Now,
+                null);
 
             // Assert
             Assert.That(assignment.Groups, Is.Not.Null);
@@ -236,7 +256,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void SetAndGetAssignees()
+        public void SetAndGetGroups()
         {
             // Arrange
             var initialDateModified = _assignment.DateModified;
@@ -586,6 +606,50 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_assignment.Location, Is.Null);
         }
 
+        [Test, Category("Models")]
+        public void SetAndGetAssignee()
+        {
+            // Arrange
+            var assignee = new SubAccount { Id = 1 };
+            var initialDateModified = _assignment.DateModified;
+
+            // Act
+            _assignment.Assignee = assignee;
+
+            // Assert - Domain entities auto-update DateModified
+            Assert.That(_assignment.Assignee, Is.EqualTo(assignee));
+            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+            Assert.That(_assignment.DateModified, Is.Not.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AcceptNullAssignee()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _assignment.Assignee = null);
+            Assert.That(_assignment.Assignee, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AssigneeIdReflectsAssigneeIdValue()
+        {
+            // Arrange
+            var assignee = new SubAccount { Id = 42 };
+
+            // Act - Set assignee
+            _assignment.Assignee = assignee;
+
+            // Assert - AssigneeId should reflect Assignee.Id
+            Assert.That(_assignment.AssigneeId, Is.EqualTo(assignee.Id));
+            Assert.That(_assignment.AssigneeId, Is.EqualTo(42));
+
+            // Act - Set assignee to null
+            _assignment.Assignee = null;
+
+            // Assert - AssigneeId should be null when Assignee is null
+            Assert.That(_assignment.AssigneeId, Is.Null);
+        }
+
         #endregion
 
         #region Cast Method Tests
@@ -914,6 +978,26 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test setting null
             iAssignment.Location = null;
             Assert.That(_assignment.Location, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void CoverAssigneeInterfaceImplementation()
+        {
+            // Arrange
+            IProjectAssignment iAssignment = _assignment;
+            var testAssignee = new SubAccount { Id = 100 };
+
+            // Act & Assert for Assignee interface property getter
+            var retrievedAssignee = iAssignment.Assignee;
+            Assert.That(retrievedAssignee, Is.EqualTo(_assignment.Assignee));
+
+            // Act & Assert for Assignee interface property setter
+            iAssignment.Assignee = testAssignee;
+            Assert.That(_assignment.Assignee, Is.EqualTo(testAssignee));
+
+            // Test setting null
+            iAssignment.Assignee = null;
+            Assert.That(_assignment.Assignee, Is.Null);
         }
 
         #endregion

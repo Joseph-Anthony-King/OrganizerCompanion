@@ -4,6 +4,8 @@
     {
         string Name { get; set; }
         string? Description { get; set; }
+        int? AssigneeId { get; }
+        ISubAccount? Assignee { get; set; }
         int? LocationId { get; set; }
         string? LocationType { get; set; }
         IAddress? Location { get; set; }
