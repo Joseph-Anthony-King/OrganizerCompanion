@@ -3,7 +3,6 @@ using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-using OrganizerCompanion.Core.Models.Type;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 

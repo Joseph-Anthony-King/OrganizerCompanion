@@ -1,6 +1,4 @@
-﻿using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-
-namespace OrganizerCompanion.Core.Interfaces.Domain
+﻿namespace OrganizerCompanion.Core.Interfaces.Domain
 {
     internal interface IProjectAssignment : IDomainEntity
     {
