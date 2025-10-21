@@ -270,7 +270,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Location?.Cast<IAddressDTO>(),
                         Groups?.ConvertAll(group => group.Cast<GroupDTO>()),
                         TaskId,
-                        Task,
+                        Task!.Cast<ProjectTaskDTO>(),
                         IsCompleted,
                         DateDue,
                         DateCompleted,

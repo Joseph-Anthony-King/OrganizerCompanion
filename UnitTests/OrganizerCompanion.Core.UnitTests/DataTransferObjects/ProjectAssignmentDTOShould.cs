@@ -1,7 +1,6 @@
 ﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-using Task = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -62,7 +61,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             IAddressDTO? location = null; // Mock address would be needed for full test
             var groups = _testGroups;
             var taskId = 10;
-            var task = new Task();
+            var task = new ProjectTaskDTO();
             var isCompleted = true;
             var dateDue = DateTime.Now.AddDays(7);
             var dateCompleted = DateTime.Now.AddDays(-1);
@@ -85,7 +84,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Location, Is.EqualTo(location));
                 Assert.That(projectAssignmentDTO.Groups, Is.EqualTo(groups));
                 Assert.That(projectAssignmentDTO.TaskId, Is.EqualTo(taskId));
-                Assert.That(projectAssignmentDTO.Task, Is.EqualTo(task));
+                Assert.That(projectAssignmentDTO.Task!.Id, Is.EqualTo(task.Id));
                 Assert.That(projectAssignmentDTO.IsCompleted, Is.EqualTo(isCompleted));
                 Assert.That(projectAssignmentDTO.DateDue, Is.EqualTo(dateDue));
                 Assert.That(projectAssignmentDTO.DateCompleted, Is.EqualTo(dateCompleted));
@@ -106,7 +105,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             IAddressDTO? location = null;
             List<GroupDTO>? groups = null;
             int? taskId = null;
-            Task? task = null;
+            ProjectTaskDTO? task = null;
             var isCompleted = false;
             DateTime? dateDue = null;
             DateTime? dateCompleted = null;
@@ -529,7 +528,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
-            var testTask = new Task();
+            var testTask = new ProjectTaskDTO();
 
             // Act & Assert for Task interface property getter
             var retrievedTask = iAssignmentDTO.Task;
@@ -714,7 +713,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void SetAndGetTask()
         {
             // Arrange
-            var testTask = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
+            var testTask = new ProjectTaskDTO();
 
             // Act
             _projectAssignmentDTO.Task = testTask;
@@ -796,7 +795,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 new() { Id = 300, Name = "Special Group 3" }
             };
             var taskId = 555;
-            var task = new Task();
+            var task = new ProjectTaskDTO();
             var isCompleted = true;
             var dateDue = new DateTime(2025, 12, 31, 23, 59, 59);
             var dateCompleted = new DateTime(2025, 10, 15, 14, 30, 0);

@@ -2,7 +2,6 @@
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using ProjectTask = OrganizerCompanion.Core.Models.Domain.ProjectTask;
 
 namespace OrganizerCompanion.Core.Models.DataTransferObject
 {
@@ -21,10 +20,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             set => Groups = value!.ConvertAll(group => (GroupDTO)group);
         }
         [JsonIgnore]
-        IProjectTask? IProjectAssignmentDTO.Task
+        IProjectTaskDTO? IProjectAssignmentDTO.Task
         {
             get => Task;
-            set => Task = (ProjectTask?)value;
+            set => Task = (ProjectTaskDTO?)value;
         }
         #endregion
 
@@ -54,7 +53,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int? TaskId { get; set; } = null;
         
         [Required, JsonPropertyName("task"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public ProjectTask? Task { get; set; } = null;
+        public ProjectTaskDTO? Task { get; set; } = null;
 
         [Required, JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; } = false;
@@ -85,7 +84,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             IAddressDTO? location,
             List<GroupDTO>? groups,
             int? taskId,
-            ProjectTask? task,
+            ProjectTaskDTO? task,
             bool isCompleted, 
             DateTime? dateDue,
             DateTime? dateCompleted,

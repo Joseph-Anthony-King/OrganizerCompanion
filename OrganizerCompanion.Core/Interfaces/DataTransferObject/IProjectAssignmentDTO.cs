@@ -11,7 +11,7 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
         IAddressDTO? Location { get; set; }
         List<IGroupDTO>? Groups { get; set; }
         int? TaskId { get; set; }
-        IProjectTask? Task { get; set; }
+        IProjectTaskDTO? Task { get; set; }
         bool IsCompleted { get; set; }
         DateTime? DateDue { get; set; }
         DateTime? DateCompleted { get; }

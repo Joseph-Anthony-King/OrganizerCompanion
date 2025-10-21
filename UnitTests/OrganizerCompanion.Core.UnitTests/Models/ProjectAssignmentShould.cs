@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
-using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
-using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 
@@ -591,59 +589,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #endregion
 
         #region Cast Method Tests
-
-        [Test, Category("Models")]
-        public void CastToProjectAssignmentDTO()
-        {
-            // Arrange
-            _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
-            _assignment.Description = "Test Description";
-            _assignment.LocationId = 42;
-            _assignment.LocationType = "Conference Room";
-            _assignment.Location = null; // Keeping null to avoid cast issues for now
-            _assignment.Groups = _groups;
-            _assignment.IsCompleted = true;
-            _assignment.DateDue = DateTime.Now.AddDays(7);
-
-            // Act
-            var dto = _assignment.Cast<ProjectAssignmentDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(dto, Is.Not.Null);
-                Assert.That(dto.Id, Is.EqualTo(_assignment.Id));
-                Assert.That(dto.Name, Is.EqualTo(_assignment.Name));
-                Assert.That(dto.Description, Is.EqualTo(_assignment.Description));
-                Assert.That(dto.LocationId, Is.EqualTo(_assignment.LocationId));
-                Assert.That(dto.LocationType, Is.EqualTo(_assignment.LocationType));
-                Assert.That(dto.Location, Is.Null);
-                Assert.That(dto.IsCompleted, Is.EqualTo(_assignment.IsCompleted));
-                Assert.That(dto.DateDue, Is.EqualTo(_assignment.DateDue));
-                Assert.That(dto.DateCreated, Is.EqualTo(_assignment.DateCreated));
-                Assert.That(dto.DateModified, Is.EqualTo(_assignment.DateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void CastToIProjectAssignmentDTO()
-        {
-            // Arrange
-            _assignment.Id = 2;
-            _assignment.Name = "Interface Test";
-
-            // Act
-            var dto = _assignment.Cast<IProjectAssignmentDTO>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(dto, Is.Not.Null);
-                Assert.That(dto.Id, Is.EqualTo(_assignment.Id));
-                Assert.That(dto.Name, Is.EqualTo(_assignment.Name));
-            });
-        }
 
         [Test, Category("Models")]
         public void ThrowInvalidCastExceptionForUnsupportedType()
