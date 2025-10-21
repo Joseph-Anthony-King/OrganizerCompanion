@@ -26,9 +26,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _country = Countries.Canada.GetName();
         private Types? _type = null;
         private bool _isPrimary = false;
-        private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
-        private string? _linkedEntityType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -134,20 +132,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
-        public int LinkedEntityId
-        {
-            get => _linkedEntityId;
-            set
-            {
-                _linkedEntityId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
-
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -155,10 +139,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.Now;
             }
         }
+
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
+        public int? LinkedEntityId => _linkedEntity?.Id ?? null;
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => _linkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
@@ -181,8 +170,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string country, 
             Types type,
             bool isPrimary,
-            int linkedEntityId,
-            string? linkedEntityType,
             IDomainEntity? linkedEntity,
             DateTime dateCreated, 
             DateTime? dateModified)
@@ -196,8 +183,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _country = country;
             _type = type;
             _isPrimary = isPrimary;
-            _linkedEntityId = linkedEntityId;
-            _linkedEntityType = linkedEntityType;
             _linkedEntity = linkedEntity;
             _dateCreated = dateCreated;
             DateModified = dateModified;

@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Extensions;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -1032,7 +1033,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_AddressProcessingLogic_ShouldEnterForeachLoop()
         {
             // Arrange - Add a simple address to test the foreach loop logic
-            var simpleAddress = new USAddress { Id = 1, Street1 = "123 Main St" };
+            var simpleAddress = new USAddress { Id = 1, Street1 = "123 Main St", City = "Anytown", State = Enums.USStates.California.ToStateModel(), ZipCode = "12345" };
             _sut.Addresses = [simpleAddress];
             _sut.Id = 1;
 

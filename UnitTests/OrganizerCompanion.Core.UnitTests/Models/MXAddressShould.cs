@@ -48,7 +48,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.State, Is.Null);
                 Assert.That(_sut.Country, Is.EqualTo(Countries.Mexico.GetName()));
                 Assert.That(_sut.Type, Is.Null);
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(_sut.LinkedEntityId, Is.Null);
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.IsPrimary, Is.False);
@@ -270,26 +270,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Type, Is.EqualTo(newType));
                 Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
                 Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newLinkedEntityId = 456;
-            var originalDateModified = _sut.DateModified;
-            Thread.Sleep(10); // Ensure time difference
-
-            // Act
-            _sut.LinkedEntityId = newLinkedEntityId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
             });
         }
 
@@ -553,7 +533,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"country\":\"M\\u00E9xico\""));
                 Assert.That(json, Does.Contain("\"type\":4")); // Types.Billing enum value
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
-                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
                 Assert.That(json, Does.Contain("\"dateCreated\""));
@@ -695,7 +675,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 { "State", () => _sut.State = new MXState { Name = "Test", Abbreviation = "TS" } },
                 { "Country", () => _sut.Country = "Test Country" },
                 { "Type", () => _sut.Type = OrganizerCompanion.Core.Enums.Types.Other },
-                { "LinkedEntityId", () => _sut.LinkedEntityId = 123 },
                 { "LinkedEntity", () => _sut.LinkedEntity = new MockDomainEntity() }
             };
 
@@ -1668,10 +1647,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             timestamps.Add(_sut.DateModified);
 
             System.Threading.Thread.Sleep(2);
-            _sut.LinkedEntityId = 999;
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
             _sut.LinkedEntity = new MockDomainEntity();
             timestamps.Add(_sut.DateModified);
 
@@ -1809,8 +1784,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultAddress.State = MXStates.Jalisco.ToStateModel();
             defaultAddress.Country = "Updated México";
             defaultAddress.Type = OrganizerCompanion.Core.Enums.Types.Billing;
-            defaultAddress.LinkedEntityId = 999;
-            defaultAddress.LinkedEntity = new MockDomainEntity();
+            defaultAddress.LinkedEntity = new MockDomainEntity() { Id = 999 };
             
             Assert.Multiple(() =>
             {

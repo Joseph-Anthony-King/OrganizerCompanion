@@ -7,6 +7,9 @@
         Mobil,
         Fax,
         Billing,
+        Shipping,
+        Retail,
+        Event,
         Other
     }
 }

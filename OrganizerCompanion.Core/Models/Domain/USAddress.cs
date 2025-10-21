@@ -16,7 +16,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         };
-        
+
         private int _id = 0;
         private string? _street1 = null;
         private string? _street2 = null;
@@ -26,111 +26,109 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _country = Countries.UnitedStates.GetName();
         private Types? _type = null;
         private bool _isPrimary = false;
-        private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
-        private string? _linkedEntityType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
         #region Properties
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
-        public int Id 
-        { 
-            get => _id; 
+        public int Id
+        {
+            get => _id;
             set
             {
                 if (value < 0)
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
-                _id = value; 
-                DateModified = DateTime.Now; 
-            } 
+                _id = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("street1")]
-        public string? Street1 
-        { 
-            get => _street1; 
-            set 
-            { 
-                _street1 = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? Street1
+        {
+            get => _street1;
+            set
+            {
+                _street1 = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("street2")]
-        public string? Street2 
-        { 
-            get => _street2; 
-            set 
-            { 
-                _street2 = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? Street2
+        {
+            get => _street2;
+            set
+            {
+                _street2 = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("city")]
-        public string? City 
-        { 
-            get => _city; 
-            set 
-            { 
-                _city = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? City
+        {
+            get => _city;
+            set
+            {
+                _city = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("state")]
-        public Interfaces.Type.INationalSubdivision? State 
-        { 
-            get => _state; 
-            set 
-            { 
-                _state = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public Interfaces.Type.INationalSubdivision? State
+        {
+            get => _state;
+            set
+            {
+                _state = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [JsonIgnore]
         public USStates? StateEnum
         {
             get => null; // Cannot reverse-lookup from IState to enum
-            set 
-            { 
+            set
+            {
                 _state = value?.ToStateModel();
                 DateModified = DateTime.Now;
             }
-        }        
+        }
 
         [Required, JsonPropertyName("zipCode")]
-        public string? ZipCode 
-        { 
-            get => _zipCode; 
-            set 
-            { 
-                _zipCode = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? ZipCode
+        {
+            get => _zipCode;
+            set
+            {
+                _zipCode = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("country")]
-        public string? Country 
-        { 
-            get => _country; 
-            set 
-            { 
-                _country = value; 
-                DateModified = DateTime.Now; 
-            } 
+        public string? Country
+        {
+            get => _country;
+            set
+            {
+                _country = value;
+                DateModified = DateTime.Now;
+            }
         }
 
         [Required, JsonPropertyName("type")]
-        public Types? Type 
-        { 
-            get => _type; 
-            set 
-            { 
-                _type = value; 
-                DateModified = DateTime.Now; 
+        public Types? Type
+        {
+            get => _type;
+            set
+            {
+                _type = value;
+                DateModified = DateTime.Now;
             }
         }
 
@@ -145,22 +143,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
-        public int LinkedEntityId
-        {
-            get => _linkedEntityId;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(value), "Linked Entity Id must be a non-negative number.");
-                _linkedEntityId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
-
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -168,10 +150,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.Now;
             }
         }
+
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
+        public int? LinkedEntityId => _linkedEntity?.Id;
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => LinkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get => _dateCreated; }
@@ -185,19 +172,17 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public USAddress(
-            int id, 
-            string? street1, 
-            string? street2, 
-            string? city, 
-            Interfaces.Type.INationalSubdivision? state, 
-            string? zipCode, 
-            string? country, 
+            int id,
+            string? street1,
+            string? street2,
+            string? city,
+            Interfaces.Type.INationalSubdivision? state,
+            string? zipCode,
+            string? country,
             Types? type,
             bool isPrimary,
-            int linkedEntityId,
-            string? linkedEntityType,
             IDomainEntity? linkedEntity,
-            DateTime dateCreated, 
+            DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
@@ -209,8 +194,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _country = country;
             _type = type;
             _isPrimary = isPrimary;
-            _linkedEntityId = linkedEntityId;
-            _linkedEntityType = linkedEntityType;
             _linkedEntity = linkedEntity;
             _dateCreated = dateCreated;
             DateModified = dateModified;
@@ -249,11 +232,11 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
-        
+
         public override string ToString()
         {
             var stateDisplay = _state?.Abbreviation ?? _state?.Name ?? "Unknown";
-            return string.Format(base.ToString() + ".Id:{0}.Street1:{1}.City:{2}.State:{3}.Zip:{4}", 
+            return string.Format(base.ToString() + ".Id:{0}.Street1:{1}.City:{2}.State:{3}.Zip:{4}",
                 _id, _street1, _city, stateDisplay, _zipCode);
         }
         #endregion

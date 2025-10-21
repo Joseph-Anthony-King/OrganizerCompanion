@@ -1335,7 +1335,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public int Id { get; set; } = 1;
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
             public bool IsPrimary { get; set; } = true;
-            public int LinkedEntityId { get; set; } = 0;
+            public int? LinkedEntityId { get; set; } = 0;
             public IDomainEntity? LinkedEntity { get; set; } = null;
             public string? LinkedEntityType { get; set; } = null;
             public bool IsCast { get; set; } = false;

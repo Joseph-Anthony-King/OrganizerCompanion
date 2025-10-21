@@ -1753,8 +1753,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         private class MockAddressDTO : IAddressDTO
         {
             public int Id { get; set; }
-            public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
+            public int LinkedEntityId { get; set; }
+            int? IAddressDTO.LinkedEntityId => LinkedEntityId;
             public string? LinkedEntityType { get; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
             bool OrganizerCompanion.Core.Interfaces.Type.IAddress.IsPrimary { get; set; }

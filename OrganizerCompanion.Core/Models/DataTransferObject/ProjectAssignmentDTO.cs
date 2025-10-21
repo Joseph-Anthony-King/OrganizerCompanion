@@ -48,7 +48,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonPropertyName("assigneeId"), Range(0, int.MaxValue, ErrorMessage = "Assignee Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? AssigneeId { get; set; } = null;
 
-        [JsonPropertyName("subAccount"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("assignee"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public SubAccountDTO? Assignee { get; set; } = null;
 
         [JsonPropertyName("locationId"), Range(0, int.MaxValue, ErrorMessage = "Location Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
@@ -65,7 +65,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [Required, JsonPropertyName("taskId"), Range(0, int.MaxValue, ErrorMessage = "Task Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
         public int? TaskId { get; set; } = null;
-        
+
         [Required, JsonPropertyName("task"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public ProjectTaskDTO? Task { get; set; } = null;
 
@@ -91,9 +91,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonConstructor]
         public ProjectAssignmentDTO(
             int id,
-            string name, 
+            string name,
             string? description,
-            int? assingeeId,
             SubAccountDTO? assignee,
             int? locationId,
             string? locationType,
@@ -101,7 +100,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             List<GroupDTO>? groups,
             int? taskId,
             ProjectTaskDTO? task,
-            bool isCompleted, 
+            bool isCompleted,
             DateTime? dateDue,
             DateTime? dateCompleted,
             DateTime dateCreated,
@@ -110,8 +109,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             Id = id;
             Name = name;
             Description = description;
-            AssigneeId = assingeeId;
             Assignee = assignee;
+            AssigneeId = assignee!.Id;
             LocationId = locationId;
             LocationType = locationType;
             Location = location;

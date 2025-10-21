@@ -1481,9 +1481,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public int Id { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
             public bool IsPrimary { get; set; }
-            public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
-            public string? LinkedEntityType { get; set; }
+            public int? LinkedEntityId => LinkedEntity!.Id;
+            public string? LinkedEntityType => LinkedEntity?.GetType().Name;
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }

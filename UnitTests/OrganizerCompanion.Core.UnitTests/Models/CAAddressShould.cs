@@ -48,7 +48,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.Country, Is.EqualTo(Countries.Canada.GetName()));
                 Assert.That(caAddress.Type, Is.Null);
                 Assert.That(caAddress.IsPrimary, Is.False);
-                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(caAddress.LinkedEntityId, Is.Null);
                 Assert.That(caAddress.LinkedEntity, Is.Null);
                 Assert.That(caAddress.LinkedEntityType, Is.Null);
                 Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
@@ -70,9 +70,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var country = "Canada";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var isPrimary = true;
-            var linkedEntityId = 456;
             var linkedEntity = new MockDomainEntity();
-            var linkedEntityType = linkedEntity.GetType().Name;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
@@ -87,8 +85,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: country,
                 type: type,
                 isPrimary: isPrimary,
-                linkedEntityId: linkedEntityId,
-                linkedEntityType: linkedEntityType,
                 linkedEntity: linkedEntity,
                 dateCreated: dateCreated,
                 dateModified: dateModified
@@ -106,9 +102,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.Country, Is.EqualTo(country));
                 Assert.That(caAddress.Type, Is.EqualTo(type));
                 Assert.That(caAddress.IsPrimary, Is.EqualTo(isPrimary));
-                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
-                Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntityType));
+                Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntity.GetType().Name));
                 Assert.That(caAddress.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(caAddress.DateModified, Is.EqualTo(dateModified));
             });
@@ -338,24 +334,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var originalDateModified = _sut.DateModified;
-
-            // Act
-            _sut.LinkedEntityId = 456;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(456));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
-            });
-        }
-
-        [Test, Category("Models")]
         public void LinkedEntity_Setter_UpdatesDateModified()
         {
             // Arrange
@@ -503,7 +481,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(isPrimaryProperty.GetBoolean(), Is.False);
 
                 Assert.That(root.TryGetProperty("linkedEntityId", out var linkedEntityIdProperty), Is.True);
-                Assert.That(linkedEntityIdProperty.GetInt32(), Is.EqualTo(0));
+                Assert.That(linkedEntityIdProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
 
                 Assert.That(root.TryGetProperty("linkedEntity", out var linkedEntityProperty), Is.True);
                 Assert.That(linkedEntityProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
@@ -653,7 +631,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var province = CAProvinces.Saskatchewan.ToStateModel();
             const string zipCode = "S7K 0J5";
             const string country = "Canada";
-            const int linkedEntityId = 123;
             var linkedEntity = new MockDomainEntity();
             var dateModified = new DateTime(2023, 12, 25, 15, 30, 0);
 
@@ -666,7 +643,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = zipCode;
             _sut.Country = country;
             _sut.Type = Enums.Types.Billing;
-            _sut.LinkedEntityId = linkedEntityId;
             _sut.LinkedEntity = linkedEntity;
             _sut.DateModified = dateModified;
 
@@ -681,7 +657,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.ZipCode, Is.EqualTo(zipCode));
                 Assert.That(_sut.Country, Is.EqualTo(country));
                 Assert.That(_sut.Type, Is.EqualTo(Enums.Types.Billing));
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
                 Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
@@ -706,8 +682,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "Canada",
                 type: Enums.Types.Home,
                 isPrimary: true,
-                linkedEntityId: 0,
-                linkedEntityType: null,
                 linkedEntity: null,
                 dateCreated: testDate,
                 dateModified: testDate
@@ -956,8 +930,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
                 isPrimary: true,
-                linkedEntityId: 0,
-                linkedEntityType: null,
                 linkedEntity: null,
                 dateCreated: dateCreated,
                 dateModified: dateModified
@@ -1064,9 +1036,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
         {
             // Arrange & Act - Test that unused parameters (isCast, castId, castType) are ignored
-            var linkedEntityId = 42;
             var linkedEntity = new MockDomainEntity();
-            var linkedEntityType = linkedEntity.GetType().Name;
             var testDate = DateTime.Now;
             var province = CAProvinces.Ontario.ToStateModel();
 
@@ -1079,9 +1049,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 zipCode: "M1M 1M1",
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Home,
-                isPrimary: true,  
-                linkedEntityId: linkedEntityId,
-                linkedEntityType: linkedEntityType,
+                isPrimary: true,
                 linkedEntity: linkedEntity,
                 dateCreated: testDate,
                 dateModified: testDate
@@ -1265,7 +1233,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // This comprehensive test verifies all major functionality works together correctly
 
             // Arrange - Test default constructor
-            var linkedEntityId = 42;
             var linkedEntity = new MockDomainEntity();
             var linkedEntityType = linkedEntity.GetType().Name;
             var defaultAddress = new CAAddress();
@@ -1285,8 +1252,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
                 isPrimary: false,
-                linkedEntityId: linkedEntityId,
-                linkedEntityType: linkedEntityType,
                 linkedEntity: linkedEntity,
                 dateCreated: testDate,
                 dateModified: testDate
@@ -1301,7 +1266,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultAddress.ZipCode = "B1B 1B1";
             defaultAddress.Country = "Canada";
             defaultAddress.Type = OrganizerCompanion.Core.Enums.Types.Other;
-            defaultAddress.LinkedEntityId = 999;
             defaultAddress.LinkedEntity = new MockDomainEntity();
             defaultAddress.DateModified = testDate;
 
@@ -1329,7 +1293,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultAddress.ZipCode, Is.EqualTo("B1B 1B1"));
                 Assert.That(defaultAddress.Country, Is.EqualTo("Canada"));
                 Assert.That(defaultAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
-                Assert.That(defaultAddress.LinkedEntityId, Is.EqualTo(999));
+                Assert.That(defaultAddress.LinkedEntityId, Is.EqualTo(1)); // MockDomainEntity has Id = 1
                 Assert.That(defaultAddress.LinkedEntity, Is.Not.Null);
                 Assert.That(defaultAddress.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(defaultAddress.DateModified, Is.EqualTo(testDate));
@@ -1364,7 +1328,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithMinimalValidParameters_ShouldSetPropertiesCorrectly()
         {
             // Arrange & Act - Test constructor with minimal valid parameters (using empty strings where needed)
-            var linkedEntityId = 42;
             var linkedEntity = new MockDomainEntity();
             var linkedEntityType = linkedEntity.GetType().Name;
             var testDate = DateTime.Now;
@@ -1380,8 +1343,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "",
                 type: OrganizerCompanion.Core.Enums.Types.Other,
                 isPrimary: false,
-                linkedEntityId: linkedEntityId,
-                linkedEntityType: linkedEntityType,
                 linkedEntity: linkedEntity,
                 dateCreated: testDate,
                 dateModified: null
@@ -1400,7 +1361,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
                 Assert.That(caAddress.DateCreated, Is.EqualTo(testDate));
                 Assert.That(caAddress.DateModified, Is.Null);
-                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id)); // Use actual linkedEntity.Id (which is 1)
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntityType));
             });
@@ -1471,9 +1432,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToCAAddressDTO_PreservesAllFieldsIncludingDates()
         {
             // Arrange - Set up a complete CAAddress with all fields populated
-            var linkedEntityId = 42;
             var linkedEntity = new MockDomainEntity();
-            var linkedEntityType = linkedEntity.GetType().Name;
             var specificDateCreated = new DateTime(2023, 6, 15, 9, 30, 0);
             var specificDateModified = new DateTime(2023, 6, 16, 14, 45, 30);
             var province = CAProvinces.Yukon.ToStateModel();
@@ -1488,8 +1447,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 country: "Canada",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: false, 
-                linkedEntityId: linkedEntityId,
-                linkedEntityType: linkedEntityType,
                 linkedEntity: linkedEntity,
                 dateCreated: specificDateCreated,
                 dateModified: specificDateModified

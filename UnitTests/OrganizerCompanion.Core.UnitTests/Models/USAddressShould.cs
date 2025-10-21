@@ -50,7 +50,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Country, Is.EqualTo(Countries.UnitedStates.GetName()));
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.IsPrimary, Is.False);
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(_sut.LinkedEntityId, Is.Null);
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
@@ -88,8 +88,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
               country,
               type,
               isPrimary,
-              linkedEntityId,
-              linkedEntity.GetType().Name,
               linkedEntity,
               dateCreated,
               dateModified);
@@ -402,26 +400,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newLinkedEntityId = 123;
-            var originalDateModified = _sut.DateModified;
-            Thread.Sleep(10); // Ensure time difference
-
-            // Act
-            _sut.LinkedEntityId = newLinkedEntityId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
-            });
-        }
-
-        [Test, Category("Models")]
         public void LinkedEntity_WhenSet_ShouldUpdateDateModified()
         {
             // Arrange
@@ -454,7 +432,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Country = "Test Country";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
             _sut.IsPrimary = true;
-            _sut.LinkedEntityId = 10;
             _sut.LinkedEntity = new MockDomainEntity { Id = 10 };
 
             // Act
@@ -640,7 +617,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"type\":4")); // OrganizerCompanion.Core.Enums.Types.Billing enum value
                 Assert.That(json, Does.Contain("\"isPrimary\":false"));
                 Assert.That(json, Does.Contain("\"state\"")); // State object should be serialized
-                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
                 Assert.That(json, Does.Contain("\"dateCreated\""));
@@ -746,6 +723,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void Id_WhenSetToNegativeOne_ShouldThrowArgumentOutOfRangeException()
+        {
+            // Arrange & Act & Assert
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = -1);
+            Assert.Multiple(() =>
+            {
+                Assert.That(exception.ParamName, Is.EqualTo("Id"));
+                Assert.That(exception.Message, Does.Contain("Id must be a non-negative number."));
+            });
+        }
+
+        [Test, Category("Models")]
         public void ToJson_WithNullProperties_ShouldHandleNullsCorrectly()
         {
             // Arrange
@@ -827,7 +816,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 { "Type", () => _sut.Type = OrganizerCompanion.Core.Enums.Types.Other },
                 { "IsPrimary", () => _sut.IsPrimary = true },
                 { "StateEnum", () => _sut.StateEnum = USStates.California },
-                { "LinkedEntityId", () => _sut.LinkedEntityId = 10 },
                 { "LinkedEntity", () => _sut.LinkedEntity = new MockDomainEntity() }
             };
 
@@ -1396,6 +1384,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void Cast_ExceptionHandling_ShouldRethrowExceptions()
+        {
+            // Note: This test verifies the exception handling in the Cast method
+            // While the catch block may not be reachable in normal scenarios,
+            // it demonstrates the expected behavior if an exception occurs
+            
+            // Arrange
+            _sut.Id = 100;
+            _sut.Street1 = "Test Street";
+
+            // Act & Assert - Test unsupported type throws InvalidCastException
+            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockUnsupportedType>());
+            Assert.That(exception.Message, Does.Contain("Cannot cast USAddress to type MockUnsupportedType."));
+        }
+
+        [Test, Category("Models")]
         public void Cast_ToUnsupportedTypeWithMock_ShouldThrowInvalidCastException()
         {
             // Arrange
@@ -1523,6 +1527,42 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                         Assert.That(iDto, Is.Not.Null);
                     });
                 }
+            });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToIAddressDTO_ShouldReturnValidIAddressDTO()
+        {
+            // Arrange
+            var state = new USState { Name = "Nevada", Abbreviation = "NV" };
+            _sut.Id = 999;
+            _sut.Street1 = "999 Desert Rd";
+            _sut.Street2 = "Suite A";
+            _sut.City = "Las Vegas";
+            _sut.State = state;
+            _sut.ZipCode = "89101";
+            _sut.Country = "USA";
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Other;
+            _sut.IsPrimary = true;
+
+            // Act
+            var result = _sut.Cast<IAddressDTO>();
+            var usAddressDto = result as USAddressDTO;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Is.InstanceOf<USAddressDTO>());
+                Assert.That(usAddressDto, Is.Not.Null);
+                Assert.That(usAddressDto!.Id, Is.EqualTo(999));
+                Assert.That(usAddressDto.Street1, Is.EqualTo("999 Desert Rd"));
+                Assert.That(usAddressDto.Street2, Is.EqualTo("Suite A"));
+                Assert.That(usAddressDto.City, Is.EqualTo("Las Vegas"));
+                Assert.That(usAddressDto.ZipCode, Is.EqualTo("89101"));
+                Assert.That(usAddressDto.Country, Is.EqualTo("USA"));
+                Assert.That(usAddressDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
+                Assert.That(usAddressDto.IsPrimary, Is.True);
             });
         }
         #endregion

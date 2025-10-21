@@ -18,7 +18,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string _name = string.Empty;
         private string? _description = null;
-        private int? _assigneeId = null;
         private SubAccount? _assignee = null;
         private int? _locationId = null;
         private string? _locationType = null;
@@ -35,6 +34,17 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Properties
         #region Explicit Interface Implementations
         [JsonIgnore]
+        ISubAccount? IProjectAssignment.Assignee
+        {
+            get => _assignee;
+            set
+            {
+                _assignee = (SubAccount?)value;
+                DateModified = DateTime.UtcNow;
+            }
+        }
+
+        [JsonIgnore]
         IAddress? IProjectAssignment.Location
         {
             get => _location;
@@ -44,7 +54,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 DateModified = DateTime.UtcNow;
             }
         }
-        
+
         [JsonIgnore]
         List<IGroup>? IProjectAssignment.Groups
         {
@@ -57,13 +67,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             get => _task;
             set => _task = (ProjectTask?)value;
-        }
-
-        [JsonIgnore]
-        ISubAccount? IProjectAssignment.Assignee
-        {
-            get => _assignee;
-            set => _assignee = (SubAccount?)value;
         }
         #endregion
 
@@ -106,17 +109,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonPropertyName("assigneeId"), Range(0, int.MaxValue, ErrorMessage = "Assignee Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("assigneeId"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? AssigneeId
         {
-            get => _assigneeId;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(AssigneeId), "Assignee Id must be a non-negative number.");
-                _assigneeId = value;
-                DateModified = DateTime.Now;
-            }
+            get => _assignee?.Id;
         }
 
         [JsonPropertyName("assignee"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
@@ -260,7 +256,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string name,
             string? description,
-            int? assigneeId,
             SubAccount? assignee,
             int? locationId,
             string? locationType,
@@ -277,7 +272,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = id;
             _name = name;
             _description = description;
-            _assigneeId = assigneeId;
             _assignee = assignee;
             _locationId = locationId;
             _locationType = locationType;
@@ -304,7 +298,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id,
                         Name,
                         Description,
-                        AssigneeId,
                         Assignee?.Cast<SubAccountDTO>(),
                         LocationId,
                         LocationType,
@@ -318,7 +311,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         DateCreated,
                         DateModified
                     );
-                    
+
                     return (T)(object)dto;
                 }
                 else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");

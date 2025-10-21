@@ -2130,33 +2130,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Cast_WithAddresses_ShouldCastAddressesCorrectly()
-        {
-            // Arrange
-            // Note: This test verifies that the Cast method attempts to cast addresses
-            // The actual casting may fail due to interface implementation issues in DTOs
-            // This test focuses on the structure and attempt rather than the success
-            var usAddress = new USAddress 
-            { 
-                Id = 1, 
-                Street1 = "123 Main St", 
-                City = "Anytown", 
-                ZipCode = "12345" 
-            };
-
-            _sut.Id = 1313;
-            _sut.FirstName = "Address";
-            _sut.LastName = "Test";
-            _sut.Addresses = [usAddress];
-            _sut.Pronouns = Pronouns.HeHim;
-
-            // Act & Assert
-            // The Cast method will attempt to cast addresses but may fail due to DTO interface issues
-            // This test documents the expected behavior - the cast attempt should be made
-            Assert.Throws<InvalidCastException>(() => _sut.Cast<UserDTO>());
-        }
-
-        [Test, Category("Models")]
         public void Cast_WithEmptyCollections_ShouldReturnUserDTOWithEmptyCollections()
         {
             // Arrange
@@ -2838,8 +2811,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? Country { get; set; } = "Unknown Country";
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
             public bool IsPrimary { get; set; }
-            public int LinkedEntityId { get; set; }
             public IDomainEntity? LinkedEntity { get; set; }
+            public int? LinkedEntityId => LinkedEntity?.Id;
             public string? LinkedEntityType => LinkedEntity?.GetType().Name;
             public DateTime DateCreated { get; } = DateTime.Now;
             public DateTime? DateModified { get; set; }

@@ -2,6 +2,7 @@
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
+using System.Net.Http.Headers;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -38,6 +39,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(0));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(string.Empty));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
+                Assert.That(projectAssignmentDTO.AssigneeId, Is.Null);
+                Assert.That(projectAssignmentDTO.Assignee, Is.Null);
                 Assert.That(projectAssignmentDTO.LocationId, Is.Null);
                 Assert.That(projectAssignmentDTO.LocationType, Is.Null);
                 Assert.That(projectAssignmentDTO.Location, Is.Null);
@@ -63,7 +66,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 FirstName = "Alice",
                 LastName = "Wonderland"
             };
-            var subAccountDTO = new SubAccountDTO
+            var assignee = new SubAccountDTO
             {
                 Id = 42,
                 LinkedEntityId = userDTO.Id,
@@ -83,7 +86,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task, isCompleted,
+                id, name, description, assignee, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -92,8 +95,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.EqualTo(description));
-                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(subAccountDTO.Id));
-                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(subAccountDTO));
+                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(assignee.Id));
+                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
                 Assert.That(projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
                 Assert.That(projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
                 Assert.That(projectAssignmentDTO.Location, Is.EqualTo(location));
@@ -121,7 +124,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 FirstName = "Alice",
                 LastName = "Wonderland"
             };
-            var subAccountDTO = new SubAccountDTO
+            var assignee = new SubAccountDTO
             {
                 Id = 42,
                 LinkedEntityId = userDTO.Id,
@@ -141,7 +144,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
-                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task, isCompleted,
+                id, name, description, assignee, locationId, locationType, location, groups, taskId, task, isCompleted,
                 dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert
@@ -150,8 +153,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
                 Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
-                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(subAccountDTO.Id));
-                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(subAccountDTO));
+                Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(assignee.Id));
+                Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
                 Assert.That(projectAssignmentDTO.LocationId, Is.Null);
                 Assert.That(projectAssignmentDTO.LocationType, Is.Null);
                 Assert.That(projectAssignmentDTO.Location, Is.Null);
@@ -337,6 +340,80 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert
             Assert.DoesNotThrow(() => _projectAssignmentDTO.LocationId = int.MinValue);
             Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void SetAndGetAssigneeId()
+        {
+            // Arrange
+            var assigneeId = 42;
+
+            // Act
+            _projectAssignmentDTO.AssigneeId = assigneeId;
+
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(assigneeId));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNullAssigneeId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.AssigneeId = null);
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.Null);
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNegativeAssigneeId()
+        {
+            // Act & Assert - DTOs don't validate, only domain entities do
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.AssigneeId = -1);
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(-1));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptZeroAssigneeId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.AssigneeId = 0);
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(0));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptMaximumAssigneeId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.AssigneeId = int.MaxValue);
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptMinimumAssigneeId()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.AssigneeId = int.MinValue);
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(int.MinValue));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void SetAndGetAssignee()
+        {
+            // Arrange
+            var testAssignee = new SubAccountDTO();
+
+            // Act
+            _projectAssignmentDTO.Assignee = testAssignee;
+
+            // Assert - DTOs don't auto-update DateModified
+            Assert.That(_projectAssignmentDTO.Assignee, Is.EqualTo(testAssignee));
+        }
+
+        [Test, Category("DataTransferObjects")]
+        public void AcceptNullAssignee()
+        {
+            // Act & Assert
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.Assignee = null);
+            Assert.That(_projectAssignmentDTO.Assignee, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -607,6 +684,26 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_projectAssignmentDTO.Location, Is.Null);
         }
 
+        [Test, Category("DataTransferObjects")]
+        public void CoverAssigneeInterfaceImplementation()
+        {
+            // Arrange
+            IProjectAssignmentDTO iAssignmentDTO = _projectAssignmentDTO;
+            var testAssignee = new SubAccountDTO();
+
+            // Act & Assert for Assignee interface property getter
+            var retrievedAssignee = iAssignmentDTO.Assignee;
+            Assert.That(retrievedAssignee, Is.EqualTo(_projectAssignmentDTO.Assignee));
+
+            // Act & Assert for Assignee interface property setter - this should cover the explicit interface implementation
+            iAssignmentDTO.Assignee = testAssignee;
+            Assert.That(_projectAssignmentDTO.Assignee, Is.EqualTo(testAssignee));
+
+            // Test setting null via interface - ensure cast occurs
+            iAssignmentDTO.Assignee = null;
+            Assert.That(_projectAssignmentDTO.Assignee, Is.Null);
+        }
+
         #endregion
 
         #region Cast Method Tests
@@ -820,15 +917,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 FirstName = "Alice",
                 LastName = "Wonderland"
             };
-            var subAccountDTO = new SubAccountDTO
+            var assignee = new SubAccountDTO
             {
                 Id = 42,
                 LinkedEntityId = userDTO.Id,
                 LinkedEntity = userDTO
             };
             var locationId = 123;
-            var locationType = "Conference Room";
-            IAddressDTO? location = null; // Mock address would be needed for full test
+            var locationType = "USAddressDTO";
+            IAddressDTO? location = (IAddressDTO)new USAddressDTO(); // Mock address would be needed for full test
             var groups = new List<GroupDTO>
             {
                 new() { Id = 100, Name = "Special Group 1" },
@@ -845,7 +942,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act
             var dto = new ProjectAssignmentDTO(
-                id, name, description, subAccountDTO.Id, subAccountDTO, locationId, locationType, location, groups, taskId, task,
+                id, name, description, assignee, locationId, locationType, location, groups, taskId, task,
                 isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
 
             // Assert - Verify all properties are set correctly
@@ -854,8 +951,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.Id, Is.EqualTo(id));
                 Assert.That(dto.Name, Is.EqualTo(name));
                 Assert.That(dto.Description, Is.EqualTo(description));
-                Assert.That(dto.AssigneeId, Is.EqualTo(subAccountDTO.Id));
-                Assert.That(dto.Assignee, Is.EqualTo(subAccountDTO));
+                Assert.That(dto.AssigneeId, Is.EqualTo(assignee.Id));
+                Assert.That(dto.Assignee, Is.EqualTo(assignee));
                 Assert.That(dto.LocationId, Is.EqualTo(locationId));
                 Assert.That(dto.LocationType, Is.EqualTo(locationType));
                 Assert.That(dto.Location, Is.EqualTo(location));
@@ -1080,6 +1177,91 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(_projectAssignmentDTO.LocationId, Is.Null);
                 Assert.That(_projectAssignmentDTO.LocationType, Is.Null);
+            });
+        }
+
+        [Test, Category("Boundary")]
+        public void HandleAssigneeIntegerBoundaryValues()
+        {
+            // Act & Assert for AssigneeId maximum value
+            _projectAssignmentDTO.AssigneeId = int.MaxValue;
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(int.MaxValue));
+
+            // Act & Assert for AssigneeId minimum value
+            _projectAssignmentDTO.AssigneeId = int.MinValue;
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(int.MinValue));
+
+            // Act & Assert for AssigneeId zero
+            _projectAssignmentDTO.AssigneeId = 0;
+            Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(0));
+        }
+
+        [Test, Category("Comprehensive")]
+        public void HandleAssigneePropertiesTogether()
+        {
+            // Arrange
+            var assigneeId = 999;
+            var assignee = new SubAccountDTO();
+
+            // Act - Set both assignee properties
+            _projectAssignmentDTO.AssigneeId = assigneeId;
+            _projectAssignmentDTO.Assignee = assignee;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(assigneeId));
+                Assert.That(_projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
+            });
+
+            // Act - Set back to null
+            _projectAssignmentDTO.AssigneeId = null;
+            _projectAssignmentDTO.Assignee = null;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.AssigneeId, Is.Null);
+                Assert.That(_projectAssignmentDTO.Assignee, Is.Null);
+            });
+        }
+
+        [Test, Category("Edge")]
+        public void HandleAssigneePropertyNullToValueTransitions()
+        {
+            // Arrange - Start with null values
+            _projectAssignmentDTO.AssigneeId = null;
+            _projectAssignmentDTO.Assignee = null;
+
+            // Assert initial null state
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.AssigneeId, Is.Null);
+                Assert.That(_projectAssignmentDTO.Assignee, Is.Null);
+            });
+
+            // Act - Transition to values
+            var assigneeId = 123;
+            var assignee = new SubAccountDTO();
+            _projectAssignmentDTO.AssigneeId = assigneeId;
+            _projectAssignmentDTO.Assignee = assignee;
+
+            // Assert transition to values
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(assigneeId));
+                Assert.That(_projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
+            });
+
+            // Act - Transition back to null
+            _projectAssignmentDTO.AssigneeId = null;
+            _projectAssignmentDTO.Assignee = null;
+
+            // Assert transition back to null
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.AssigneeId, Is.Null);
+                Assert.That(_projectAssignmentDTO.Assignee, Is.Null);
             });
         }
 
