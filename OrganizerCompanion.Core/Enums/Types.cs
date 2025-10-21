@@ -9,6 +9,7 @@
         Billing,
         Shipping,
         Retail,
+        Restaurant,
         Event,
         Other
     }
