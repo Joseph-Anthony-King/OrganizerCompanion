@@ -135,6 +135,319 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #endregion
 
+        #region IGroupDTO Constructor Tests
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithCompleteDTO_ShouldSetAllProperties()
+        {
+            // Arrange
+            var contactDto = new ContactDTO
+            {
+                Id = 1,
+                FirstName = "John",
+                LastName = "Doe"
+            };
+            var accountDto = new AccountDTO
+            {
+                Id = 456,
+                AccountName = "Test Account"
+            };
+            var dto = new GroupDTO
+            {
+                Id = 123,
+                GroupName = "TestGroup",
+                Description = "Test Description",
+                Members = [contactDto],
+                AccountId = 456,
+                Account = accountDto,
+                DateCreated = DateTime.Now.AddDays(-2),
+                DateModified = DateTime.Now.AddDays(-1)
+            };
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            _sut = new Group(dto);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members.Count, Is.EqualTo(dto.Members.Count));
+                Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(_sut.Account, Is.Not.Null);
+                Assert.That(_sut.Account!.Id, Is.EqualTo(dto.Account!.Id));
+                // DateCreated should be set to current time, not DTO's DateCreated
+                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalDTO_ShouldSetBasicProperties()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "MinimalGroup",
+                Members = []
+            };
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            _sut = new Group(dto);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(_sut.Account, Is.Null);
+                // DateCreated should be set to current time
+                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullAccount_ShouldHandleNullAccount()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                Id = 789,
+                GroupName = "NoAccountGroup",
+                Description = "Group without account",
+                Members = [],
+                AccountId = 0,
+                Account = null
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(_sut.Account, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleMembers_ShouldConvertAllMembers()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "MultiMemberGroup",
+                Members = [
+                    new ContactDTO { Id = 1, FirstName = "John", LastName = "Doe" },
+                    new ContactDTO { Id = 2, FirstName = "Jane", LastName = "Smith" },
+                    new ContactDTO { Id = 3, FirstName = "Bob", LastName = "Johnson" }
+                ]
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members.Count, Is.EqualTo(3));
+                Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
+                Assert.That(_sut.Members[0].FirstName, Is.EqualTo("John"));
+                Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
+                Assert.That(_sut.Members[1].FirstName, Is.EqualTo("Jane"));
+                Assert.That(_sut.Members[2].Id, Is.EqualTo(3));
+                Assert.That(_sut.Members[2].FirstName, Is.EqualTo("Bob"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyMembers_ShouldCreateEmptyMembersList()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "EmptyGroup",
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullValues_ShouldAcceptNullValues()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                Id = 456,
+                GroupName = null,
+                Description = null,
+                Members = [],
+                AccountId = 0,
+                Account = null
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.GroupName, Is.Null);
+                Assert.That(_sut.Description, Is.Null);
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.AccountId, Is.EqualTo(0));
+                Assert.That(_sut.Account, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullDTO_ShouldThrowArgumentNullException()
+        {
+            // Act & Assert
+            var ex = Assert.Throws<ArgumentNullException>(() => new Group((IGroupDTO)null!));
+            Assert.Multiple(() =>
+            {
+                Assert.That(ex.ParamName, Is.EqualTo("dto"));
+                Assert.That(ex.Message, Does.Contain("DTO cannot be null"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithSpecialCharactersInName_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "Group!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 123",
+                Description = "Description with símbolos y ñ",
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithUnicodeCharacters_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "Group 组 🚀 ñáéíóú",
+                Description = "Описание группы 中文测试",
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithLongStrings_ShouldAcceptLongStrings()
+        {
+            // Arrange
+            var longName = new string('G', 1000);
+            var longDescription = new string('D', 2000);
+            var dto = new GroupDTO
+            {
+                GroupName = longName,
+                Description = longDescription,
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.GroupName, Is.EqualTo(longName));
+                Assert.That(_sut.Description, Is.EqualTo(longDescription));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithZeroAccountId_ShouldAcceptZeroValue()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "ZeroAccountGroup",
+                AccountId = 0,
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.That(_sut.AccountId, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMaxIntAccountId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            var dto = new GroupDTO
+            {
+                GroupName = "MaxAccountGroup",
+                AccountId = int.MaxValue,
+                Members = []
+            };
+
+            // Act
+            _sut = new Group(dto);
+
+            // Assert
+            Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));
+        }
+
+        #endregion
+
         #region Property Tests
 
         [Test, Category("Models")]

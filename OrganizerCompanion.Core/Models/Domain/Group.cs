@@ -165,6 +165,21 @@ namespace OrganizerCompanion.Core.Models.Domain
             AccountId = accountId;
             Account = account;
         }
+
+        public Group(IGroupDTO dto)
+        {
+            if (dto == null)
+                throw new ArgumentNullException(nameof(dto), "DTO cannot be null.");
+
+            _id = dto.Id;
+            _groupName = dto.GroupName;
+            _description = dto.Description;
+            _members = dto.Members.ConvertAll(member => new Contact(member));
+            _accountId = dto.AccountId;
+            _account = dto.Account != null ? new Account(dto.Account) : null;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods
