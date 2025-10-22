@@ -70,7 +70,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var account = new Account { Id = 789, AccountName = "Test Account" };
-            var feature = new Feature(456, "Test Feature", true, false, 0, null, DateTime.Now, null);
+            var feature = new Feature(456, "Test Feature", true, DateTime.Now, null);
             var beforeCreation = DateTime.UtcNow;
 
             // Act
@@ -95,7 +95,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ConstructorWithAccountAndFeature_WithNullAccount_ThrowsException()
         {
             // Arrange
-            var feature = new Feature(456, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(456, "Test Feature", true, DateTime.Now, DateTime.Now);
 
             // Act & Assert
             Assert.Throws<NullReferenceException>(() => new AccountFeature(null!, feature));
@@ -374,7 +374,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToFeatureDTO_WithValidFeature_ReturnsFeatureDTOWithCorrectProperties()
         {
             // Arrange
-            var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Test Feature", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 789,
                 accountId: 123,
@@ -404,7 +404,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToIFeatureDTO_WithValidFeature_ReturnsFeatureDTOWithCorrectProperties()
         {
             // Arrange
-            var feature = new Feature(2, "Another Feature", false, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(2, "Another Feature", false, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 777,
                 accountId: 999,
@@ -517,7 +517,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToUnsupportedType_ThrowsInvalidCastException()
         {
             // Arrange
-            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Test", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 789,
                 accountId: 123,
@@ -542,7 +542,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToAnotherUnsupportedType_ThrowsInvalidCastException()
         {
             // Arrange
-            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Test", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 789,
                 accountId: 123,
@@ -567,7 +567,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ReturnsNewInstanceEachTime()
         {
             // Arrange
-            var feature = new Feature(1, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Test Feature", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 789,
                 accountId: 123,
@@ -607,8 +607,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_WithDifferentFeatureProperties_ReturnsDifferentDTOValues()
         {
             // Arrange
-            var feature1 = new Feature(10, "Feature One", true, false, 0, null, DateTime.Now, DateTime.Now);
-            var feature2 = new Feature(20, "Feature Two", false, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature1 = new Feature(10, "Feature One", true, DateTime.Now, DateTime.Now);
+            var feature2 = new Feature(20, "Feature Two", false, DateTime.Now, DateTime.Now);
             
             var accountFeature1 = new AccountFeature(
                 id: 1000,
@@ -656,7 +656,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_WithZeroId_ReturnsCorrectDTO()
         {
             // Arrange
-            var feature = new Feature(1, "Zero ID Test", false, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Zero ID Test", false, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 0,
                 accountId: 0,
@@ -685,7 +685,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_WithMaxIntId_ReturnsCorrectDTO()
         {
             // Arrange
-            var feature = new Feature(1, "Max ID Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Max ID Test", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: int.MaxValue,
                 accountId: int.MaxValue,
@@ -714,7 +714,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ExplicitInterfaceFeature_CanBeSetAndRetrieved()
         {
             // Arrange
-            var feature = new Feature(123, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(123, "Test Feature", true, DateTime.Now, DateTime.Now);
             IAccountFeature accountFeature = _sut;
 
             // Act
@@ -832,7 +832,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Feature_CanBeSetAndRetrieved()
         {
             // Arrange
-            var feature = new Feature(101, "Another Feature", false, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(101, "Another Feature", false, DateTime.Now, DateTime.Now);
 
             // Act
             _sut.Feature = feature;
@@ -999,7 +999,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_GenericException_ReThrowsCorrectly()
         {
             // Arrange - Create a scenario that might throw a different exception
-            var feature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Test", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 789,
                 accountId: 123,
@@ -1024,7 +1024,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             IAccountFeature accountFeature = _sut;
-            var initialFeature = new Feature(1, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var initialFeature = new Feature(1, "Test", true, DateTime.Now, DateTime.Now);
             accountFeature.Feature = initialFeature;
 
             // Act - Casting null to reference type succeeds in C#
@@ -1084,7 +1084,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Feature_Property_SetsFeatureIdFromFeatureId()
         {
             // Arrange
-            var feature = new Feature(888, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(888, "Test Feature", true, DateTime.Now, DateTime.Now);
 
             // Act
             _sut.Feature = feature;
@@ -1127,7 +1127,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(afterAccount, Is.Not.EqualTo(afterFeatureId));
 
             System.Threading.Thread.Sleep(1);
-            _sut.Feature = new Feature(500, "Test", true, false, 0, null, DateTime.Now, DateTime.Now);
+            _sut.Feature = new Feature(500, "Test", true, DateTime.Now, DateTime.Now);
             var afterFeature = _sut.DateModified;
             Assert.That(afterFeature, Is.Not.EqualTo(afterAccount));
         }
@@ -1198,7 +1198,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             IAccountFeature accountFeature = _sut;
-            var feature = new Feature(123, "Interface Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(123, "Interface Feature", true, DateTime.Now, DateTime.Now);
             var account = new Account { Id = 456, AccountName = "Interface Account" };
 
             // Act & Assert - Test getting properties through interface
@@ -1221,7 +1221,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_WithEmptyFeatureName_HandlesCorrectly()
         {
             // Arrange
-            var feature = new Feature(1, "", false, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "", false, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 777,
                 accountId: 555,
@@ -1249,7 +1249,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_WithComplexFeature_PreservesAllProperties()
         {
             // Arrange
-            var feature = new Feature(999, "Complex Feature Name", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(999, "Complex Feature Name", true, DateTime.Now, DateTime.Now);
             _sut = new AccountFeature(
                 id: 1000,
                 accountId: 2000,
@@ -1299,7 +1299,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CompleteIntegration_AllPropertiesAndMethods()
         {
             // Arrange
-            var feature = new Feature(1, "Integration Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+            var feature = new Feature(1, "Integration Test Feature", true, DateTime.Now, DateTime.Now);
             var account = new Account { Id = 2, AccountName = "Integration Test Account" };
             var createdDate = new DateTime(2025, 1, 1, 12, 0, 0);
             var modifiedDate = new DateTime(2025, 10, 20, 18, 30, 45);
@@ -1346,6 +1346,74 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Contains.Substring("\"id\":12345"));
                 Assert.That(json, Contains.Substring("\"accountId\":2"));
                 Assert.That(json, Contains.Substring("\"featureId\":1"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_ReturnsFormattedString()
+        {
+            // Arrange
+            _sut.Id = 123;
+            _sut.AccountId = 456;
+            _sut.FeatureId = 789;
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("123"));
+                Assert.That(result, Does.Contain("456"));
+                Assert.That(result, Does.Contain("789"));
+                Assert.That(result, Does.Contain("Id:"));
+                Assert.That(result, Does.Contain("AccountId:"));
+                Assert.That(result, Does.Contain("FeatureId:"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithZeroValues_ReturnsCorrectFormat()
+        {
+            // Arrange
+            _sut.Id = 0;
+            _sut.AccountId = 0;
+            _sut.FeatureId = 0;
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain("0"));
+                Assert.That(result, Does.Contain("Id:0"));
+                Assert.That(result, Does.Contain("AccountId:0"));
+                Assert.That(result, Does.Contain("FeatureId:0"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithMaxValues_ReturnsCorrectFormat()
+        {
+            // Arrange
+            _sut.Id = int.MaxValue;
+            _sut.AccountId = int.MaxValue;
+            _sut.FeatureId = int.MaxValue;
+
+            // Act
+            var result = _sut.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result, Does.Contain(int.MaxValue.ToString()));
+                Assert.That(result, Does.Contain($"Id:{int.MaxValue}"));
+                Assert.That(result, Does.Contain($"AccountId:{int.MaxValue}"));
+                Assert.That(result, Does.Contain($"FeatureId:{int.MaxValue}"));
             });
         }
 

@@ -69,13 +69,10 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public Feature(
-            int id, 
-            string? featureName, 
-            bool isEnabled, 
-            bool isCast, 
-            int castId, 
-            string? castType, 
-            DateTime dateCreated, 
+            int id,
+            string? featureName,
+            bool isEnabled,
+            DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
@@ -83,6 +80,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isEnabled = isEnabled;
             _dateCreated = dateCreated;
             DateModified = dateModified;
+        }
+        
+        public Feature(
+            string? featureName, 
+            bool isEnabled)
+        {
+            _featureName = featureName;
+            _isEnabled = isEnabled;
         }
         #endregion
 

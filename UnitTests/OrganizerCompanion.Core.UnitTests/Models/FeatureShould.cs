@@ -52,14 +52,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             var featureName = "TestFeature";
             var isEnabled = true;
-            var isCast = true;
-            var castId = 456;
-            var castType = "TestType";
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-2);
 
             // Act
-            var feature = new Feature(id, featureName, isEnabled, isCast, castId, castType, dateCreated, dateModified);
+            var feature = new Feature(id, featureName, isEnabled, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -79,14 +76,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 123;
             string? featureName = null;
             var isEnabled = false;
-            var isCast = false;
-            var castId = 0;
-            string? castType = null;
             var dateCreated = DateTime.Now.AddDays(-1);
             DateTime? dateModified = null;
 
             // Act
-            var feature = new Feature(id, featureName, isEnabled, isCast, castId, castType, dateCreated, dateModified);
+            var feature = new Feature(id, featureName, isEnabled, dateCreated, dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -295,10 +289,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("\"featureName\":null"));
-                // Cast properties should be omitted due to JsonIgnore
-                Assert.That(json, Does.Not.Contain("\"isCast\""));
-                Assert.That(json, Does.Not.Contain("\"castId\""));
-                Assert.That(json, Does.Not.Contain("\"castType\""));
             });
         }
 
@@ -452,6 +442,166 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Id, Is.EqualTo(maxId));
         }
 
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_ShouldCreateFeatureWithProvidedValues()
+        {
+            // Arrange
+            var featureName = "TestFeature";
+            var isEnabled = true;
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var feature = new Feature(featureName, isEnabled);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0)); // Default value
+                Assert.That(feature.FeatureName, Is.EqualTo(featureName));
+                Assert.That(feature.IsEnabled, Is.EqualTo(isEnabled));
+                Assert.That(feature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(feature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime))); // Default value
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_WithNullFeatureName_ShouldCreateFeatureWithNull()
+        {
+            // Arrange
+            string? featureName = null;
+            var isEnabled = false;
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var feature = new Feature(featureName, isEnabled);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.Null);
+                Assert.That(feature.IsEnabled, Is.False);
+                Assert.That(feature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(feature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_WithEmptyFeatureName_ShouldCreateFeatureWithEmptyString()
+        {
+            // Arrange
+            var featureName = string.Empty;
+            var isEnabled = true;
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var feature = new Feature(featureName, isEnabled);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.EqualTo(string.Empty));
+                Assert.That(feature.IsEnabled, Is.True);
+                Assert.That(feature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(feature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_WithSpecialCharacters_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var specialName = "Feature!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 123";
+            var isEnabled = false;
+
+            // Act
+            var feature = new Feature(specialName, isEnabled);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.EqualTo(specialName));
+                Assert.That(feature.IsEnabled, Is.False);
+                Assert.That(feature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_WithUnicodeCharacters_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var unicodeName = "Feature 功能 🚀 ñáéíóú";
+            var isEnabled = true;
+
+            // Act
+            var feature = new Feature(unicodeName, isEnabled);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.EqualTo(unicodeName));
+                Assert.That(feature.IsEnabled, Is.True);
+                Assert.That(feature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_WithLongFeatureName_ShouldAcceptLongString()
+        {
+            // Arrange
+            var longName = new string('A', 1000);
+            var isEnabled = false;
+
+            // Act
+            var feature = new Feature(longName, isEnabled);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(0));
+                Assert.That(feature.FeatureName, Is.EqualTo(longName));
+                Assert.That(feature.IsEnabled, Is.False);
+                Assert.That(feature.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(feature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TwoParameterConstructor_PropertiesCanBeModifiedAfterConstruction()
+        {
+            // Arrange
+            var initialName = "InitialFeature";
+            var initialEnabled = false;
+
+            // Act
+            var feature = new Feature(initialName, initialEnabled);
+            
+            // Modify properties after construction
+            feature.Id = 123;
+            feature.FeatureName = "ModifiedFeature";
+            feature.IsEnabled = true;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(feature.Id, Is.EqualTo(123));
+                Assert.That(feature.FeatureName, Is.EqualTo("ModifiedFeature"));
+                Assert.That(feature.IsEnabled, Is.True);
+                Assert.That(feature.DateModified, Is.Not.EqualTo(default(DateTime)));
+            });
+        }
+
         #region Cast Method Tests
 
         [Test, Category("Models")]
@@ -575,9 +725,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 999,
                 featureName: "CompleteFeature",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: dateCreated,
                 dateModified: dateModified
             );
@@ -595,8 +742,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.IsEnabled, Is.True);
                 Assert.That(result.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(result.DateModified, Is.EqualTo(dateModified));
-                // Note: Cast-related properties are not part of FeatureDTO
-                // This is by design as FeatureDTO is a simplified representation
             });
         }
 
@@ -822,7 +967,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_WithUnusedParameters_ShouldIgnoreThemAndSetPropertiesCorrectly()
         {
-            // Test that JsonConstructor handles unused parameters (isCast, castId, castType) correctly
+            // Test that JsonConstructor handles all provided parameters correctly
             
             // Arrange & Act
             var testDate = DateTime.Now;
@@ -830,14 +975,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 999,
                 featureName: "ComprehensiveFeature",
                 isEnabled: true,
-                isCast: true,        // These parameters are unused by the constructor
-                castId: 12345,       // but should be handled gracefully
-                castType: "TestType",
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
 
-            // Assert - Verify that the object is created correctly and unused parameters don't affect it
+            // Assert - Verify that the object is created correctly
             Assert.Multiple(() =>
             {
                 Assert.That(feature.Id, Is.EqualTo(999));
@@ -876,9 +1018,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 featureName: "SerializationTestFeature",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: DateTime.Now.AddHours(-1),
                 dateModified: DateTime.Now
             );
@@ -952,9 +1091,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 100,
                 featureName: "MultiCastFeature",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now
             );
@@ -1102,9 +1238,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 12345,
                 featureName: "ComprehensiveTestFeature",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
             );
@@ -1192,9 +1325,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 featureName: "DateTest",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: specificDate,
                 dateModified: DateTime.Now
             );
@@ -1212,9 +1342,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 1,
                 featureName: "ExceptionTestFeature",
                 isEnabled: true,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now
             );
@@ -1267,9 +1394,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 id: 0,
                 featureName: null,
                 isEnabled: false,
-                isCast: false,
-                castId: 0,
-                castType: null,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: null
             );
