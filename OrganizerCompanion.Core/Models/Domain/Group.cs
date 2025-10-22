@@ -16,7 +16,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
-        private string? _name = null;
+        private string? _groupName = null;
         private string? _description = null;
         private List<Contact> _members = [];
         private int _accountId = 0;
@@ -63,12 +63,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("name")]
-        public string? Name
+        public string? GroupName
         {
-            get => _name;
+            get => _groupName;
             set
             {
-                _name = value;
+                _groupName = value;
                 DateModified = DateTime.Now;
             }
         }
@@ -134,25 +134,36 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public Group(
             int id,
-            string? name,
+            string? groupName,
             string? description,
             List<Contact> members,
             int accountId,
             Account? account,
             DateTime dateCreated,
-            DateTime? dateModified,
-            bool isCast = false,
-            int castId = 0,
-            string? castType = null)
+            DateTime? dateModified)
         {
             Id = id;
-            Name = name;
+            GroupName = groupName;
             Description = description;
             Members = members;
             AccountId = accountId;
             Account = account;
             DateCreated = dateCreated;
             DateModified = dateModified;
+        }
+
+        public Group(
+            string? groupName,
+            string? description,
+            List<Contact> members,
+            int accountId,
+            Account? account)
+        {
+            GroupName = groupName;
+            Description = description;
+            Members = members;
+            AccountId = accountId;
+            Account = account;
         }
         #endregion
 
@@ -166,7 +177,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                     object dto = new GroupDTO
                     {
                         Id = this.Id,
-                        Name = this.Name,
+                        GroupName = this.GroupName,
                         Description = this.Description,
                         Members = this.Members.ConvertAll(member => member.Cast<ContactDTO>()),
                         AccountId = this.AccountId,
@@ -189,7 +200,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}", _id, _name);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}", _id, _groupName);
         #endregion
     }
 }

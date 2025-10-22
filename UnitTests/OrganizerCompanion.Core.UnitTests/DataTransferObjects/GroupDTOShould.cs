@@ -62,7 +62,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(groupDTO.Id, Is.EqualTo(0));
-                Assert.That(groupDTO.Name, Is.Null);
+                Assert.That(groupDTO.GroupName, Is.Null);
                 Assert.That(groupDTO.Description, Is.Null);
                 Assert.That(groupDTO.Members, Is.Not.Null);
                 Assert.That(groupDTO.Members.Count, Is.EqualTo(0));
@@ -92,20 +92,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void Name_GetSet_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.Name = "My Group";
+            _sut.GroupName = "My Group";
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo("My Group"));
+            Assert.That(_sut.GroupName, Is.EqualTo("My Group"));
         }
 
         [Test, Category("DataTransferObjects")]
         public void Name_SetNull_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.Name = null;
+            _sut.GroupName = null;
 
             // Assert
-            Assert.That(_sut.Name, Is.Null);
+            Assert.That(_sut.GroupName, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -509,7 +509,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void Name_HasRequiredAttribute()
         {
             // Arrange
-            var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.Name));
+            var property = typeof(GroupDTO).GetProperty(nameof(GroupDTO.GroupName));
 
             // Act
             var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false).FirstOrDefault();
@@ -619,20 +619,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void Name_ShouldAcceptEmptyString()
         {
             // Arrange & Act
-            _sut.Name = "";
+            _sut.GroupName = "";
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(""));
+            Assert.That(_sut.GroupName, Is.EqualTo(""));
         }
 
         [Test, Category("DataTransferObjects")]
         public void Name_ShouldAcceptWhitespace()
         {
             // Arrange & Act
-            _sut.Name = "   ";
+            _sut.GroupName = "   ";
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo("   "));
+            Assert.That(_sut.GroupName, Is.EqualTo("   "));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -642,10 +642,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var unicodeName = "测试组 (Test Group) - Группа Тест 🚀";
 
             // Act
-            _sut.Name = unicodeName;
+            _sut.GroupName = unicodeName;
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(unicodeName));
+            Assert.That(_sut.GroupName, Is.EqualTo(unicodeName));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -655,11 +655,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var longName = new string('G', 10000) + " Group";
 
             // Act
-            _sut.Name = longName;
+            _sut.GroupName = longName;
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(longName));
-            Assert.That(_sut.Name?.Length, Is.EqualTo(10006));
+            Assert.That(_sut.GroupName, Is.EqualTo(longName));
+            Assert.That(_sut.GroupName?.Length, Is.EqualTo(10006));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -868,7 +868,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var groupDto = new GroupDTO
             {
                 Id = 555,
-                Name = "Initializer Group",
+                GroupName = "Initializer Group",
                 Description = "Group created with initializer",
                 Members = _testMembers,
                 AccountId = 123,
@@ -881,7 +881,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(groupDto.Id, Is.EqualTo(555));
-                Assert.That(groupDto.Name, Is.EqualTo("Initializer Group"));
+                Assert.That(groupDto.GroupName, Is.EqualTo("Initializer Group"));
                 Assert.That(groupDto.Description, Is.EqualTo("Group created with initializer"));
                 Assert.That(groupDto.Members, Is.SameAs(_testMembers));
                 Assert.That(groupDto.AccountId, Is.EqualTo(123));
@@ -896,7 +896,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange & Act
             _sut.Id = 999;
-            _sut.Name = "Independent Group";
+            _sut.GroupName = "Independent Group";
             _sut.Description = "Independent Description";
             _sut.Members = _testMembers;
             _sut.AccountId = 456;
@@ -908,7 +908,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Store original values
             var originalId = _sut.Id;
-            var originalName = _sut.Name;
+            var originalName = _sut.GroupName;
             var originalDescription = _sut.Description;
             var originalMembers = _sut.Members;
             var originalAccountId = _sut.AccountId;
@@ -921,7 +921,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 // Change Id, verify others unchanged
                 _sut.Id = 1000;
-                Assert.That(_sut.Name, Is.EqualTo(originalName));
+                Assert.That(_sut.GroupName, Is.EqualTo(originalName));
                 Assert.That(_sut.Description, Is.EqualTo(originalDescription));
                 Assert.That(_sut.Members, Is.SameAs(originalMembers));
                 Assert.That(_sut.AccountId, Is.EqualTo(originalAccountId));
@@ -930,7 +930,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
 
                 // Change Name, verify others unchanged
-                _sut.Name = "Changed Name";
+                _sut.GroupName = "Changed Name";
                 Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_sut.Description, Is.EqualTo(originalDescription));
                 Assert.That(_sut.Members, Is.SameAs(originalMembers));
@@ -1023,11 +1023,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 foreach (var op in operations)
                 {
                     _sut.Id = op.Id;
-                    _sut.Name = op.Name;
+                    _sut.GroupName = op.Name;
                     _sut.Description = op.Description;
 
                     Assert.That(_sut.Id, Is.EqualTo(op.Id));
-                    Assert.That(_sut.Name, Is.EqualTo(op.Name));
+                    Assert.That(_sut.GroupName, Is.EqualTo(op.Name));
                     Assert.That(_sut.Description, Is.EqualTo(op.Description));
                 }
             });
@@ -1097,7 +1097,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange & Act
             _sut.Id = int.MaxValue;
-            _sut.Name = "Complex Group with 特殊字符 and emojis 🌟⭐";
+            _sut.GroupName = "Complex Group with 特殊字符 and emojis 🌟⭐";
             _sut.Description = "Multi-line\ndescription with\ttabs and special chars !@#$%";
             _sut.AccountId = int.MaxValue;
             _sut.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
@@ -1120,9 +1120,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
-                Assert.That(_sut.Name, Contains.Substring("Complex Group"));
-                Assert.That(_sut.Name, Contains.Substring("特殊字符"));
-                Assert.That(_sut.Name, Contains.Substring("🌟⭐"));
+                Assert.That(_sut.GroupName, Contains.Substring("Complex Group"));
+                Assert.That(_sut.GroupName, Contains.Substring("特殊字符"));
+                Assert.That(_sut.GroupName, Contains.Substring("🌟⭐"));
                 Assert.That(_sut.Description, Contains.Substring("Multi-line"));
                 Assert.That(_sut.Description, Contains.Substring("!@#$%"));
                 Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));

@@ -21,7 +21,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             [
                 new() {
                     Id = 1,
-                    Name = "Group 1",
+                    GroupName = "Group 1",
                     Members =
                     [
                         new() { Id = 1, FirstName = "John", LastName = "Doe" },
@@ -29,7 +29,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     ] },
                 new() {
                     Id = 2,
-                    Name = "Group 2",
+                    GroupName = "Group 2",
                     Members =
                     [
                         new() { Id = 3, FirstName = "Bob", LastName = "Johnson" }

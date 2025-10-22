@@ -40,7 +40,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int Id { get; set; } = 0;
 
         [Required, JsonPropertyName("name")]
-        public string? Name { get; set; } = null;
+        public string? GroupName { get; set; } = null;
 
         [Required, JsonPropertyName("description")]
         public string? Description { get; set; } = null;

@@ -62,7 +62,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(group.Id, Is.EqualTo(0));
-                Assert.That(group.Name, Is.Null);
+                Assert.That(group.GroupName, Is.Null);
                 Assert.That(group.Description, Is.Null);
                 Assert.That(group.Members, Is.Not.Null);
                 Assert.That(group.Members.Count, Is.EqualTo(0));
@@ -80,7 +80,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             var group = new Group(
                 id: 1,
-                name: "Test Group",
+                groupName: "Test Group",
                 description: "Test Description",
                 members: _testMembers,
                 accountId: 123,
@@ -93,7 +93,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(group.Id, Is.EqualTo(1));
-                Assert.That(group.Name, Is.EqualTo("Test Group"));
+                Assert.That(group.GroupName, Is.EqualTo("Test Group"));
                 Assert.That(group.Description, Is.EqualTo("Test Description"));
                 Assert.That(group.Members, Is.SameAs(_testMembers));
                 Assert.That(group.AccountId, Is.EqualTo(123));
@@ -109,7 +109,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             var group = new Group(
                 id: 0,
-                name: null,
+                groupName: null,
                 description: null,
                 members: [],
                 accountId: 0,
@@ -122,7 +122,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(group.Id, Is.EqualTo(0));
-                Assert.That(group.Name, Is.Null);
+                Assert.That(group.GroupName, Is.Null);
                 Assert.That(group.Description, Is.Null);
                 Assert.That(group.Members, Is.Not.Null);
                 Assert.That(group.Members.Count, Is.EqualTo(0));
@@ -151,20 +151,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Name_GetSet_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.Name = "My Group";
+            _sut.GroupName = "My Group";
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo("My Group"));
+            Assert.That(_sut.GroupName, Is.EqualTo("My Group"));
         }
 
         [Test, Category("Models")]
         public void Name_SetNull_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.Name = null;
+            _sut.GroupName = null;
 
             // Assert
-            Assert.That(_sut.Name, Is.Null);
+            Assert.That(_sut.GroupName, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -362,7 +362,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 1;
-            _sut.Name = "Test Group";
+            _sut.GroupName = "Test Group";
             _sut.Description = "Test Description";
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
@@ -379,7 +379,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO, Is.Not.Null);
                 Assert.That(groupDTO, Is.InstanceOf<GroupDTO>());
                 Assert.That(groupDTO.Id, Is.EqualTo(1));
-                Assert.That(groupDTO.Name, Is.EqualTo("Test Group"));
+                Assert.That(groupDTO.GroupName, Is.EqualTo("Test Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Test Description"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
                 Assert.That(groupDTO.Members.Count, Is.EqualTo(2));
@@ -397,7 +397,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 2;
-            _sut.Name = "Interface Test Group";
+            _sut.GroupName = "Interface Test Group";
             _sut.Description = "Interface Test Description";
             _sut.Members = _testMembers;
             _sut.AccountId = 456;
@@ -415,7 +415,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO, Is.InstanceOf<IGroupDTO>());
                 Assert.That(groupDTO, Is.InstanceOf<GroupDTO>());
                 Assert.That(groupDTO.Id, Is.EqualTo(2));
-                Assert.That(groupDTO.Name, Is.EqualTo("Interface Test Group"));
+                Assert.That(groupDTO.GroupName, Is.EqualTo("Interface Test Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Interface Test Description"));
                 Assert.That(groupDTO.AccountId, Is.EqualTo(456));
                 Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
@@ -437,7 +437,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 3;
-            _sut.Name = "Empty Group";
+            _sut.GroupName = "Empty Group";
             _sut.Description = "Group with no members";
             _sut.Members = [];
             _sut.AccountId = 789;
@@ -453,7 +453,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(groupDTO, Is.Not.Null);
                 Assert.That(groupDTO.Id, Is.EqualTo(3));
-                Assert.That(groupDTO.Name, Is.EqualTo("Empty Group"));
+                Assert.That(groupDTO.GroupName, Is.EqualTo("Empty Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Group with no members"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
                 Assert.That(groupDTO.Members.Count, Is.EqualTo(0));
@@ -469,7 +469,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 10;
-            _sut.Name = "Test Group Null Account";
+            _sut.GroupName = "Test Group Null Account";
             _sut.Description = "Test Description";
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
@@ -486,7 +486,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO, Is.Not.Null);
                 Assert.That(groupDTO, Is.InstanceOf<GroupDTO>());
                 Assert.That(groupDTO.Id, Is.EqualTo(10));
-                Assert.That(groupDTO.Name, Is.EqualTo("Test Group Null Account"));
+                Assert.That(groupDTO.GroupName, Is.EqualTo("Test Group Null Account"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Test Description"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
                 Assert.That(groupDTO.Members.Count, Is.EqualTo(2));
@@ -506,7 +506,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 1;
-            _sut.Name = "JSON Test Group";
+            _sut.GroupName = "JSON Test Group";
             _sut.Description = "Group for JSON testing";
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
@@ -537,7 +537,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 0;
-            _sut.Name = null;
+            _sut.GroupName = null;
             _sut.Description = null;
             _sut.Members = [];
             _sut.AccountId = 0;
@@ -636,23 +636,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             var group = new Group(
                 id: 999,
-                name: "ComprehensiveGroup",
+                groupName: "ComprehensiveGroup",
                 description: "Test comprehensive functionality",
                 members: _testMembers,
                 accountId: 456,
                 account: _testAccount,
                 dateCreated: _testDateCreated,
-                dateModified: _testDateModified,
-                isCast: true,        // These parameters are unused by the constructor
-                castId: 12345,       // but should be handled gracefully
-                castType: "TestType"
+                dateModified: _testDateModified
             );
 
             // Assert - Verify that the object is created correctly and unused parameters don't affect it
             Assert.Multiple(() =>
             {
                 Assert.That(group.Id, Is.EqualTo(999));
-                Assert.That(group.Name, Is.EqualTo("ComprehensiveGroup"));
+                Assert.That(group.GroupName, Is.EqualTo("ComprehensiveGroup"));
                 Assert.That(group.Description, Is.EqualTo("Test comprehensive functionality"));
                 Assert.That(group.Members, Is.SameAs(_testMembers));
                 Assert.That(group.AccountId, Is.EqualTo(456));
@@ -669,7 +666,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Arrange
             _sut.Id = 1;
-            _sut.Name = "TestGroup";
+            _sut.GroupName = "TestGroup";
             _sut.Members = _testMembers;
 
             // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
@@ -689,7 +686,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange - Create group with complex member data
             _sut = new Group(
                 id: 1,
-                name: "SerializationTestGroup",
+                groupName: "SerializationTestGroup",
                 description: "Testing cyclical references",
                 members: _testMembers,
                 accountId: 123,
@@ -736,7 +733,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new Group(
                 id: 100,
-                name: "MultiCastGroup",
+                groupName: "MultiCastGroup",
                 description: "Testing multiple casts",
                 members: _testMembers,
                 accountId: account.Id,
@@ -762,9 +759,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDto2.Id, Is.EqualTo(100));
                 Assert.That(iGroupDto.Id, Is.EqualTo(100));
                 
-                Assert.That(groupDto1.Name, Is.EqualTo("MultiCastGroup"));
-                Assert.That(groupDto2.Name, Is.EqualTo("MultiCastGroup"));
-                Assert.That(iGroupDto.Name, Is.EqualTo("MultiCastGroup"));
+                Assert.That(groupDto1.GroupName, Is.EqualTo("MultiCastGroup"));
+                Assert.That(groupDto2.GroupName, Is.EqualTo("MultiCastGroup"));
+                Assert.That(iGroupDto.GroupName, Is.EqualTo("MultiCastGroup"));
                 
                 // Verify members are properly cast
                 Assert.That(groupDto1.Members, Has.Count.EqualTo(2));
@@ -832,7 +829,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Group
             {
                 Id = 1,
-                Name = "NullAccountTest",
+                GroupName = "NullAccountTest",
                 Description = "Testing null account casting",
                 Members = _testMembers,
                 AccountId = 123,
@@ -850,7 +847,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDto, Is.Not.Null);
                 Assert.That(groupDto.Account, Is.Null);
                 Assert.That(groupDto.AccountId, Is.EqualTo(123));
-                Assert.That(groupDto.Name, Is.EqualTo("NullAccountTest"));
+                Assert.That(groupDto.GroupName, Is.EqualTo("NullAccountTest"));
                 Assert.That(groupDto.Members, Has.Count.EqualTo(2));
             });
         }
@@ -862,7 +859,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Arrange
             _sut.Id = 888;
-            _sut.Name = "Group!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 组 🚀 ñáéíóú";
+            _sut.GroupName = "Group!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 组 🚀 ñáéíóú";
             _sut.Description = "Description with special chars: !@#$%^&*() and Unicode: 测试 🎯";
             _sut.Members = _testMembers;
             _sut.AccountId = 999;
@@ -908,7 +905,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test JsonConstructor with comprehensive data
             var comprehensiveGroup = new Group(
                 id: 12345,
-                name: "ComprehensiveTestGroup",
+                groupName: "ComprehensiveTestGroup",
                 description: "Testing all functionality",
                 members: _testMembers,
                 accountId: 789,
@@ -921,7 +918,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(comprehensiveGroup.Id, Is.EqualTo(12345));
-                Assert.That(comprehensiveGroup.Name, Is.EqualTo("ComprehensiveTestGroup"));
+                Assert.That(comprehensiveGroup.GroupName, Is.EqualTo("ComprehensiveTestGroup"));
                 Assert.That(comprehensiveGroup.Description, Is.EqualTo("Testing all functionality"));
                 Assert.That(comprehensiveGroup.Members, Is.SameAs(_testMembers));
                 Assert.That(comprehensiveGroup.AccountId, Is.EqualTo(789));
@@ -932,7 +929,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Test all property setters
             defaultGroup.Id = 54321;
-            defaultGroup.Name = "UpdatedGroup";
+            defaultGroup.GroupName = "UpdatedGroup";
             defaultGroup.Description = "Updated description";
             defaultGroup.Members = _testMembers;
             defaultGroup.AccountId = 999;
@@ -942,7 +939,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(defaultGroup.Id, Is.EqualTo(54321));
-                Assert.That(defaultGroup.Name, Is.EqualTo("UpdatedGroup"));
+                Assert.That(defaultGroup.GroupName, Is.EqualTo("UpdatedGroup"));
                 Assert.That(defaultGroup.Description, Is.EqualTo("Updated description"));
                 Assert.That(defaultGroup.Members, Is.SameAs(_testMembers));
                 Assert.That(defaultGroup.AccountId, Is.EqualTo(999));
@@ -992,7 +989,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Group
             {
                 Id = 1,
-                Name = "ExceptionTestGroup",
+                GroupName = "ExceptionTestGroup",
                 Members = _testMembers
             };
             
@@ -1018,7 +1015,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var largeGroup = new Group
             {
                 Id = 1,
-                Name = "LargeGroup",
+                GroupName = "LargeGroup",
                 Description = "Group with many members",
                 Members =
                 [
@@ -1099,7 +1096,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Arrange & Act
             _sut.Id = int.MaxValue;
-            _sut.Name = new string('A', 10000); // Very long name
+            _sut.GroupName = new string('A', 10000); // Very long name
             _sut.Description = new string('B', 10000); // Very long description
             _sut.AccountId = int.MaxValue;
             _sut.DateModified = DateTime.MaxValue;
@@ -1108,7 +1105,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
-                Assert.That(_sut.Name, Has.Length.EqualTo(10000));
+                Assert.That(_sut.GroupName, Has.Length.EqualTo(10000));
                 Assert.That(_sut.Description, Has.Length.EqualTo(10000));
                 Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));
                 Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));

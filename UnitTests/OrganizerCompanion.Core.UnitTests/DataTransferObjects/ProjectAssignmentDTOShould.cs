@@ -18,8 +18,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Create test groups
             _testGroups =
             [
-                new() { Id = 1, Name = "Development Team" },
-                new() { Id = 2, Name = "QA Team" }
+                new() { Id = 1, GroupName = "Development Team" },
+                new() { Id = 2, GroupName = "QA Team" }
             ];
         }
 
@@ -926,9 +926,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             IAddressDTO? location = (IAddressDTO)new USAddressDTO(); // Mock address would be needed for full test
             var groups = new List<GroupDTO>
             {
-                new() { Id = 100, Name = "Special Group 1" },
-                new() { Id = 200, Name = "Special Group 2" },
-                new() { Id = 300, Name = "Special Group 3" }
+                new() { Id = 100, GroupName = "Special Group 1" },
+                new() { Id = 200, GroupName = "Special Group 2" },
+                new() { Id = 300, GroupName = "Special Group 3" }
             };
             var taskId = 555;
             var task = new ProjectTaskDTO();
@@ -971,8 +971,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
-            var groupA = new GroupDTO { Id = 10, Name = "Group A" };
-            var groupB = new GroupDTO { Id = 20, Name = "Group B" };
+            var groupA = new GroupDTO { Id = 10, GroupName = "Group A" };
+            var groupB = new GroupDTO { Id = 20, GroupName = "Group B" };
             _projectAssignmentDTO.Groups = [groupA, groupB];
 
             // Act - This covers the [.. Groups!.Cast<IGroupDTO>()] logic
@@ -984,9 +984,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
-                Assert.That(interfaceGroups[0].Name, Is.EqualTo("Group A"));
+                Assert.That(interfaceGroups[0].GroupName, Is.EqualTo("Group A"));
                 Assert.That(interfaceGroups[1].Id, Is.EqualTo(20));
-                Assert.That(interfaceGroups[1].Name, Is.EqualTo("Group B"));
+                Assert.That(interfaceGroups[1].GroupName, Is.EqualTo("Group B"));
             });
         }
 
@@ -995,8 +995,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             IProjectAssignmentDTO iDTO = _projectAssignmentDTO;
-            var group1 = new GroupDTO { Id = 100, Name = "Interface Group 1" };
-            var group2 = new GroupDTO { Id = 200, Name = "Interface Group 2" };
+            var group1 = new GroupDTO { Id = 100, GroupName = "Interface Group 1" };
+            var group2 = new GroupDTO { Id = 200, GroupName = "Interface Group 2" };
             var interfaceGroups = new List<IGroupDTO> { group1, group2 };
 
             // Act - This covers the value!.ConvertAll(group => (GroupDTO)group) logic
@@ -1021,7 +1021,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var largeGroupsList = new List<GroupDTO>();
             for (int i = 0; i < 1000; i++)
             {
-                largeGroupsList.Add(new GroupDTO { Id = i, Name = $"Group {i}" });
+                largeGroupsList.Add(new GroupDTO { Id = i, GroupName = $"Group {i}" });
             }
 
             // Act
@@ -1030,7 +1030,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
             Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(1000));
-            Assert.That(_projectAssignmentDTO.Groups[999].Name, Is.EqualTo("Group 999"));
+            Assert.That(_projectAssignmentDTO.Groups[999].GroupName, Is.EqualTo("Group 999"));
         }
 
         [Test, Category("DateTime")]
