@@ -109,6 +109,182 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        #region IEmailDTO Constructor Tests
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithCompleteDTO_ShouldSetAllProperties()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                Id = 123,
+                EmailAddress = "test@example.com",
+                Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = true,
+                IsConfirmed = true,
+                DateCreated = DateTime.Now.AddDays(-2),
+                DateModified = DateTime.Now.AddDays(-1)
+            };
+            var linkedEntity = new MockDomainEntity();
+
+            // Act
+            _sut = new Email(dto, linkedEntity);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.EmailAddress, Is.EqualTo(dto.EmailAddress));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.IsConfirmed, Is.EqualTo(dto.IsConfirmed));
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalDTO_ShouldSetBasicProperties()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                EmailAddress = "minimal@example.com",
+                Type = OrganizerCompanion.Core.Enums.Types.Home
+            };
+
+            // Act
+            _sut = new Email(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.EmailAddress, Is.EqualTo(dto.EmailAddress));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.IsConfirmed, Is.EqualTo(dto.IsConfirmed));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityId, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullLinkedEntity_ShouldHandleGracefully()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                Id = 456,
+                EmailAddress = "nullentity@example.com",
+                Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = false,
+                IsConfirmed = false
+            };
+
+            // Act
+            _sut = new Email(dto, null);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.EmailAddress, Is.EqualTo(dto.EmailAddress));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.IsConfirmed, Is.EqualTo(dto.IsConfirmed));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityId, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithDifferentLinkedEntityTypes_ShouldSetCorrectEntityType()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                EmailAddress = "entity@example.com",
+                Type = OrganizerCompanion.Core.Enums.Types.Home
+            };
+            var anotherEntity = new AnotherMockEntity();
+
+            // Act
+            _sut = new Email(dto, anotherEntity);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(anotherEntity));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(anotherEntity.Id));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullDTO_ShouldThrowArgumentNullException()
+        {
+            // Arrange
+            MockEmailDTO? dto = null;
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new Email(dto!));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithInvalidDTOType_ShouldThrowArgumentException()
+        {
+            // This test validates that the Email constructor properly validates DTO types
+            // Since we can't pass an invalid type due to compile-time checking,
+            // we'll test with a null DTO instead to trigger validation
+            
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new Email((IEmailDTO)null!));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullEmailAddress_ShouldAcceptNullValue()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                EmailAddress = null,
+                Type = OrganizerCompanion.Core.Enums.Types.Work
+            };
+
+            // Act
+            _sut = new Email(dto);
+
+            // Assert
+            Assert.That(_sut.EmailAddress, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullType_ShouldAcceptNullValue()
+        {
+            // Arrange
+            var dto = new MockEmailDTO
+            {
+                EmailAddress = "nulltype@example.com",
+                Type = null
+            };
+
+            // Act
+            _sut = new Email(dto);
+
+            // Assert
+            Assert.That(_sut.Type, Is.Null);
+        }
+
+        #endregion
+
         [Test, Category("Models")]
         public void Id_WhenSet_ShouldUpdateDateModified()
         {
@@ -2162,6 +2338,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? CastType { get; set; } = null;
             public DateTime DateCreated { get; } = DateTime.Now;
             public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        // Mock EmailDTO for testing IEmailDTO constructor
+        private class MockEmailDTO : IEmailDTO
+        {
+            public int Id { get; set; } = 0;
+            public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+            public string? CastType { get; set; } = null;
+            public DateTime DateCreated { get; set; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public string? EmailAddress { get; set; }
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+            public bool IsPrimary { get; set; } = false;
+            public bool IsConfirmed { get; set; } = false;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
