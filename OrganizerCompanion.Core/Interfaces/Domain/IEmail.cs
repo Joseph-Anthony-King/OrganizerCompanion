@@ -2,8 +2,8 @@
 {
     internal interface IEmail : IDomainEntity, Type.IEmail
     {
-        int LinkedEntityId { get; set; }
         IDomainEntity? LinkedEntity { get; set; }
+        int? LinkedEntityId { get; }
         string? LinkedEntityType { get; }
         bool IsConfirmed { get; set; }
     }

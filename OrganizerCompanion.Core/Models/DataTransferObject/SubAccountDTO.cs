@@ -37,7 +37,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity { get; set; } = null;
         [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get => _dateCreated; }
+        public DateTime DateCreated => _dateCreated;
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion

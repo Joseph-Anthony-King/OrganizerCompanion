@@ -161,7 +161,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         public string? LinkedEntityType => LinkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get => _dateCreated; }
+        public DateTime DateCreated => _dateCreated;
 
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = default(DateTime);

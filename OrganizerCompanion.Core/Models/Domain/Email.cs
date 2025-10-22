@@ -20,9 +20,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _emailAddress = null;
         private Types? _type = null;
         private bool _isPrimary = false;
-        private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
-        private string? _linkedEntityType = null;
         private bool _isConfirmed = false;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
@@ -74,17 +72,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
-        public int LinkedEntityId
-        {
-            get => _linkedEntityId;
-            set
-            {
-                _linkedEntityId = value;
-                DateModified = DateTime.Now;
-            }
-        }
-
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -92,13 +79,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.Now;
             }
         }
 
+        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
+        public int? LinkedEntityId
+        {
+            get => _linkedEntity?.Id ?? null;
+        }
+
         [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
+        public string? LinkedEntityType => _linkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("isConfirmed")]
         public bool IsConfirmed
@@ -112,7 +104,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get => _dateCreated; }
+        public DateTime DateCreated => _dateCreated;
 
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = default(DateTime);
@@ -127,9 +119,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? emailAddress,
             Types? type,
             bool isPrimary,
-            int linkedEntityId,
             IDomainEntity? linkedEntity,
-            string? linkedEntityType,
             bool isConfirmed,
             DateTime dateCreated,
             DateTime? dateModified)
@@ -138,9 +128,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _emailAddress = emailAddress;
             _type = type;
             _isPrimary = isPrimary;
-            _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
-            _linkedEntityType = linkedEntityType;
             _isConfirmed = isConfirmed;
             _dateCreated = dateCreated;
             DateModified = dateModified;
@@ -149,11 +137,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         public Email(
             string? emailAddress,
             Types? type,
-            bool isPrimary)
+            bool isPrimary,
+            IDomainEntity? linkedEntity)
         {
             _emailAddress = emailAddress;
             _type = type;
             _isPrimary = isPrimary;
+            _linkedEntity = linkedEntity;
         }
         #endregion
 

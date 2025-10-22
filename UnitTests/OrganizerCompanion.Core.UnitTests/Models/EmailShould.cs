@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.EmailAddress, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.IsPrimary, Is.False);
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(_sut.LinkedEntityId, Is.Null);
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.IsConfirmed, Is.False);
@@ -55,7 +55,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var beforeCreation = DateTime.Now;
 
             // Act
-            _sut = new Email(emailAddress, type, true);
+            _sut = new Email(emailAddress, type, true, null);
 
             // Assert
             Assert.Multiple(() =>
@@ -77,9 +77,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var emailAddress = "test@example.com";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var isPrimary = true;
-            var linkedEntityId = 123;
             var linkedEntity = new MockDomainEntity();
-            var linkedEntityType = "MockDomainEntity";
             var isConfirmed = true;
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now;
@@ -90,9 +88,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress,
                 type,
                 isPrimary,
-                linkedEntityId,
                 linkedEntity,
-                linkedEntityType,
                 isConfirmed,
                 dateCreated,
                 dateModified);
@@ -104,9 +100,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
                 Assert.That(_sut.Type, Is.EqualTo(type));
                 Assert.That(_sut.IsPrimary, Is.EqualTo(isPrimary));
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
-                Assert.That(_sut.LinkedEntityType, Is.EqualTo(linkedEntityType));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(_sut.IsConfirmed, Is.EqualTo(isConfirmed));
                 Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
@@ -156,7 +152,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void EmailAddress_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null)
             {
                 EmailAddress = null
             };
@@ -189,7 +185,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null)
             {
                 // Act
                 Type = null
@@ -332,7 +328,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void IsConfirmed_WithSimpleConstructor_ShouldDefaultToFalse()
         {
             // Arrange & Act
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true);
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
 
             // Assert
             Assert.That(_sut.IsConfirmed, Is.False);
@@ -402,8 +398,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
-                0,
-                null,
                 null,
                 false,
                 specificDate,
@@ -506,8 +500,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
-                0,
-                null,
                 null,
                 true,
                 DateTime.Now.AddDays(-1),
@@ -522,7 +514,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("\"emailAddress\":\"test@example.com\""));
-                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
                 Assert.That(json, Does.Contain("\"dateCreated\":"));
@@ -674,8 +666,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Home,
                 false,
-                0,
-                null,
                 null,
                 false,
                 DateTime.Now.AddDays(-1),
@@ -702,8 +692,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 null,
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
-                0,
-                null,
                 null,
                 true,
                 DateTime.Now.AddDays(-1),
@@ -746,8 +734,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Mobil,
                 true,
-                0,
-                null,
                 null,
                 false,
                 DateTime.Now.AddDays(-1),
@@ -779,7 +765,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             foreach (var enumValue in enumValues)
             {
                 // Arrange
-                _sut = new Email($"test{enumValue}@example.com", enumValue, true)
+                _sut = new Email($"test{enumValue}@example.com", enumValue, true, null)
                 {
                     Id = 1
                 };
@@ -804,7 +790,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_WithEmptyEmailAddress_ShouldBeAllowed()
         {
             // Arrange & Act
-            _sut = new Email(string.Empty, OrganizerCompanion.Core.Enums.Types.Other, true);
+            _sut = new Email(string.Empty, OrganizerCompanion.Core.Enums.Types.Other, true, null);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(string.Empty));
@@ -817,7 +803,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var longEmail = new string('a', 1000) + "@example.com";
 
             // Act
-            _sut = new Email(longEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
+            _sut = new Email(longEmail, OrganizerCompanion.Core.Enums.Types.Work, true, null);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(longEmail));
@@ -847,7 +833,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntityId = 123;
+            _sut.LinkedEntity = new MockDomainEntity { Id = 123 };
             var fourthModified = _sut.DateModified;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
@@ -892,8 +878,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "test@example.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 false,
-                0,
-                null,
                 null,
                 true,
                 DateTime.Now,
@@ -916,9 +900,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: null,
                 type: null,
                 isPrimary: false,
-                linkedEntityId: 0,
                 linkedEntity: null,
-                linkedEntityType: null,
                 isConfirmed: false,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: null);
@@ -929,7 +911,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.Id, Is.EqualTo(0));
                 Assert.That(email.EmailAddress, Is.Null);
                 Assert.That(email.Type, Is.Null);
-                Assert.That(email.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(email.LinkedEntityId, Is.Null);
                 Assert.That(email.LinkedEntity, Is.Null);
                 Assert.That(email.LinkedEntityType, Is.Null);
                 Assert.That(email.DateModified, Is.Null);
@@ -960,7 +942,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specialEmail = "test+special.chars@example-domain.co.uk";
 
             // Act
-            _sut = new Email(specialEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
+            _sut = new Email(specialEmail, OrganizerCompanion.Core.Enums.Types.Work, true, null);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(specialEmail));
@@ -973,7 +955,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var unicodeEmail = "tést@ëxämplë.com";
 
             // Act
-            _sut = new Email(unicodeEmail, OrganizerCompanion.Core.Enums.Types.Work, true);
+            _sut = new Email(unicodeEmail, OrganizerCompanion.Core.Enums.Types.Work, true, null);
 
             // Assert
             Assert.That(_sut.EmailAddress, Is.EqualTo(unicodeEmail));
@@ -993,7 +975,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_WithNegativeLinkedEntityId_ShouldBeAllowed()
         {
             // Arrange & Act
-            _sut = new Email { LinkedEntityId = -1 };
+            _sut = new Email { LinkedEntity = new MockDomainEntity { Id = -1 } };
 
             // Assert
             Assert.That(_sut.LinkedEntityId, Is.EqualTo(-1));
@@ -1003,7 +985,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Email_WithMaxIntLinkedEntityId_ShouldBeAllowed()
         {
             // Arrange & Act
-            _sut = new Email { LinkedEntityId = int.MaxValue };
+            _sut = new Email { LinkedEntity = new MockDomainEntity { Id = int.MaxValue } };
 
             // Assert
             Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MaxValue));
@@ -1062,9 +1044,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 "linked@test.com",
                 OrganizerCompanion.Core.Enums.Types.Work,
                 true,
-                456,
                 mockEntity,
-                "MockDomainEntity",
                 false,
                 DateTime.Now.AddDays(-1),
                 DateTime.Now);
@@ -1076,7 +1056,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"linkedEntityId\":456"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":789"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":\"MockDomainEntity\""));
 
                 // Verify JSON is well-formed
@@ -1153,21 +1133,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_WithDifferentLinkedEntityType_ShouldRespectProvidedValue()
         {
-            // Arrange & Act - Testing that the JsonConstructor sets _linkedEntityType directly
+            // Arrange & Act - Testing that the JsonConstructor sets linkedEntity correctly
+            var mockEntity = new MockDomainEntity();
             var email = new Email(
                 id: 1,
                 emailAddress: "test@example.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: false,
-                linkedEntityId: 123,
-                linkedEntity: new MockDomainEntity(),
-                linkedEntityType: "CustomEntityType", // Different from actual type name
+                linkedEntity: mockEntity,
                 isConfirmed: true,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now);
 
-            // Assert - LinkedEntityType should be what was passed in, not derived from LinkedEntity
-            Assert.That(email.LinkedEntityType, Is.EqualTo("CustomEntityType"));
+            // Assert - LinkedEntityType should be derived from LinkedEntity
+            Assert.That(email.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
         }
 
         [Test, Category("Models")]
@@ -1233,8 +1212,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             var typeModified = _sut.DateModified;
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntityId = 999;
-            Assert.That(_sut.DateModified, Is.GreaterThan(typeModified), "LinkedEntityId setter should update DateModified");
+            _sut.LinkedEntity = new MockDomainEntity { Id = 999 };
+            Assert.That(_sut.DateModified, Is.GreaterThan(typeModified), "LinkedEntity setter should update DateModified");
 
             var linkedIdModified = _sut.DateModified;
             System.Threading.Thread.Sleep(1);
@@ -1309,7 +1288,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Constructor_SimpleEmailAndType_ShouldNotSetLinkedProperties()
         {
             // Arrange & Act
-            var email = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Home, true);
+            var email = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Home, true, null);
 
             // Assert
             Assert.Multiple(() =>
@@ -1317,7 +1296,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.EmailAddress, Is.EqualTo("simple@test.com"));
                 Assert.That(email.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 Assert.That(email.Id, Is.EqualTo(0));
-                Assert.That(email.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(email.LinkedEntityId, Is.Null);
                 Assert.That(email.LinkedEntity, Is.Null);
                 Assert.That(email.LinkedEntityType, Is.Null);
                 Assert.That(email.DateModified, Is.EqualTo(default(DateTime)));
@@ -1333,7 +1312,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 _sut = new Email
                 {
                     Id = int.MinValue,
-                    LinkedEntityId = int.MinValue
+                    LinkedEntity = new MockDomainEntity { Id = int.MinValue }
                 };
             });
         }
@@ -1534,9 +1513,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: "complete@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
                 isPrimary: false,
-                linkedEntityId: 42,
                 linkedEntity: new MockDomainEntity { Id = 42 },
-                linkedEntityType: "MockDomainEntity",
                 isConfirmed: true,
                 dateCreated: dateCreated,
                 dateModified: dateModified
@@ -1734,9 +1711,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: "comprehensive@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: false,
-                linkedEntityId: 456,
-                linkedEntity: new MockDomainEntity(),
-                linkedEntityType: "CustomType", // This parameter should be respected in JsonConstructor
+                linkedEntity: new MockDomainEntity { Id = 456 },
                 isConfirmed: true,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
@@ -1750,7 +1725,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(email.LinkedEntityId, Is.EqualTo(456));
                 Assert.That(email.LinkedEntity, Is.Not.Null);
-                Assert.That(email.LinkedEntityType, Is.EqualTo("CustomType")); // Should be from parameter, not derived
+                Assert.That(email.LinkedEntityType, Is.EqualTo("MockDomainEntity")); // Should be derived from LinkedEntity type
                 Assert.That(email.IsConfirmed, Is.True);
                 Assert.That(email.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
                 Assert.That(email.DateModified, Is.EqualTo(testDate));
@@ -1869,9 +1844,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: "cycle@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: true,
-                linkedEntityId: 123,
                 linkedEntity: mockEntity,
-                linkedEntityType: "MockDomainEntity",
                 isConfirmed: true,
                 dateCreated: DateTime.Now.AddHours(-1),
                 dateModified: DateTime.Now
@@ -1912,9 +1885,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: "multi@cast.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
                 isPrimary: false,
-                linkedEntityId: 0,
                 linkedEntity: null,
-                linkedEntityType: null,
                 isConfirmed: false,
                 dateCreated: DateTime.Now.AddDays(-1),
                 dateModified: DateTime.Now
@@ -1958,9 +1929,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     emailAddress: $"test{enumValue}@example.com",
                     type: enumValue,
                     isPrimary: false,
-                    linkedEntityId: 0,
                     linkedEntity: null,
-                    linkedEntityType: null,
                     isConfirmed: (int)enumValue % 2 == 0,
                     dateCreated: DateTime.Now.AddDays(-(int)enumValue),
                     dateModified: DateTime.Now
@@ -2008,7 +1977,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             timestamps.Add(_sut.DateModified);
 
             System.Threading.Thread.Sleep(2);
-            _sut.LinkedEntityId = 999;
+            _sut.LinkedEntity = new MockDomainEntity { Id = 999 };
             timestamps.Add(_sut.DateModified);
 
             System.Threading.Thread.Sleep(2);
@@ -2038,7 +2007,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(defaultEmail.DateCreated, Is.Not.EqualTo(default(DateTime)));
 
             // Test simple constructor
-            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work, true);
+            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
             Assert.Multiple(() =>
             {
                 Assert.That(simpleEmail.EmailAddress, Is.EqualTo("simple@test.com"));
@@ -2054,9 +2023,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 emailAddress: "comprehensive@test.com",
                 type: OrganizerCompanion.Core.Enums.Types.Mobil,
                 isPrimary: false,
-                linkedEntityId: 456,
                 linkedEntity: linkedEntity,
-                linkedEntityType: "MockDomainEntity",
                 isConfirmed: true,
                 dateCreated: testDate.AddDays(-1),
                 dateModified: testDate
@@ -2080,8 +2047,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultEmail.Id = 54321;
             defaultEmail.EmailAddress = "updated@test.com";
             defaultEmail.Type = OrganizerCompanion.Core.Enums.Types.Fax;
-            defaultEmail.LinkedEntityId = 789;
-            defaultEmail.LinkedEntity = new AnotherMockEntity();
+            defaultEmail.LinkedEntity = new AnotherMockEntity { Id = 789 };
             defaultEmail.IsConfirmed = true;
 
             Assert.Multiple(() =>
@@ -2156,7 +2122,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test that the catch block in Cast method properly rethrows exceptions
 
             // Arrange
-            _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work, true);
+            _sut = new Email("test@exception.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
 
             // Act & Assert - Verify that InvalidCastException is thrown for unsupported types
             var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());

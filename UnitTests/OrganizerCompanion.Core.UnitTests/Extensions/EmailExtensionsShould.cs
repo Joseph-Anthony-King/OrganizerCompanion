@@ -14,7 +14,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         [SetUp]
         public void SetUp()
         {
-            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true)
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null)
             {
                 Id = 1
             };
@@ -99,7 +99,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsTypeEmails_WithListOfDomainEmails_ShouldConvertToTypeEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home, true);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Home, true, null);
             var domainEmails = new List<IEmail?> { _sut, domainEmail2, null };
 
             // Act
@@ -134,7 +134,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil, true);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil, true, null);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)

@@ -118,7 +118,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get => _dateCreated; }
+        public DateTime DateCreated => _dateCreated;
 
         [JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = default(DateTime);
