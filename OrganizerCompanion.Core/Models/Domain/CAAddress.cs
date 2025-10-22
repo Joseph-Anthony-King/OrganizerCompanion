@@ -209,6 +209,22 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
         }
+
+        public CAAddress(ICAAddressDTO dto, IDomainEntity? linkedEntity = null)
+        {
+            _id = dto.Id;
+            _street1 = dto.Street1;
+            _street2 = dto.Street2;
+            _city = dto.City;
+            _province = dto.Province;
+            _zipCode = dto.ZipCode;
+            _country = dto.Country;
+            _type = dto.Type;
+            _isPrimary = dto.IsPrimary;
+            _linkedEntity = linkedEntity;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods

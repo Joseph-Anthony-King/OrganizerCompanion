@@ -164,16 +164,16 @@ namespace OrganizerCompanion.Core.Models.Domain
             _subAccounts = accounts;
         }
 
-        public Account(IAccountDTO accountDTO)
+        public Account(IAccountDTO dto)
         {
-            _id = accountDTO.Id;
-            _accountName = accountDTO.AccountName;
-            _accountNumber = accountDTO.AccountNumber;
-            _license = accountDTO.License;
-            _features = accountDTO.Features.ConvertAll(featureDTO => new AccountFeature(featureDTO, accountDTO.Id));
-            _subAccounts = accountDTO.Accounts?.ConvertAll(subAccountDTO => new SubAccount(subAccountDTO));
-            _dateCreated = accountDTO.DateCreated;
-            DateModified = accountDTO.DateModified;
+            _id = dto.Id;
+            _accountName = dto.AccountName;
+            _accountNumber = dto.AccountNumber;
+            _license = dto.License;
+            _features = dto.Features.ConvertAll(featureDTO => new AccountFeature(featureDTO, dto.Id));
+            _subAccounts = dto.Accounts?.ConvertAll(subAccountDTO => new SubAccount(subAccountDTO));
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
         }
         #endregion
 

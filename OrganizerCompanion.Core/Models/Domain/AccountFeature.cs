@@ -140,11 +140,11 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public AccountFeature(
-            IFeatureDTO featureDTO,
+            IFeatureDTO dto,
             int accountId)
         {
             _accountId = accountId;
-            _featureId = featureDTO.Id;
+            _featureId = dto.Id;
         }
         #endregion
 
