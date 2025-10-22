@@ -198,6 +198,254 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_SetsAllPropertiesCorrectly()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = 123,
+                UserName = "DTOTestUser",
+                AccountId = 456,
+                IsCast = true,
+                CastId = 789,
+                CastType = "Organization",
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(123));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("DTOTestUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(456));
+                Assert.That(anonymousUser.Account, Is.Null); // Not set by this constructor
+                Assert.That(anonymousUser.IsCast, Is.True);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(789));
+                Assert.That(anonymousUser.CastType, Is.EqualTo("Organization"));
+                Assert.That(anonymousUser.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(anonymousUser.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_WithNullDTO_ThrowsNullReferenceException()
+        {
+            // Arrange
+            IAnnonymousUserDTO? dto = null;
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new AnnonymousUser(dto!));
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_WithNullOptionalProperties_SetsToNull()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = 111,
+                UserName = "NullPropsUser",
+                AccountId = 222,
+                IsCast = null, // Nullable bool
+                CastId = null, // Nullable int
+                CastType = null, // Nullable string
+                DateCreated = _testDateCreated,
+                DateModified = null // Nullable DateTime
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(111));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("NullPropsUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(222));
+                Assert.That(anonymousUser.IsCast, Is.Null);
+                Assert.That(anonymousUser.CastId, Is.Null);
+                Assert.That(anonymousUser.CastType, Is.Null);
+                Assert.That(anonymousUser.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(anonymousUser.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_WithZeroValues_AcceptsZeroValues()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = 0,
+                UserName = "ZeroUser", // Cannot be empty due to validation
+                AccountId = 0,
+                IsCast = false,
+                CastId = 0,
+                CastType = "",
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(0));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("ZeroUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(0));
+                Assert.That(anonymousUser.IsCast, Is.False);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(0));
+                Assert.That(anonymousUser.CastType, Is.EqualTo(""));
+                Assert.That(anonymousUser.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(anonymousUser.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_WithMaxValues_HandlesLargeNumbers()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = int.MaxValue,
+                UserName = "MaxValueUser",
+                AccountId = int.MaxValue,
+                IsCast = true,
+                CastId = int.MaxValue,
+                CastType = "MaxValueType",
+                DateCreated = DateTime.MaxValue,
+                DateModified = DateTime.MaxValue
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("MaxValueUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(int.MaxValue));
+                Assert.That(anonymousUser.IsCast, Is.True);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(int.MaxValue));
+                Assert.That(anonymousUser.CastType, Is.EqualTo("MaxValueType"));
+                Assert.That(anonymousUser.DateCreated, Is.EqualTo(DateTime.MaxValue));
+                Assert.That(anonymousUser.DateModified, Is.EqualTo(DateTime.MaxValue));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_PropertiesCanBeModifiedAfterConstruction()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = 333,
+                UserName = "ModifiableUser",
+                AccountId = 444,
+                IsCast = false,
+                CastId = 555,
+                CastType = "InitialType",
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+            
+            // Modify properties after construction
+            anonymousUser.Id = 999;
+            anonymousUser.UserName = "ModifiedUser";
+            anonymousUser.AccountId = 888;
+            anonymousUser.IsCast = true;
+            anonymousUser.CastId = 777;
+            anonymousUser.CastType = "ModifiedType";
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(999));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("ModifiedUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(888));
+                Assert.That(anonymousUser.IsCast, Is.True);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(777));
+                Assert.That(anonymousUser.CastType, Is.EqualTo("ModifiedType"));
+                Assert.That(anonymousUser.DateModified, Is.Not.EqualTo(_testDateModified)); // Should be updated by setters
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_WithInterfaceType_WorksCorrectly()
+        {
+            // Arrange
+            IAnnonymousUserDTO dto = new AnnonymousUserDTO
+            {
+                Id = 666,
+                UserName = "InterfaceUser",
+                AccountId = 777,
+                IsCast = true,
+                CastId = 888,
+                CastType = "InterfaceType",
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(666));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("InterfaceUser"));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(777));
+                Assert.That(anonymousUser.IsCast, Is.True);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(888));
+                Assert.That(anonymousUser.CastType, Is.EqualTo("InterfaceType"));
+                Assert.That(anonymousUser.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(anonymousUser.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserDTOConstructor_OnlyMapsSpecificProperties_DoesNotSetAccount()
+        {
+            // Arrange
+            var dto = new AnnonymousUserDTO
+            {
+                Id = 999,
+                UserName = "PropertyMappingUser",
+                AccountId = 123, // This sets AccountId but not Account object
+                IsCast = false,
+                CastId = 456,
+                CastType = "TestType",
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var anonymousUser = new AnnonymousUser(dto);
+
+            // Assert - Verify that AccountId is set but Account object is not
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(123)); // AccountId is set from DTO
+                Assert.That(anonymousUser.Account, Is.Null); // Account object is not created/set
+                Assert.That(anonymousUser.Id, Is.EqualTo(999));
+                Assert.That(anonymousUser.UserName, Is.EqualTo("PropertyMappingUser"));
+                Assert.That(anonymousUser.IsCast, Is.False);
+                Assert.That(anonymousUser.CastId, Is.EqualTo(456));
+                Assert.That(anonymousUser.CastType, Is.EqualTo("TestType"));
+            });
+        }
+
+        [Test, Category("Models")]
         public void UserName_Getter_ReturnsCorrectValue()
         {
             // Arrange

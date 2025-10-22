@@ -30,10 +30,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int AccountId { get; set; } = 0;
 
         [JsonPropertyName("isCast"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
-        public bool IsCast { get; set; } = false;
+        public bool? IsCast { get; set; } = false;
 
         [JsonPropertyName("castId"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
-        public int CastId { get; set; } = 0;
+        public int? CastId { get; set; } = 0;
 
         [JsonPropertyName("castType"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? CastType { get; set; } = null;
@@ -44,5 +44,5 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion
-    }
+  }
 }

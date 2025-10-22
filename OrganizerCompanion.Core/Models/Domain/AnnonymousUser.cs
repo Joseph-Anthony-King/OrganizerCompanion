@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 
@@ -157,6 +158,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             _userName = userName;
             _account = account;
+        }
+
+        public AnnonymousUser(IAnnonymousUserDTO dto)
+        {
+            _id = dto.Id;
+            _userName = dto.UserName;
+            _accountId = dto.AccountId;
+            _isCast = dto.IsCast;
+            _castId = dto.CastId;
+            _castType = dto.CastType;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
         }
         #endregion
 
