@@ -138,6 +138,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             _feature = (Feature)feature;
             _featureId = feature.Id;
         }
+
+        public AccountFeature(
+            IFeatureDTO featureDTO,
+            int accountId)
+        {
+            _accountId = accountId;
+            _featureId = featureDTO.Id;
+        }
         #endregion
 
         #region Methods

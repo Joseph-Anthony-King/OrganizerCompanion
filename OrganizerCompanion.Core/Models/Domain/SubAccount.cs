@@ -115,12 +115,12 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime dateCreated, 
             DateTime? dateModified)
         {
-            Id = id;
-            LinkedEntityId = linkedEntityId;
+            _id = id;
+            _linkedEntityId = linkedEntityId;
             _linkedEntityType = linkedEntityType; // Set the type first
             _linkedEntity = linkedEntity; // Set the entity without triggering the setter that would override _linkedEntityType
-            AccountId = accountId;
-            Account = account;
+            _accountId = accountId;
+            _account = account;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
@@ -134,6 +134,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             LinkedEntity = linkedEntity;
             _accountId = account?.Id;
             Account = account;
+        }
+        public SubAccount(ISubAccountDTO account)
+        {
+            _id = account.Id;
+            _linkedEntityId = account.LinkedEntityId;
+            _linkedEntityType = account.LinkedEntityType;
+            _linkedEntity = account.LinkedEntity?.Cast<IDomainEntity>();
+            _accountId = account.AccountId;
+            _account = account.Account?.Cast<IAccount>();
+            _dateCreated = account.DateCreated;
+            DateModified = account.DateModified;
         }
         #endregion
 

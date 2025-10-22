@@ -163,6 +163,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             _features = features;
             _subAccounts = accounts;
         }
+
+        public Account(IAccountDTO accountDTO)
+        {
+            _id = accountDTO.Id;
+            _accountName = accountDTO.AccountName;
+            _accountNumber = accountDTO.AccountNumber;
+            _license = accountDTO.License;
+            _features = accountDTO.Features.ConvertAll(featureDTO => new AccountFeature(featureDTO, accountDTO.Id));
+            _subAccounts = accountDTO.Accounts?.ConvertAll(subAccountDTO => new SubAccount(subAccountDTO));
+            _dateCreated = accountDTO.DateCreated;
+            DateModified = accountDTO.DateModified;
+        }
         #endregion
 
         #region Methods

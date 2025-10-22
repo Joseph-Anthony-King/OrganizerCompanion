@@ -119,6 +119,220 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void FeatureDTOConstructor_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 123,
+                FeatureName = "Test Feature",
+                IsEnabled = true,
+                DateCreated = DateTime.Now,
+                DateModified = DateTime.Now
+            };
+            var accountId = 456;
+            var beforeCreation = DateTime.UtcNow;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+            var afterCreation = DateTime.UtcNow;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+                Assert.That(accountFeature.AccountId, Is.EqualTo(456));
+                Assert.That(accountFeature.Account, Is.Null); // Not set by this constructor
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(123));
+                Assert.That(accountFeature.Feature, Is.Null); // Not set by this constructor
+                Assert.That(accountFeature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(accountFeature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(accountFeature.DateModified, Is.EqualTo(default(DateTime))); // Default value
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_WithNullFeatureDTO_ThrowsNullReferenceException()
+        {
+            // Arrange
+            IFeatureDTO? featureDTO = null;
+            var accountId = 123;
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new AccountFeature(featureDTO!, accountId));
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_WithZeroAccountId_AcceptsZeroValue()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 789,
+                FeatureName = "Zero Account Feature",
+                IsEnabled = false,
+                DateCreated = DateTime.Now,
+                DateModified = null
+            };
+            var accountId = 0;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.AccountId, Is.EqualTo(0));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(789));
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+                Assert.That(accountFeature.Account, Is.Null);
+                Assert.That(accountFeature.Feature, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_WithNegativeAccountId_AcceptsNegativeValue()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 555,
+                FeatureName = "Negative Account Feature",
+                IsEnabled = true,
+                DateCreated = DateTime.Now,
+                DateModified = DateTime.Now
+            };
+            var accountId = -1;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.AccountId, Is.EqualTo(-1));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(555));
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_WithMaxValues_HandlesLargeNumbers()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = int.MaxValue,
+                FeatureName = "Max Value Feature",
+                IsEnabled = true,
+                DateCreated = DateTime.Now,
+                DateModified = DateTime.Now
+            };
+            var accountId = int.MaxValue;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.AccountId, Is.EqualTo(int.MaxValue));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(int.MaxValue));
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_PropertiesCanBeModifiedAfterConstruction()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 111,
+                FeatureName = "Modifiable Feature",
+                IsEnabled = false,
+                DateCreated = DateTime.Now,
+                DateModified = DateTime.Now
+            };
+            var accountId = 222;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+            
+            // Modify properties after construction
+            accountFeature.Id = 999;
+            accountFeature.AccountId = 888;
+            accountFeature.FeatureId = 777;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Id, Is.EqualTo(999));
+                Assert.That(accountFeature.AccountId, Is.EqualTo(888));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(777));
+                Assert.That(accountFeature.DateModified, Is.Not.EqualTo(default(DateTime))); // Should be updated by setters
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_OnlyUsesFeatureDTOId_IgnoresOtherFeatureProperties()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 333,
+                FeatureName = "This name should not be used",
+                IsEnabled = true,
+                DateCreated = DateTime.Now.AddDays(-1),
+                DateModified = DateTime.Now.AddHours(-1)
+            };
+            var accountId = 444;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+
+            // Assert - Only the ID should be used, other FeatureDTO properties are ignored
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.AccountId, Is.EqualTo(444));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(333));
+                Assert.That(accountFeature.Feature, Is.Null); // No Feature object created
+                Assert.That(accountFeature.Account, Is.Null); // No Account object created
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+                Assert.That(accountFeature.DateCreated, Is.Not.EqualTo(featureDTO.DateCreated)); // Uses current time
+                Assert.That(accountFeature.DateModified, Is.EqualTo(default(DateTime))); // Default value
+            });
+        }
+
+        [Test, Category("Models")]
+        public void FeatureDTOConstructor_WithIFeatureDTOInterface_WorksCorrectly()
+        {
+            // Arrange
+            IFeatureDTO featureDTO = new FeatureDTO
+            {
+                Id = 666,
+                FeatureName = "Interface Feature",
+                IsEnabled = false,
+                DateCreated = DateTime.Now,
+                DateModified = null
+            };
+            var accountId = 777;
+
+            // Act
+            var accountFeature = new AccountFeature(featureDTO, accountId);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.AccountId, Is.EqualTo(777));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(666));
+                Assert.That(accountFeature.Id, Is.EqualTo(0));
+                Assert.That(accountFeature.Account, Is.Null);
+                Assert.That(accountFeature.Feature, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
         public void Id_CanBeSetAndRetrieved()
         {
             // Arrange

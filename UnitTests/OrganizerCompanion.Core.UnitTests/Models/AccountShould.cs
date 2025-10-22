@@ -438,6 +438,300 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void AccountDTOConstructor_SetsAllPropertiesCorrectly()
+        {
+            // Arrange
+            var featureDTOs = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Test Feature", IsEnabled = true, DateCreated = _testDateCreated, DateModified = _testDateModified }
+            };
+            var subAccountDTOs = new List<SubAccountDTO>
+            {
+                new() { Id = 10, LinkedEntityId = 100, AccountId = 123 }
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 123,
+                AccountName = "Test Account",
+                AccountNumber = "ACC123",
+                License = Guid.NewGuid().ToString(),
+                Features = featureDTOs,
+                Accounts = subAccountDTOs,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(123));
+                Assert.That(account.AccountName, Is.EqualTo("Test Account"));
+                Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
+                Assert.That(account.License, Is.EqualTo(accountDTO.License));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(123));
+                Assert.That(account.Features[0].FeatureId, Is.EqualTo(1));
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(1));
+                Assert.That(account.Accounts![0].Id, Is.EqualTo(10));
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_WithNullAccounts_SetsAccountsToNull()
+        {
+            // Arrange
+            var featureDTOs = new List<FeatureDTO>
+            {
+                new() { Id = 2, FeatureName = "Another Feature", IsEnabled = false, DateCreated = _testDateCreated, DateModified = null }
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 456,
+                AccountName = "No Sub Accounts",
+                AccountNumber = "ACC456",
+                License = Guid.NewGuid().ToString(),
+                Features = featureDTOs,
+                Accounts = null, // Explicitly null
+                DateCreated = _testDateCreated,
+                DateModified = null
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(456));
+                Assert.That(account.AccountName, Is.EqualTo("No Sub Accounts"));
+                Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
+                Assert.That(account.License, Is.EqualTo(accountDTO.License));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(456));
+                Assert.That(account.Accounts, Is.Null);
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_WithEmptyCollections_SetsEmptyLists()
+        {
+            // Arrange
+            var accountDTO = new AccountDTO
+            {
+                Id = 789,
+                AccountName = "Empty Collections",
+                AccountNumber = "ACC789",
+                License = Guid.NewGuid().ToString(),
+                Features = [], // Empty list
+                Accounts = [], // Empty list
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(789));
+                Assert.That(account.AccountName, Is.EqualTo("Empty Collections"));
+                Assert.That(account.AccountNumber, Is.EqualTo("ACC789"));
+                Assert.That(account.License, Is.EqualTo(accountDTO.License));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Is.Empty);
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Is.Empty);
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_WithNullStringProperties_AcceptsNullValues()
+        {
+            // Arrange
+            var featureDTOs = new List<FeatureDTO>
+            {
+                new() { Id = 3, FeatureName = "Null Test Feature", IsEnabled = true, DateCreated = _testDateCreated, DateModified = _testDateModified }
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 111,
+                AccountName = null, // Null value
+                AccountNumber = null, // Null value
+                License = null, // Null value
+                Features = featureDTOs,
+                Accounts = null,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(111));
+                Assert.That(account.AccountName, Is.Null);
+                Assert.That(account.AccountNumber, Is.Null);
+                Assert.That(account.License, Is.Null);
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(111));
+                Assert.That(account.Accounts, Is.Null);
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_WithMultipleFeaturesAndAccounts_MapsCorrectly()
+        {
+            // Arrange
+            var featureDTOs = new List<FeatureDTO>
+            {
+                new() { Id = 10, FeatureName = "Feature 1", IsEnabled = true, DateCreated = _testDateCreated, DateModified = _testDateModified },
+                new() { Id = 20, FeatureName = "Feature 2", IsEnabled = false, DateCreated = _testDateCreated, DateModified = null },
+                new() { Id = 30, FeatureName = "Feature 3", IsEnabled = true, DateCreated = _testDateCreated, DateModified = _testDateModified }
+            };
+            var subAccountDTOs = new List<SubAccountDTO>
+            {
+                new() { Id = 100, LinkedEntityId = 200, AccountId = 999 },
+                new() { Id = 200, LinkedEntityId = 300, AccountId = 999 }
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 999,
+                AccountName = "Multi Test Account",
+                AccountNumber = "ACC999",
+                License = Guid.NewGuid().ToString(),
+                Features = featureDTOs,
+                Accounts = subAccountDTOs,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(999));
+                Assert.That(account.AccountName, Is.EqualTo("Multi Test Account"));
+                Assert.That(account.AccountNumber, Is.EqualTo("ACC999"));
+                Assert.That(account.License, Is.EqualTo(accountDTO.License));
+                
+                // Verify Features mapping
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(3));
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(999));
+                Assert.That(account.Features[0].FeatureId, Is.EqualTo(10));
+                Assert.That(account.Features[1].AccountId, Is.EqualTo(999));
+                Assert.That(account.Features[1].FeatureId, Is.EqualTo(20));
+                Assert.That(account.Features[2].AccountId, Is.EqualTo(999));
+                Assert.That(account.Features[2].FeatureId, Is.EqualTo(30));
+                
+                // Verify Accounts mapping
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(2));
+                Assert.That(account.Accounts![0].Id, Is.EqualTo(100));
+                Assert.That(account.Accounts![1].Id, Is.EqualTo(200));
+                
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_WithZeroId_AcceptsZeroValue()
+        {
+            // Arrange
+            var featureDTOs = new List<FeatureDTO>
+            {
+                new() { Id = 1, FeatureName = "Zero ID Test", IsEnabled = true, DateCreated = _testDateCreated, DateModified = _testDateModified }
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 0, // Zero ID
+                AccountName = "Zero ID Account",
+                AccountNumber = "ACC000",
+                License = Guid.NewGuid().ToString(),
+                Features = featureDTOs,
+                Accounts = null,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Id, Is.EqualTo(0));
+                Assert.That(account.AccountName, Is.EqualTo("Zero ID Account"));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(0)); // Should use the DTO's Id
+                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
+                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AccountDTOConstructor_ConvertsFeaturesDTOsToAccountFeatures()
+        {
+            // Arrange
+            var featureDTO = new FeatureDTO
+            {
+                Id = 42,
+                FeatureName = "Conversion Test Feature",
+                IsEnabled = true,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+            var accountDTO = new AccountDTO
+            {
+                Id = 555,
+                AccountName = "Conversion Test",
+                AccountNumber = "CONV555",
+                License = Guid.NewGuid().ToString(),
+                Features = [featureDTO],
+                Accounts = null,
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var account = new Account(accountDTO);
+
+            // Assert - Verify the AccountFeature was created properly from FeatureDTO
+            Assert.Multiple(() =>
+            {
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                
+                var accountFeature = account.Features[0];
+                Assert.That(accountFeature, Is.TypeOf<AccountFeature>());
+                Assert.That(accountFeature.AccountId, Is.EqualTo(555)); // From accountDTO.Id
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(42)); // From featureDTO.Id
+            });
+        }
+
+        [Test, Category("Models")]
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
             // Arrange
