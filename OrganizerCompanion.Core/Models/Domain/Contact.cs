@@ -376,6 +376,51 @@ namespace OrganizerCompanion.Core.Models.Domain
             _linkedEntity = linkedEntity;
             _linkedEntityType = linkedEntityType;
         }
+
+        public Contact(IContactDTO dto)
+        {
+            _id = dto.Id;
+            _firstName = dto.FirstName;
+            _middleName = dto.MiddleName;
+            _lastName = dto.LastName;
+            _userName = dto.UserName;
+            _pronouns = dto.Pronouns;
+            _birthDate = dto.BirthDate;
+            _deceasedDate = dto.DeceasedDate;
+            _joinedDate = dto.JoinedDate;
+            _isActive = dto.IsActive;
+            _isDeceased = dto.IsDeceased;
+            _isAdmin = dto.IsAdmin;
+            _isSuperUser = dto.IsSuperUser;
+            
+            // Access collections through the interface properties
+            var emails = ((Interfaces.Type.IPerson)dto).Emails;
+            var phoneNumbers = ((Interfaces.Type.IPerson)dto).PhoneNumbers;
+            var addresses = ((Interfaces.Type.IPerson)dto).Addresses;
+            
+            _emails = emails?.ConvertAll(emailInterface => emailInterface switch
+            {
+                EmailDTO emailDto => new Email(emailDto),
+                _ => throw new InvalidOperationException($"Unknown email type: {emailInterface.GetType().Name}.")
+            }) ?? [];
+            
+            _phoneNumbers = phoneNumbers?.ConvertAll(phoneInterface => phoneInterface switch
+            {
+                PhoneNumberDTO phoneDto => new PhoneNumber(phoneDto),
+                _ => throw new InvalidOperationException($"Unknown phone number type: {phoneInterface.GetType().Name}.")
+            }) ?? [];
+
+            _addresses = addresses?.ConvertAll<IAddress>(addressInterface => addressInterface switch
+            {
+                CAAddressDTO caAddressDto => new CAAddress(caAddressDto),
+                MXAddressDTO mxAddressDto => new MXAddress(mxAddressDto),
+                USAddressDTO usAddressDto => new USAddress(usAddressDto),
+                _ => throw new InvalidOperationException($"Unknown address type: {addressInterface.GetType().Name}.")
+            }) ?? [];
+            
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods

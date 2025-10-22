@@ -2,7 +2,7 @@
 {
     internal interface IPhoneNumber : IDomainEntity, OrganizerCompanion.Core.Interfaces.Type.IPhoneNumber
     {
-        int LinkedEntityId { get; set; }
+        int? LinkedEntityId { get; }
         IDomainEntity? LinkedEntity { get; set; }
         string? LinkedEntityType { get; }
     }

@@ -145,6 +145,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
         }
+
+        public Email(IEmailDTO dto, IDomainEntity? linkedEntity = null)
+        {
+            _id = dto.Id;
+            _emailAddress = dto.EmailAddress;
+            _type = dto.Type;
+            _isPrimary = dto.IsPrimary;
+            _linkedEntity = linkedEntity;
+            _isConfirmed = dto.IsConfirmed;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods

@@ -86,9 +86,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone, 
                 type, 
                 country,
-                linkedEntityId,
                 linkedEntity,
-                linkedEntityType,
                 dateCreated, 
                 dateModified);
 
@@ -265,7 +263,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var specificDate = DateTime.Now.AddDays(-10);
 
             // Act
-            var phoneNumber = new PhoneNumber(1, "555-1234", OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Countries.UnitedStates, 0, null, null, specificDate, null);
+            var phoneNumber = new PhoneNumber(
+                1, 
+                "555-1234", 
+                OrganizerCompanion.Core.Enums.Types.Home, 
+                OrganizerCompanion.Core.Enums.Countries.UnitedStates, 
+                null, 
+                specificDate, 
+                null);
 
             // Assert
             Assert.That(phoneNumber.DateCreated, Is.EqualTo(specificDate));
@@ -342,9 +347,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
-                linkedEntityId: 456,
                 linkedEntity: null,
-                linkedEntityType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -371,9 +374,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone: "+1-555-123-4567",
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
-                linkedEntityId: 789,
                 linkedEntity: null,
-                linkedEntityType: null,
                 dateCreated: _testDateCreated,
                 dateModified: _testDateModified
             );
@@ -520,14 +521,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntityId = 456;
-            var fifthModified = _sut.DateModified;
-            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
-
-            System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
             var sixthModified = _sut.DateModified;
-            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
+            Assert.That(sixthModified, Is.GreaterThan(fourthModified));
         }
 
         [Test, Category("Models")]
@@ -539,7 +535,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Phone = "+1-800-CALL-NOW";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Billing;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
-            _sut.LinkedEntityId = 999;
             _sut.LinkedEntity = mockEntity;
             _sut.DateModified = DateTime.Now;
 
@@ -711,7 +706,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             DateTime? dateModified = null;
 
             // Act
-            var phoneNumber = new PhoneNumber(id, phone, type, country, linkedEntityId, null, null, dateCreated, dateModified);
+            var phoneNumber = new PhoneNumber(
+                id, 
+                phone, 
+                type, 
+                country, 
+                null, 
+                dateCreated, 
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -720,7 +722,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
                 Assert.That(phoneNumber.Type, Is.EqualTo(type));
                 Assert.That(phoneNumber.Country, Is.EqualTo(country));
-                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(phoneNumber.LinkedEntityId, Is.Null);
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityType, Is.Null);
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
@@ -738,12 +740,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
             var linkedEntityId = 123;
             var mockEntity = new MockDomainEntity { Id = 123 };
-            var linkedEntityType = "TestType";
             var dateCreated = DateTime.Now.AddDays(-1);
             var dateModified = DateTime.Now.AddHours(-1);
             
             // Act - Test constructor with all parameters
-            var phoneNumber = new PhoneNumber(id, phone, type, country, linkedEntityId, mockEntity, linkedEntityType, dateCreated, dateModified);
+            var phoneNumber = new PhoneNumber(
+                id, 
+                phone, 
+                type, 
+                country, 
+                mockEntity, 
+                dateCreated, 
+                dateModified);
 
             // Assert
             Assert.Multiple(() =>
@@ -754,28 +762,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Country, Is.EqualTo(country));
                 Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(mockEntity));
-                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(linkedEntityType));
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
                 Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityId_WhenSet_ShouldUpdateDateModified()
-        {
-            // Arrange
-            var newLinkedEntityId = 999;
-            var beforeSet = DateTime.Now;
-
-            // Act
-            _sut.LinkedEntityId = newLinkedEntityId;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntityId, Is.EqualTo(newLinkedEntityId));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -833,36 +822,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_WithNegativeValue_ShouldNotBeAllowed()
-        {
-            // Arrange, Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                _sut.LinkedEntityId = -1;
-            });
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityId_WithMaxValue_ShouldBeAllowed()
-        {
-            // Act
-            _sut.LinkedEntityId = int.MaxValue;
-
-            // Assert
-            Assert.That(_sut.LinkedEntityId, Is.EqualTo(int.MaxValue));
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityId_WithMinValue_ShouldNotBeAllowed()
-        {
-            // Arrange, Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
-            {
-                _sut.LinkedEntityId = int.MinValue;
-            });
-        }
-
-        [Test, Category("Models")]
         public void JsonSerialization_WithLinkedEntityProperties_ShouldIncludeAllFields()
         {
             // Arrange
@@ -870,7 +829,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
-            _sut.LinkedEntityId = 789;
             _sut.LinkedEntity = mockEntity;
 
             // Act
@@ -895,7 +853,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
-            _sut.LinkedEntityId = 0;
             _sut.LinkedEntity = null;
 
             // Act
@@ -905,7 +862,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
-                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+                Assert.That(json, Does.Contain("\"linkedEntityId\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
                 
@@ -1025,9 +982,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone: null,
                 type: null,
                 country: null,
-                linkedEntityId: 0,
                 linkedEntity: null,
-                linkedEntityType: null,
                 dateCreated: DateTime.Now,
                 dateModified: null
             );
@@ -1039,7 +994,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Phone, Is.Null);
                 Assert.That(phoneNumber.Type, Is.Null);
                 Assert.That(phoneNumber.Country, Is.Null);
-                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(phoneNumber.LinkedEntityId, Is.Null);
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
                 Assert.That(phoneNumber.LinkedEntityType, Is.Null);
             });
@@ -1054,9 +1009,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 phone: string.Empty,
                 type: OrganizerCompanion.Core.Enums.Types.Other,
                 country: OrganizerCompanion.Core.Enums.Countries.UnitedStates,
-                linkedEntityId: 0,
                 linkedEntity: null,
-                linkedEntityType: string.Empty,
                 dateCreated: DateTime.Now,
                 dateModified: DateTime.Now
             );
@@ -1068,9 +1021,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(phoneNumber.Phone, Is.EqualTo(string.Empty));
                 Assert.That(phoneNumber.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
                 Assert.That(phoneNumber.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedStates));
-                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(phoneNumber.LinkedEntityId, Is.Null);
                 Assert.That(phoneNumber.LinkedEntity, Is.Null);
-                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo(string.Empty));
+                Assert.That(phoneNumber.LinkedEntityType, Is.Null);
             });
         }
 
@@ -1128,14 +1081,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntityId = 456;
-            var fifthModified = _sut.DateModified;
-            Assert.That(fifthModified, Is.GreaterThan(fourthModified));
-
-            System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity { Id = 789 };
             var sixthModified = _sut.DateModified;
-            Assert.That(sixthModified, Is.GreaterThan(fifthModified));
+            Assert.That(sixthModified, Is.GreaterThan(fourthModified));
         }
 
         #region Cast Method Tests

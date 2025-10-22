@@ -32,6 +32,9 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [Required, JsonPropertyName("isPrimary")]
         public bool IsPrimary { get; set; } = false;
+        
+        [Required, JsonPropertyName("isConfirmed")]
+        public bool IsConfirmed { get; set; } = false;
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
@@ -39,5 +42,5 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("dateModified")]
         public DateTime? DateModified { get; set; } = null;
         #endregion
-    }
+  }
 }

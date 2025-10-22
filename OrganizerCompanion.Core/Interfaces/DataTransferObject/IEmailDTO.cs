@@ -4,5 +4,6 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
     internal interface IEmailDTO : IDomainEntity, Type.IEmail
     {
+        bool IsConfirmed { get; set; }
     }
 }

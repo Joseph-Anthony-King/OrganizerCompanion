@@ -20,9 +20,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _phone = null;
         private Types? _type = null;
         private Countries? _country = null;
-        private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
-        private string? _linkedEntityType = null;
         private readonly DateTime _dateCreated = DateTime.Now;
         #endregion
 
@@ -74,17 +72,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
-        public int LinkedEntityId
-        {
-            get => _linkedEntityId;
-            set
-            {
-                if (value < 0)
-                    throw new ArgumentOutOfRangeException(nameof(LinkedEntityId), "Linked Entity Id must be a non-negative number.");
-                _linkedEntityId = value;
-                DateModified = DateTime.Now;
-            }
-        }
+        public int? LinkedEntityId => _linkedEntity?.Id;
 
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
@@ -93,13 +81,12 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                _linkedEntityType = value?.GetType().Name;
                 DateModified = DateTime.Now;
             }
         }
 
         [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntityType;
+        public string? LinkedEntityType => _linkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated => _dateCreated;
@@ -117,9 +104,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? phone,
             Types? type,
             Countries? country,
-            int linkedEntityId,
             IDomainEntity? linkedEntity,
-            string? linkedEntityType,
             DateTime dateCreated,
             DateTime? dateModified)
         {
@@ -127,11 +112,20 @@ namespace OrganizerCompanion.Core.Models.Domain
             _phone = phone;
             _type = type;
             _country = country;
-            _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
-            _linkedEntityType = linkedEntityType;
             _dateCreated = dateCreated;
             DateModified = dateModified;
+        }
+
+        public PhoneNumber(IPhoneNumberDTO dto, IDomainEntity? linkedEntity = null)
+        {
+            _id = dto.Id;
+            _phone = dto.Phone;
+            _type = dto.Type;
+            _country = dto.Country;
+            _linkedEntity = linkedEntity;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
         }
         #endregion
 

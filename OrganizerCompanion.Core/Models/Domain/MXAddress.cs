@@ -193,6 +193,22 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public MXAddress(IMXAddressDTO dto, IDomainEntity? linkedEntity = null)
+        {
+            _id = dto.Id;
+            _street = dto.Street;
+            _neighborhood = dto.Neighborhood;
+            _postalCode = dto.PostalCode;
+            _city = dto.City;
+            _state = dto.State;
+            _country = dto.Country;
+            _type = dto.Type;
+            _isPrimary = dto.IsPrimary;
+            _linkedEntity = linkedEntity;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods

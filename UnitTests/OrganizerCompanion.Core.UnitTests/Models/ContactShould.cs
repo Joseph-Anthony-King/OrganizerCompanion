@@ -457,6 +457,273 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             }
         }
 
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithCompleteDTO_SetsAllPropertiesCorrectly()
+        {
+            // Arrange
+            var contactDto = new ContactDTO
+            {
+                Id = 100,
+                FirstName = "Jane",
+                MiddleName = "Marie",
+                LastName = "Doe",
+                UserName = "jane.doe",
+                Pronouns = Pronouns.SheHer,
+                BirthDate = new DateTime(1990, 5, 15),
+                DeceasedDate = new DateTime(2023, 10, 1),
+                JoinedDate = new DateTime(2020, 3, 1),
+                IsActive = true,
+                IsDeceased = true,
+                IsAdmin = false,
+                IsSuperUser = true,
+                Emails = [new EmailDTO { Id = 1, EmailAddress = "jane@example.com", Type = OrganizerCompanion.Core.Enums.Types.Home }],
+                PhoneNumbers = [new PhoneNumberDTO { Id = 2, Phone = "555-9876", Type = OrganizerCompanion.Core.Enums.Types.Work }],
+                Addresses = [],
+                DateCreated = _testDateCreated,
+                DateModified = _testDateModified
+            };
+
+            // Act
+            var contact = new Contact(contactDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(100));
+                Assert.That(contact.FirstName, Is.EqualTo("Jane"));
+                Assert.That(contact.MiddleName, Is.EqualTo("Marie"));
+                Assert.That(contact.LastName, Is.EqualTo("Doe"));
+                Assert.That(contact.FullName, Is.EqualTo("Jane Marie Doe"));
+                Assert.That(contact.UserName, Is.EqualTo("jane.doe"));
+                Assert.That(contact.Pronouns, Is.EqualTo(Pronouns.SheHer));
+                Assert.That(contact.BirthDate, Is.EqualTo(new DateTime(1990, 5, 15)));
+                Assert.That(contact.DeceasedDate, Is.EqualTo(new DateTime(2023, 10, 1)));
+                Assert.That(contact.JoinedDate, Is.EqualTo(new DateTime(2020, 3, 1)));
+                Assert.That(contact.IsActive, Is.True);
+                Assert.That(contact.IsDeceased, Is.True);
+                Assert.That(contact.IsAdmin, Is.False);
+                Assert.That(contact.IsSuperUser, Is.True);
+                Assert.That(contact.Emails, Has.Count.EqualTo(1));
+                Assert.That(contact.Emails[0].EmailAddress, Is.EqualTo("jane@example.com"));
+                Assert.That(contact.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(contact.PhoneNumbers[0].Phone, Is.EqualTo("555-9876"));
+                Assert.That(contact.Addresses, Is.Empty);
+                Assert.That(contact.DateModified, Is.EqualTo(_testDateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithMinimalDTO_SetsBasicPropertiesCorrectly()
+        {
+            // Arrange
+            var contactDto = new ContactDTO
+            {
+                Id = 50,
+                FirstName = "John",
+                LastName = "Smith",
+                Pronouns = Pronouns.HeHim,
+                BirthDate = new DateTime(1985, 12, 25),
+                JoinedDate = new DateTime(2021, 1, 15),
+                IsActive = false,
+                IsAdmin = true,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = []
+            };
+
+            // Act
+            var contact = new Contact(contactDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(50));
+                Assert.That(contact.FirstName, Is.EqualTo("John"));
+                Assert.That(contact.MiddleName, Is.Null);
+                Assert.That(contact.LastName, Is.EqualTo("Smith"));
+                Assert.That(contact.FullName, Is.EqualTo("John Smith"));
+                Assert.That(contact.UserName, Is.Null);
+                Assert.That(contact.Pronouns, Is.EqualTo(Pronouns.HeHim));
+                Assert.That(contact.BirthDate, Is.EqualTo(new DateTime(1985, 12, 25)));
+                Assert.That(contact.DeceasedDate, Is.Null);
+                Assert.That(contact.JoinedDate, Is.EqualTo(new DateTime(2021, 1, 15)));
+                Assert.That(contact.IsActive, Is.False);
+                Assert.That(contact.IsDeceased, Is.Null);
+                Assert.That(contact.IsAdmin, Is.True);
+                Assert.That(contact.IsSuperUser, Is.Null);
+                Assert.That(contact.Emails, Is.Empty);
+                Assert.That(contact.PhoneNumbers, Is.Empty);
+                Assert.That(contact.Addresses, Is.Empty);
+                Assert.That(contact.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithNullProperties_HandlesMixedNullValues()
+        {
+            // Arrange
+            var contactDto = new ContactDTO
+            {
+                Id = 25,
+                FirstName = "Alice",
+                MiddleName = null,
+                LastName = "Johnson",
+                UserName = null,
+                Pronouns = null,
+                BirthDate = null,
+                DeceasedDate = null,
+                JoinedDate = null,
+                IsActive = null,
+                IsDeceased = null,
+                IsAdmin = null,
+                IsSuperUser = null,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                DateModified = null
+            };
+
+            // Act
+            var contact = new Contact(contactDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(25));
+                Assert.That(contact.FirstName, Is.EqualTo("Alice"));
+                Assert.That(contact.MiddleName, Is.Null);
+                Assert.That(contact.LastName, Is.EqualTo("Johnson"));
+                Assert.That(contact.FullName, Is.EqualTo("Alice Johnson"));
+                Assert.That(contact.UserName, Is.Null);
+                Assert.That(contact.Pronouns, Is.Null);
+                Assert.That(contact.BirthDate, Is.Null);
+                Assert.That(contact.DeceasedDate, Is.Null);
+                Assert.That(contact.JoinedDate, Is.Null);
+                Assert.That(contact.IsActive, Is.Null);
+                Assert.That(contact.IsDeceased, Is.Null);
+                Assert.That(contact.IsAdmin, Is.Null);
+                Assert.That(contact.IsSuperUser, Is.Null);
+                Assert.That(contact.Emails, Is.Empty);
+                Assert.That(contact.PhoneNumbers, Is.Empty);
+                Assert.That(contact.Addresses, Is.Empty);
+                Assert.That(contact.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithMultipleEmailsAndPhones_CreatesCorrectCollections()
+        {
+            // Arrange
+            var contactDto = new ContactDTO
+            {
+                Id = 125,
+                FirstName = "Sarah",
+                LastName = "Davis",
+                Pronouns = Pronouns.SheHer,
+                BirthDate = new DateTime(1988, 4, 22),
+                JoinedDate = new DateTime(2022, 7, 10),
+                IsActive = true,
+                IsAdmin = false,
+                Emails = [
+                    new EmailDTO { Id = 1, EmailAddress = "sarah.personal@example.com", Type = OrganizerCompanion.Core.Enums.Types.Home },
+                    new EmailDTO { Id = 2, EmailAddress = "sarah.work@company.com", Type = OrganizerCompanion.Core.Enums.Types.Work },
+                    new EmailDTO { Id = 3, EmailAddress = "sarah.billing@example.com", Type = OrganizerCompanion.Core.Enums.Types.Billing }
+                ],
+                PhoneNumbers = [
+                    new PhoneNumberDTO { Id = 1, Phone = "555-1111", Type = OrganizerCompanion.Core.Enums.Types.Home },
+                    new PhoneNumberDTO { Id = 2, Phone = "555-2222", Type = OrganizerCompanion.Core.Enums.Types.Work },
+                    new PhoneNumberDTO { Id = 3, Phone = "555-3333", Type = OrganizerCompanion.Core.Enums.Types.Mobil }
+                ],
+                Addresses = []
+            };
+
+            // Act
+            var contact = new Contact(contactDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Emails, Has.Count.EqualTo(3));
+                Assert.That(contact.Emails[0].EmailAddress, Is.EqualTo("sarah.personal@example.com"));
+                Assert.That(contact.Emails[1].EmailAddress, Is.EqualTo("sarah.work@company.com"));
+                Assert.That(contact.Emails[2].EmailAddress, Is.EqualTo("sarah.billing@example.com"));
+                
+                Assert.That(contact.PhoneNumbers, Has.Count.EqualTo(3));
+                Assert.That(contact.PhoneNumbers[0].Phone, Is.EqualTo("555-1111"));
+                Assert.That(contact.PhoneNumbers[1].Phone, Is.EqualTo("555-2222"));
+                Assert.That(contact.PhoneNumbers[2].Phone, Is.EqualTo("555-3333"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithUnknownEmailType_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var mockContactDto = new MockContactDTOWithInvalidEmail();
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidOperationException>(() => new Contact(mockContactDto));
+            Assert.That(ex.Message, Does.Contain("Unknown email type"));
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithUnknownPhoneNumberType_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var mockContactDto = new MockContactDTOWithInvalidPhoneNumber();
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidOperationException>(() => new Contact(mockContactDto));
+            Assert.That(ex.Message, Does.Contain("Unknown phone number type"));
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_WithUnknownAddressType_ThrowsInvalidOperationException()
+        {
+            // Arrange
+            var mockContactDto = new MockContactDTOWithInvalidAddress();
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidOperationException>(() => new Contact(mockContactDto));
+            Assert.That(ex.Message, Does.Contain("Unknown address type"));
+        }
+
+        [Test, Category("Models")]
+        public void IContactDTOConstructor_SetsDatesCorrectly()
+        {
+            // Arrange
+            var specificDateCreated = new DateTime(2023, 1, 1, 10, 0, 0);
+            var specificDateModified = new DateTime(2023, 6, 15, 14, 30, 0);
+            
+            var contactDto = new ContactDTO
+            {
+                Id = 200,
+                FirstName = "TimeTester",
+                LastName = "User",
+                Pronouns = Pronouns.TheyThem,
+                BirthDate = new DateTime(1990, 1, 1),
+                JoinedDate = new DateTime(2020, 1, 1),
+                IsActive = true,
+                IsAdmin = false,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                DateCreated = specificDateCreated,
+                DateModified = specificDateModified
+            };
+
+            // Act
+            var contact = new Contact(contactDto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                // DateCreated is set during construction and should be close to DateTime.Now, not copied from DTO
+                Assert.That(contact.DateCreated, Is.EqualTo(specificDateCreated));
+                Assert.That(contact.DateModified, Is.EqualTo(specificDateModified));
+            });
+        }
+
         #endregion
 
         #region Property Tests
@@ -2038,6 +2305,159 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Test exception scenarios
             Assert.Throws<InvalidCastException>(() => defaultContact.Cast<MockDomainEntity>());
+        }
+
+        #endregion
+
+        #region Mock Classes for Testing
+
+        // Mock ContactDTO with invalid email type for testing error handling
+        private class MockContactDTOWithInvalidEmail : IContactDTO
+        {
+            public int Id { get; set; } = 1;
+            public string? FirstName { get; set; } = "Test";
+            public string? MiddleName { get; set; } = null;
+            public string? LastName { get; set; } = "User";
+            public string? FullName => $"{FirstName} {LastName}";
+            public Pronouns? Pronouns { get; set; } = OrganizerCompanion.Core.Enums.Pronouns.HeHim;
+            public DateTime? BirthDate { get; set; } = new DateTime(1990, 1, 1);
+            public DateTime? DeceasedDate { get; set; } = null;
+            public DateTime? JoinedDate { get; set; } = new DateTime(2020, 1, 1);
+            public string? UserName { get; set; } = "testuser";
+            public bool? IsActive { get; set; } = true;
+            public bool? IsDeceased { get; set; } = false;
+            public bool? IsAdmin { get; set; } = false;
+            public bool? IsSuperUser { get; set; } = false;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = null;
+
+            List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
+            {
+                get => [new MockInvalidEmail()];
+                set { }
+            }
+
+            List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
+            {
+                get => [];
+                set { }
+            }
+
+            List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
+            {
+                get => [];
+                set { }
+            }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => throw new NotImplementedException();
+        }
+
+        // Mock ContactDTO with invalid phone number type for testing error handling
+        private class MockContactDTOWithInvalidPhoneNumber : IContactDTO
+        {
+            public int Id { get; set; } = 1;
+            public string? FirstName { get; set; } = "Test";
+            public string? MiddleName { get; set; } = null;
+            public string? LastName { get; set; } = "User";
+            public string? FullName => $"{FirstName} {LastName}";
+            public Pronouns? Pronouns { get; set; } = OrganizerCompanion.Core.Enums.Pronouns.HeHim;
+            public DateTime? BirthDate { get; set; } = new DateTime(1990, 1, 1);
+            public DateTime? DeceasedDate { get; set; } = null;
+            public DateTime? JoinedDate { get; set; } = new DateTime(2020, 1, 1);
+            public string? UserName { get; set; } = "testuser";
+            public bool? IsActive { get; set; } = true;
+            public bool? IsDeceased { get; set; } = false;
+            public bool? IsAdmin { get; set; } = false;
+            public bool? IsSuperUser { get; set; } = false;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = null;
+
+            List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
+            {
+                get => [];
+                set { }
+            }
+
+            List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
+            {
+                get => [new MockInvalidPhoneNumber()];
+                set { }
+            }
+
+            List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
+            {
+                get => [];
+                set { }
+            }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => throw new NotImplementedException();
+        }
+
+        // Mock ContactDTO with invalid address type for testing error handling
+        private class MockContactDTOWithInvalidAddress : IContactDTO
+        {
+            public int Id { get; set; } = 1;
+            public string? FirstName { get; set; } = "Test";
+            public string? MiddleName { get; set; } = null;
+            public string? LastName { get; set; } = "User";
+            public string? FullName => $"{FirstName} {LastName}";
+            public Pronouns? Pronouns { get; set; } = OrganizerCompanion.Core.Enums.Pronouns.HeHim;
+            public DateTime? BirthDate { get; set; } = new DateTime(1990, 1, 1);
+            public DateTime? DeceasedDate { get; set; } = null;
+            public DateTime? JoinedDate { get; set; } = new DateTime(2020, 1, 1);
+            public string? UserName { get; set; } = "testuser";
+            public bool? IsActive { get; set; } = true;
+            public bool? IsDeceased { get; set; } = false;
+            public bool? IsAdmin { get; set; } = false;
+            public bool? IsSuperUser { get; set; } = false;
+            public DateTime DateCreated { get; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = null;
+
+            List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
+            {
+                get => [];
+                set { }
+            }
+
+            List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
+            {
+                get => [];
+                set { }
+            }
+
+            List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses
+            {
+                get => [new MockInvalidAddress()];
+                set { }
+            }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => throw new NotImplementedException();
+        }
+
+        // Mock invalid email that is not EmailDTO
+        private class MockInvalidEmail : Interfaces.Type.IEmail
+        {
+            public string? EmailAddress { get; set; } = "invalid@test.com";
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
+            public bool IsPrimary { get; set; } = false;
+        }
+
+        // Mock invalid phone number that is not PhoneNumberDTO
+        private class MockInvalidPhoneNumber : Interfaces.Type.IPhoneNumber
+        {
+            public string? Phone { get; set; } = "555-0000";
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
+            public Countries? Country { get; set; } = Countries.UnitedStates;
+        }
+
+        // Mock invalid address that is not a known AddressDTO type
+        private class MockInvalidAddress : Interfaces.Type.IAddress
+        {
+            public OrganizerCompanion.Core.Enums.Types? Type { get; set; } = OrganizerCompanion.Core.Enums.Types.Home;
+            public bool IsPrimary { get; set; } = false;
         }
 
         #endregion
