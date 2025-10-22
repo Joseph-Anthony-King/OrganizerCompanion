@@ -117,7 +117,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public AccountFeature(
             int id,
-            int accountId, 
+            int accountId,
             int featureId,
             DateTime dateCreated,
             DateTime? dateModified)
@@ -127,6 +127,16 @@ namespace OrganizerCompanion.Core.Models.Domain
             _featureId = featureId;
             _dateCreated = dateCreated;
             DateModified = dateModified;
+        }
+        
+        public AccountFeature(
+            IAccount account,
+            IFeature feature)
+        {
+            _account = (Account)account;
+            _accountId = account.Id;
+            _feature = (Feature)feature;
+            _featureId = feature.Id;
         }
         #endregion
 

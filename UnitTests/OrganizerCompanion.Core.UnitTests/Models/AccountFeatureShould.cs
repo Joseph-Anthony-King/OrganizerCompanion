@@ -66,6 +66,59 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void ConstructorWithAccountAndFeature_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var account = new Account { Id = 789, AccountName = "Test Account" };
+            var feature = new Feature(456, "Test Feature", true, false, 0, null, DateTime.Now, null);
+            var beforeCreation = DateTime.UtcNow;
+
+            // Act
+            var accountFeature = new AccountFeature(account, feature);
+            var afterCreation = DateTime.UtcNow;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(accountFeature.Id, Is.EqualTo(0)); // Default value
+                Assert.That(accountFeature.AccountId, Is.EqualTo(789));
+                Assert.That(accountFeature.Account, Is.EqualTo(account));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(456));
+                Assert.That(accountFeature.Feature, Is.EqualTo(feature));
+                Assert.That(accountFeature.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(accountFeature.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(accountFeature.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithAccountAndFeature_WithNullAccount_ThrowsException()
+        {
+            // Arrange
+            var feature = new Feature(456, "Test Feature", true, false, 0, null, DateTime.Now, DateTime.Now);
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new AccountFeature(null!, feature));
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithAccountAndFeature_WithNullFeature_ThrowsException()
+        {
+            // Arrange
+            var account = new Account { Id = 789, AccountName = "Test Account" };
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new AccountFeature(account, null!));
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithAccountAndFeature_WithBothNull_ThrowsException()
+        {
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new AccountFeature(null!, null!));
+        }
+
+        [Test, Category("Models")]
         public void Id_CanBeSetAndRetrieved()
         {
             // Arrange
