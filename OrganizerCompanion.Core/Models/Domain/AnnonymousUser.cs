@@ -150,6 +150,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public AnnonymousUser(
+            string userName,
+            SubAccount account)
+        {
+            _userName = userName;
+            _account = account;
+        }
         #endregion
 
         #region Methods

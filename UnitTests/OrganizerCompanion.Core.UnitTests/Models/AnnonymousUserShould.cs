@@ -98,6 +98,106 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var userName = "TestUser";
+            var account = new SubAccount { Id = 123 };
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var anonymousUser = new AnnonymousUser(userName, account);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(anonymousUser.Id, Is.EqualTo(0)); // Default value
+                Assert.That(anonymousUser.UserName, Is.EqualTo(userName));
+                Assert.That(anonymousUser.Account, Is.EqualTo(account));
+                Assert.That(anonymousUser.AccountId, Is.EqualTo(0)); // Not set by this constructor
+                Assert.That(anonymousUser.IsCast, Is.Null); // Default value
+                Assert.That(anonymousUser.CastId, Is.Null); // Default value
+                Assert.That(anonymousUser.CastType, Is.Null); // Default value
+                Assert.That(anonymousUser.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(anonymousUser.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(anonymousUser.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_WithNullUserName_AcceptsNull()
+        {
+            // Arrange
+            var account = new SubAccount { Id = 456 };
+
+            // Act & Assert - Constructor should accept null userName (validation happens in property setter)
+            Assert.DoesNotThrow(() =>
+            {
+                var anonymousUser = new AnnonymousUser(null!, account);
+                Assert.That(anonymousUser.UserName, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_WithNullAccount_AcceptsNull()
+        {
+            // Arrange
+            var userName = "TestUser";
+
+            // Act & Assert - Constructor should accept null account
+            Assert.DoesNotThrow(() =>
+            {
+                var anonymousUser = new AnnonymousUser(userName, null!);
+                Assert.That(anonymousUser.Account, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_WithBothNull_AcceptsNull()
+        {
+            // Act & Assert - Constructor should accept both null values
+            Assert.DoesNotThrow(() =>
+            {
+                var anonymousUser = new AnnonymousUser(null!, null!);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(anonymousUser.UserName, Is.Null);
+                    Assert.That(anonymousUser.Account, Is.Null);
+                });
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_WithEmptyUserName_AcceptsEmpty()
+        {
+            // Arrange
+            var account = new SubAccount { Id = 789 };
+
+            // Act & Assert - Constructor should accept empty userName (validation happens in property setter)
+            Assert.DoesNotThrow(() =>
+            {
+                var anonymousUser = new AnnonymousUser(string.Empty, account);
+                Assert.That(anonymousUser.UserName, Is.EqualTo(string.Empty));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ConstructorWithUserNameAndAccount_WithLongUserName_AcceptsLongString()
+        {
+            // Arrange
+            var longUserName = new string('A', 150); // 150 characters (exceeds max)
+            var account = new SubAccount { Id = 999 };
+
+            // Act & Assert - Constructor should accept long userName (validation happens in property setter)
+            Assert.DoesNotThrow(() =>
+            {
+                var anonymousUser = new AnnonymousUser(longUserName, account);
+                Assert.That(anonymousUser.UserName, Is.EqualTo(longUserName));
+            });
+        }
+
+        [Test, Category("Models")]
         public void UserName_Getter_ReturnsCorrectValue()
         {
             // Arrange
