@@ -342,6 +342,40 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public Contact(
+            string? firstName,
+            string? middleName,
+            string? lastName,
+            string? userName,
+            Pronouns? pronouns,
+            DateTime? birthDate,
+            DateTime? joinedDate,
+            List<Email> emails,
+            List<PhoneNumber> phoneNumbers,
+            List<IAddress> addresses,
+            bool? isActive,
+            bool? isAdmin,
+            int linkedEntityId,
+            IDomainEntity? linkedEntity,
+            string? linkedEntityType)
+        {
+            _firstName = firstName;
+            _middleName = middleName;
+            _lastName = lastName;
+            _userName = userName;
+            _pronouns = pronouns;
+            _birthDate = birthDate;
+            _joinedDate = joinedDate;
+            _emails = emails ?? [];
+            _phoneNumbers = phoneNumbers ?? [];
+            _addresses = addresses ?? [];
+            _isActive = isActive;
+            _isAdmin = isAdmin;
+            _linkedEntityId = linkedEntityId;
+            _linkedEntity = linkedEntity;
+            _linkedEntityType = linkedEntityType;
+        }
         #endregion
 
         #region Methods

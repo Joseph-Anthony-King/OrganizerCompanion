@@ -204,6 +204,259 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var firstName = "Alice";
+            var middleName = "Marie";
+            var lastName = "Johnson";
+            var userName = "alicej";
+            var pronouns = Pronouns.SheHer;
+            var birthDate = new DateTime(1992, 3, 15);
+            var joinedDate = new DateTime(2022, 6, 1);
+            var isActive = true;
+            var isAdmin = false;
+            var linkedEntityId = 42;
+            var linkedEntity = _linkedUser;
+            var linkedEntityType = "User";
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var contact = new Contact(
+                firstName: firstName,
+                middleName: middleName,
+                lastName: lastName,
+                userName: userName,
+                pronouns: pronouns,
+                birthDate: birthDate,
+                joinedDate: joinedDate,
+                emails: _testEmails,
+                phoneNumbers: _testPhoneNumbers,
+                addresses: _testAddresses,
+                isActive: isActive,
+                isAdmin: isAdmin,
+                linkedEntityId: linkedEntityId,
+                linkedEntity: linkedEntity,
+                linkedEntityType: linkedEntityType
+            );
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Id, Is.EqualTo(0)); // Default value
+                Assert.That(contact.FirstName, Is.EqualTo(firstName));
+                Assert.That(contact.MiddleName, Is.EqualTo(middleName));
+                Assert.That(contact.LastName, Is.EqualTo(lastName));
+                Assert.That(contact.UserName, Is.EqualTo(userName));
+                Assert.That(contact.Pronouns, Is.EqualTo(pronouns));
+                Assert.That(contact.BirthDate, Is.EqualTo(birthDate));
+                Assert.That(contact.DeceasedDate, Is.Null); // Not set by this constructor
+                Assert.That(contact.JoinedDate, Is.EqualTo(joinedDate));
+                Assert.That(contact.Emails, Is.EqualTo(_testEmails));
+                Assert.That(contact.PhoneNumbers, Is.EqualTo(_testPhoneNumbers));
+                Assert.That(contact.Addresses, Is.EqualTo(_testAddresses));
+                Assert.That(contact.IsActive, Is.EqualTo(isActive));
+                Assert.That(contact.IsDeceased, Is.Null); // Not set by this constructor
+                Assert.That(contact.IsAdmin, Is.EqualTo(isAdmin));
+                Assert.That(contact.IsSuperUser, Is.Null); // Not set by this constructor
+                Assert.That(contact.LinkedEntityId, Is.EqualTo(linkedEntityId));
+                Assert.That(contact.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(contact.LinkedEntityType, Is.EqualTo(linkedEntityType));
+                Assert.That(contact.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(contact.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(contact.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithNullCollections_InitializesEmptyLists()
+        {
+            // Arrange
+            var firstName = "Bob";
+            var lastName = "Smith";
+
+            // Act
+            var contact = new Contact(
+                firstName: firstName,
+                middleName: null,
+                lastName: lastName,
+                userName: null,
+                pronouns: null,
+                birthDate: null,
+                joinedDate: null,
+                emails: null!, // Should be handled by null coalescing in constructor
+                phoneNumbers: null!, // Should be handled by null coalescing in constructor
+                addresses: null!, // Should be handled by null coalescing in constructor
+                isActive: null,
+                isAdmin: null,
+                linkedEntityId: 0,
+                linkedEntity: null,
+                linkedEntityType: null
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.FirstName, Is.EqualTo(firstName));
+                Assert.That(contact.LastName, Is.EqualTo(lastName));
+                Assert.That(contact.Emails, Is.Not.Null);
+                Assert.That(contact.Emails, Is.Empty);
+                Assert.That(contact.PhoneNumbers, Is.Not.Null);
+                Assert.That(contact.PhoneNumbers, Is.Empty);
+                Assert.That(contact.Addresses, Is.Not.Null);
+                Assert.That(contact.Addresses, Is.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithNullNameValues_AcceptsNullValues()
+        {
+            // Arrange & Act
+            var contact = new Contact(
+                firstName: null,
+                middleName: null,
+                lastName: null,
+                userName: null,
+                pronouns: Pronouns.TheyThem,
+                birthDate: new DateTime(1995, 7, 20),
+                joinedDate: new DateTime(2023, 2, 14),
+                emails: [],
+                phoneNumbers: [],
+                addresses: [],
+                isActive: false,
+                isAdmin: true,
+                linkedEntityId: 999,
+                linkedEntity: _linkedUser,
+                linkedEntityType: "User"
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.FirstName, Is.Null);
+                Assert.That(contact.MiddleName, Is.Null);
+                Assert.That(contact.LastName, Is.Null);
+                Assert.That(contact.UserName, Is.Null);
+                Assert.That(contact.Pronouns, Is.EqualTo(Pronouns.TheyThem));
+                Assert.That(contact.BirthDate, Is.EqualTo(new DateTime(1995, 7, 20)));
+                Assert.That(contact.JoinedDate, Is.EqualTo(new DateTime(2023, 2, 14)));
+                Assert.That(contact.IsActive, Is.False);
+                Assert.That(contact.IsAdmin, Is.True);
+                Assert.That(contact.LinkedEntityId, Is.EqualTo(999));
+                Assert.That(contact.LinkedEntity, Is.EqualTo(_linkedUser));
+                Assert.That(contact.LinkedEntityType, Is.EqualTo("User"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithValidFullName_CalculatesFullNameCorrectly()
+        {
+            // Arrange & Act
+            var contact = new Contact(
+                firstName: "Charlie",
+                middleName: "Robert",
+                lastName: "Brown",
+                userName: "charlieb",
+                pronouns: Pronouns.HeHim,
+                birthDate: new DateTime(1988, 11, 30),
+                joinedDate: new DateTime(2021, 9, 15),
+                emails: _testEmails,
+                phoneNumbers: _testPhoneNumbers,
+                addresses: _testAddresses,
+                isActive: true,
+                isAdmin: false,
+                linkedEntityId: 123,
+                linkedEntity: _linkedUser,
+                linkedEntityType: "User"
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.FirstName, Is.EqualTo("Charlie"));
+                Assert.That(contact.MiddleName, Is.EqualTo("Robert"));
+                Assert.That(contact.LastName, Is.EqualTo("Brown"));
+                Assert.That(contact.FullName, Is.EqualTo("Charlie Robert Brown"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithEmptyCollections_SetsEmptyCollections()
+        {
+            // Arrange
+            var emptyEmails = new List<Email>();
+            var emptyPhoneNumbers = new List<PhoneNumber>();
+            var emptyAddresses = new List<IAddress>();
+
+            // Act
+            var contact = new Contact(
+                firstName: "Diana",
+                middleName: null,
+                lastName: "Wilson",
+                userName: "dianaw",
+                pronouns: Pronouns.SheHer,
+                birthDate: new DateTime(1991, 4, 8),
+                joinedDate: new DateTime(2022, 11, 20),
+                emails: emptyEmails,
+                phoneNumbers: emptyPhoneNumbers,
+                addresses: emptyAddresses,
+                isActive: true,
+                isAdmin: true,
+                linkedEntityId: 456,
+                linkedEntity: _linkedUser,
+                linkedEntityType: "User"
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(contact.Emails, Is.EqualTo(emptyEmails));
+                Assert.That(contact.Emails, Is.Empty);
+                Assert.That(contact.PhoneNumbers, Is.EqualTo(emptyPhoneNumbers));
+                Assert.That(contact.PhoneNumbers, Is.Empty);
+                Assert.That(contact.Addresses, Is.EqualTo(emptyAddresses));
+                Assert.That(contact.Addresses, Is.Empty);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithAllPronouns_SetsPronouns()
+        {
+            // Arrange & Act & Assert - Test with various pronouns
+            var pronounOptions = new[]
+            {
+                Pronouns.HeHim,
+                Pronouns.SheHer,
+                Pronouns.TheyThem
+            };
+
+            foreach (var pronoun in pronounOptions)
+            {
+                var contact = new Contact(
+                    firstName: "Test",
+                    middleName: null,
+                    lastName: "User",
+                    userName: $"test{pronoun}",
+                    pronouns: pronoun,
+                    birthDate: new DateTime(1990, 1, 1),
+                    joinedDate: new DateTime(2023, 1, 1),
+                    emails: [],
+                    phoneNumbers: [],
+                    addresses: [],
+                    isActive: true,
+                    isAdmin: false,
+                    linkedEntityId: 1,
+                    linkedEntity: null,
+                    linkedEntityType: null
+                );
+
+                Assert.That(contact.Pronouns, Is.EqualTo(pronoun),
+                    $"Pronouns should be set correctly for {pronoun}");
+            }
+        }
+
         #endregion
 
         #region Property Tests
