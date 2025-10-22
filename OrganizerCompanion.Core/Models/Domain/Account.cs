@@ -21,7 +21,6 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _accountName = null;
         private string? _accountNumber = null;
         private string? _license = null;
-        private DatabaseConnection? _databaseConnection = null;
         private List<AccountFeature> _features = [];
         private List<SubAccount>? _subAccounts = null;
         private readonly DateTime _dateCreated = DateTime.Now;
@@ -29,17 +28,6 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         #region Properties
         #region Explicit Interface Implementations
-        [JsonIgnore]
-        IDatabaseConnection? IAccount.DatabaseConnection
-        {
-            get => _databaseConnection;
-            set
-            {
-                _databaseConnection = value as DatabaseConnection;
-                DateModified = DateTime.Now;
-            }
-        }
-
         [JsonIgnore]
         List<IAccountFeature> IAccount.Features
         {
@@ -107,18 +95,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _license = value;
                 DateModified = DateTime.Now;
             }
-        }
-
-        [Required, JsonPropertyName("databaseConnection"), DatabaseConnectionValidator]
-        public DatabaseConnection? DatabaseConnection
-        {
-            get => _databaseConnection;
-            set
-            {
-                _databaseConnection = value;
-                DateModified = DateTime.Now;
-            }
-        }      
+        }    
 
         [Required, JsonPropertyName("features")]
         public List<AccountFeature> Features
@@ -159,7 +136,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             string? license,
-            DatabaseConnection? databaseConnection,
             List<AccountFeature> features,
             List<SubAccount> accounts,
             DateTime dateCreated,
@@ -169,7 +145,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _accountName = accountName;
             _accountNumber = accountNumber;
             _license = license;
-            _databaseConnection = databaseConnection;
             _features = features;
             _subAccounts = accounts;
             _dateCreated = dateCreated;
@@ -180,7 +155,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountName,
             string? accountNumber,
             string? license,
-            DatabaseConnection? databaseConnection,
             List<AccountFeature> features,
             List<SubAccount>? accounts,
             DateTime dateCreated,
@@ -189,7 +163,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             _accountName = accountName;
             _accountNumber = accountNumber;
             _license = license;
-            _databaseConnection = databaseConnection;
             _features = features;
             _subAccounts = accounts;
             _dateCreated = dateCreated;
@@ -210,7 +183,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                         AccountName = this.AccountName,
                         AccountNumber = this.AccountNumber,
                         License = this.License,
-                        DatabaseConnection = this.DatabaseConnection,
                         Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
                         Accounts = this.Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
                         DateCreated = this.DateCreated,

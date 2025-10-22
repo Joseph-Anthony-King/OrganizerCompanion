@@ -8,7 +8,6 @@ using OrganizerCompanion.Core.Models.Type;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Validation.Attributes;
-using DatabaseConnection = OrganizerCompanion.Core.Models.Domain.DatabaseConnection;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
@@ -29,14 +28,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange & Act
             _sut = new AccountDTO();
 
-            // Assert
+                        // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.AccountName, Is.Null);
                 Assert.That(_sut.AccountNumber, Is.Null);
                 Assert.That(_sut.License, Is.Null);
-                Assert.That(_sut.DatabaseConnection, Is.Null);
                 Assert.That(_sut.Features, Is.Not.Null);
                 Assert.That(_sut.Features, Is.Empty);
                 Assert.That(_sut.Accounts, Is.Null);
@@ -140,62 +138,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_sut.License, Is.EqualTo(validGuid));
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void DatabaseConnection_ShouldGetAndSetValue()
-        {
-            // Arrange
-            var expectedConnection = new DatabaseConnection
-            {
-                ConnectionString = "Server=localhost;Database=testdb;",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
 
-            // Act
-            _sut.DatabaseConnection = expectedConnection;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.DatabaseConnection, Is.EqualTo(expectedConnection));
-                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=localhost;Database=testdb;"));
-                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.SQLServer));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void DatabaseConnection_ShouldAcceptNullValue()
-        {
-            // Arrange & Act
-            _sut.DatabaseConnection = null;
-
-            // Assert
-            Assert.That(_sut.DatabaseConnection, Is.Null);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        [TestCase(SupportedDatabases.SQLServer)]
-        [TestCase(SupportedDatabases.SQLite)]
-        [TestCase(SupportedDatabases.MySQL)]
-        [TestCase(SupportedDatabases.PostgreSQL)]
-        public void DatabaseConnection_ShouldAcceptAllDatabaseTypes(SupportedDatabases databaseType)
-        {
-            // Arrange
-            var connection = new DatabaseConnection
-            {
-                ConnectionString = "test-connection-string",
-                DatabaseType = databaseType
-            };
-
-            // Act
-            _sut.DatabaseConnection = connection;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.DatabaseConnection, Is.Not.Null);
-                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(databaseType));
-            });
-        }
 
         [Test, Category("DataTransferObjects")]
         public void Features_ShouldGetAndSetValue()
@@ -884,48 +827,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(guidValidatorAttribute, Is.Not.Null);
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void DatabaseConnection_ShouldHaveRequiredAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DatabaseConnection));
 
-            // Act
-            var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
-
-            // Assert
-            Assert.That(requiredAttribute, Is.Not.Null);
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void DatabaseConnection_ShouldHaveJsonPropertyNameAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DatabaseConnection));
-
-            // Act
-            var jsonPropertyNameAttribute = property?.GetCustomAttribute<JsonPropertyNameAttribute>();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("databaseConnection"));
-            });
-        }
-
-        [Test, Category("DataTransferObjects")]
-        public void DatabaseConnection_ShouldHaveDatabaseConnectionValidatorAttribute()
-        {
-            // Arrange
-            var property = typeof(AccountDTO).GetProperty(nameof(AccountDTO.DatabaseConnection));
-
-            // Act
-            var validatorAttribute = property?.GetCustomAttribute<DatabaseConnectionValidatorAttribute>();
-
-            // Assert
-            Assert.That(validatorAttribute, Is.Not.Null);
-        }
 
         [Test, Category("DataTransferObjects")]
         public void Features_ShouldHaveRequiredAttribute()
@@ -1104,11 +1006,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var testGuid = Guid.NewGuid().ToString();
-            var testConnection = new DatabaseConnection
-            {
-                ConnectionString = "Server=localhost;Database=test;",
-                DatabaseType = SupportedDatabases.MySQL
-            };
             var testSubAccounts = new List<SubAccountDTO>
             {
                 new() { Id = 1, LinkedEntityId = 1 }
@@ -1121,7 +1018,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 AccountName = "Chained Account",
                 AccountNumber = "CHAIN-999",
                 License = testGuid,
-                DatabaseConnection = testConnection,
                 Features =
                 [
                     new() { Id = 1, FeatureName = "Chained Feature", IsEnabled = true }
@@ -1136,8 +1032,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(accountDTO.AccountName, Is.EqualTo("Chained Account"));
                 Assert.That(accountDTO.AccountNumber, Is.EqualTo("CHAIN-999"));
                 Assert.That(accountDTO.License, Is.EqualTo(testGuid));
-                Assert.That(accountDTO.DatabaseConnection.ConnectionString, Is.EqualTo(testConnection.ConnectionString));
-                Assert.That(accountDTO.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
                 Assert.That(accountDTO.Features, Has.Count.EqualTo(1));
                 Assert.That(accountDTO.Features[0].FeatureName, Is.EqualTo("Chained Feature"));
                 Assert.That(accountDTO.Accounts, Is.EqualTo(testSubAccounts));
@@ -1151,11 +1045,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             var guid = Guid.NewGuid().ToString();
-            var connection = new DatabaseConnection
-            {
-                ConnectionString = "Server=testserver;Database=testdb;User ID=admin;",
-                DatabaseType = SupportedDatabases.PostgreSQL
-            };
             var features = new List<FeatureDTO>
             {
                 new() { Id = 10, FeatureName = "Feature A", IsEnabled = true },
@@ -1172,7 +1061,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.AccountName = "Comprehensive Test";
             _sut.AccountNumber = "COMP-500";
             _sut.License = guid;
-            _sut.DatabaseConnection = connection;
             _sut.Features = features;
             _sut.Accounts = accounts;
 
@@ -1183,9 +1071,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.AccountName, Is.EqualTo("Comprehensive Test"));
                 Assert.That(_sut.AccountNumber, Is.EqualTo("COMP-500"));
                 Assert.That(_sut.License, Is.EqualTo(guid));
-                Assert.That(_sut.DatabaseConnection, Is.Not.Null);
-                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("Server=testserver;Database=testdb;User ID=admin;"));
-                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
                 Assert.That(_sut.Features, Has.Count.EqualTo(2));
                 Assert.That(_sut.Features[0].FeatureName, Is.EqualTo("Feature A"));
                 Assert.That(_sut.Features[1].FeatureName, Is.EqualTo("Feature B"));
@@ -1198,35 +1083,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             });
         }
 
-        [Test, Category("DataTransferObjects")]
-        public void AccountDTO_ShouldAllowModificationOfDatabaseConnection()
-        {
-            // Arrange
-            var initialConnection = new DatabaseConnection
-            {
-                ConnectionString = "Initial Connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-            _sut.DatabaseConnection = initialConnection;
 
-            var newConnection = new DatabaseConnection
-            {
-                ConnectionString = "New Connection",
-                DatabaseType = SupportedDatabases.SQLite
-            };
-
-            // Act
-            _sut.DatabaseConnection = newConnection;
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.DatabaseConnection, Is.EqualTo(newConnection));
-                Assert.That(_sut.DatabaseConnection?.ConnectionString, Is.EqualTo("New Connection"));
-                Assert.That(_sut.DatabaseConnection?.DatabaseType, Is.EqualTo(SupportedDatabases.SQLite));
-                Assert.That(_sut.DatabaseConnection, Is.Not.EqualTo(initialConnection));
-            });
-        }
 
         [Test, Category("DataTransferObjects")]
         public void ExplicitInterfaceFeatures_Property_ShouldHaveJsonIgnoreAttribute()
@@ -1401,7 +1258,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(freshAccountDTO.AccountName, Is.Null, "AccountName should default to null");
                 Assert.That(freshAccountDTO.AccountNumber, Is.Null, "AccountNumber should default to null");
                 Assert.That(freshAccountDTO.License, Is.Null, "License should default to null");
-                Assert.That(freshAccountDTO.DatabaseConnection, Is.Null, "DatabaseConnection should default to null");
                 Assert.That(freshAccountDTO.Features, Is.Not.Null, "Features should not be null");
                 Assert.That(freshAccountDTO.Features, Is.Empty, "Features should be empty list");
                 Assert.That(freshAccountDTO.Accounts, Is.Null, "Accounts should default to null");
@@ -1416,18 +1272,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var testDate = new DateTime(2023, 12, 25, 10, 30, 45);
             var testGuid = Guid.NewGuid().ToString();
-            var testConnection = new DatabaseConnection
-            {
-                ConnectionString = "Type Test Connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
 
             // Act
             _sut.Id = 12345;
             _sut.AccountName = "Type Test Account";
             _sut.AccountNumber = "TYPE-12345";
             _sut.License = testGuid;
-            _sut.DatabaseConnection = testConnection;
             _sut.Features = [new() { Id = 1, FeatureName = "Type Test Feature", IsEnabled = true }];
             _sut.Accounts = [new() { Id = 1, LinkedEntityId = 1 }];
             _sut.DateCreated = testDate;
@@ -1440,7 +1290,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.AccountName, Is.TypeOf<string>());
                 Assert.That(_sut.AccountNumber, Is.TypeOf<string>());
                 Assert.That(_sut.License, Is.TypeOf<string>());
-                Assert.That(_sut.DatabaseConnection, Is.TypeOf<DatabaseConnection>());
                 Assert.That(_sut.Features, Is.TypeOf<List<FeatureDTO>>());
                 Assert.That(_sut.Accounts, Is.TypeOf<List<SubAccountDTO>>());
                 Assert.That(_sut.DateCreated, Is.TypeOf<DateTime>());

@@ -7,7 +7,6 @@ namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
         string? AccountName { get; set; }
         string? AccountNumber { get; set; }
         string? License { get; set; }
-        IDatabaseConnection? DatabaseConnection { get; set; }
         List<IFeatureDTO> Features { get; set; }
         List<ISubAccountDTO>? Accounts { get; set; }
     }

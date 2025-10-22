@@ -17,10 +17,23 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _connectionString = null;
         private SupportedDatabases? _databaseType = null;
+        private Account _account = null!;
         private DateTime _dateCreated = DateTime.UtcNow;
         #endregion
 
         #region Properties
+        #region Explicit Interface Implementations
+        IAccount IDatabaseConnection.Account
+        {
+            get => _account;
+            set
+            {
+                _account = (Account)value;
+                DateModified = DateTime.Now;
+            }
+        }
+        #endregion
+
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -56,6 +69,20 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
+        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "AccountId must be a non-negative number.")]
+        public int AccountId => _account.Id;
+
+        [Required, JsonPropertyName("account")]
+        public Account Account
+        {
+            get => _account;
+            set
+            {
+                _account = value;
+                DateModified = DateTime.Now;
+            }
+        }
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated => _dateCreated;
 
@@ -68,15 +95,17 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public DatabaseConnection(
-            int id, 
-            string? connectionString, 
-            SupportedDatabases? databaseType, 
-            DateTime dateCreated, 
+            int id,
+            string? connectionString,
+            SupportedDatabases? databaseType,
+            Account account,
+            DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
             _connectionString = connectionString;
             _databaseType = databaseType;
+            _account = account;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

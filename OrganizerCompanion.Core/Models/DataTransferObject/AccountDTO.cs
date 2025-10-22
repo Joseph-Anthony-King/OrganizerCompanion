@@ -11,17 +11,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     {
         #region Explicit Interface Implementations
         [JsonIgnore]
-        IDatabaseConnection? IAccountDTO.DatabaseConnection
-        {
-            get => DatabaseConnection;
-            set
-            {
-                DatabaseConnection = (DatabaseConnection?)value;
-                DateModified = DateTime.Now;
-            }
-        }
-
-        [JsonIgnore]
         List<IFeatureDTO> IAccountDTO.Features
         {
             get => Features.ConvertAll(feature => (IFeatureDTO)feature);
@@ -76,9 +65,6 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
 
         [Required, JsonPropertyName("license"), GuidValidator]
         public string? License { get; set; } = null;
-
-        [Required, JsonPropertyName("databaseConnection"), DatabaseConnectionValidator]
-        public DatabaseConnection? DatabaseConnection { get; set; } = null;
 
         [Required, JsonPropertyName("features")]
         public List<FeatureDTO> Features { get; set; } = [];

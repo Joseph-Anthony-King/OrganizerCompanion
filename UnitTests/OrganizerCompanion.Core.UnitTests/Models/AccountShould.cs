@@ -60,8 +60,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.Null);
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.License, Is.Null);
-                Assert.That(account.DatabaseConnection, Is.Null);
-
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features.Count, Is.EqualTo(0));
                 Assert.That(account.Accounts, Is.Null);
@@ -74,20 +72,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_SetsAllPropertiesCorrectly()
         {
-            // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
-            // Act
+            // Arrange & Act
             var account = new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -101,8 +91,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("testuser"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC123"));
                 Assert.That(account.License, Is.Not.Null);
-                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
-                Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.Accounts, Is.Not.Null);
@@ -115,19 +103,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ParameterizedConstructor_SetsPropertiesCorrectly()
         {
-            // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
-            // Act
+            // Arrange & Act
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: null,
                 dateCreated: _testDateCreated,
@@ -140,8 +120,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("testuser2"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC456"));
                 Assert.That(account.License, Is.Not.Null);
-                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("test-db-connection"));
-                Assert.That(account.DatabaseConnection?.DatabaseType, Is.EqualTo(Enums.SupportedDatabases.SQLServer));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.Accounts, Is.Null);
@@ -154,12 +132,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_SetsMainAccountIdAndAccountsCorrectly()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
-
             var subAccounts = new List<SubAccount>
             {
                 new() { Id = 10 },
@@ -172,7 +144,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "Main Account",
                 accountNumber: "MAIN001",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: subAccounts,
                 dateCreated: _testDateCreated,
@@ -266,31 +237,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
             Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
         }
-
-        [Test, Category("Models")]
-        public void DatabaseConnection_Setter_UpdatesDateModified()
-        {
-            // Arrange
-            var account = new Account();
-            var originalDateModified = account.DateModified;
-
-            // Act
-            account.DatabaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "new-connection-string",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.DatabaseConnection?.ConnectionString, Is.EqualTo("new-connection-string"));
-                Assert.That(account.DateModified, Is.Not.EqualTo(originalDateModified));
-            });
-            Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-        }
-
-
 
         [Test, Category("Models")]
         public void Features_Setter_UpdatesDateModified()
@@ -397,9 +343,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             account.License = null;
             Assert.That(account.License, Is.Null);
-
-            account.DatabaseConnection = null;
-            Assert.That(account.DatabaseConnection, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -425,11 +368,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var specificDate = new DateTime(2023, 5, 15, 10, 30, 45);
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
 
             // Act
             var account = new Account(
@@ -437,7 +375,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: [],
                 dateCreated: specificDate,
@@ -453,18 +390,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var specificDate = new DateTime(2023, 6, 20, 14, 15, 30);
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = Enums.SupportedDatabases.SQLServer
-            };
 
             // Act
             var account = new Account(
                 accountName: "testuser2",
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: null,
                 dateCreated: specificDate,
@@ -495,21 +426,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Note: This test demonstrates the exception handling structure.
             // In practice, the JsonConstructor is less likely to throw exceptions
             // since it uses direct field assignment, but the try-catch is there for safety.
-
-            // This test would need a scenario that actually causes an exception
-            // For demonstration, we'll test with valid parameters to ensure no exception is thrown
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             Assert.DoesNotThrow(() => new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -520,20 +441,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_WithNullFeatures_AcceptsNull()
         {
-            // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
-            // Act - The JSON constructor accepts null features and assigns them directly
+            // Arrange & Act - The JSON constructor accepts null features and assigns them directly
             var account = new Account(
                 id: 1,
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: null!,
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -552,18 +465,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account(
                 id: 123,
                 accountName: "Test Account",
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: [],
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -587,18 +493,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account(
                 id: 777,
                 accountName: "Test Account",
                 accountNumber: "ACC777",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: [],
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -618,18 +517,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToAnotherUnsupportedDomainType_ThrowsInvalidCastException()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account(
                 id: 888,
                 accountName: "Another Test Account",
                 accountNumber: "ACC888",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: [],
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -649,18 +541,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToFeature_ThrowsInvalidCastException()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account(
                 id: 999,
                 accountName: "Feature Test Account",
                 accountNumber: "ACC999",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: [],
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -680,18 +565,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToAnnonymousUser_ThrowsInvalidCastException()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account(
                 id: 111,
                 accountName: "Anonymous Test Account",
                 accountNumber: "ACC111",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: [],
                 accounts: [],
                 dateCreated: _testDateCreated,
@@ -717,13 +595,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "ValidName",
                 AccountNumber = "ValidNumber",
                 License = Guid.NewGuid().ToString(),
-                DatabaseConnection = new DatabaseConnection
-                {
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
-                    DatabaseType = SupportedDatabases.SQLServer
-                },
-
-
                 Features = _testFeatures
             };
 
@@ -744,13 +615,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "name",
                 AccountNumber = "num",
                 License = Guid.NewGuid().ToString(),
-                DatabaseConnection = new OrganizerCompanion.Core.Models.Domain.DatabaseConnection
-                {
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
-                    DatabaseType = SupportedDatabases.SQLServer
-                },
-
-
                 Features = _testFeatures
             };
 
@@ -773,11 +637,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     AccountName = "name",
                     AccountNumber = "num",
                     License = Guid.NewGuid().ToString(),
-                    DatabaseConnection = new DatabaseConnection
-                    {
-                        ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
-                        DatabaseType = SupportedDatabases.SQLServer
-                    },
                 };
             });
         }
@@ -786,7 +645,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
         {
             // Arrange
-            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null, DatabaseConnection = null, };
+            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null};
 
             // Act
             var validationResults = ValidateModel(account);
@@ -797,7 +656,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountName")));
                 Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("AccountNumber")));
                 Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("License")));
-                Assert.That(validationResults.Any(v => v!.ErrorMessage!.Contains("DatabaseConnection")));
             });
         }
 
@@ -811,11 +669,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "name",
                 AccountNumber = "num",
                 License = "invalid-guid",
-                DatabaseConnection = new DatabaseConnection
-                {
-                    ConnectionString = "Server=localhost;Database=testdb;Integrated Security=true;",
-                    DatabaseType = SupportedDatabases.SQLServer
-                },
             };
 
             // Act
@@ -1008,19 +861,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ToJson_SerializesCorrectly()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             var account = new Account
             {
                 Id = 123,
                 AccountName = "Test Account",
                 AccountNumber = "ACC123",
                 License = Guid.NewGuid().ToString(),
-                DatabaseConnection = databaseConnection,
                 Features = _testFeatures,
                 DateModified = new DateTime(2025, 10, 20, 15, 30, 45)
             };
@@ -1052,7 +898,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = null,
                 AccountNumber = null,
                 License = null,
-                DatabaseConnection = null,
                 Features = [],
                 Accounts = null
             };
@@ -1149,9 +994,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             account.License = testGuid;
             Assert.That(account.License, Is.EqualTo(testGuid));
 
-            account.DatabaseConnection = databaseConnection;
-            Assert.That(account.DatabaseConnection, Is.EqualTo(databaseConnection));
-
             account.Features = testFeatures;
             Assert.That(account.Features, Is.EqualTo(testFeatures));
 
@@ -1227,18 +1069,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(afterLicense, Is.GreaterThan(afterNumber));
 
             System.Threading.Thread.Sleep(1);
-            account.DatabaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-            var afterDbConnection = account.DateModified;
-            Assert.That(afterDbConnection, Is.GreaterThan(afterLicense));
-
-            System.Threading.Thread.Sleep(1);
             account.Features = [new AccountFeature { Id = 1 }];
             var afterFeatures = account.DateModified;
-            Assert.That(afterFeatures, Is.GreaterThan(afterDbConnection));
+            Assert.That(afterFeatures, Is.GreaterThan(afterLicense));
         }
 
         [Test, Category("Models")]
@@ -1272,7 +1105,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = null,
                 AccountNumber = null,
                 License = null,
-                DatabaseConnection = null,
                 Accounts = null
             };
 
@@ -1282,7 +1114,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.Null);
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.License, Is.Null);
-                Assert.That(account.DatabaseConnection, Is.Null);
                 Assert.That(account.Accounts, Is.Null);
             });
         }
@@ -1416,7 +1247,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _ = account.AccountName;
             _ = account.AccountNumber;
             _ = account.License;
-            _ = account.DatabaseConnection;
             _ = account.Features;
             _ = account.Accounts;
             _ = account.DateCreated;
@@ -1427,11 +1257,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             account.AccountName = "Test";
             account.AccountNumber = "ACC1";
             account.License = Guid.NewGuid().ToString();
-            account.DatabaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
             account.Features = [];
             account.Accounts = [];
             account.DateModified = DateTime.Now;
@@ -1443,7 +1268,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("Test"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC1"));
                 Assert.That(account.License, Is.Not.Null);
-                Assert.That(account.DatabaseConnection, Is.Not.Null);
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Accounts, Is.Not.Null);
                 Assert.That(account.DateModified, Is.Not.Null);
@@ -1487,22 +1311,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_ExceptionHandling_WithSpecificScenario()
         {
-            // This test attempts to trigger the exception handling in the JSON constructor
-            // Since direct field assignments rarely throw, this documents the structure
-
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             // Test with extreme values that might cause issues
             Assert.DoesNotThrow(() => new Account(
                 id: int.MaxValue,
                 accountName: new string('A', 10000), // Very long string
                 accountNumber: new string('B', 10000),
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: [],
                 dateCreated: DateTime.MaxValue,
@@ -1514,11 +1328,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CompleteIntegration_AllConstructorsPropertiesAndMethods()
         {
             // Arrange
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "integration-test-connection",
-                DatabaseType = SupportedDatabases.PostgreSQL
-            };
             var features = new List<AccountFeature>
             {
                 new() { Id = 1, AccountId = 1, FeatureId = 1 },
@@ -1537,7 +1346,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "Integration Account",
                 accountNumber: "INT999",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: features,
                 accounts: subAccounts,
                 dateCreated: _testDateCreated,
@@ -1548,7 +1356,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountName: "Linked Account",
                 accountNumber: "LINK123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: features,
                 accounts: null,
                 dateCreated: _testDateCreated,
@@ -1701,22 +1508,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void ParameterizedConstructor_ExceptionHandling_DocumentsStructure()
         {
-            // This test documents the exception handling structure in the parameterized constructor
-            // The try-catch block exists but is difficult to trigger in practice due to 
-            // simple field assignments and property access
-
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "test-db-connection",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
             // Normal operation should not throw
             Assert.DoesNotThrow(() => new Account(
                 accountName: "testuser",
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
-                databaseConnection: databaseConnection,
                 features: _testFeatures,
                 accounts: null,
                 dateCreated: _testDateCreated,
@@ -1739,11 +1535,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(account1.Id, Is.EqualTo(0));
 
             // Test JSON constructor with minimum values
-            var account2 = new Account(0, null, null, null, new DatabaseConnection(), null!, null!, DateTime.Now, null);
+            var account2 = new Account(0, null, null, null, null!, null!, DateTime.Now, null);
             Assert.That(account2.Id, Is.EqualTo(0));
 
             // Test parameterized constructor 
-            var account3 = new Account(0, null, null, null, new DatabaseConnection(), null!, null!, DateTime.Now, null);
+            var account3 = new Account(0, null, null, null, null!, null!, DateTime.Now, null);
             Assert.That(account3.Id, Is.EqualTo(0));
 
             // Verify all constructors work
