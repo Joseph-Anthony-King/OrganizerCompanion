@@ -155,17 +155,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? accountNumber,
             string? license,
             List<AccountFeature> features,
-            List<SubAccount>? accounts,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            List<SubAccount>? accounts)
         {
             _accountName = accountName;
             _accountNumber = accountNumber;
             _license = license;
             _features = features;
             _subAccounts = accounts;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
         }
         #endregion
 

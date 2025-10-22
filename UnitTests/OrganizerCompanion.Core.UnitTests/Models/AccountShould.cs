@@ -109,9 +109,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC456",
                 license: Guid.NewGuid().ToString(),
                 features: _testFeatures,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                accounts: null
             );
 
             // Assert
@@ -123,8 +121,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
                 Assert.That(account.Accounts, Is.Null);
-                Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(account.DateModified, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -377,27 +374,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 license: Guid.NewGuid().ToString(),
                 features: _testFeatures,
                 accounts: [],
-                dateCreated: specificDate,
-                dateModified: _testDateModified
-            );
-
-            // Assert
-            Assert.That(account.DateCreated, Is.EqualTo(specificDate));
-        }
-
-        [Test, Category("Models")]
-        public void ParameterizedConstructor_SetsDateCreatedFromParameter()
-        {
-            // Arrange
-            var specificDate = new DateTime(2023, 6, 20, 14, 15, 30);
-
-            // Act
-            var account = new Account(
-                accountName: "testuser2",
-                accountNumber: "ACC456",
-                license: Guid.NewGuid().ToString(),
-                features: _testFeatures,
-                accounts: null,
                 dateCreated: specificDate,
                 dateModified: _testDateModified
             );
@@ -1357,9 +1333,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "LINK123",
                 license: Guid.NewGuid().ToString(),
                 features: features,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                accounts: null
             );
 
             // Test interface functionality
@@ -1514,9 +1488,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 features: _testFeatures,
-                accounts: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                accounts: null
             ));
         }
 
