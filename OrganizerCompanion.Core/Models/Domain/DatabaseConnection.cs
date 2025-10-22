@@ -109,6 +109,16 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public DatabaseConnection(
+            string? connectionString,
+            SupportedDatabases? databaseType,
+            Account account)
+        {
+            _connectionString = connectionString;
+            _databaseType = databaseType;
+            _account = account;
+        }
         #endregion
 
         #region Methods
