@@ -93,6 +93,237 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        #region IFeatureDTO Constructor Tests
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithCompleteDTO_ShouldSetAllProperties()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                Id = 123,
+                FeatureName = "TestFeature",
+                IsEnabled = true,
+                DateCreated = DateTime.Now.AddDays(-2),
+                DateModified = DateTime.Now.AddDays(-1)
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.FeatureName, Is.EqualTo(dto.FeatureName));
+                Assert.That(_sut.IsEnabled, Is.EqualTo(dto.IsEnabled));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalDTO_ShouldSetBasicProperties()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = "MinimalFeature"
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.FeatureName, Is.EqualTo(dto.FeatureName));
+                Assert.That(_sut.IsEnabled, Is.EqualTo(dto.IsEnabled));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullFeatureName_ShouldAcceptNullValue()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                Id = 456,
+                FeatureName = null,
+                IsEnabled = false
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.FeatureName, Is.Null);
+                Assert.That(_sut.IsEnabled, Is.EqualTo(dto.IsEnabled));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyFeatureName_ShouldAcceptEmptyString()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                Id = 789,
+                FeatureName = string.Empty,
+                IsEnabled = true
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.FeatureName, Is.EqualTo(string.Empty));
+                Assert.That(_sut.IsEnabled, Is.EqualTo(dto.IsEnabled));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithIsEnabledTrue_ShouldSetIsEnabledCorrectly()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = "EnabledFeature",
+                IsEnabled = true
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.IsEnabled, Is.True);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithIsEnabledFalse_ShouldSetIsEnabledCorrectly()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = "DisabledFeature",
+                IsEnabled = false
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.IsEnabled, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullDTO_ShouldThrowArgumentNullException()
+        {
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => new Feature((IFeatureDTO)null!));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithSpecialCharactersInName_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = "Feature!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 123",
+                IsEnabled = true
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.FeatureName, Is.EqualTo(dto.FeatureName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithUnicodeCharacters_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = "Feature 功能 🚀 ñáéíóú",
+                IsEnabled = false
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.FeatureName, Is.EqualTo(dto.FeatureName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithLongFeatureName_ShouldAcceptLongString()
+        {
+            // Arrange
+            var longName = new string('A', 1000);
+            var dto = new MockFeatureDTO
+            {
+                FeatureName = longName,
+                IsEnabled = true
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.FeatureName, Is.EqualTo(longName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithZeroId_ShouldAcceptZeroId()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                Id = 0,
+                FeatureName = "ZeroIdFeature",
+                IsEnabled = true
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMaxIntId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            var dto = new MockFeatureDTO
+            {
+                Id = int.MaxValue,
+                FeatureName = "MaxIdFeature",
+                IsEnabled = false
+            };
+
+            // Act
+            _sut = new Feature(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        #endregion
+
         [Test, Category("Models")]
         public void Id_WhenSet_ShouldUpdateDateModified()
         {
@@ -1434,6 +1665,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public string? CastType { get; set; } = null;
             public DateTime DateCreated { get; } = DateTime.Now;
             public DateTime? DateModified { get; set; } = DateTime.Now;
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => "{}";
+        }
+
+        // Mock FeatureDTO for testing IFeatureDTO constructor
+        private class MockFeatureDTO : IFeatureDTO
+        {
+            public int Id { get; set; } = 0;
+            public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+            public string? CastType { get; set; } = null;
+            public DateTime DateCreated { get; set; } = DateTime.Now;
+            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public string? FeatureName { get; set; }
+            public bool IsEnabled { get; set; } = false;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";

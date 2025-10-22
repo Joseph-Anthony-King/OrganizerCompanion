@@ -701,7 +701,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var phone = "+1-555-123-4567";
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
-            var linkedEntityId = 0;
             var dateCreated = DateTime.Now.AddDays(-1);
             DateTime? dateModified = null;
 

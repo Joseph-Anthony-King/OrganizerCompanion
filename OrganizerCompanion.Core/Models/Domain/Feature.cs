@@ -81,13 +81,22 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
-        
+
         public Feature(
-            string? featureName, 
+            string? featureName,
             bool isEnabled)
         {
             _featureName = featureName;
             _isEnabled = isEnabled;
+        }
+        
+        public Feature(IFeatureDTO dto)
+        {
+            _id = dto.Id;
+            _featureName = dto.FeatureName;
+            _isEnabled = dto.IsEnabled;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
         }
         #endregion
 
