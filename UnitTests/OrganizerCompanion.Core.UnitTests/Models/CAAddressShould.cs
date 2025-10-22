@@ -111,6 +111,218 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void ParameterizedConstructor_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var street1 = "456 Queen Street";
+            var street2 = "Unit 789";
+            var city = "Calgary";
+            var province = CAProvinces.Alberta.ToStateModel();
+            var zipCode = "T2P 1M7";
+            var country = "Canada";
+            var type = OrganizerCompanion.Core.Enums.Types.Work;
+            var isPrimary = false;
+            var linkedEntity = new MockDomainEntity();
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var caAddress = new CAAddress(
+                street1: street1,
+                street2: street2,
+                city: city,
+                province: province,
+                zipCode: zipCode,
+                country: country,
+                type: type,
+                isPrimary: isPrimary,
+                linkedEntity: linkedEntity
+            );
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Id, Is.EqualTo(0)); // Default value
+                Assert.That(caAddress.Street1, Is.EqualTo(street1));
+                Assert.That(caAddress.Street2, Is.EqualTo(street2));
+                Assert.That(caAddress.City, Is.EqualTo(city));
+                Assert.That(caAddress.Province, Is.EqualTo(province));
+                Assert.That(caAddress.ZipCode, Is.EqualTo(zipCode));
+                Assert.That(caAddress.Country, Is.EqualTo(country));
+                Assert.That(caAddress.Type, Is.EqualTo(type));
+                Assert.That(caAddress.IsPrimary, Is.EqualTo(isPrimary));
+                Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
+                Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntity.GetType().Name));
+                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithNullLinkedEntity_SetsPropertiesCorrectly()
+        {
+            // Arrange
+            var street1 = "789 Main Avenue";
+            var street2 = "Suite 101";
+            var city = "Vancouver";
+            var province = CAProvinces.BritishColumbia.ToStateModel();
+            var zipCode = "V6B 4N8";
+            var country = "Canada";
+            var type = OrganizerCompanion.Core.Enums.Types.Home;
+            var isPrimary = true;
+            var beforeCreation = DateTime.Now;
+
+            // Act
+            var caAddress = new CAAddress(
+                street1: street1,
+                street2: street2,
+                city: city,
+                province: province,
+                zipCode: zipCode,
+                country: country,
+                type: type,
+                isPrimary: isPrimary,
+                linkedEntity: null
+            );
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Id, Is.EqualTo(0)); // Default value
+                Assert.That(caAddress.Street1, Is.EqualTo(street1));
+                Assert.That(caAddress.Street2, Is.EqualTo(street2));
+                Assert.That(caAddress.City, Is.EqualTo(city));
+                Assert.That(caAddress.Province, Is.EqualTo(province));
+                Assert.That(caAddress.ZipCode, Is.EqualTo(zipCode));
+                Assert.That(caAddress.Country, Is.EqualTo(country));
+                Assert.That(caAddress.Type, Is.EqualTo(type));
+                Assert.That(caAddress.IsPrimary, Is.EqualTo(isPrimary));
+                Assert.That(caAddress.LinkedEntity, Is.Null);
+                Assert.That(caAddress.LinkedEntityId, Is.Null);
+                Assert.That(caAddress.LinkedEntityType, Is.Null);
+                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.DateModified, Is.EqualTo(default(DateTime)));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithNullStringValues_AcceptsNullValues()
+        {
+            // Arrange
+            var province = CAProvinces.Manitoba.ToStateModel();
+            var type = OrganizerCompanion.Core.Enums.Types.Billing;
+            var linkedEntity = new MockDomainEntity();
+
+            // Act
+            var caAddress = new CAAddress(
+                street1: null!,
+                street2: null!,
+                city: null!,
+                province: province,
+                zipCode: null!,
+                country: null!,
+                type: type,
+                isPrimary: false,
+                linkedEntity: linkedEntity
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Street1, Is.Null);
+                Assert.That(caAddress.Street2, Is.Null);
+                Assert.That(caAddress.City, Is.Null);
+                Assert.That(caAddress.Province, Is.EqualTo(province));
+                Assert.That(caAddress.ZipCode, Is.Null);
+                Assert.That(caAddress.Country, Is.Null);
+                Assert.That(caAddress.Type, Is.EqualTo(type));
+                Assert.That(caAddress.IsPrimary, Is.False);
+                Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithNullProvince_AcceptsNullValues()
+        {
+            // Arrange
+            var street1 = "Test Street";
+            var city = "Test City";
+            var zipCode = "T1T 1T1";
+            var country = "Canada";
+
+            // Act
+            var caAddress = new CAAddress(
+                street1: street1,
+                street2: null!,
+                city: city,
+                province: null!,
+                zipCode: zipCode,
+                country: country,
+                type: OrganizerCompanion.Core.Enums.Types.Home,
+                isPrimary: true,
+                linkedEntity: null
+            );
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(caAddress.Street1, Is.EqualTo(street1));
+                Assert.That(caAddress.Street2, Is.Null);
+                Assert.That(caAddress.City, Is.EqualTo(city));
+                Assert.That(caAddress.Province, Is.Null);
+                Assert.That(caAddress.ZipCode, Is.EqualTo(zipCode));
+                Assert.That(caAddress.Country, Is.EqualTo(country));
+                Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
+                Assert.That(caAddress.IsPrimary, Is.True);
+                Assert.That(caAddress.LinkedEntity, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void ParameterizedConstructor_WithAllProvinces_SetsProvinceCorrectly()
+        {
+            // Arrange & Act & Assert - Test with various Canadian provinces
+            var provinces = new[]
+            {
+                CAProvinces.Alberta.ToStateModel(),
+                CAProvinces.BritishColumbia.ToStateModel(),
+                CAProvinces.Manitoba.ToStateModel(),
+                CAProvinces.NewBrunswick.ToStateModel(),
+                CAProvinces.NewfoundlandAndLabrador.ToStateModel(),
+                CAProvinces.NorthwestTerritories.ToStateModel(),
+                CAProvinces.NovaScotia.ToStateModel(),
+                CAProvinces.Nunavut.ToStateModel(),
+                CAProvinces.Ontario.ToStateModel(),
+                CAProvinces.PrinceEdwardIsland.ToStateModel(),
+                CAProvinces.Quebec.ToStateModel(),
+                CAProvinces.Saskatchewan.ToStateModel(),
+                CAProvinces.Yukon.ToStateModel()
+            };
+
+            foreach (var province in provinces)
+            {
+                var caAddress = new CAAddress(
+                    street1: "Test Street",
+                    street2: "Test Unit",
+                    city: "Test City",
+                    province: province,
+                    zipCode: "T1T 1T1",
+                    country: "Canada",
+                    type: OrganizerCompanion.Core.Enums.Types.Home,
+                    isPrimary: false,
+                    linkedEntity: null
+                );
+
+                Assert.That(caAddress.Province, Is.EqualTo(province),
+                    $"Province should be set correctly for {province.Name}");
+            }
+        }
+
+        [Test, Category("Models")]
         public void Id_Setter_UpdatesDateModified()
         {
             // Arrange

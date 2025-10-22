@@ -161,17 +161,17 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [JsonConstructor]
         public CAAddress(
-            int id, 
-            string street1, 
-            string street2, 
-            string city, 
-            Interfaces.Type.INationalSubdivision province, 
-            string zipCode, 
-            string country, 
+            int id,
+            string street1,
+            string street2,
+            string city,
+            Interfaces.Type.INationalSubdivision province,
+            string zipCode,
+            string country,
             Types type,
             bool isPrimary,
             IDomainEntity? linkedEntity,
-            DateTime dateCreated, 
+            DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
@@ -186,6 +186,28 @@ namespace OrganizerCompanion.Core.Models.Domain
             _linkedEntity = linkedEntity;
             _dateCreated = dateCreated;
             DateModified = dateModified;
+        }
+
+        public CAAddress(
+            string street1,
+            string street2,
+            string city,
+            Interfaces.Type.INationalSubdivision province,
+            string zipCode,
+            string country,
+            Types type,
+            bool isPrimary,
+            IDomainEntity? linkedEntity)
+        {
+            _street1 = street1;
+            _street2 = street2;
+            _city = city;
+            _province = province;
+            _zipCode = zipCode;
+            _country = country;
+            _type = type;
+            _isPrimary = isPrimary;
+            _linkedEntity = linkedEntity;
         }
         #endregion
 
