@@ -1,8 +1,6 @@
 ﻿using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Models.DataTransferObject;
-using OrganizerCompanion.Core.Models.Domain;
-using System.Net.Http.Headers;
 
 namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 {
