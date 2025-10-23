@@ -1017,7 +1017,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _sut = new Organization(dto);
-            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
@@ -1036,7 +1035,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Contacts, Is.Empty);
                 Assert.That(_sut.Accounts, Is.Not.Null);
                 Assert.That(_sut.Accounts, Is.Empty);
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                // DateCreated should match the DTO's DateCreated (which defaults to DateTime.Now)
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
             });
         }
 
