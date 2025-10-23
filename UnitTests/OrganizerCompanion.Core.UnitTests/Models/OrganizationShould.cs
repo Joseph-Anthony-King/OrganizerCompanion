@@ -995,7 +995,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Contacts, Has.Count.EqualTo(dto.Contacts.Count));
                 Assert.That(_sut.Accounts, Is.Not.Null);
                 Assert.That(_sut.Accounts, Has.Count.EqualTo(dto.Accounts.Count));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
                 Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
             });
         }
