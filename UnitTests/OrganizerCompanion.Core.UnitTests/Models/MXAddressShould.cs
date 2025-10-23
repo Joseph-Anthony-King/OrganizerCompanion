@@ -113,6 +113,406 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        #region IMXAddressDTO Constructor Tests
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithCompleteDTO_ShouldSetAllProperties()
+        {
+            // Arrange
+            var dateCreated = DateTime.Now.AddDays(-5);
+
+            var dto = new MXAddressDTO
+            {
+                Id = 123,
+                Street = "Calle Principal 456",
+                Neighborhood = "Centro Histórico",
+                PostalCode = "06000",
+                City = "Ciudad de México",
+                State = new MXState { Name = "Ciudad de México", Abbreviation = "CDMX" },
+                Country = "México",
+                Type = OrganizerCompanion.Core.Enums.Types.Home,
+                IsPrimary = true,
+                DateCreated = dateCreated,
+                DateModified = DateTime.Now.AddDays(-1)
+            };
+            var linkedEntity = new MockDomainEntity { Id = 42 };
+
+            // Act
+            _sut = new MXAddress(dto, linkedEntity);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Street, Is.EqualTo(dto.Street));
+                Assert.That(_sut.Neighborhood, Is.EqualTo(dto.Neighborhood));
+                Assert.That(_sut.PostalCode, Is.EqualTo(dto.PostalCode));
+                Assert.That(_sut.City, Is.EqualTo(dto.City));
+                Assert.That(_sut.State, Is.EqualTo(dto.State));
+                Assert.That(_sut.Country, Is.EqualTo(dto.Country));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                // DateCreated should be set to current time, not DTO's DateCreated (readonly field behavior)
+                Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalDTO_ShouldSetBasicProperties()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Calle Básica",
+                City = "Puebla"
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Street, Is.EqualTo(dto.Street));
+                Assert.That(_sut.Neighborhood, Is.EqualTo(dto.Neighborhood));
+                Assert.That(_sut.PostalCode, Is.EqualTo(dto.PostalCode));
+                Assert.That(_sut.City, Is.EqualTo(dto.City));
+                Assert.That(_sut.State, Is.EqualTo(dto.State));
+                Assert.That(_sut.Country, Is.EqualTo(dto.Country));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityId, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullLinkedEntity_ShouldHandleGracefully()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Id = 789,
+                Street = "Avenida Sin Entidad",
+                City = "Monterrey",
+                Type = OrganizerCompanion.Core.Enums.Types.Work,
+                IsPrimary = false
+            };
+
+            // Act
+            _sut = new MXAddress(dto, null);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Street, Is.EqualTo(dto.Street));
+                Assert.That(_sut.City, Is.EqualTo(dto.City));
+                Assert.That(_sut.Type, Is.EqualTo(dto.Type));
+                Assert.That(_sut.IsPrimary, Is.EqualTo(dto.IsPrimary));
+                Assert.That(_sut.LinkedEntity, Is.Null);
+                Assert.That(_sut.LinkedEntityId, Is.Null);
+                Assert.That(_sut.LinkedEntityType, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithDifferentLinkedEntityTypes_ShouldSetCorrectEntityType()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Calle Entidad Diferente",
+                City = "Guadalajara"
+            };
+            var anotherEntity = new AnotherMockEntity { Id = 99 };
+
+            // Act
+            _sut = new MXAddress(dto, anotherEntity);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.EqualTo(anotherEntity));
+                Assert.That(_sut.LinkedEntityId, Is.EqualTo(anotherEntity.Id));
+                Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullStreetAndNeighborhood_ShouldAcceptNullValues()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Id = 456,
+                Street = null,
+                Neighborhood = null,
+                PostalCode = "12345",
+                City = "Tijuana",
+                Country = "México"
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Street, Is.Null);
+                Assert.That(_sut.Neighborhood, Is.Null);
+                Assert.That(_sut.PostalCode, Is.EqualTo(dto.PostalCode));
+                Assert.That(_sut.City, Is.EqualTo(dto.City));
+                Assert.That(_sut.Country, Is.EqualTo(dto.Country));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyStrings_ShouldAcceptEmptyStrings()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = string.Empty,
+                Neighborhood = string.Empty,
+                PostalCode = string.Empty,
+                City = string.Empty,
+                Country = string.Empty
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Street, Is.EqualTo(string.Empty));
+                Assert.That(_sut.Neighborhood, Is.EqualTo(string.Empty));
+                Assert.That(_sut.PostalCode, Is.EqualTo(string.Empty));
+                Assert.That(_sut.City, Is.EqualTo(string.Empty));
+                Assert.That(_sut.Country, Is.EqualTo(string.Empty));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithSpecialCharactersAndUnicode_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Calle José María Vigil #123, Apto. 4B",
+                Neighborhood = "Colonia Américas Unidas",
+                PostalCode = "44160",
+                City = "Guadalajara, Jalisco",
+                Country = "México 🇲🇽"
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Street, Is.EqualTo(dto.Street));
+                Assert.That(_sut.Neighborhood, Is.EqualTo(dto.Neighborhood));
+                Assert.That(_sut.PostalCode, Is.EqualTo(dto.PostalCode));
+                Assert.That(_sut.City, Is.EqualTo(dto.City));
+                Assert.That(_sut.Country, Is.EqualTo(dto.Country));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithLongStrings_ShouldAcceptLongStrings()
+        {
+            // Arrange
+            var longStreet = new string('A', 500);
+            var longNeighborhood = new string('B', 300);
+            var longCity = new string('C', 200);
+            var dto = new MXAddressDTO
+            {
+                Street = longStreet,
+                Neighborhood = longNeighborhood,
+                City = longCity
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Street, Is.EqualTo(longStreet));
+                Assert.That(_sut.Neighborhood, Is.EqualTo(longNeighborhood));
+                Assert.That(_sut.City, Is.EqualTo(longCity));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithAllMXStates_ShouldAcceptAllValidStates()
+        {
+            // Arrange
+            var testStates = new[]
+            {
+                new MXState { Name = "Aguascalientes", Abbreviation = "AGU" },
+                new MXState { Name = "Baja California", Abbreviation = "BC" },
+                new MXState { Name = "Chihuahua", Abbreviation = "CHIH" },
+                new MXState { Name = "Jalisco", Abbreviation = "JAL" },
+                new MXState { Name = "Yucatán", Abbreviation = "YUC" }
+            };
+
+            // Act & Assert
+            foreach (var state in testStates)
+            {
+                var dto = new MXAddressDTO
+                {
+                    Street = "Calle Test",
+                    City = "Ciudad Test",
+                    State = state
+                };
+                
+                _sut = new MXAddress(dto);
+                
+                Assert.Multiple(() =>
+                {
+                    Assert.That(_sut.State, Is.EqualTo(state));
+                    Assert.That(_sut.State?.Name, Is.EqualTo(state.Name));
+                    Assert.That(_sut.State?.Abbreviation, Is.EqualTo(state.Abbreviation));
+                });
+            }
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithAllAddressTypes_ShouldAcceptAllValidTypes()
+        {
+            // Arrange
+            var testTypes = new[]
+            {
+                OrganizerCompanion.Core.Enums.Types.Home,
+                OrganizerCompanion.Core.Enums.Types.Work,
+                OrganizerCompanion.Core.Enums.Types.Mobil,
+                OrganizerCompanion.Core.Enums.Types.Fax,
+            };
+
+            // Act & Assert
+            foreach (var type in testTypes)
+            {
+                var dto = new MXAddressDTO
+                {
+                    Street = "Calle Test",
+                    City = "Ciudad Test",
+                    Type = type
+                };
+                
+                _sut = new MXAddress(dto);
+                
+                Assert.That(_sut.Type, Is.EqualTo(type));
+            }
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullType_ShouldAcceptNullType()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Calle Sin Tipo",
+                City = "Ciudad Test",
+                Type = null
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.That(_sut.Type, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithIsPrimaryTrue_ShouldSetIsPrimaryCorrectly()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Dirección Principal",
+                City = "Ciudad Test",
+                IsPrimary = true
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.True);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithIsPrimaryFalse_ShouldSetIsPrimaryCorrectly()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Street = "Dirección Secundaria",
+                City = "Ciudad Test",
+                IsPrimary = false
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.That(_sut.IsPrimary, Is.False);
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithZeroId_ShouldAcceptZeroValue()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Id = 0,
+                Street = "Calle Cero",
+                City = "Ciudad Test"
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMaxIntId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            var dto = new MXAddressDTO
+            {
+                Id = int.MaxValue,
+                Street = "Calle Máxima",
+                City = "Ciudad Test"
+            };
+
+            // Act
+            _sut = new MXAddress(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        #endregion
+
         [Test, Category("Models")]
         public void Id_WhenSet_ShouldUpdateDateModified()
         {
