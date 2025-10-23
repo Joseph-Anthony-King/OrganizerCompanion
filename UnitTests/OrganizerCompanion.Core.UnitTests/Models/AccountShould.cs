@@ -1036,7 +1036,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(accounts, Is.Not.Null);
                 Assert.That(accounts!, Has.Count.EqualTo(2));
-                Assert.That(accounts[0], Is.InstanceOf<ISubAccount>());
+                Assert.That(accounts![0], Is.InstanceOf<ISubAccount>());
                 Assert.That(accounts[1], Is.InstanceOf<ISubAccount>());
             });
         }
@@ -1082,7 +1082,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(account.Accounts, Is.Not.Null);
                 Assert.That(account.Accounts!, Has.Count.EqualTo(2));
-                Assert.That(account.Accounts[0], Is.EqualTo(subAccount1));
+                Assert.That(account!.Accounts![0], Is.EqualTo(subAccount1));
                 Assert.That(account.Accounts[1], Is.EqualTo(subAccount2));
                 Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
             });

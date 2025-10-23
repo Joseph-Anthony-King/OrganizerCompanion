@@ -277,6 +277,194 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void DTOConstructor_ShouldCreatePhoneNumberFromDTOWithProvidedValues()
+        {
+            // Arrange
+            var id = 456;
+            var phone = "+1-555-987-6543";
+            var type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            var country = OrganizerCompanion.Core.Enums.Countries.Canada;
+            var dateCreated = DateTime.Now.AddDays(-5);
+            var dateModified = DateTime.Now.AddHours(-3);
+            var linkedEntity = new MockDomainEntity { Id = 789 };
+
+            var dto = new PhoneNumberDTO
+            {
+                Id = id,
+                Phone = phone,
+                Type = type,
+                Country = country,
+                DateCreated = dateCreated,
+                DateModified = dateModified
+            };
+
+            // Act
+            var phoneNumber = new PhoneNumber(dto, linkedEntity);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
+                Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(789));
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullLinkedEntity_ShouldCreatePhoneNumberWithNullLinkedEntity()
+        {
+            // Arrange
+            var id = 123;
+            var phone = "+1-555-123-4567";
+            var type = OrganizerCompanion.Core.Enums.Types.Work;
+            var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+            var dateCreated = DateTime.Now.AddDays(-2);
+            var dateModified = DateTime.Now.AddHours(-1);
+
+            var dto = new PhoneNumberDTO
+            {
+                Id = id,
+                Phone = phone,
+                Type = type,
+                Country = country,
+                DateCreated = dateCreated,
+                DateModified = dateModified
+            };
+
+            // Act
+            var phoneNumber = new PhoneNumber(dto, null);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
+                Assert.That(phoneNumber.LinkedEntity, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityId, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityType, Is.Null);
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithDefaultLinkedEntity_ShouldCreatePhoneNumberWithNullLinkedEntity()
+        {
+            // Arrange
+            var id = 789;
+            var phone = "+1-800-DEFAULT-ENTITY";
+            var type = OrganizerCompanion.Core.Enums.Types.Fax;
+            var country = OrganizerCompanion.Core.Enums.Countries.Mexico;
+            var dateCreated = DateTime.Now.AddDays(-7);
+
+            var dto = new PhoneNumberDTO
+            {
+                Id = id,
+                Phone = phone,
+                Type = type,
+                Country = country,
+                DateCreated = dateCreated,
+                DateModified = null
+            };
+
+            // Act - Test the optional parameter by not providing it
+            var phoneNumber = new PhoneNumber(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(phone));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
+                Assert.That(phoneNumber.LinkedEntity, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityId, Is.Null);
+                Assert.That(phoneNumber.LinkedEntityType, Is.Null);
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullDTOProperties_ShouldCreatePhoneNumberWithNullValues()
+        {
+            // Arrange
+            var dateCreated = DateTime.Now.AddDays(-1);
+            var linkedEntity = new MockDomainEntity { Id = 999 };
+
+            var dto = new PhoneNumberDTO
+            {
+                Id = 0,
+                Phone = null,
+                Type = null,
+                Country = null,
+                DateCreated = dateCreated,
+                DateModified = null
+            };
+
+            // Act
+            var phoneNumber = new PhoneNumber(dto, linkedEntity);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(0));
+                Assert.That(phoneNumber.Phone, Is.Null);
+                Assert.That(phoneNumber.Type, Is.Null);
+                Assert.That(phoneNumber.Country, Is.Null);
+                Assert.That(phoneNumber.LinkedEntity, Is.EqualTo(linkedEntity));
+                Assert.That(phoneNumber.LinkedEntityId, Is.EqualTo(999));
+                Assert.That(phoneNumber.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyPhoneString_ShouldCreatePhoneNumberWithEmptyPhone()
+        {
+            // Arrange
+            var id = 555;
+            var phone = string.Empty;
+            var type = OrganizerCompanion.Core.Enums.Types.Other;
+            var country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
+            var dateCreated = DateTime.Now.AddDays(-3);
+            var dateModified = DateTime.Now.AddHours(-6);
+
+            var dto = new PhoneNumberDTO
+            {
+                Id = id,
+                Phone = phone,
+                Type = type,
+                Country = country,
+                DateCreated = dateCreated,
+                DateModified = dateModified
+            };
+
+            // Act
+            var phoneNumber = new PhoneNumber(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(phoneNumber.Id, Is.EqualTo(id));
+                Assert.That(phoneNumber.Phone, Is.EqualTo(string.Empty));
+                Assert.That(phoneNumber.Type, Is.EqualTo(type));
+                Assert.That(phoneNumber.Country, Is.EqualTo(country));
+                Assert.That(phoneNumber.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(phoneNumber.DateModified, Is.EqualTo(dateModified));
+            });
+        }
+
+        [Test, Category("Models")]
         public void DateModified_CanBeSetAndRetrieved()
         {
             // Arrange
