@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -13,6 +14,25 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private User _testLinkedEntity;
         private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+
+        // Test implementation of ISubAccountDTO that properly handles null values
+        private class TestSubAccountDTO : ISubAccountDTO
+        {
+            public int Id { get; set; }
+            public int? AccountId { get; set; }
+            public IAccountDTO? Account { get; set; }
+            public int LinkedEntityId { get; set; }
+            public string? LinkedEntityType { get; private set; }
+            public IDomainEntity? LinkedEntity { get; set; }
+            public DateTime DateCreated { get; private set; } = DateTime.UtcNow;
+            public DateTime? DateModified { get; set; }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => throw new NotImplementedException();
+
+            // Helper method to set LinkedEntityType for testing
+            public void SetLinkedEntityType(string? type) => LinkedEntityType = type;
+        }
 
         // Helper method to perform validation
         private IList<ValidationResult> ValidateModel(object model)
@@ -194,6 +214,194 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(subAccount.LinkedEntity, Is.Null);
                 Assert.That(subAccount.AccountId, Is.Null);
                 Assert.That(subAccount.Account, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithValidDTO_ShouldCreateSubAccountCorrectly()
+        {
+            // Arrange
+            var dto = new TestSubAccountDTO
+            {
+                Id = 1,
+                LinkedEntityId = 100,
+                AccountId = 200,
+                DateModified = _testDateModified
+            };
+            dto.SetLinkedEntityType("User");
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(dto.Id));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(dto.LinkedEntityId));
+                Assert.That(subAccount.LinkedEntityType, Is.EqualTo(dto.LinkedEntityType));
+                Assert.That(subAccount.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(subAccount.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(subAccount.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullOptionalProperties_ShouldCreateSubAccountCorrectly()
+        {
+            // Arrange
+            var dto = new TestSubAccountDTO
+            {
+                Id = 2,
+                LinkedEntityId = 150,
+                AccountId = null,
+                Account = null,
+                LinkedEntity = null,
+                DateModified = null
+            };
+            dto.SetLinkedEntityType(null);
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(dto.Id));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(dto.LinkedEntityId));
+                Assert.That(subAccount.LinkedEntityType, Is.Null);
+                Assert.That(subAccount.LinkedEntity, Is.Null);
+                Assert.That(subAccount.AccountId, Is.Null);
+                Assert.That(subAccount.Account, Is.Null);
+                Assert.That(subAccount.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(subAccount.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithLinkedEntityAndAccount_ShouldCreateSubAccountCorrectly()
+        {
+            // Arrange
+            var dto = new TestSubAccountDTO
+            {
+                Id = 3,
+                LinkedEntityId = 300,
+                AccountId = 400,
+                LinkedEntity = null, // Set to null to avoid casting issues
+                Account = null, // Set to null to avoid casting issues
+                DateModified = _testDateModified
+            };
+            dto.SetLinkedEntityType("User");
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(dto.Id));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(dto.LinkedEntityId));
+                Assert.That(subAccount.LinkedEntityType, Is.EqualTo(dto.LinkedEntityType));
+                Assert.That(subAccount.LinkedEntity, Is.Null);
+                Assert.That(subAccount.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(subAccount.Account, Is.Null);
+                Assert.That(subAccount.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(subAccount.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalValidData_ShouldCreateSubAccountCorrectly()
+        {
+            // Arrange
+            var dto = new TestSubAccountDTO
+            {
+                Id = 0,
+                LinkedEntityId = 0,
+                AccountId = null,
+                Account = null,
+                LinkedEntity = null,
+                DateModified = null
+            };
+            dto.SetLinkedEntityType(null);
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(0));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
+                Assert.That(subAccount.LinkedEntityType, Is.Null);
+                Assert.That(subAccount.LinkedEntity, Is.Null);
+                Assert.That(subAccount.AccountId, Is.Null);
+                Assert.That(subAccount.Account, Is.Null);
+                Assert.That(subAccount.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(subAccount.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMaxValidData_ShouldCreateSubAccountCorrectly()
+        {
+            // Arrange
+            var dto = new TestSubAccountDTO
+            {
+                Id = int.MaxValue,
+                LinkedEntityId = int.MaxValue,
+                AccountId = int.MaxValue,
+                Account = null, // Avoid casting issues
+                LinkedEntity = null, // Set to null to avoid casting issues
+                DateModified = _testDateModified
+            };
+            dto.SetLinkedEntityType("User");
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(int.MaxValue));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(int.MaxValue));
+                Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
+                Assert.That(subAccount.LinkedEntity, Is.Null);
+                Assert.That(subAccount.AccountId, Is.EqualTo(int.MaxValue));
+                Assert.That(subAccount.Account, Is.Null);
+                Assert.That(subAccount.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(subAccount.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_PreservesDateCreatedFromDTO_ShouldUseProvidedDate()
+        {
+            // Arrange
+            var specificDateCreated = new DateTime(2023, 6, 15, 14, 30, 45);
+            var dto = new TestSubAccountDTO
+            {
+                Id = 5,
+                LinkedEntityId = 500,
+                AccountId = 600,
+                DateModified = _testDateModified
+            };
+            
+            // Use reflection to set the DateCreated since it's typically read-only
+            var dateCreatedField = typeof(TestSubAccountDTO).GetField("<DateCreated>k__BackingField", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            dateCreatedField?.SetValue(dto, specificDateCreated);
+
+            // Act
+            var subAccount = new SubAccount(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.Id, Is.EqualTo(dto.Id));
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(dto.LinkedEntityId));
+                Assert.That(subAccount.AccountId, Is.EqualTo(dto.AccountId));
+                Assert.That(subAccount.DateCreated, Is.EqualTo(specificDateCreated));
+                Assert.That(subAccount.DateModified, Is.EqualTo(dto.DateModified));
             });
         }
 

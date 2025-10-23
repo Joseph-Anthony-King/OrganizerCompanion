@@ -135,6 +135,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _accountId = account?.Id;
             Account = account;
         }
+        
         public SubAccount(ISubAccountDTO account)
         {
             _id = account.Id;
