@@ -105,10 +105,14 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public AccountFeature(
             int id,
+            Account? account,
+            Feature? feature,
             DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
+            _account = account;
+            _feature = feature;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }

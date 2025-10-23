@@ -44,24 +44,28 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_SetsPropertiesCorrectly()
         {
             // Arrange
-            var testDateCreated = DateTime.UtcNow;
+     var testDateCreated = DateTime.UtcNow;
+          var account = new Account { Id = 789, AccountName = "Test Account" };
+     var feature = new Feature(456, "Test Feature", true, DateTime.Now, null);
 
-            // Act
-            var accountFeature = new AccountFeature(
-               id: 1,
-    dateCreated: testDateCreated,
-         dateModified: null);
+   // Act
+  var accountFeature = new AccountFeature(
+    id: 1,
+     account: account,
+    feature: feature,
+                dateCreated: testDateCreated,
+                dateModified: null);
 
             // Assert
-            Assert.Multiple(() =>
-       {
-           Assert.That(accountFeature.Id, Is.EqualTo(1));
-           Assert.That(accountFeature.AccountId, Is.EqualTo(0)); // No account set
-           Assert.That(accountFeature.FeatureId, Is.EqualTo(0)); // No feature set
-           Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
-           Assert.That(accountFeature.DateModified, Is.Null);
-       });
-        }
+  Assert.Multiple(() =>
+         {
+  Assert.That(accountFeature.Id, Is.EqualTo(1));
+     Assert.That(accountFeature.AccountId, Is.EqualTo(789));
+        Assert.That(accountFeature.FeatureId, Is.EqualTo(456));
+          Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
+                Assert.That(accountFeature.DateModified, Is.Null);
+            });
+   }
 
         [Test, Category("Models")]
         public void ConstructorWithAccountAndFeature_SetsPropertiesCorrectly()
@@ -492,18 +496,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_WithZeroValues_SetsPropertiesCorrectly()
         {
             // Arrange & Act
-            var accountFeature = new AccountFeature(
-          id: 0,
-                dateCreated: DateTime.UtcNow,
-          dateModified: null);
+   var accountFeature = new AccountFeature(
+     id: 0,
+           account: null,
+feature: null,
+         dateCreated: DateTime.UtcNow,
+         dateModified: null);
 
             // Assert
-            Assert.Multiple(() =>
-         {
-             Assert.That(accountFeature.AccountId, Is.EqualTo(0));
-             Assert.That(accountFeature.FeatureId, Is.EqualTo(0));
-             Assert.That(accountFeature.Id, Is.EqualTo(0));
-         });
+ Assert.Multiple(() =>
+          {
+       Assert.That(accountFeature.AccountId, Is.EqualTo(0));
+  Assert.That(accountFeature.FeatureId, Is.EqualTo(0));
+      Assert.That(accountFeature.Id, Is.EqualTo(0));
+            });
         }
 
         [Test, Category("Models")]
@@ -652,23 +658,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var testDateCreated = new DateTime(2025, 1, 1, 10, 0, 0);
-            var testDateModified = new DateTime(2025, 10, 20, 15, 30, 45);
+         var testDateModified = new DateTime(2025, 10, 20, 15, 30, 45);
+            var account = new Account { Id = 100, AccountName = "Test" };
+  var feature = new Feature(200, "Test", true, DateTime.Now, null);
 
             // Act
-            var accountFeature = new AccountFeature(
-            id: 555,
-               dateCreated: testDateCreated,
-              dateModified: testDateModified);
+     var accountFeature = new AccountFeature(
+    id: 555,
+                account: account,
+                feature: feature,
+   dateCreated: testDateCreated,
+   dateModified: testDateModified);
 
-            // Assert
-            Assert.Multiple(() =>
-             {
-                 Assert.That(accountFeature.Id, Is.EqualTo(555));
-                 Assert.That(accountFeature.AccountId, Is.EqualTo(0)); // No account set
-                 Assert.That(accountFeature.FeatureId, Is.EqualTo(0)); // No feature set
-                 Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
-                 Assert.That(accountFeature.DateModified, Is.EqualTo(testDateModified));
-             });
+      // Assert
+      Assert.Multiple(() =>
+  {
+                Assert.That(accountFeature.Id, Is.EqualTo(555));
+    Assert.That(accountFeature.AccountId, Is.EqualTo(100));
+           Assert.That(accountFeature.FeatureId, Is.EqualTo(200));
+       Assert.That(accountFeature.DateCreated, Is.EqualTo(testDateCreated));
+        Assert.That(accountFeature.DateModified, Is.EqualTo(testDateModified));
+            });
         }
 
         [Test, Category("Models")]
@@ -745,54 +755,51 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         [Test, Category("Models")]
         public void CompleteIntegration_AllPropertiesAndMethods()
-        {
+{
             // Arrange
             var feature = new Feature(1, "Integration Test Feature", true, DateTime.Now, DateTime.Now);
-            var account = new Account { Id = 2, AccountName = "Integration Test Account" };
-            var createdDate = new DateTime(2025, 1, 1, 12, 0, 0);
-            var modifiedDate = new DateTime(2025, 10, 20, 18, 30, 45);
+   var account = new Account { Id = 2, AccountName = "Integration Test Account" };
+     var createdDate = new DateTime(2025, 1, 1, 12, 0, 0);
+     var modifiedDate = new DateTime(2025, 10, 20, 18, 30, 45);
 
-            // Act - Create using JsonConstructor
-            var accountFeature = new AccountFeature(
-                id: 12345,
-                dateCreated: createdDate,
-                dateModified: modifiedDate)
+  // Act - Create using JsonConstructor
+     var accountFeature = new AccountFeature(
+     id: 12345,
+                account: account,
+feature: feature,
+           dateCreated: createdDate,
+                dateModified: modifiedDate);
+
+   // Assert - Verify all properties
+ Assert.Multiple(() =>
             {
-                // Set complex properties
-                Account = account,
-                Feature = feature
-            };
+          Assert.That(accountFeature.Id, Is.EqualTo(12345));
+      Assert.That(accountFeature.AccountId, Is.EqualTo(2));
+        Assert.That(accountFeature.Account, Is.EqualTo(account));
+      Assert.That(accountFeature.FeatureId, Is.EqualTo(1));
+Assert.That(accountFeature.Feature, Is.EqualTo(feature));
+      Assert.That(accountFeature.DateCreated, Is.EqualTo(createdDate));
+    Assert.That(accountFeature.DateModified, Is.EqualTo(modifiedDate));
+     });
 
-            // Assert - Verify all properties
-            Assert.Multiple(() =>
-            {
-                Assert.That(accountFeature.Id, Is.EqualTo(12345));
-                Assert.That(accountFeature.AccountId, Is.EqualTo(2)); // Should be from Account.Id
-                Assert.That(accountFeature.Account, Is.EqualTo(account));
-                Assert.That(accountFeature.FeatureId, Is.EqualTo(1)); // Should be from Feature.Id
-                Assert.That(accountFeature.Feature, Is.EqualTo(feature));
-                Assert.That(accountFeature.DateCreated, Is.EqualTo(createdDate));
-                Assert.That(accountFeature.DateModified, Is.Not.EqualTo(modifiedDate)); // Updated by property setters
-            });
-
-            // Test Cast method
+     // Test Cast method
             var dto = accountFeature.Cast<FeatureDTO>();
             Assert.Multiple(() =>
-                   {
-                       Assert.That(dto.Id, Is.EqualTo(12345));
-                       Assert.That(dto.FeatureName, Is.EqualTo("Integration Test Feature"));
-                       Assert.That(dto.IsEnabled, Is.True);
-                   });
+     {
+                Assert.That(dto.Id, Is.EqualTo(12345));
+         Assert.That(dto.FeatureName, Is.EqualTo("Integration Test Feature"));
+      Assert.That(dto.IsEnabled, Is.True);
+      });
 
-            // Test ToJson method
-            var json = accountFeature.ToJson();
-            Assert.Multiple(() =>
-               {
-                   Assert.That(json, Is.Not.Null);
-                   Assert.That(json, Contains.Substring("\"id\":12345"));
-                   Assert.That(json, Contains.Substring("\"accountId\":2"));
-                   Assert.That(json, Contains.Substring("\"featureId\":1"));
-               });
+     // Test ToJson method
+   var json = accountFeature.ToJson();
+ Assert.Multiple(() =>
+       {
+         Assert.That(json, Is.Not.Null);
+  Assert.That(json, Contains.Substring("\"id\":12345"));
+    Assert.That(json, Contains.Substring("\"accountId\":2"));
+     Assert.That(json, Contains.Substring("\"featureId\":1"));
+      });
         }
 
         [Test, Category("Models")]
