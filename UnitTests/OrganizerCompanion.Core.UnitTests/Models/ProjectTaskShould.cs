@@ -3,6 +3,7 @@ using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -10,6 +11,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     internal class ProjectTaskShould
     {
         private ProjectTask _sut;
+
+        // Test implementation of IProjectTaskDTO that properly handles null values
+        private class TestProjectTaskDTO : IProjectTaskDTO
+        {
+            public int Id { get; set; }
+            public string Name { get; set; } = string.Empty;
+            public string? Description { get; set; }
+            public List<IProjectAssignmentDTO>? Assignments { get; set; }
+            public bool IsCompleted { get; set; }
+            public DateTime? DateDue { get; set; }
+            public DateTime? DateCompleted { get; private set; }
+            public DateTime DateCreated { get; private set; } = DateTime.UtcNow;
+            public DateTime? DateModified { get; set; }
+
+            public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
+            public string ToJson() => throw new NotImplementedException();
+        }
 
         [SetUp]
         public void SetUp()
@@ -94,6 +112,178 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.DateDue, Is.Null);
                 Assert.That(_sut.DateCompleted, Is.Null);
                 Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(_sut.DateModified, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithValidDTO_ShouldCreateTaskCorrectly()
+        {
+            // Arrange
+            var dto = new ProjectTaskDTO
+            {
+                Id = 1,
+                Name = "DTO Task",
+                Description = "DTO Description",
+                Assignments = new List<ProjectAssignmentDTO>
+                {
+                    new ProjectAssignmentDTO { Id = 1, Name = "Assignment 1", Groups = new List<GroupDTO>() },
+                    new ProjectAssignmentDTO { Id = 2, Name = "Assignment 2", Groups = new List<GroupDTO>() }
+                },
+                IsCompleted = true,
+                DateDue = DateTime.Now.AddDays(7),
+                DateModified = DateTime.Now
+            };
+
+            // Act
+            _sut = new ProjectTask(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Assignments, Is.Not.Null);
+                Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
+                Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
+                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
+                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullAssignments_ShouldCreateTaskWithNullAssignments()
+        {
+            // Arrange
+            // Create a custom DTO implementation that properly handles null assignments
+            var dto = new TestProjectTaskDTO
+            {
+                Id = 2,
+                Name = "DTO Task No Assignments",
+                Description = "DTO Description",
+                Assignments = null,
+                IsCompleted = false,
+                DateDue = null,
+                DateModified = null
+            };
+
+            // Act
+            _sut = new ProjectTask(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Assignments, Is.Null);
+                Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
+                Assert.That(_sut.DateDue, Is.Null);
+                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyAssignments_ShouldCreateTaskWithEmptyAssignments()
+        {
+            // Arrange
+            var dto = new ProjectTaskDTO
+            {
+                Id = 3,
+                Name = "DTO Task Empty Assignments",
+                Description = "DTO Description",
+                Assignments = new List<ProjectAssignmentDTO>(),
+                IsCompleted = false,
+                DateDue = DateTime.Now.AddDays(14),
+                DateModified = DateTime.Now
+            };
+
+            // Act
+            _sut = new ProjectTask(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.Description, Is.EqualTo(dto.Description));
+                Assert.That(_sut.Assignments, Is.Not.Null);
+                Assert.That(_sut.Assignments, Is.Empty);
+                Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
+                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
+                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullDescription_ShouldCreateTaskWithNullDescription()
+        {
+            // Arrange
+            var dto = new TestProjectTaskDTO
+            {
+                Id = 4,
+                Name = "DTO Task No Description",
+                Description = null,
+                Assignments = null,
+                IsCompleted = true,
+                DateDue = DateTime.Now.AddDays(3),
+                DateModified = DateTime.Now
+            };
+
+            // Act
+            _sut = new ProjectTask(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.Description, Is.Null);
+                Assert.That(_sut.Assignments, Is.Null);
+                Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
+                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
+                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalValidData_ShouldCreateTaskCorrectly()
+        {
+            // Arrange
+            var dto = new TestProjectTaskDTO
+            {
+                Id = 0,
+                Name = "A", // Minimum valid name
+                Description = null,
+                Assignments = null,
+                IsCompleted = false,
+                DateDue = null,
+                DateModified = null
+            };
+
+            // Act
+            _sut = new ProjectTask(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(0));
+                Assert.That(_sut.Name, Is.EqualTo("A"));
+                Assert.That(_sut.Description, Is.Null);
+                Assert.That(_sut.Assignments, Is.Null);
+                Assert.That(_sut.IsCompleted, Is.False);
+                Assert.That(_sut.DateDue, Is.Null);
+                Assert.That(_sut.DateCompleted, Is.Null);
+                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
                 Assert.That(_sut.DateModified, Is.Null);
             });
         }

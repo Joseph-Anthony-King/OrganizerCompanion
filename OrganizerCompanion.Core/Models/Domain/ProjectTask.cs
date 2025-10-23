@@ -147,6 +147,19 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public ProjectTask(IProjectTaskDTO task)
+        {
+            _id = task.Id;
+            _name = task.Name;
+            _description = task.Description;
+            _assignments = task.Assignments?.Select(a => new ProjectAssignment(a)).ToList();
+            _isCompleted = task.IsCompleted;
+            _dateDue = task.DateDue;
+            _dateCompleted = task.DateCompleted;
+            _dateCreated = task.DateCreated;
+            DateModified = task.DateModified;
+        }
         #endregion
 
         #region Methods

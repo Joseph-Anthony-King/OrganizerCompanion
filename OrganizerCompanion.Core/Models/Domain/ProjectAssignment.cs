@@ -285,6 +285,25 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public ProjectAssignment(IProjectAssignmentDTO assignment)
+        {
+            _id = assignment.Id;
+            _name = assignment.Name;
+            _description = assignment.Description;
+            _assignee = (SubAccount?)assignment.Assignee;
+            _locationId = assignment.LocationId;
+            _locationType = assignment.LocationType;
+            _location = assignment.Location != null ? (IAddress)assignment.Location : null;
+            _groups = assignment.Groups?.ConvertAll(group => (Group)group) ?? [];
+            _taskId = assignment.TaskId;
+            _task = (ProjectTask?)assignment.Task;
+            _isCompleted = assignment.IsCompleted;
+            _dateDue = assignment.DateDue;
+            _dateCompleted = assignment.DateCompleted;
+            _dateCreated = assignment.DateCreated;
+            DateModified = assignment.DateModified;
+        }
         #endregion
 
         #region Methods

@@ -170,6 +170,20 @@ namespace OrganizerCompanion.Core.Models.Domain
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
+
+        public Project(IProjectDTO dto)
+        {
+            _id = dto.Id;
+            _name = dto.Name;
+            _description = dto.Description;
+            _groups = dto.Groups?.Select(g => new Group(g)).ToList();
+            _tasks = dto.Tasks?.Select(t => new ProjectTask(t)).ToList();
+            _isCompleted = dto.IsCompleted;
+            _dateDue = dto.DateDue;
+            _dateCompleted = dto.DateCompleted;
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods
