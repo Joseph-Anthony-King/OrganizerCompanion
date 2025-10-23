@@ -33,7 +33,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -46,7 +49,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "Linked Entity Id must be a non-negative number.");
+                }
+
                 _linkedEntityId = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -77,7 +83,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value != null && value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), "Account Id must be a non-negative number.");
+                }
+
                 _accountId = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -160,10 +169,14 @@ namespace OrganizerCompanion.Core.Models.Domain
         public T CastLinkedEntity<T>() where T : class, IDomainEntity
         {
             if (_linkedEntity == null)
+            {
                 throw new InvalidOperationException("LinkedEntity is null and cannot be cast.");
-            
+            }
+
             if (string.IsNullOrEmpty(_linkedEntityType))
+            {
                 throw new InvalidOperationException("LinkedEntityType is not set.");
+            }
 
             // Check if type is registered in the TypeRegistry
             var targetType = TypeRegistry.GetType(_linkedEntityType);
@@ -175,15 +188,21 @@ namespace OrganizerCompanion.Core.Models.Domain
                            ?? System.Type.GetType(_linkedEntityType);
                 
                 if (targetType == null)
+                {
                     throw new InvalidCastException($"Could not find type '{_linkedEntityType}'.");
+                }
             }
 
             if (!typeof(T).IsAssignableFrom(targetType) && targetType != typeof(T))
+            {
                 throw new InvalidCastException($"Cannot cast LinkedEntity of type '{_linkedEntityType}' to '{typeof(T).Name}'.");
+            }
 
             // If the LinkedEntity is already of the correct type, return it directly
             if (_linkedEntity is T directCast)
+            {
                 return directCast;
+            }
 
             // If the LinkedEntity has a Cast method, use it
             if (_linkedEntity.GetType().GetMethod("Cast")?.MakeGenericMethod(typeof(T)) is var castMethod && castMethod != null)
@@ -219,7 +238,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         public bool CanCastLinkedEntityTo<T>() where T : class, IDomainEntity
         {
             if (_linkedEntity == null || string.IsNullOrEmpty(_linkedEntityType))
+            {
                 return false;
+            }
 
             var targetType = TypeRegistry.GetType(_linkedEntityType);
             return _linkedEntity is T || (targetType != null && typeof(T).IsAssignableFrom(targetType));

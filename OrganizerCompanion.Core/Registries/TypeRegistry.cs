@@ -17,11 +17,17 @@ namespace OrganizerCompanion.Core.Registries
         /// </summary>
         public static void Initialize()
         {
-            if (_initialized) return;
+            if (_initialized)
+            {
+                return;
+            }
 
             lock (_lock)
             {
-                if (_initialized) return;
+                if (_initialized)
+                {
+                    return;
+                }
 
                 // Register Domain types
                 RegisterType<Models.Domain.Account>("Account");
@@ -78,10 +84,16 @@ namespace OrganizerCompanion.Core.Registries
         /// <returns>The Type if found, null otherwise</returns>
         public static System.Type? GetType(string typeName)
         {
-            if (!_initialized) Initialize();
-            
-            if (string.IsNullOrEmpty(typeName)) return null;
-            
+            if (!_initialized)
+            {
+                Initialize();
+            }
+
+            if (string.IsNullOrEmpty(typeName))
+            {
+                return null;
+            }
+
             return _typeCache.TryGetValue(typeName, out var type) ? type : null;
         }
 
@@ -92,10 +104,16 @@ namespace OrganizerCompanion.Core.Registries
         /// <returns>True if the type is registered, false otherwise</returns>
         public static bool IsTypeRegistered(string typeName)
         {
-            if (!_initialized) Initialize();
-            
-            if (string.IsNullOrEmpty(typeName)) return false;
-            
+            if (!_initialized)
+            {
+                Initialize();
+            }
+
+            if (string.IsNullOrEmpty(typeName))
+            {
+                return false;
+            }
+
             return _typeCache.ContainsKey(typeName);
         }
 
@@ -105,8 +123,11 @@ namespace OrganizerCompanion.Core.Registries
         /// <returns>Collection of registered type names</returns>
         public static IEnumerable<string> GetRegisteredTypeNames()
         {
-            if (!_initialized) Initialize();
-            
+            if (!_initialized)
+            {
+                Initialize();
+            }
+
             return _typeCache.Keys;
         }
 

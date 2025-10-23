@@ -118,10 +118,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             IFeature feature)
         {
             if (account == null)
+            {
                 throw new ArgumentNullException(nameof(account), "Account cannot be null.");
+            }
 
             if (feature == null)
+            {
                 throw new ArgumentNullException(nameof(feature), "Feature cannot be null.");
+            }
 
             _account = (Account)account;
             _feature = (Feature)feature;
@@ -169,7 +173,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                     };
                     return (T)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {

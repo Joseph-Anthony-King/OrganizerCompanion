@@ -25,7 +25,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value; 
                 DateModified = DateTime.Now; 
             } 
@@ -65,7 +68,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                     _previousPasswords.RemoveAt(0);
                 }
                 if (_passwordValue != null)
+                {
                     _previousPasswords.Add(_passwordValue!);
+                }
+
                 _passwordValue = value;
                 _expirationDate = DateTime.Now.AddMonths(3);
                 DateModified = DateTime.Now; 
@@ -100,7 +106,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(AccountId), "Account Id must be a non-negative number.");
+                }
+
                 _accountId = value; 
                 DateModified = DateTime.Now; 
             } 

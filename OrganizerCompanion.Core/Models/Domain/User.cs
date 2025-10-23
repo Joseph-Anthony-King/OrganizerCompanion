@@ -393,7 +393,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                     );
                     return (T)contact;
                 }
-                else throw new InvalidCastException($"Cannot cast User to type {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast User to type {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {

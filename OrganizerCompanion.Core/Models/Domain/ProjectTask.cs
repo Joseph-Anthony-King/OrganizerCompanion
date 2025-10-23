@@ -42,7 +42,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -55,9 +58,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
+                {
                     throw new ArgumentException("Name must be at least 1 character long.", nameof(Name));
+                }
+
                 if (value.Length > 100)
+                {
                     throw new ArgumentException("Name cannot exceed 100 characters.", nameof(Name));
+                }
+
                 _name = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -70,9 +79,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
+                {
                     throw new ArgumentException("Description must be at least 1 character long.", nameof(Description));
+                }
+
                 if (value.Length > 1000)
+                {
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
+                }
+
                 _description = value;
                 DateModified = DateTime.UtcNow;
             }
@@ -174,7 +189,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                     var dto = new ProjectTaskDTO();
                     return (T)(object)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {

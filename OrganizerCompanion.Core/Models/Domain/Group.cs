@@ -56,7 +56,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -169,7 +172,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         public Group(IGroupDTO dto)
         {
             if (dto == null)
+            {
                 throw new ArgumentNullException(nameof(dto), "DTO cannot be null.");
+            }
 
             _id = dto.Id;
             _groupName = dto.GroupName;

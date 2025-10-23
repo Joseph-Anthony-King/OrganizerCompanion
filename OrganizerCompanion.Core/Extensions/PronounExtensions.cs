@@ -67,8 +67,11 @@ namespace OrganizerCompanion.Core.Extensions
         public static string GetFormattedSubject(this Pronouns pronoun, bool capitalize = true)
         {
             var subject = pronoun.GetSubject();
-            if (string.IsNullOrEmpty(subject)) return string.Empty;
-            
+            if (string.IsNullOrEmpty(subject))
+            {
+                return string.Empty;
+            }
+
             return capitalize ? char.ToUpper(subject[0]) + subject.Substring(1) : subject;
         }
     }

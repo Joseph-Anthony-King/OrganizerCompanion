@@ -77,7 +77,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -90,7 +93,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value.Length < 1 || value.Length > 100)
+                {
                     throw new ArgumentException("Name must be between 1 and 100 characters long.", nameof(Name));
+                }
+
                 _name = value;
                 DateModified = DateTime.Now;
             }
@@ -103,7 +109,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value!.Length > 1000)
+                {
                     throw new ArgumentException("Description cannot exceed 1000 characters.", nameof(Description));
+                }
+
                 _description = value;
                 DateModified = DateTime.Now;
             }
@@ -133,7 +142,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(LocationId), "Location Id must be a non-negative number.");
+                }
+
                 _locationId = value;
                 DateModified = DateTime.Now;
             }
@@ -180,7 +192,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(TaskId), "Task Id must be a non-negative number.");
+                }
+
                 _taskId = value;
                 DateModified = DateTime.Now;
             }
@@ -333,7 +348,10 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     return (T)(object)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast Feature to type {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {

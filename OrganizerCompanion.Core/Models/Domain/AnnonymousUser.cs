@@ -45,7 +45,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -58,9 +61,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
+                {
                     throw new ArgumentException("User Name must be at least 1 character long.", nameof(UserName));
+                }
+
                 if (value.Length > 100)
+                {
                     throw new ArgumentException("User Name cannot exceed 100 characters.", nameof(UserName));
+                }
+
                 _userName = value;
                 DateModified = DateTime.Now;
             }
@@ -241,7 +250,10 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                     return result;
                 }
-                else throw new InvalidCastException($"Cannot cast AnnonymousUser to {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast AnnonymousUser to {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {

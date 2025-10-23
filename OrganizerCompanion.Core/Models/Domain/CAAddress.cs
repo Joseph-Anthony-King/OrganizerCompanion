@@ -38,7 +38,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
+
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -250,7 +253,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                     };
                     return (T)dto;
                 }
-                else throw new InvalidCastException($"Cannot cast CAAddress to type {typeof(T).Name}.");
+                else
+                {
+                    throw new InvalidCastException($"Cannot cast CAAddress to type {typeof(T).Name}.");
+                }
             }
             catch (Exception)
             {
