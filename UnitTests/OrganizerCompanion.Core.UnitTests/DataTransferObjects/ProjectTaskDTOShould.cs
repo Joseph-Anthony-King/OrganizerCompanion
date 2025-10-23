@@ -407,7 +407,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert - This covers the casting logic [.. Assignments!.Cast<IProjectAssignmentDTO>()]
             Assert.That(result, Is.Not.Null);
-            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result, Has.Count.EqualTo(2));
       Assert.Multiple(() =>
       {
         Assert.That(result[0].Id, Is.EqualTo(1));
@@ -431,7 +431,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Assignments, Is.Not.Null);
-            Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
+            Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
             Assert.That(_sut.Assignments[0], Is.InstanceOf<ProjectAssignmentDTO>());
       Assert.Multiple(() =>
       {
@@ -766,7 +766,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.Name, Is.EqualTo(name));
                 Assert.That(dto.Description, Is.EqualTo(description));
                 Assert.That(dto.Assignments, Is.EqualTo(assignments));
-                Assert.That(dto.Assignments!.Count, Is.EqualTo(3));
+                Assert.That(dto.Assignments!, Has.Count.EqualTo(3));
                 Assert.That(dto.IsCompleted, Is.EqualTo(isCompleted));
                 Assert.That(dto.DateDue, Is.EqualTo(dateDue));
                 Assert.That(dto.DateCompleted, Is.EqualTo(dateCompleted));
@@ -838,7 +838,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Assignments, Is.Not.Null);
-            Assert.That(_sut.Assignments.Count, Is.EqualTo(1000));
+            Assert.That(_sut.Assignments, Has.Count.EqualTo(1000));
             Assert.That(_sut.Assignments[999].Name, Is.EqualTo("Assignment 999"));
         }
 

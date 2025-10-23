@@ -2152,11 +2152,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.FirstName, Is.EqualTo("Empty"));
                 Assert.That(result.LastName, Is.EqualTo("Collections"));
                 Assert.That(result.Emails, Is.Not.Null);
-                Assert.That(result.Emails.Count, Is.EqualTo(0));
+                Assert.That(result.Emails, Is.Empty);
                 Assert.That(result.PhoneNumbers, Is.Not.Null);
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(result.PhoneNumbers, Is.Empty);
                 Assert.That(result.Addresses, Is.Not.Null);
-                Assert.That(result.Addresses.Count, Is.EqualTo(0));
+                Assert.That(result.Addresses, Is.Empty);
                 Assert.That(result.Pronouns, Is.EqualTo(Pronouns.Other));
             });
         }
@@ -2385,7 +2385,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(userDto.JoinedDate, Is.EqualTo(_sut.JoinedDate));
                 Assert.That(userDto.Emails, Has.Count.EqualTo(1));
                 Assert.That(userDto.PhoneNumbers, Has.Count.EqualTo(1));
-                Assert.That(userDto.Addresses.Count, Is.EqualTo(0));
+                Assert.That(userDto.Addresses, Is.Empty);
                 Assert.That(userDto.IsActive, Is.EqualTo(true));
                 Assert.That(userDto.IsDeceased, Is.EqualTo(false));
                 Assert.That(userDto.IsAdmin, Is.EqualTo(true));

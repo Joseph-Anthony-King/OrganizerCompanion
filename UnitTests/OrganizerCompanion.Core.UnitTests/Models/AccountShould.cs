@@ -61,7 +61,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountNumber, Is.Null);
                 Assert.That(account.License, Is.Null);
                 Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features.Count, Is.EqualTo(0));
+                Assert.That(account.Features, Is.Empty);
                 Assert.That(account.Accounts, Is.Null);
                 Assert.That(account.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(account.DateCreated, Is.LessThanOrEqualTo(afterCreation));
@@ -969,7 +969,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(features, Is.Not.Null);
-                Assert.That(features.Count, Is.EqualTo(2));
+                Assert.That(features, Has.Count.EqualTo(2));
                 Assert.That(features[0], Is.InstanceOf<IAccountFeature>());
                 Assert.That(features[1], Is.InstanceOf<IAccountFeature>());
             });
@@ -993,7 +993,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features.Count, Is.EqualTo(2));
+                Assert.That(account.Features, Has.Count.EqualTo(2));
                 Assert.That(account.Features[0], Is.EqualTo(feature1));
                 Assert.That(account.Features[1], Is.EqualTo(feature2));
                 Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -1035,7 +1035,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(accounts, Is.Not.Null);
-                Assert.That(accounts!.Count, Is.EqualTo(2));
+                Assert.That(accounts!, Has.Count.EqualTo(2));
                 Assert.That(accounts[0], Is.InstanceOf<ISubAccount>());
                 Assert.That(accounts[1], Is.InstanceOf<ISubAccount>());
             });
@@ -1081,7 +1081,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Accounts, Is.Not.Null);
-                Assert.That(account.Accounts!.Count, Is.EqualTo(2));
+                Assert.That(account.Accounts!, Has.Count.EqualTo(2));
                 Assert.That(account.Accounts[0], Is.EqualTo(subAccount1));
                 Assert.That(account.Accounts[1], Is.EqualTo(subAccount2));
                 Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
@@ -1122,7 +1122,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Accounts, Is.Not.Null);
-                Assert.That(account.Accounts.Count, Is.EqualTo(0));
+                Assert.That(account.Accounts, Is.Empty);
                 Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
             });
         }
@@ -1464,7 +1464,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(account.Accounts, Is.Not.Null);
-                Assert.That(account.Accounts!.Count, Is.EqualTo(2));
+                Assert.That(account.Accounts!, Has.Count.EqualTo(2));
                 Assert.That(account.Accounts[0].Id, Is.EqualTo(100));
                 Assert.That(account.Accounts[1].Id, Is.EqualTo(200));
             });
@@ -1484,11 +1484,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert - Test all interface scenarios
             iAccount.Features = emptyFeatures;
             Assert.That(account.Features, Is.Not.Null);
-            Assert.That(account.Features.Count, Is.EqualTo(0));
+            Assert.That(account.Features, Is.Empty);
 
             iAccount.Accounts = emptyAccounts;
             Assert.That(account.Accounts, Is.Not.Null);
-            Assert.That(account.Accounts!.Count, Is.EqualTo(0));
+            Assert.That(account.Accounts!, Is.Empty);
 
             // Test with actual data
             var feature = new AccountFeature { Id = 1, FeatureId = 1 };
@@ -1499,10 +1499,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             Assert.Multiple(() =>
             {
-                Assert.That(account.Features.Count, Is.EqualTo(1));
-                Assert.That(account.Accounts!.Count, Is.EqualTo(1));
-                Assert.That(iAccount.Features.Count, Is.EqualTo(1));
-                Assert.That(iAccount.Accounts!.Count, Is.EqualTo(1));
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Accounts!, Has.Count.EqualTo(1));
+                Assert.That(iAccount.Features, Has.Count.EqualTo(1));
+                Assert.That(iAccount.Accounts!, Has.Count.EqualTo(1));
             });
         }
 
@@ -1652,9 +1652,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Verify interface functionality
                 Assert.That(interfaceFeatures, Is.Not.Null);
-                Assert.That(interfaceFeatures.Count, Is.EqualTo(2));
+                Assert.That(interfaceFeatures, Has.Count.EqualTo(2));
                 Assert.That(interfaceAccounts, Is.Not.Null);
-                Assert.That(interfaceAccounts!.Count, Is.EqualTo(2));
+                Assert.That(interfaceAccounts!, Has.Count.EqualTo(2));
 
                 // Verify methods
                 Assert.That(json1, Is.Not.Null);
@@ -1732,7 +1732,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Verify we can add to it
                 account.Features.Add(new AccountFeature { Id = 1 });
-                Assert.That(account.Features.Count, Is.EqualTo(1));
+                Assert.That(account.Features, Has.Count.EqualTo(1));
             });
         }
 

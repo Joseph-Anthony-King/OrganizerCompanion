@@ -91,11 +91,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.DeceasedDate, Is.Null);
                 Assert.That(contact.JoinedDate, Is.Null);
                 Assert.That(contact.Emails, Is.Not.Null);
-                Assert.That(contact.Emails.Count, Is.EqualTo(0));
+                Assert.That(contact.Emails, Is.Empty);
                 Assert.That(contact.PhoneNumbers, Is.Not.Null);
-                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(contact.PhoneNumbers, Is.Empty);
                 Assert.That(contact.Addresses, Is.Not.Null);
-                Assert.That(contact.Addresses.Count, Is.EqualTo(0));
+                Assert.That(contact.Addresses, Is.Empty);
                 Assert.That(contact.IsActive, Is.Null);
                 Assert.That(contact.IsDeceased, Is.Null);
                 Assert.That(contact.IsAdmin, Is.Null);
@@ -196,11 +196,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(contact.Emails, Is.Not.Null);
-                Assert.That(contact.Emails.Count, Is.EqualTo(0));
+                Assert.That(contact.Emails, Is.Empty);
                 Assert.That(contact.PhoneNumbers, Is.Not.Null);
-                Assert.That(contact.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(contact.PhoneNumbers, Is.Empty);
                 Assert.That(contact.Addresses, Is.Not.Null);
-                Assert.That(contact.Addresses.Count, Is.EqualTo(0));
+                Assert.That(contact.Addresses, Is.Empty);
             });
         }
 
@@ -1202,7 +1202,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).Emails = [];
 
             // Assert
-            Assert.That(_sut.Emails.Count, Is.EqualTo(0));
+            Assert.That(_sut.Emails, Is.Empty);
         }
 
         [Test, Category("Models")]
@@ -1238,7 +1238,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).PhoneNumbers = [];
 
             // Assert
-            Assert.That(_sut.PhoneNumbers.Count, Is.EqualTo(0));
+            Assert.That(_sut.PhoneNumbers, Is.Empty);
         }
 
         [Test, Category("Models")]
@@ -1275,7 +1275,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             ((Interfaces.Type.IPerson)_sut).Addresses = [];
 
             // Assert
-            Assert.That(_sut.Addresses.Count, Is.EqualTo(0));
+            Assert.That(_sut.Addresses, Is.Empty);
         }
 
         #endregion
@@ -1598,30 +1598,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.DeceasedDate, Is.Null);
                 Assert.That(result.JoinedDate, Is.Null);
                 Assert.That(result.Emails, Is.Not.Null);
-                Assert.That(result.Emails.Count, Is.EqualTo(0));
+                Assert.That(result.Emails, Is.Empty);
                 Assert.That(result.PhoneNumbers, Is.Not.Null);
-                Assert.That(result.PhoneNumbers.Count, Is.EqualTo(0));
+                Assert.That(result.PhoneNumbers, Is.Empty);
                 Assert.That(result.Addresses, Is.Not.Null);
-                Assert.That(result.Addresses.Count, Is.EqualTo(0));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ToContactDTO_WithAddresses_ThrowsInvalidCastExceptionDueToInterfaceIssue()
-        {
-            // Arrange
-            // This test documents the current behavior where address casting fails due to interface inheritance issues
-            _sut.Id = 999;
-            _sut.FirstName = "Address";
-            _sut.LastName = "Test";
-            _sut.Addresses = _testAddresses; // This will cause the cast to fail
-
-            // Act & Assert
-            var exception = Assert.Throws<InvalidCastException>(() => _sut.Cast<ContactDTO>());
-            Assert.Multiple(() =>
-            {
-                Assert.That(exception, Is.Not.Null);
-                Assert.That(exception.Message, Does.Contain("Unable to cast object of type 'OrganizerCompanion.Core.Models.DataTransferObject.CAAddressDTO' to type 'OrganizerCompanion.Core.Interfaces.DataTransferObject.IAddressDTO'."));
+                Assert.That(result.Addresses, Is.Empty);
             });
         }
 
@@ -1729,7 +1710,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.JoinedDate, Is.EqualTo(new DateTime(2019, 6, 15)));
                 Assert.That(result.Emails, Has.Count.EqualTo(1));
                 Assert.That(result.PhoneNumbers, Has.Count.EqualTo(1));
-                Assert.That(result.Addresses.Count, Is.EqualTo(0));
+                Assert.That(result.Addresses, Is.Empty);
             });
         }
 

@@ -2,7 +2,7 @@
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface ICAAddressDTO : IDomainEntity, Type.ICAAddress
+    internal interface ICAAddressDTO : IAddressDTO, Type.ICAAddress
     {
     }
 }

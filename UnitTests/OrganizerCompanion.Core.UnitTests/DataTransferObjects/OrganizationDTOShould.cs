@@ -879,9 +879,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Members, Has.Count.EqualTo(2));
                 Assert.That(_organizationDTO.Contacts, Has.Count.EqualTo(1));
-                Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(0));
-                Assert.That(_organizationDTO.Addresses.Count, Is.EqualTo(0));
-                Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(0));
+                Assert.That(_organizationDTO.PhoneNumbers, Is.Empty);
+                Assert.That(_organizationDTO.Addresses, Is.Empty);
+                Assert.That(_organizationDTO.Accounts, Is.Empty);
             });
         }
 
@@ -1111,15 +1111,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 // Start with empty
                 interfaceOrg.Emails = emptyEmails;
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(0));
+                Assert.That(_organizationDTO.Emails, Is.Empty);
 
                 // Add items
                 interfaceOrg.Emails = nonEmptyEmails;
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(1));
 
                 // Back to empty
                 interfaceOrg.Emails = emptyEmails;
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(0));
+                Assert.That(_organizationDTO.Emails, Is.Empty);
             });
         }
 
@@ -1231,11 +1231,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(orgDto.Id, Is.EqualTo(555));
                 Assert.That(orgDto.OrganizationName, Is.EqualTo("Initializer Organization"));
                 Assert.That(orgDto.Emails, Is.EqualTo(testEmails));
-                Assert.That(orgDto.PhoneNumbers.Count, Is.EqualTo(1));
-                Assert.That(orgDto.Addresses.Count, Is.EqualTo(1));
-                Assert.That(orgDto.Members.Count, Is.EqualTo(1));
-                Assert.That(orgDto.Contacts.Count, Is.EqualTo(1));
-                Assert.That(orgDto.Accounts.Count, Is.EqualTo(1));
+                Assert.That(orgDto.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(orgDto.Addresses, Has.Count.EqualTo(1));
+                Assert.That(orgDto.Members, Has.Count.EqualTo(1));
+                Assert.That(orgDto.Contacts, Has.Count.EqualTo(1));
+                Assert.That(orgDto.Accounts, Has.Count.EqualTo(1));
                 Assert.That(orgDto.DateCreated, Is.EqualTo(testCreated));
                 Assert.That(orgDto.DateModified, Is.EqualTo(testModified));
             });
@@ -1373,8 +1373,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(interfaceEmails.Count, Is.EqualTo(emails.Count));
-                Assert.That(backToEmails.Count, Is.EqualTo(emails.Count));
+                Assert.That(interfaceEmails, Has.Count.EqualTo(emails.Count));
+                Assert.That(backToEmails, Has.Count.EqualTo(emails.Count));
                 Assert.That(interfaceEmails[0].Id, Is.EqualTo(emails[0].Id));
                 Assert.That(backToEmails[0].Id, Is.EqualTo(emails[0].Id));
                 Assert.That(interfaceEmails[0].EmailAddress, Is.EqualTo(emails[0].EmailAddress));
@@ -1422,8 +1422,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_organizationDTO.OrganizationName, Contains.Substring("Complex Organization"));
                 Assert.That(_organizationDTO.OrganizationName, Contains.Substring("特殊字符"));
                 Assert.That(_organizationDTO.OrganizationName, Contains.Substring("🏢🏛️"));
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(100));
-                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(50));
+                Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(100));
+                Assert.That(_organizationDTO.Members, Has.Count.EqualTo(50));
                 Assert.That(_organizationDTO.DateCreated, Is.LessThan(DateTime.MaxValue));
                 Assert.That(_organizationDTO.DateModified, Is.GreaterThan(DateTime.MinValue));
             });
@@ -1450,17 +1450,17 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(interfaceOrg.Emails.Count, Is.EqualTo(1));
-                Assert.That(interfaceOrg.PhoneNumbers.Count, Is.EqualTo(1));
-                Assert.That(interfaceOrg.Members.Count, Is.EqualTo(1));
-                Assert.That(interfaceOrg.Contacts.Count, Is.EqualTo(1));
-                Assert.That(interfaceOrg.Accounts.Count, Is.EqualTo(1));
+                Assert.That(interfaceOrg.Emails, Has.Count.EqualTo(1));
+                Assert.That(interfaceOrg.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(interfaceOrg.Members, Has.Count.EqualTo(1));
+                Assert.That(interfaceOrg.Contacts, Has.Count.EqualTo(1));
+                Assert.That(interfaceOrg.Accounts, Has.Count.EqualTo(1));
 
-                Assert.That(_organizationDTO.Emails.Count, Is.EqualTo(1));
-                Assert.That(_organizationDTO.PhoneNumbers.Count, Is.EqualTo(1));
-                Assert.That(_organizationDTO.Members.Count, Is.EqualTo(1));
-                Assert.That(_organizationDTO.Contacts.Count, Is.EqualTo(1));
-                Assert.That(_organizationDTO.Accounts.Count, Is.EqualTo(1));
+                Assert.That(_organizationDTO.Emails, Has.Count.EqualTo(1));
+                Assert.That(_organizationDTO.PhoneNumbers, Has.Count.EqualTo(1));
+                Assert.That(_organizationDTO.Members, Has.Count.EqualTo(1));
+                Assert.That(_organizationDTO.Contacts, Has.Count.EqualTo(1));
+                Assert.That(_organizationDTO.Accounts, Has.Count.EqualTo(1));
             });
         }
 

@@ -564,11 +564,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act & Assert for Groups interface property
             var retrievedIGroups = iAssignmentDTO.Groups;
             Assert.That(retrievedIGroups, Is.Not.Null);
-            Assert.That(retrievedIGroups.Count, Is.EqualTo(_testGroups.Count));
+            Assert.That(retrievedIGroups, Has.Count.EqualTo(_testGroups.Count));
 
             iAssignmentDTO.Groups = testIGroups;
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
-            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
+            Assert.That(_projectAssignmentDTO.Groups, Has.Count.EqualTo(testIGroups.Count));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -609,7 +609,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
-            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(testIGroups.Count));
+            Assert.That(_projectAssignmentDTO.Groups, Has.Count.EqualTo(testIGroups.Count));
             Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
         }
 
@@ -955,7 +955,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.LocationType, Is.EqualTo(locationType));
                 Assert.That(dto.Location, Is.EqualTo(location));
                 Assert.That(dto.Groups, Is.EqualTo(groups));
-                Assert.That(dto.Groups!.Count, Is.EqualTo(3));
+                Assert.That(dto.Groups!, Has.Count.EqualTo(3));
                 Assert.That(dto.TaskId, Is.EqualTo(taskId));
                 Assert.That(dto.Task, Is.EqualTo(task));
                 Assert.That(dto.IsCompleted, Is.EqualTo(isCompleted));
@@ -980,7 +980,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(interfaceGroups, Is.Not.Null);
-            Assert.That(interfaceGroups.Count, Is.EqualTo(2));
+            Assert.That(interfaceGroups, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceGroups[0].Id, Is.EqualTo(10));
@@ -1004,7 +1004,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
-            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(2));
+            Assert.That(_projectAssignmentDTO.Groups, Has.Count.EqualTo(2));
             Assert.That(_projectAssignmentDTO.Groups[0], Is.InstanceOf<GroupDTO>());
             Assert.Multiple(() =>
             {
@@ -1029,7 +1029,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_projectAssignmentDTO.Groups, Is.Not.Null);
-            Assert.That(_projectAssignmentDTO.Groups.Count, Is.EqualTo(1000));
+            Assert.That(_projectAssignmentDTO.Groups, Has.Count.EqualTo(1000));
             Assert.That(_projectAssignmentDTO.Groups[999].GroupName, Is.EqualTo("Group 999"));
         }
 

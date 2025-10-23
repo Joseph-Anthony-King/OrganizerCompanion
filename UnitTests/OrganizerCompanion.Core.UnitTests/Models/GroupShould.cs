@@ -65,7 +65,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.GroupName, Is.Null);
                 Assert.That(group.Description, Is.Null);
                 Assert.That(group.Members, Is.Not.Null);
-                Assert.That(group.Members.Count, Is.EqualTo(0));
+                Assert.That(group.Members, Is.Empty);
                 Assert.That(group.AccountId, Is.EqualTo(0));
                 Assert.That(group.Account, Is.Null);
                 Assert.That(group.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
@@ -125,7 +125,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.GroupName, Is.Null);
                 Assert.That(group.Description, Is.Null);
                 Assert.That(group.Members, Is.Not.Null);
-                Assert.That(group.Members.Count, Is.EqualTo(0));
+                Assert.That(group.Members, Is.Empty);
                 Assert.That(group.AccountId, Is.EqualTo(0));
                 Assert.That(group.Account, Is.Null);
                 Assert.That(group.DateCreated, Is.EqualTo(_testDateCreated));
@@ -176,7 +176,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
                 Assert.That(_sut.Description, Is.EqualTo(dto.Description));
                 Assert.That(_sut.Members, Is.Not.Null);
-                Assert.That(_sut.Members.Count, Is.EqualTo(dto.Members.Count));
+                Assert.That(_sut.Members, Has.Count.EqualTo(dto.Members.Count));
                 Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
                 Assert.That(_sut.Account, Is.Not.Null);
                 Assert.That(_sut.Account!.Id, Is.EqualTo(dto.Account!.Id));
@@ -209,7 +209,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.GroupName, Is.EqualTo(dto.GroupName));
                 Assert.That(_sut.Description, Is.EqualTo(dto.Description));
                 Assert.That(_sut.Members, Is.Not.Null);
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
                 Assert.That(_sut.Account, Is.Null);
                 // DateCreated should be set to current time
@@ -269,7 +269,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Is.Not.Null);
-                Assert.That(_sut.Members.Count, Is.EqualTo(3));
+                Assert.That(_sut.Members, Has.Count.EqualTo(3));
                 Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
                 Assert.That(_sut.Members[0].FirstName, Is.EqualTo("John"));
                 Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
@@ -296,7 +296,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Is.Not.Null);
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
             });
         }
 
@@ -324,7 +324,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.GroupName, Is.Null);
                 Assert.That(_sut.Description, Is.Null);
                 Assert.That(_sut.Members, Is.Not.Null);
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.AccountId, Is.EqualTo(0));
                 Assert.That(_sut.Account, Is.Null);
             });
@@ -508,7 +508,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(_testMembers));
-            Assert.That(_sut.Members.Count, Is.EqualTo(2));
+            Assert.That(_sut.Members, Has.Count.EqualTo(2));
         }
 
         [Test, Category("Models")]
@@ -522,7 +522,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(emptyList));
-            Assert.That(_sut.Members.Count, Is.EqualTo(0));
+            Assert.That(_sut.Members, Is.Empty);
         }
 
         [Test, Category("Models")]
@@ -605,7 +605,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(interfaceMembers, Is.Not.Null);
-            Assert.That(interfaceMembers.Count, Is.EqualTo(2));
+            Assert.That(interfaceMembers, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceMembers[0], Is.InstanceOf<IContact>());
@@ -632,7 +632,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
-            Assert.That(_sut.Members.Count, Is.EqualTo(2));
+            Assert.That(_sut.Members, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
@@ -659,7 +659,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Members, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.DateModified, Is.Not.Null);
             });
             Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
@@ -695,7 +695,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.GroupName, Is.EqualTo("Test Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Test Description"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
-                Assert.That(groupDTO.Members.Count, Is.EqualTo(2));
+                Assert.That(groupDTO.Members, Has.Count.EqualTo(2));
                 Assert.That(groupDTO.Members[0], Is.InstanceOf<ContactDTO>());
                 Assert.That(groupDTO.Members[1], Is.InstanceOf<ContactDTO>());
                 Assert.That(groupDTO.AccountId, Is.EqualTo(123));
@@ -769,7 +769,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.GroupName, Is.EqualTo("Empty Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Group with no members"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
-                Assert.That(groupDTO.Members.Count, Is.EqualTo(0));
+                Assert.That(groupDTO.Members, Is.Empty);
                 Assert.That(groupDTO.AccountId, Is.EqualTo(789));
                 Assert.That(groupDTO.Account, Is.Null);
                 Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
@@ -802,7 +802,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.GroupName, Is.EqualTo("Test Group Null Account"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Test Description"));
                 Assert.That(groupDTO.Members, Is.Not.Null);
-                Assert.That(groupDTO.Members.Count, Is.EqualTo(2));
+                Assert.That(groupDTO.Members, Has.Count.EqualTo(2));
                 Assert.That(groupDTO.AccountId, Is.EqualTo(123));
                 Assert.That(groupDTO.Account, Is.Null);
                 Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));

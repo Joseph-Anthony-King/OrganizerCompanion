@@ -65,7 +65,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(groupDTO.GroupName, Is.Null);
                 Assert.That(groupDTO.Description, Is.Null);
                 Assert.That(groupDTO.Members, Is.Not.Null);
-                Assert.That(groupDTO.Members.Count, Is.EqualTo(0));
+                Assert.That(groupDTO.Members, Is.Empty);
                 Assert.That(groupDTO.AccountId, Is.EqualTo(0));
                 Assert.That(groupDTO.Account, Is.Null);
                 Assert.That(groupDTO.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
@@ -136,7 +136,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(_testMembers));
-            Assert.That(_sut.Members.Count, Is.EqualTo(2));
+            Assert.That(_sut.Members, Has.Count.EqualTo(2));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -150,7 +150,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(emptyList));
-            Assert.That(_sut.Members.Count, Is.EqualTo(0));
+            Assert.That(_sut.Members, Is.Empty);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -229,7 +229,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(interfaceMembers, Is.Not.Null);
-            Assert.That(interfaceMembers.Count, Is.EqualTo(2));
+            Assert.That(interfaceMembers, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(interfaceMembers[0], Is.InstanceOf<IContactDTO>());
@@ -256,7 +256,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
-            Assert.That(_sut.Members.Count, Is.EqualTo(2));
+            Assert.That(_sut.Members, Has.Count.EqualTo(2));
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
@@ -283,7 +283,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.That(_sut.Members, Is.Not.Null);
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.DateModified, Is.Not.Null);
             });
             Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
@@ -786,7 +786,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(largeCollection));
-            Assert.That(_sut.Members.Count, Is.EqualTo(1000));
+            Assert.That(_sut.Members, Has.Count.EqualTo(1000));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -805,7 +805,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Members, Is.SameAs(membersWithNull));
-            Assert.That(_sut.Members.Count, Is.EqualTo(3));
+            Assert.That(_sut.Members, Has.Count.EqualTo(3));
             Assert.That(_sut.Members[1], Is.Null);
         }
 
@@ -822,15 +822,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 // Start with empty
                 groupInterface.Members = emptyMembers;
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
 
                 // Add members
                 groupInterface.Members = nonEmptyMembers;
-                Assert.That(_sut.Members.Count, Is.EqualTo(2));
+                Assert.That(_sut.Members, Has.Count.EqualTo(2));
 
                 // Back to empty
                 groupInterface.Members = emptyMembers;
-                Assert.That(_sut.Members.Count, Is.EqualTo(0));
+                Assert.That(_sut.Members, Is.Empty);
             });
         }
 
@@ -1126,7 +1126,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Description, Contains.Substring("Multi-line"));
                 Assert.That(_sut.Description, Contains.Substring("!@#$%"));
                 Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));
-                Assert.That(_sut.Members.Count, Is.EqualTo(100));
+                Assert.That(_sut.Members, Has.Count.EqualTo(100));
                 Assert.That(_sut.DateCreated, Is.LessThan(DateTime.MaxValue));
                 Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.MinValue));
             });
@@ -1146,8 +1146,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(interfaceMembers.Count, Is.EqualTo(_testMembers.Count));
-                Assert.That(backToInterface.Count, Is.EqualTo(_testMembers.Count));
+                Assert.That(interfaceMembers, Has.Count.EqualTo(_testMembers.Count));
+                Assert.That(backToInterface, Has.Count.EqualTo(_testMembers.Count));
                 
                 for (int i = 0; i < _testMembers.Count; i++)
                 {

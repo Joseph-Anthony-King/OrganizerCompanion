@@ -543,7 +543,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert - Check that the assignments were set on the concrete implementation
             Assert.That(_sut.Assignments, Is.Not.Null);
-            Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
+            Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
       Assert.Multiple(() =>
       {
         Assert.That(_sut.Assignments[0].Id, Is.EqualTo(1));
@@ -679,7 +679,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Assignments, Is.Not.Null);
-                Assert.That(_sut.Assignments.Count, Is.EqualTo(2));
+                Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
                 Assert.That(_sut.Assignments[0].Name, Is.EqualTo("Complex Assignment 1"));
                 Assert.That(_sut.Assignments[1].Name, Is.EqualTo("Complex Assignment 2"));
                 Assert.That(_sut.DateModified, Is.Not.Null);

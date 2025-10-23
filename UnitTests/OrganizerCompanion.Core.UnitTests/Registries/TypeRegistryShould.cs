@@ -364,7 +364,7 @@ namespace OrganizerCompanion.Core.UnitTests.Registries
                 Assert.That(typeNames, Does.Contain("OrganizationDTO"));
                 Assert.That(typeNames, Does.Contain("SubAccountDTO"));
                 // Should have at least the expected number of types (16 domain + 14 DTO = 30)
-                Assert.That(typeNames.Count, Is.GreaterThanOrEqualTo(30));
+                Assert.That(typeNames, Has.Count.GreaterThanOrEqualTo(30));
             });
         }
 

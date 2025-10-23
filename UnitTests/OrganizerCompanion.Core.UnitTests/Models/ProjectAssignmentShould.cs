@@ -929,7 +929,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             iAssignment.Groups = testIGroup;
             var retrievedIAssignees = iAssignment.Groups;
             Assert.That(retrievedIAssignees, Is.Not.Null);
-            Assert.That(retrievedIAssignees.Count, Is.EqualTo(testIGroup.Count));
+            Assert.That(retrievedIAssignees, Has.Count.EqualTo(testIGroup.Count));
         }
 
         [Test, Category("Models")]

@@ -52,6 +52,15 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("isPrimary")]
         public bool IsPrimary { get; set; } = false;
 
+        [Required, JsonPropertyName("linkedEntity")]
+        public IDomainEntity? LinkedEntity { get; set; } = null;
+
+        [Required, JsonPropertyName("linkedEntityId")]
+        public int? LinkedEntityId => LinkedEntity?.Id;
+
+        [Required, JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => LinkedEntity?.GetType().Name;
+
         [Required, JsonPropertyName("dateCreated")]
         public DateTime DateCreated { get; set; } = DateTime.Now;
 

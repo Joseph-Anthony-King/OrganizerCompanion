@@ -3,7 +3,9 @@ using NUnit.Framework;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Extensions;
+using OrganizerCompanion.Core.Models.Type;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -952,6 +954,470 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
+        #region IOrganizationDTO Constructor Tests
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithCompleteDTO_ShouldSetAllProperties()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                Id = 123,
+                OrganizationName = "Test Organization",
+                Emails = [new EmailDTO { Id = 1, EmailAddress = "test@example.com" }],
+                PhoneNumbers = [new PhoneNumberDTO { Id = 2, Phone = "555-1234" }],
+                Addresses = [new USAddressDTO { Id = 3, Street1 = "123 Main St", City = "Anytown" }],
+                Members = [new ContactDTO { Id = 4, FirstName = "John", LastName = "Doe" }],
+                Contacts = [new ContactDTO { Id = 5, FirstName = "Jane", LastName = "Smith" }],
+                Accounts = [new AccountDTO { Id = 6, AccountName = "Test Account" }],
+                DateCreated = DateTime.Now.AddDays(-3),
+                DateModified = DateTime.Now.AddDays(-1)
+            };
+
+            // Act
+            _sut = new Organization(dto);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.OrganizationName, Is.EqualTo(dto.OrganizationName));
+                Assert.That(_sut.Emails, Is.Not.Null);
+                Assert.That(_sut.Emails, Has.Count.EqualTo(dto.Emails.Count));
+                Assert.That(_sut.PhoneNumbers, Is.Not.Null);
+                Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(dto.PhoneNumbers.Count));
+                Assert.That(_sut.Addresses, Is.Not.Null);
+                Assert.That(_sut.Addresses, Has.Count.EqualTo(dto.Addresses.Count));
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members, Has.Count.EqualTo(dto.Members.Count));
+                Assert.That(_sut.Contacts, Is.Not.Null);
+                Assert.That(_sut.Contacts, Has.Count.EqualTo(dto.Contacts.Count));
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(dto.Accounts.Count));
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMinimalDTO_ShouldSetBasicProperties()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Minimal Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+            var afterCreation = DateTime.Now;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.OrganizationName, Is.EqualTo(dto.OrganizationName));
+                Assert.That(_sut.Emails, Is.Not.Null);
+                Assert.That(_sut.Emails, Is.Empty);
+                Assert.That(_sut.PhoneNumbers, Is.Not.Null);
+                Assert.That(_sut.PhoneNumbers, Is.Empty);
+                Assert.That(_sut.Addresses, Is.Not.Null);
+                Assert.That(_sut.Addresses, Is.Empty);
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members, Is.Empty);
+                Assert.That(_sut.Contacts, Is.Not.Null);
+                Assert.That(_sut.Contacts, Is.Empty);
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Is.Empty);
+                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleAddressTypes_ShouldConvertAllAddressTypes()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Address Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [
+                    (IAddressDTO)new USAddressDTO { Id = 1, Street1 = "123 US Street", City = "US City" },
+                    (IAddressDTO)new CAAddressDTO { Id = 2, Street1 = "456 CA Street", City = "CA City" },
+                    (IAddressDTO)new MXAddressDTO { Id = 3, Street = "789 MX Street", City = "MX City" }
+                ],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Addresses, Is.Not.Null);
+                Assert.That(_sut.Addresses, Has.Count.EqualTo(3));
+                Assert.That(_sut.Addresses[0], Is.TypeOf<USAddress>());
+                Assert.That(_sut.Addresses[1], Is.TypeOf<CAAddress>());
+                Assert.That(_sut.Addresses[2], Is.TypeOf<MXAddress>());
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleEmails_ShouldConvertAllEmails()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Email Organization",
+                Emails = [
+                    new EmailDTO { Id = 1, EmailAddress = "primary@example.com", IsPrimary = true },
+                    new EmailDTO { Id = 2, EmailAddress = "secondary@example.com", IsPrimary = false },
+                    new EmailDTO { Id = 3, EmailAddress = "support@example.com", IsPrimary = false }
+                ],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Emails, Is.Not.Null);
+                Assert.That(_sut.Emails, Has.Count.EqualTo(3));
+                Assert.That(_sut.Emails[0].EmailAddress, Is.EqualTo("primary@example.com"));
+                Assert.That(_sut.Emails[1].EmailAddress, Is.EqualTo("secondary@example.com"));
+                Assert.That(_sut.Emails[2].EmailAddress, Is.EqualTo("support@example.com"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultiplePhoneNumbers_ShouldConvertAllPhoneNumbers()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Phone Organization",
+                Emails = [],
+                PhoneNumbers = [
+                    new PhoneNumberDTO { Id = 1, Phone = "555-1234", Type = OrganizerCompanion.Core.Enums.Types.Work },
+                    new PhoneNumberDTO { Id = 2, Phone = "555-5678", Type = OrganizerCompanion.Core.Enums.Types.Home },
+                    new PhoneNumberDTO { Id = 3, Phone = "555-9999", Type = OrganizerCompanion.Core.Enums.Types.Mobil }
+                ],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.PhoneNumbers, Is.Not.Null);
+                Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(3));
+                Assert.That(_sut.PhoneNumbers[0].Phone, Is.EqualTo("555-1234"));
+                Assert.That(_sut.PhoneNumbers[1].Phone, Is.EqualTo("555-5678"));
+                Assert.That(_sut.PhoneNumbers[2].Phone, Is.EqualTo("555-9999"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleMembers_ShouldConvertAllMembers()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Member Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [
+                    new ContactDTO { Id = 1, FirstName = "John", LastName = "Doe" },
+                    new ContactDTO { Id = 2, FirstName = "Jane", LastName = "Smith" },
+                    new ContactDTO { Id = 3, FirstName = "Bob", LastName = "Johnson" }
+                ],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Members, Is.Not.Null);
+                Assert.That(_sut.Members, Has.Count.EqualTo(3));
+                Assert.That(_sut.Members[0].FirstName, Is.EqualTo("John"));
+                Assert.That(_sut.Members[1].FirstName, Is.EqualTo("Jane"));
+                Assert.That(_sut.Members[2].FirstName, Is.EqualTo("Bob"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleContacts_ShouldConvertAllContacts()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Contact Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [
+                    new ContactDTO { Id = 10, FirstName = "Alice", LastName = "Williams" },
+                    new ContactDTO { Id = 11, FirstName = "Charlie", LastName = "Brown" }
+                ],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Contacts, Is.Not.Null);
+                Assert.That(_sut.Contacts, Has.Count.EqualTo(2));
+                Assert.That(_sut.Contacts[0].FirstName, Is.EqualTo("Alice"));
+                Assert.That(_sut.Contacts[1].FirstName, Is.EqualTo("Charlie"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMultipleAccounts_ShouldConvertAllAccounts()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Multi-Account Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = [
+                    new AccountDTO { Id = 100, AccountName = "Primary Account", AccountNumber = "ACC-001" },
+                    new AccountDTO { Id = 101, AccountName = "Secondary Account", AccountNumber = "ACC-002" }
+                ]
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Accounts, Is.Not.Null);
+                Assert.That(_sut.Accounts, Has.Count.EqualTo(2));
+                Assert.That(_sut.Accounts[0].AccountName, Is.EqualTo("Primary Account"));
+                Assert.That(_sut.Accounts[1].AccountName, Is.EqualTo("Secondary Account"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithNullOrganizationName_ShouldAcceptNullValue()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                Id = 456,
+                OrganizationName = null,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Id, Is.EqualTo(dto.Id));
+                Assert.That(_sut.OrganizationName, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithEmptyOrganizationName_ShouldAcceptEmptyString()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = string.Empty,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.OrganizationName, Is.EqualTo(string.Empty));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithSpecialCharactersInName_ShouldAcceptSpecialCharacters()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Organization!@#$%^&*()_+-={}[]|\\:;\"'<>?,./ 123",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.OrganizationName, Is.EqualTo(dto.OrganizationName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithUnicodeCharacters_ShouldAcceptUnicodeCharacters()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Organization 组织 🏢 ñáéíóú",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.OrganizationName, Is.EqualTo(dto.OrganizationName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithLongOrganizationName_ShouldAcceptLongString()
+        {
+            // Arrange
+            var longName = new string('O', 1000);
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = longName,
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.OrganizationName, Is.EqualTo(longName));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithZeroId_ShouldAcceptZeroValue()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                Id = 0,
+                OrganizationName = "Zero ID Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithMaxIntId_ShouldAcceptMaxValue()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                Id = int.MaxValue,
+                OrganizationName = "Max ID Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act
+            _sut = new Organization(dto);
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void DTOConstructor_WithUnknownAddressType_ShouldThrowInvalidCastException()
+        {
+            // Arrange
+            var dto = new OrganizationDTO
+            {
+                OrganizationName = "Invalid Address Organization",
+                Emails = [],
+                PhoneNumbers = [],
+                Addresses = [new MockInvalidAddressDTO()],
+                Members = [],
+                Contacts = [],
+                Accounts = []
+            };
+
+            // Act & Assert
+            var ex = Assert.Throws<InvalidCastException>(() => new Organization(dto));
+            Assert.That(ex.Message, Does.Contain("Unknown address DTO type"));
+        }
+
+        #endregion
+
         #region Comprehensive Coverage Tests
 
         [Test, Category("Models")]
@@ -1898,5 +2364,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Mock invalid address DTO for testing error scenarios
+    /// </summary>
+    internal class MockInvalidAddressDTO : IAddressDTO
+    {
+        public int Id { get; set; }
+        public DateTime DateCreated { get; private set; } = DateTime.Now;
+        public DateTime? DateModified { get; set; }
+        public IDomainEntity? LinkedEntity { get; set; }
+        public int? LinkedEntityId => LinkedEntity?.Id;
+        public string? LinkedEntityType => LinkedEntity?.GetType().Name;
+        public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
+        public bool IsPrimary { get; set; }
+        
+        public string ToJson() => System.Text.Json.JsonSerializer.Serialize(this);
+        public T Cast<T>() where T : IDomainEntity => (T)(object)this;
     }
 }

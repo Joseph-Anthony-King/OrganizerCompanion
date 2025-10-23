@@ -219,6 +219,29 @@ namespace OrganizerCompanion.Core.Models.Domain
                 throw new ArgumentException("Error creating Organization object.", ex);
             }
         }
+
+        public Organization(IOrganizationDTO dto)
+        {
+            _id = dto.Id;
+            _organizationName = dto.OrganizationName;
+            _emails = dto.Emails.ConvertAll(emailDto => new Email(emailDto));
+            _phoneNumbers = dto.PhoneNumbers.ConvertAll(phoneDto => new PhoneNumber(phoneDto));
+            _address = dto.Addresses.ConvertAll<IAddress>(addressDto =>
+            {
+                return addressDto switch
+                {
+                    CAAddressDTO caAddressDto => new CAAddress(caAddressDto),
+                    MXAddressDTO mxAddressDto => new MXAddress(mxAddressDto),
+                    USAddressDTO usAddressDto => new USAddress(usAddressDto),
+                    _ => throw new InvalidCastException("Unknown address DTO type.")
+                };
+            });
+            _members = dto.Members.ConvertAll(memberDto => new Contact(memberDto));
+            _contacts = dto.Contacts.ConvertAll(contactDto => new Contact(contactDto));
+            _accounts = dto.Accounts.ConvertAll(accountDto => new Account(accountDto));
+            _dateCreated = dto.DateCreated;
+            DateModified = dto.DateModified;
+        }
         #endregion
 
         #region Methods

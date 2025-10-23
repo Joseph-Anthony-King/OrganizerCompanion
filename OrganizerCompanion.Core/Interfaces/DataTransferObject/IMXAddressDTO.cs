@@ -2,7 +2,7 @@
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IMXAddressDTO : IDomainEntity, Type.IMXAddress
+    internal interface IMXAddressDTO : IAddressDTO, Type.IMXAddress
     {
     }
 }
