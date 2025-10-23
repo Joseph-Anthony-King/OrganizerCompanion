@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -236,17 +236,17 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new CAAddressDTO
                     {
-                        Id = this.Id,
-                        Street1 = this.Street1,
-                        Street2 = this.Street2,
-                        City = this.City,
-                        Province = this.Province,
-                        ZipCode = this.ZipCode,
-                        Country = this.Country,
-                        Type = this.Type,
-                        IsPrimary = this.IsPrimary,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        Street1 = Street1,
+                        Street2 = Street2,
+                        City = City,
+                        Province = Province,
+                        ZipCode = ZipCode,
+                        Country = Country,
+                        Type = Type,
+                        IsPrimary = IsPrimary,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }

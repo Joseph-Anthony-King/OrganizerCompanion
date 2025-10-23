@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -220,17 +220,17 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new MXAddressDTO
                     {
-                        Id = this.Id,
-                        Street = this.Street,
-                        Neighborhood = this.Neighborhood,
-                        PostalCode = this.PostalCode,
-                        City = this.City,
-                        State = this.State,
-                        Country = this.Country,
-                        Type = this.Type,
-                        IsPrimary = this.IsPrimary,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        Street = Street,
+                        Neighborhood = Neighborhood,
+                        PostalCode = PostalCode,
+                        City = City,
+                        State = State,
+                        Country = Country,
+                        Type = Type,
+                        IsPrimary = IsPrimary,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }

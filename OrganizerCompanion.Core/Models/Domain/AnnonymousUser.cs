@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -189,8 +189,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         [],
                         [],
                         [],
-                        this.DateCreated,
-                        this.DateModified
+                        DateCreated,
+                        DateModified
                     );
 
                     IsCast = true;
@@ -218,8 +218,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         null,
                         null,
                         null,
-                        this.DateCreated,
-                        this.DateModified
+                        DateCreated,
+                        DateModified
                     );
 
                     IsCast = true;
@@ -232,11 +232,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     var result = (T)(IDomainEntity)new AnnonymousUserDTO
                     {
-                      Id = this.Id,
-                      UserName = this.UserName,
-                      AccountId = this.AccountId,
-                      DateCreated = this.DateCreated,
-                      DateModified = this.DateModified
+                      Id = Id,
+                      UserName = UserName,
+                      AccountId = AccountId,
+                      DateCreated = DateCreated,
+                      DateModified = DateModified
                     };
 
                     return result;

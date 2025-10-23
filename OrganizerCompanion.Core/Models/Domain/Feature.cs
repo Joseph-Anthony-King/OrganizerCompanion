@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -109,11 +109,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new FeatureDTO
                     {
-                        Id = this.Id,
-                        FeatureName = this.FeatureName,
-                        IsEnabled = this.IsEnabled,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified,
+                        Id = Id,
+                        FeatureName = FeatureName,
+                        IsEnabled = IsEnabled,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified,
                     };
                     return (T)dto;
                 }

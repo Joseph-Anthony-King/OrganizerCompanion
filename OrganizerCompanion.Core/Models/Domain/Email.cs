@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -168,12 +168,12 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new EmailDTO
                     {
-                        Id = this.Id,
-                        EmailAddress = this.EmailAddress,
-                        Type = this.Type,
-                        IsPrimary = this.IsPrimary,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified,
+                        Id = Id,
+                        EmailAddress = EmailAddress,
+                        Type = Type,
+                        IsPrimary = IsPrimary,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified,
                     };
                     return (T)dto;
                 }

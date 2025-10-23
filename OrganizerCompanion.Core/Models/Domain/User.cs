@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -344,24 +344,24 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new UserDTO
                     {
-                        Id = this.Id,
-                        FirstName = this.FirstName,
-                        MiddleName = this.MiddleName,
-                        LastName = this.LastName,
-                        UserName = this.UserName,
-                        Pronouns = this.Pronouns,
-                        BirthDate = this.BirthDate,
-                        DeceasedDate = this.DeceasedDate,
-                        JoinedDate = this.JoinedDate,
-                        Emails = this.Emails.ConvertAll(email => email.Cast<EmailDTO>()),
-                        PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => phone.Cast<PhoneNumberDTO>()),
-                        Addresses = this.Addresses.ConvertAll(address => (IAddressDTO)CastAddressByType(address)),
-                        IsActive = this.IsActive,
-                        IsDeceased = this.IsDeceased,
-                        IsAdmin = this.IsAdmin,
-                        IsSuperUser = this.IsSuperUser,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        FirstName = FirstName,
+                        MiddleName = MiddleName,
+                        LastName = LastName,
+                        UserName = UserName,
+                        Pronouns = Pronouns,
+                        BirthDate = BirthDate,
+                        DeceasedDate = DeceasedDate,
+                        JoinedDate = JoinedDate,
+                        Emails = Emails.ConvertAll(email => email.Cast<EmailDTO>()),
+                        PhoneNumbers = PhoneNumbers.ConvertAll(phone => phone.Cast<PhoneNumberDTO>()),
+                        Addresses = Addresses.ConvertAll(address => (IAddressDTO)CastAddressByType(address)),
+                        IsActive = IsActive,
+                        IsDeceased = IsDeceased,
+                        IsAdmin = IsAdmin,
+                        IsSuperUser = IsSuperUser,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }

@@ -191,14 +191,14 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new GroupDTO
                     {
-                        Id = this.Id,
-                        GroupName = this.GroupName,
-                        Description = this.Description,
-                        Members = this.Members.ConvertAll(member => member.Cast<ContactDTO>()),
-                        AccountId = this.AccountId,
-                        Account = this.Account?.Cast<AccountDTO>(),
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        GroupName = GroupName,
+                        Description = Description,
+                        Members = Members.ConvertAll(member => member.Cast<ContactDTO>()),
+                        AccountId = AccountId,
+                        Account = Account?.Cast<AccountDTO>(),
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }

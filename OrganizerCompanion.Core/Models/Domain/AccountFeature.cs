@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -16,9 +16,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
-        private int _accountId = 0;
         private Account? _account = null;
-        private int _featureId = 0;
         private Feature? _feature = null;
         private readonly DateTime _dateCreated = DateTime.UtcNow;
         #endregion
@@ -52,7 +50,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 if (value < 0)
+                {
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                }
                 _id = value;
                 DateModified = DateTime.Now;
             }
@@ -61,12 +61,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId
         {
-            get => _accountId;
-            set
-            {
-                _accountId = value;
-                DateModified = DateTime.Now;
-            }
+            get => _account?.Id ?? 0;
         }
 
         [JsonIgnore]
@@ -76,7 +71,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = value;
-                _accountId = value?.Id ?? 0;
                 DateModified = DateTime.Now;
             }
         }
@@ -84,12 +78,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("featureId"), Range(0, int.MaxValue, ErrorMessage = "Feature Id must be a non-negative number.")]
         public int FeatureId
         {
-            get => _featureId;
-            set
-            {
-                _featureId = value;
-                DateModified = DateTime.Now;
-            }
+            get => _feature?.Id ?? 0;
         }
 
         [JsonIgnore]
@@ -99,7 +88,6 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _feature = value;
-                _featureId = value?.Id ?? 0;
                 DateModified = DateTime.Now;
             }
         }
@@ -117,34 +105,52 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public AccountFeature(
             int id,
-            int accountId,
-            int featureId,
             DateTime dateCreated,
             DateTime? dateModified)
         {
             _id = id;
-            _accountId = accountId;
-            _featureId = featureId;
             _dateCreated = dateCreated;
             DateModified = dateModified;
         }
-        
+
         public AccountFeature(
             IAccount account,
             IFeature feature)
         {
+            if (account == null)
+                throw new ArgumentNullException(nameof(account), "Account cannot be null.");
+
+            if (feature == null)
+                throw new ArgumentNullException(nameof(feature), "Feature cannot be null.");
+
             _account = (Account)account;
-            _accountId = account.Id;
             _feature = (Feature)feature;
-            _featureId = feature.Id;
         }
 
         public AccountFeature(
-            IFeatureDTO dto,
-            int accountId)
+            IAccountDTO accountDTO,
+            IFeatureDTO featureDTO)
         {
-            _accountId = accountId;
-            _featureId = dto.Id;
+            if (accountDTO == null)
+                throw new ArgumentNullException(nameof(accountDTO), "AccountDTO cannot be null.");
+
+            if (featureDTO == null)
+                throw new ArgumentNullException(nameof(featureDTO), "FeatureDTO cannot be null.");
+
+            // Create lightweight objects without cascading child object creation
+            // Feature has a constructor that takes IFeatureDTO
+            _feature = new Feature(featureDTO);
+
+            // Create Account using JsonConstructor with empty collections to avoid recursion
+            _account = new Account(
+                id: accountDTO.Id,
+                accountName: accountDTO.AccountName,
+                accountNumber: accountDTO.AccountNumber,
+                license: accountDTO.License,
+                features: [], // Empty to avoid infinite recursion
+                accounts: accountDTO.Accounts?.ConvertAll(sa => new SubAccount(sa)) ?? [],
+                dateCreated: accountDTO.DateCreated,
+                dateModified: accountDTO.DateModified);
         }
         #endregion
 
@@ -157,9 +163,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new FeatureDTO
                     {
-                        Id = this.Id,
-                        FeatureName = this.Feature!.FeatureName!,
-                        IsEnabled = this.Feature!.IsEnabled!,
+                        Id = Id,
+                        FeatureName = Feature!.FeatureName!,
+                        IsEnabled = Feature!.IsEnabled!,
                     };
                     return (T)dto;
                 }
@@ -173,7 +179,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.AccountId:{1}.FeatureId:{2}", _id, _accountId, _featureId);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.AccountId:{1}.FeatureId:{2}", _id, AccountId, FeatureId);
         #endregion
     }
 }

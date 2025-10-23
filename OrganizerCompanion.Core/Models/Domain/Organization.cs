@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -252,7 +252,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 if (typeof(T) == typeof(OrganizationDTO) || typeof(T) == typeof(IOrganizationDTO))
                 {
                     List<IAddressDTO> addressesDto = [];
-                    foreach (var item in this.Addresses)
+                    foreach (var item in Addresses)
                     {
                         if (!string.IsNullOrEmpty(item.LinkedEntityType))
                         {
@@ -307,9 +307,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                     }
                     var dto = new OrganizationDTO
                     {
-                        Id = this.Id,
-                        OrganizationName = this.OrganizationName,
-                        Emails = this.Emails.ConvertAll(email => new EmailDTO
+                        Id = Id,
+                        OrganizationName = OrganizationName,
+                        Emails = Emails.ConvertAll(email => new EmailDTO
                         {
                             Id = email.Id,
                             EmailAddress = email.EmailAddress,
@@ -317,7 +317,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                             DateCreated = email.DateCreated,
                             DateModified = email.DateModified
                         }),
-                        PhoneNumbers = this.PhoneNumbers.ConvertAll(phone => new PhoneNumberDTO
+                        PhoneNumbers = PhoneNumbers.ConvertAll(phone => new PhoneNumberDTO
                         {
                             Id = phone.Id,
                             Phone = phone.Phone,
@@ -326,7 +326,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                             DateModified = phone.DateModified
                         }),
                         Addresses = addressesDto,
-                        Members = this.Members.ConvertAll(member => new ContactDTO
+                        Members = Members.ConvertAll(member => new ContactDTO
                         {
                             Id = member.Id,
                             FirstName = member.FirstName,
@@ -335,7 +335,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                             DateCreated = member.DateCreated,
                             DateModified = member.DateModified
                         }),
-                        Contacts = this.Contacts.ConvertAll(contact => new ContactDTO
+                        Contacts = Contacts.ConvertAll(contact => new ContactDTO
                         {
                             Id = contact.Id,
                             FirstName = contact.FirstName,
@@ -344,7 +344,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                             DateCreated = contact.DateCreated,
                             DateModified = contact.DateModified
                         }),
-                        Accounts = this.Accounts.ConvertAll(account => new AccountDTO
+                        Accounts = Accounts.ConvertAll(account => new AccountDTO
                         {
                             Id = account.Id,
                             AccountName = account.AccountName,
@@ -353,8 +353,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                             DateCreated = account.DateCreated,
                             DateModified = account.DateModified
                         }),
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)(IDomainEntity)dto;
                 }

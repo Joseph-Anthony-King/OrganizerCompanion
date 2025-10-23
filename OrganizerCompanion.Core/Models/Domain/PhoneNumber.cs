@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -138,12 +138,12 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new PhoneNumberDTO
                     {
-                        Id = this.Id,
-                        Phone = this.Phone,
-                        Type = this.Type,
-                        Country = this.Country,
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        Phone = Phone,
+                        Type = Type,
+                        Country = Country,
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }

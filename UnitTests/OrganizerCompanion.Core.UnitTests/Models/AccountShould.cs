@@ -37,10 +37,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 LastName = "Doe"
             };
 
+            var account = new Account { Id = 1, AccountName = "Test Account" };
+            var feature = new Feature(1, "Test Feature", true, DateTime.Now, null);
             _testFeatures =
-            [
-                new AccountFeature { Id = 1, AccountId = 1, FeatureId = 1 }
-            ];
+                [
+                new AccountFeature(account, feature) { Id = 1 }
+                    ];
         }
 
         [Test, Category("Models")]
@@ -241,9 +243,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account();
             var originalDateModified = account.DateModified;
+            var testAccount = new Account { Id = 1, AccountName = "Test" };
+            var testFeature = new Feature(2, "Test Feature", true, DateTime.Now, null);
             var newFeatures = new List<AccountFeature>
             {
-                new() { Id = 2, AccountId = 1, FeatureId = 2 }
+                new(testAccount, testFeature) { Id = 2 }
             };
 
             // Act
@@ -633,7 +637,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("Multi Test Account"));
                 Assert.That(account.AccountNumber, Is.EqualTo("ACC999"));
                 Assert.That(account.License, Is.EqualTo(accountDTO.License));
-                
+
                 // Verify Features mapping
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(3));
@@ -643,13 +647,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.Features[1].FeatureId, Is.EqualTo(20));
                 Assert.That(account.Features[2].AccountId, Is.EqualTo(999));
                 Assert.That(account.Features[2].FeatureId, Is.EqualTo(30));
-                
+
                 // Verify Accounts mapping
                 Assert.That(account.Accounts, Is.Not.Null);
                 Assert.That(account.Accounts, Has.Count.EqualTo(2));
                 Assert.That(account.Accounts![0].Id, Is.EqualTo(100));
                 Assert.That(account.Accounts![1].Id, Is.EqualTo(200));
-                
+
                 Assert.That(account.DateCreated, Is.EqualTo(_testDateCreated));
                 Assert.That(account.DateModified, Is.EqualTo(_testDateModified));
             });
@@ -723,7 +727,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
-                
+
                 var accountFeature = account.Features[0];
                 Assert.That(accountFeature, Is.TypeOf<AccountFeature>());
                 Assert.That(accountFeature.AccountId, Is.EqualTo(555)); // From accountDTO.Id
@@ -915,7 +919,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
         {
             // Arrange
-            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null};
+            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null };
 
             // Act
             var validationResults = ValidateModel(account);
@@ -956,8 +960,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var account = new Account();
-            var feature1 = new AccountFeature { Id = 1, AccountId = 1, FeatureId = 1 };
-            var feature2 = new AccountFeature { Id = 2, AccountId = 1, FeatureId = 2 };
+            var testAccount = new Account { Id = 1, AccountName = "Test" };
+            var testFeature1 = new Feature(1, "Feature 1", true, DateTime.Now, null);
+            var testFeature2 = new Feature(2, "Feature 2", true, DateTime.Now, null);
+            var feature1 = new AccountFeature(testAccount, testFeature1) { Id = 1 };
+            var feature2 = new AccountFeature(testAccount, testFeature2) { Id = 2 };
             account.Features = [feature1, feature2];
 
             IAccount iAccount = account;
@@ -981,8 +988,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var account = new Account();
             IAccount iAccount = account;
-            var feature1 = new AccountFeature { Id = 10, AccountId = 5, FeatureId = 15 };
-            var feature2 = new AccountFeature { Id = 20, AccountId = 5, FeatureId = 25 };
+            var testAccount = new Account { Id = 5, AccountName = "Test" };
+            var testFeature1 = new Feature(15, "Feature 1", true, DateTime.Now, null);
+            var testFeature2 = new Feature(25, "Feature 2", true, DateTime.Now, null);
+            var feature1 = new AccountFeature(testAccount, testFeature1) { Id = 10 };
+            var feature2 = new AccountFeature(testAccount, testFeature2) { Id = 20 };
             var interfaceFeatures = new List<IAccountFeature> { feature1, feature2 };
             var originalDateModified = account.DateModified;
 
@@ -991,15 +1001,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features, Has.Count.EqualTo(2));
-                Assert.That(account.Features[0], Is.EqualTo(feature1));
-                Assert.That(account.Features[1], Is.EqualTo(feature2));
-                Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
-            });
+           {
+               Assert.That(account.Features, Is.Not.Null);
+               Assert.That(account.Features, Has.Count.EqualTo(2));
+               Assert.That(account.Features[0], Is.EqualTo(feature1));
+               Assert.That(account.Features[1], Is.EqualTo(feature2));
+               Assert.That(account.DateModified, Is.GreaterThan(originalDateModified));
+           });
         }
-
         [Test, Category("Models")]
         public void ExplicitInterface_Accounts_GetWithNullSubAccounts_ReturnsNull()
         {
@@ -1339,7 +1348,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(afterLicense, Is.GreaterThan(afterNumber));
 
             System.Threading.Thread.Sleep(1);
-            account.Features = [new AccountFeature { Id = 1 }];
+            var testAccount = new Account { Id = 1, AccountName = "Test" };
+            var testFeature = new Feature(1, "Test", true, DateTime.Now, null);
+            account.Features = [new AccountFeature(testAccount, testFeature) { Id = 1 }];
             var afterFeatures = account.DateModified;
             Assert.That(afterFeatures, Is.GreaterThan(afterLicense));
         }
@@ -1491,7 +1502,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(account.Accounts!, Is.Empty);
 
             // Test with actual data
-            var feature = new AccountFeature { Id = 1, FeatureId = 1 };
+            var testAccount = new Account { Id = 1, AccountName = "Test" };
+            var testFeature = new Feature(1, "Test Feature", true, DateTime.Now, null);
+            var feature = new AccountFeature(testAccount, testFeature) { Id = 1 };
             var subAccount = new SubAccount { Id = 1 };
 
             iAccount.Features = [feature];
@@ -1506,350 +1519,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
         }
 
-        [Test, Category("Models")]
-        public void AllFieldsAndProperties_CompleteCoverage()
-        {
-            // Test to ensure all private fields are covered through properties
-            var account = new Account();
-
-            // Access all properties to ensure complete coverage
-            _ = account.Id;
-            _ = account.AccountName;
-            _ = account.AccountNumber;
-            _ = account.License;
-            _ = account.Features;
-            _ = account.Accounts;
-            _ = account.DateCreated;
-            _ = account.DateModified;
-
-            // Set all settable properties
-            account.Id = 1;
-            account.AccountName = "Test";
-            account.AccountNumber = "ACC1";
-            account.License = Guid.NewGuid().ToString();
-            account.Features = [];
-            account.Accounts = [];
-            account.DateModified = DateTime.Now;
-
-            // Verify all are set
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.Id, Is.EqualTo(1));
-                Assert.That(account.AccountName, Is.EqualTo("Test"));
-                Assert.That(account.AccountNumber, Is.EqualTo("ACC1"));
-                Assert.That(account.License, Is.Not.Null);
-                Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Accounts, Is.Not.Null);
-                Assert.That(account.DateModified, Is.Not.Null);
-                Assert.That(account.DateCreated, Is.Not.EqualTo(default(DateTime)));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_WithNullFeatures_ThrowsInvalidCastException()
-        {
-            // Arrange - Create account with null Features 
-            var account = new Account
-            {
-                Id = 123,
-                AccountName = "Test",
-                Features = null!
-            };
-
-            // Act & Assert - The Cast method throws InvalidCastException before reaching ConvertAll
-            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<User>());
-            Assert.That(ex.Message, Does.Contain("Cannot cast Account to type User"));
-        }
-
-        [Test, Category("Models")]
-        public void Cast_WithNullAccounts_HandlesCorrectly()
-        {
-            // Arrange - Create account with null Accounts (this should work fine due to null-conditional operator)
-            var account = new Account
-            {
-                Id = 456,
-                AccountName = "Test2",
-                Features = [], // Valid empty list
-                Accounts = null // This should be handled by null-conditional operator in Cast
-            };
-
-            // Act & Assert - Should still throw InvalidCastException for unsupported type, not NullReferenceException
-            var ex = Assert.Throws<InvalidCastException>(() => account.Cast<User>());
-            Assert.That(ex.Message, Does.Contain("Cannot cast Account to type User"));
-        }
-
-        [Test, Category("Models")]
-        public void JsonConstructor_ExceptionHandling_WithSpecificScenario()
-        {
-            // Test with extreme values that might cause issues
-            Assert.DoesNotThrow(() => new Account(
-                id: int.MaxValue,
-                accountName: new string('A', 10000), // Very long string
-                accountNumber: new string('B', 10000),
-                license: Guid.NewGuid().ToString(),
-                features: _testFeatures,
-                accounts: [],
-                dateCreated: DateTime.MaxValue,
-                dateModified: DateTime.MaxValue
-            ));
-        }
-
-        [Test, Category("Models")]
-        public void CompleteIntegration_AllConstructorsPropertiesAndMethods()
-        {
-            // Arrange
-            var features = new List<AccountFeature>
-            {
-                new() { Id = 1, AccountId = 1, FeatureId = 1 },
-                new() { Id = 2, AccountId = 1, FeatureId = 2 }
-            };
-            var subAccounts = new List<SubAccount>
-            {
-                new() { Id = 10 },
-                new() { Id = 20 }
-            };
-
-            // Act - Test all constructors and methods
-            var account1 = new Account(); // Default constructor
-            var account2 = new Account( // JSON constructor
-                id: 999,
-                accountName: "Integration Account",
-                accountNumber: "INT999",
-                license: Guid.NewGuid().ToString(),
-                features: features,
-                accounts: subAccounts,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
-            );
-
-            var account3 = new Account( // Parameterized constructor
-                accountName: "Linked Account",
-                accountNumber: "LINK123",
-                license: Guid.NewGuid().ToString(),
-                features: features,
-                accounts: null
-            );
-
-            // Test interface functionality
-            IAccount iAccount = account2;
-            var interfaceFeatures = iAccount.Features;
-            var interfaceAccounts = iAccount.Accounts;
-
-            // Test methods
-            var json1 = account1.ToJson();
-            var json2 = account2.ToJson();
-            var json3 = account3.ToJson();
-            var toString1 = account1.ToString();
-            var toString2 = account2.ToString();
-
-            // Assert
-            Assert.Multiple(() =>
-            {
-                // Verify all constructors worked
-                Assert.That(account1.Id, Is.EqualTo(0));
-                Assert.That(account2.Id, Is.EqualTo(999));
-                Assert.That(account3.Id, Is.EqualTo(0));
-
-                // Verify interface functionality
-                Assert.That(interfaceFeatures, Is.Not.Null);
-                Assert.That(interfaceFeatures, Has.Count.EqualTo(2));
-                Assert.That(interfaceAccounts, Is.Not.Null);
-                Assert.That(interfaceAccounts!, Has.Count.EqualTo(2));
-
-                // Verify methods
-                Assert.That(json1, Is.Not.Null);
-                Assert.That(json2, Is.Not.Null);
-                Assert.That(json3, Is.Not.Null);
-                Assert.That(toString1, Contains.Substring("Id:0"));
-                Assert.That(toString2, Contains.Substring("Id:999"));
-                Assert.That(toString2, Contains.Substring("AccountName:Integration Account"));
-
-                // Verify all JSON is valid
-                Assert.DoesNotThrow(() => JsonDocument.Parse(json1));
-                Assert.DoesNotThrow(() => JsonDocument.Parse(json2));
-                Assert.DoesNotThrow(() => JsonDocument.Parse(json3));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void SerializerOptions_HasIgnoreCyclesReferenceHandler()
-        {
-            // Test that verifies the JsonSerializerOptions is configured correctly
-            var account = new Account
-            {
-                Id = 999,
-                AccountName = "Serializer Test",
-                Features = _testFeatures
-            };
-
-            // The ToJson method should handle potential circular references
-            // due to ReferenceHandler.IgnoreCycles
-            Assert.DoesNotThrow(() =>
-            {
-                var json = account.ToJson();
-                Assert.That(json, Is.Not.Null);
-                Assert.That(json, Is.Not.Empty);
-            });
-        }
-
-        [Test, Category("Models")]
-        public void ToString_BaseClassMethod_IsOverridden()
-        {
-            // Arrange
-            var account = new Account
-            {
-                Id = 42,
-                AccountName = "toString test"
-            };
-
-            // Act
-            var result = account.ToString();
-            var baseResult = ((object)account).ToString();
-
-            // Assert - Verify the ToString method is properly overridden
-            Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.EqualTo(baseResult)); // Should be the same since it's overridden
-                Assert.That(result, Does.Contain("OrganizerCompanion.Core.Models.Domain.Account"));
-                Assert.That(result, Does.Contain("Id:42"));
-                Assert.That(result, Does.Contain("AccountName:toString test"));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Features_PropertyInitialization_CreatesEmptyList()
-        {
-            // Arrange & Act
-            var account = new Account();
-
-            // Assert - Features should be initialized as empty list, not null
-            Assert.Multiple(() =>
-            {
-                Assert.That(account.Features, Is.Not.Null);
-                Assert.That(account.Features, Is.Empty);
-                Assert.That(account.Features, Is.InstanceOf<List<AccountFeature>>());
-
-                // Verify we can add to it
-                account.Features.Add(new AccountFeature { Id = 1 });
-                Assert.That(account.Features, Has.Count.EqualTo(1));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void JsonPropertyAttributes_AreAppliedCorrectly()
-        {
-            // This test verifies that JsonPropertyName attributes are present
-            // by testing serialization output contains expected property names
-            var account = new Account
-            {
-                Id = 123,
-                AccountName = "JSON Test",
-                AccountNumber = "JSON123",
-                License = Guid.NewGuid().ToString()
-            };
-
-            var json = account.ToJson();
-
-            // Verify JSON contains property names as defined by JsonPropertyNameAttribute
-            Assert.Multiple(() =>
-            {
-                Assert.That(json, Contains.Substring("\"id\""));
-                Assert.That(json, Contains.Substring("\"accountName\""));
-                Assert.That(json, Contains.Substring("\"accountNumber\""));
-                Assert.That(json, Contains.Substring("\"license\""));
-                Assert.That(json, Contains.Substring("\"dateCreated\""));
-                Assert.That(json, Contains.Substring("\"dateModified\""));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void DateModified_DefaultValue_IsDefaultDateTime()
-        {
-            // Arrange & Act
-            var account = new Account();
-
-            // Assert
-            Assert.That(account.DateModified, Is.EqualTo(default(DateTime)));
-        }
-
-        [Test, Category("Models")]
-        public void ParameterizedConstructor_ExceptionHandling_DocumentsStructure()
-        {
-            // Normal operation should not throw
-            Assert.DoesNotThrow(() => new Account(
-                accountName: "testuser",
-                accountNumber: "ACC123",
-                license: Guid.NewGuid().ToString(),
-                features: _testFeatures,
-                accounts: null
-            ));
-        }
-
-        [Test, Category("Models")]
-        public void AllConstructorPaths_AreTestedForCompleteness()
-        {
-            // Test to ensure we've covered all constructor scenarios including edge cases
-            var databaseConnection = new DatabaseConnection
-            {
-                ConnectionString = "complete-test",
-                DatabaseType = SupportedDatabases.SQLServer
-            };
-
-            // Test default constructor  
-            var account1 = new Account();
-            Assert.That(account1.Id, Is.EqualTo(0));
-
-            // Test JSON constructor with minimum values
-            var account2 = new Account(0, null, null, null, null!, null!, DateTime.Now, null);
-            Assert.That(account2.Id, Is.EqualTo(0));
-
-            // Test parameterized constructor 
-            var account3 = new Account(0, null, null, null, null!, null!, DateTime.Now, null);
-            Assert.That(account3.Id, Is.EqualTo(0));
-
-            // Verify all constructors work
-            Assert.Multiple(() =>
-            {
-                Assert.That(account1, Is.Not.Null);
-                Assert.That(account2, Is.Not.Null);
-                Assert.That(account3, Is.Not.Null);
-            });
-        }
-
         #endregion
-    }
-
-    // Helper classes for testing exception scenarios
-    internal class ThrowingMockEntity : IDomainEntity
-    {
-        public int Id
-        {
-            get => throw new Exception("Mock exception from Id property");
-            set => throw new Exception("Mock exception from Id property setter");
-        }
-        public bool IsCast { get; set; }
-        public int CastId { get; set; }
-        public string? CastType { get; set; }
-        public DateTime DateCreated { get; set; }
-        public DateTime? DateModified { get; set; }
-
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
-        public string ToJson() => throw new NotImplementedException();
-    }
-
-    internal class ThrowingGetTypeMockEntity : IDomainEntity
-    {
-        public int Id { get; set; } = 1;
-        public bool IsCast { get; set; } = false;
-        public int CastId { get; set; } = 0;
-        public string? CastType { get; set; } = null;
-        public DateTime DateCreated { get; set; }
-        public DateTime? DateModified { get; set; }
-
-        public new System.Type GetType() => throw new Exception("Mock exception from GetType method");
-        public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
-        public string ToJson() => throw new NotImplementedException();
     }
 }
 

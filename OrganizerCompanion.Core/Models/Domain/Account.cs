@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -170,7 +170,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _accountName = dto.AccountName;
             _accountNumber = dto.AccountNumber;
             _license = dto.License;
-            _features = dto.Features.ConvertAll(featureDTO => new AccountFeature(featureDTO, dto.Id));
+            _features = dto.Features.ConvertAll(featureDTO => new AccountFeature(dto, featureDTO));
             _subAccounts = dto.Accounts?.ConvertAll(subAccountDTO => new SubAccount(subAccountDTO));
             _dateCreated = dto.DateCreated;
             DateModified = dto.DateModified;
@@ -186,14 +186,14 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     object dto = new AccountDTO()
                     {
-                        Id = this.Id,
-                        AccountName = this.AccountName,
-                        AccountNumber = this.AccountNumber,
-                        License = this.License,
-                        Features = this.Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
-                        Accounts = this.Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
-                        DateCreated = this.DateCreated,
-                        DateModified = this.DateModified
+                        Id = Id,
+                        AccountName = AccountName,
+                        AccountNumber = AccountNumber,
+                        License = License,
+                        Features = Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
+                        Accounts = Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
+                        DateCreated = DateCreated,
+                        DateModified = DateModified
                     };
                     return (T)dto;
                 }
