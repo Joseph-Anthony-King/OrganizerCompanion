@@ -15,7 +15,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private DateTime? _expirationDate = null;
         private int _accountId = 0;
         private IAccount? _account = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -175,7 +175,6 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountId = account.Id;
             }
             _account = account;
-            _createdDate = DateTime.Now;
         }
         #endregion
 

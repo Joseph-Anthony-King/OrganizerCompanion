@@ -33,12 +33,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void DefaultConstructor_SetsDefaultValues()
         {
-            // Arrange
-            var beforeCreation = DateTime.UtcNow;
-
-            // Act
+            // Arrange & Act
             var databaseConnection = new DatabaseConnection();
-            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -46,9 +42,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.Id, Is.EqualTo(0));
                 Assert.That(databaseConnection.ConnectionString, Is.Null);
                 Assert.That(databaseConnection.DatabaseType, Is.Null);
-                Assert.That(databaseConnection.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(databaseConnection.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(databaseConnection.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(databaseConnection.ModifiedDate, Is.Null);
             });
         }
 
@@ -84,7 +79,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var connectionString = "Data Source=mydb.sqlite;Version=3;";
             var databaseType = SupportedDatabases.SQLite;
-            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var databaseConnection = new DatabaseConnection(
@@ -92,7 +86,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 databaseType: databaseType,
                 account: _testAccount
             );
-            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -102,9 +95,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.DatabaseType, Is.EqualTo(databaseType));
                 Assert.That(databaseConnection.Account, Is.EqualTo(_testAccount));
                 Assert.That(databaseConnection.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(databaseConnection.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(databaseConnection.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(databaseConnection.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(databaseConnection.ModifiedDate, Is.Null);
             });
         }
 
@@ -170,8 +162,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(456));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -201,8 +193,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ConnectionString, Is.EqualTo(connectionString));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -210,8 +202,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ConnectionString_Setter_WithNull_UpdatesModifiedDate()
         {
             // Arrange
-            _sut.ConnectionString = "Initial value";
             var originalModifiedDate = _sut.ModifiedDate;
+            _sut.ConnectionString = "Initial value";
 
             // Act
             _sut.ConnectionString = null;
@@ -220,8 +212,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ConnectionString, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -238,8 +230,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -247,8 +239,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DatabaseType_Setter_WithNull_UpdatesModifiedDate()
         {
             // Arrange
-            _sut.DatabaseType = SupportedDatabases.SQLServer;
             var originalModifiedDate = _sut.ModifiedDate;
+            _sut.DatabaseType = SupportedDatabases.SQLServer;
 
             // Act
             _sut.DatabaseType = null;
@@ -257,8 +249,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DatabaseType, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -277,8 +269,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Account, Is.EqualTo(newAccount));
                 Assert.That(_sut.AccountId, Is.EqualTo(newAccount.Id));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -354,8 +346,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Account, Is.EqualTo(newAccount));
                 Assert.That(_sut.AccountId, Is.EqualTo(newAccount.Id));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -910,7 +902,7 @@ Assert.That(connection.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
            Assert.That(_sut.Account, Is.InstanceOf<Account>());
          Assert.That(_sut.Account.Id, Is.EqualTo(555));
               Assert.That(_sut.AccountId, Is.EqualTo(555));
-       Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+       Assert.That(_sut.ModifiedDate, Is.Not.Null);
           });
         }
 

@@ -24,7 +24,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool _isCompleted = false;
         private DateTime? _dueDate = null;
         private DateTime? _completedDate = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -197,8 +197,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = dto.Id;
             _projectName = dto.ProjectName;
             _description = dto.Description;
-            _groups = dto.Groups?.Select(g => new Group(g)).ToList();
-            _tasks = dto.Tasks?.Select(t => new ProjectTask(t)).ToList();
+            _groups = dto.Groups?.ConvertAll(g => (GroupDTO)g).Select(g => new Group(g)).ToList();
+            _tasks = dto.Tasks?.ConvertAll(t => (ProjectTaskDTO)t).Select(t => new ProjectTask(t)).ToList();
             _isCompleted = dto.IsCompleted;
             _dueDate = dto.DueDate;
             _completedDate = dto.CompletedDate;

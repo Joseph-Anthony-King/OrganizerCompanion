@@ -26,7 +26,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange & Act
             _sut = new AccountDTO();
 
-                        // Assert
+            // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
@@ -37,7 +37,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Features, Is.Empty);
                 Assert.That(_sut.Accounts, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.Null);
-                // CreatedDate should be set to current time, tested separately for timing
             });
         }
 
@@ -541,9 +540,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_Get_ShouldReturnValue()
         {
             // Arrange
-            var beforeCreation = DateTime.Now.AddSeconds(-1);
+            var beforeCreation = DateTime.UtcNow;
             var accountDto = new AccountDTO();
-            var afterCreation = DateTime.Now.AddSeconds(1);
+            var afterCreation = DateTime.UtcNow;
 
             // Act
             var createdDate = accountDto.CreatedDate;
@@ -573,11 +572,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_DefaultValue_ShouldBeCurrentDateTime()
         {
             // Arrange
-            var beforeCreation = DateTime.Now.AddSeconds(-1);
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var accountDto = new AccountDTO();
-            var afterCreation = DateTime.Now.AddSeconds(1);
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>

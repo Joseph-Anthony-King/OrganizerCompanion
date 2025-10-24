@@ -57,7 +57,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(userDTO.IsAdmin, Is.Null);
                 Assert.That(userDTO.IsSuperUser, Is.Null);
                 Assert.That(userDTO.ModifiedDate, Is.Null);
-                Assert.That(userDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(userDTO.CreatedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -1330,7 +1330,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(newInstance.IsDeceased, Is.Null);
                 Assert.That(newInstance.IsAdmin, Is.Null);
                 Assert.That(newInstance.IsSuperUser, Is.Null);
-                Assert.That(newInstance.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(newInstance.ModifiedDate, Is.Null);
             });
         }

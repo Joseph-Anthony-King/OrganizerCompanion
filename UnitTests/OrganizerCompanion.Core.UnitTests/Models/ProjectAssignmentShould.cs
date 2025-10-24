@@ -4,7 +4,6 @@ using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
-using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -896,7 +895,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Is.Not.Null);
             Assert.That(json, Is.Not.Empty);
             Assert.That(json, Does.Contain("\"id\":1"));
-            Assert.That(json, Does.Contain("\"name\":\"Test Assignment\""));
+            Assert.That(json, Does.Contain("\"projectAssignmentName\":\"Test Assignment\""));
             Assert.That(json, Does.Contain("\"description\":\"Test Description\""));
             Assert.That(json, Does.Contain("\"isCompleted\":false"));
         }
@@ -916,7 +915,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(json, Is.Not.Null);
             Assert.That(json, Is.Not.Empty);
             Assert.That(json, Does.Contain("\"id\":0"));
-            Assert.That(json, Does.Contain("\"name\":\"Minimal Assignment\""));
+            Assert.That(json, Does.Contain("\"projectAssignmentName\":\"Minimal Assignment\""));
         }
 
         [Test, Category("Models")]

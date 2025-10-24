@@ -9,7 +9,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     {
         #region Fields
         private readonly DateTime? _completedDate = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties

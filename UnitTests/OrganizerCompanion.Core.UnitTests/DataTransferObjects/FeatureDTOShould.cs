@@ -22,11 +22,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void DefaultConstructor_ShouldCreateFeatureDTOWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new FeatureDTO();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -258,11 +258,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_DefaultValue_ShouldBeCurrentTime()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var featureDTO = new FeatureDTO();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.That(featureDTO.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));

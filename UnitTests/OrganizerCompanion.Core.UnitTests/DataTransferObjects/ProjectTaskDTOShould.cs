@@ -373,24 +373,30 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void AsIProjectTaskDTO_Assignments_Get_WithNullAssignments_ShouldThrowException()
+        public void AsIProjectTaskDTO_Assignments_Get_WithNullAssignments_ShouldReturnNull()
         {
             // Arrange
             var dto = (IProjectTaskDTO)_sut;
             _sut.Assignments = null;
 
-            // Act & Assert - This covers the Assignments!.Cast<IProjectAssignmentDTO>() with null
-            Assert.Throws<ArgumentNullException>(() => { var _ = dto.Assignments; });
+            // Act
+            var result = dto.Assignments;
+
+            // Assert - After the fix, this now returns null instead of throwing
+            Assert.That(result, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
-        public void AsIProjectTaskDTO_Assignments_Set_WithNullValue_ShouldThrowException()
+        public void AsIProjectTaskDTO_Assignments_Set_WithNullValue_ShouldSetNull()
         {
             // Arrange
             var dto = (IProjectTaskDTO)_sut;
 
-            // Act & Assert - This covers the value!.Cast<ProjectAssignmentDTO>() with null
-            Assert.Throws<ArgumentNullException>(() => { dto.Assignments = null; });
+            // Act
+            dto.Assignments = null;
+
+            // Assert - After the fix, this now sets null instead of throwing
+            Assert.That(_sut.Assignments, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]

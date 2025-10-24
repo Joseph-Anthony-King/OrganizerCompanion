@@ -39,7 +39,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(phoneNumberDTO.Phone, Is.Null);
                 Assert.That(phoneNumberDTO.Type, Is.Null);
                 Assert.That(phoneNumberDTO.Country, Is.Null);
-                Assert.That(phoneNumberDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(phoneNumberDTO.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(phoneNumberDTO.ModifiedDate, Is.Null);
             });
         }

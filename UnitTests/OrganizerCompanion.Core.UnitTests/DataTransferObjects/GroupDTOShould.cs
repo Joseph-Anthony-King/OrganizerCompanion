@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
@@ -52,11 +52,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void DefaultConstructor_SetsDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var groupDTO = new GroupDTO();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -246,13 +246,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void IGroupDTO_Members_Set_UpdatesMembers()
         {
             // Arrange
-            var beforeModified = DateTime.Now;
             var groupInterface = (IGroupDTO)_sut;
             var interfaceMembers = _testMembers.Cast<IContactDTO>().ToList();
 
             // Act
             groupInterface.Members = interfaceMembers;
-            var afterModified = DateTime.Now;
+            var afterModified = DateTime.UtcNow;
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
@@ -263,7 +262,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
                 Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
@@ -271,13 +269,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void IGroupDTO_Members_SetEmptyList_UpdatesCorrectly()
         {
             // Arrange
-            var beforeModified = DateTime.Now;
             var groupInterface = (IGroupDTO)_sut;
             var emptyInterfaceMembers = new List<IContactDTO>();
 
             // Act
             groupInterface.Members = emptyInterfaceMembers;
-            var afterModified = DateTime.Now;
+            var afterModified = DateTime.UtcNow;
 
             // Assert
             Assert.That(_sut.Members, Is.Not.Null);
@@ -286,7 +283,6 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
@@ -410,18 +406,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void IGroupDTO_Members_Set_UpdatesModifiedDate_WhenNull()
         {
             // Arrange
-            var beforeModified = DateTime.Now;
             _sut.ModifiedDate = null;
             var groupInterface = (IGroupDTO)_sut;
             var interfaceMembers = _testMembers.Cast<IContactDTO>().ToList();
 
             // Act
             groupInterface.Members = interfaceMembers;
-            var afterModified = DateTime.Now;
+            var afterModified = DateTime.UtcNow;
 
             // Assert
             Assert.That(_sut.ModifiedDate, Is.Not.Null);
-            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
             Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 

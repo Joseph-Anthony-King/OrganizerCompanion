@@ -40,7 +40,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.IsPrimary, Is.False);
-                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
                 Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
@@ -371,11 +371,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_ShouldHaveDefaultValue()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var dto = new CAAddressDTO();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -832,11 +832,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_DefaultValue_ShouldBeCloseToCurrentTime()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var dto = new CAAddressDTO();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>

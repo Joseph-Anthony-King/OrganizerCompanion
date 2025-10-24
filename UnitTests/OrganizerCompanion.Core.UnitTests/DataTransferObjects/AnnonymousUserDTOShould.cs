@@ -22,11 +22,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void DefaultConstructor_ShouldCreateAnnonymousUserDTOWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now.AddSeconds(-1);
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new AnnonymousUserDTO();
-            var afterCreation = DateTime.Now.AddSeconds(1);
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -294,9 +294,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void CreatedDate_Get_ShouldReturnValue()
         {
             // Arrange
-            var beforeCreation = DateTime.Now.AddSeconds(-1);
+            var beforeCreation = DateTime.UtcNow;
             var dto = new AnnonymousUserDTO();
-            var afterCreation = DateTime.Now.AddSeconds(1);
+            var afterCreation = DateTime.UtcNow;
 
             // Act
             var createdDate = dto.CreatedDate;

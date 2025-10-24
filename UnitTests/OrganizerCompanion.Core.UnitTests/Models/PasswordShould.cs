@@ -25,11 +25,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreatePasswordWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new Password();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -44,7 +44,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Account, Is.Null);
                 Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -95,11 +95,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var passwordValue = "MyPassword123";
             var passwordHint = "Remember this one";
             IAccount? account = null; // Using null as we don't have concrete implementation
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var password = new Password(passwordValue, passwordHint, account!);
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -442,11 +442,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var password = new Password();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -1014,18 +1014,18 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_CreatedDate_ShouldBeSetToConstructionTime()
         {
             // Arrange
-            var beforeConstruction = DateTime.Now;
+            var beforeConstruction = DateTime.UtcNow;
 
             // Act
             var password = new Password();
-            var afterConstruction = DateTime.Now;
+            var afterConstruction = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(password.CreatedDate, Is.GreaterThanOrEqualTo(beforeConstruction));
                 Assert.That(password.CreatedDate, Is.LessThanOrEqualTo(afterConstruction));
-                Assert.That(password.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(password.ModifiedDate, Is.Null);
             });
         }
 

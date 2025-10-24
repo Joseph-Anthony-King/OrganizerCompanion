@@ -24,7 +24,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private List<Contact> _members = [];
         private List<Contact> _contacts = [];
         private List<Account> _accounts = [];
-        private readonly DateTime _createdDate = DateTime.Now;
+        private readonly DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties

@@ -17,8 +17,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonIgnore]
         List<IProjectAssignmentDTO>? IProjectTaskDTO.Assignments
         {
-            get => [.. Assignments!.Cast<IProjectAssignmentDTO>()];
-            set => Assignments = [.. value!.Cast<ProjectAssignmentDTO>()];
+            get => Assignments != null ? [.. Assignments.Cast<IProjectAssignmentDTO>()] : null;
+            set => Assignments = value != null ? [.. value.Cast<ProjectAssignmentDTO>()] : null;
         }
         #endregion
 

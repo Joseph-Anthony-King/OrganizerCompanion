@@ -61,7 +61,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(organizationDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(organizationDTO.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(organizationDTO.ModifiedDate, Is.Null);
             });
         }

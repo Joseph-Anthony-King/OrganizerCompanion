@@ -23,7 +23,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool _isCompleted = false;
         private DateTime? _dueDate = null;
         private DateTime? _completedDate = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -149,7 +149,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         [JsonConstructor]
         public ProjectTask(
             int id,
-            string name,
+            string projectTaskName,
             string? description,
             List<ProjectAssignment>? assignments,
             bool isCompleted,
@@ -159,7 +159,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             DateTime? modifiedDate)
         {
             _id = id;
-            _projectTaskName = name;
+            _projectTaskName = projectTaskName;
             _description = description;
             _assignments = assignments;
             _isCompleted = isCompleted;

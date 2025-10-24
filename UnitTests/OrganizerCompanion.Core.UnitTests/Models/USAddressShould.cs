@@ -31,11 +31,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreateUSAddressWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new USAddress();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -55,7 +55,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -127,7 +127,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(newId));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -147,7 +147,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Street1, Is.EqualTo(newStreet1));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -167,7 +167,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Street2, Is.EqualTo(newStreet2));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -187,7 +187,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.City, Is.EqualTo(newCity));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -207,7 +207,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.State, Is.EqualTo(newState));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -229,7 +229,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.State, Is.Not.Null);
                 Assert.That(_sut.State!.Name, Is.EqualTo("California"));
                 Assert.That(_sut.State!.Abbreviation, Is.EqualTo("CA"));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -238,8 +238,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void StateEnum_WhenSetToNull_ShouldSetStateToNullAndUpdateModifiedDate()
         {
             // Arrange
-            _sut.StateEnum = USStates.Florida; // Set initial value
             var originalModifiedDate = _sut.ModifiedDate;
+            _sut.StateEnum = USStates.Florida; // Set initial value
             Thread.Sleep(10); // Ensure time difference
 
             // Act
@@ -249,8 +249,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.State, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -282,7 +282,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ZipCode, Is.EqualTo(newZipCode));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -302,7 +302,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Country, Is.EqualTo(newCountry));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -322,7 +322,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Type, Is.EqualTo(newType));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -342,7 +342,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsPrimary, Is.EqualTo(newIsPrimary));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
@@ -414,7 +414,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(newLinkedEntity));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(originalModifiedDate, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }

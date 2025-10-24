@@ -24,8 +24,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private readonly DateTime _createdDate = DateTime.UtcNow;
 
         // EF Core navigation properties
-        private Contact? _contact;
+        private User? _user;
         private Organization? _organization;
+        private AnnonymousUser? _annonymousUser;
         #endregion
 
         #region Properties
@@ -55,13 +56,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (_linkedEntity == null)
                 {
-                    if (_contact != null)
+                    if (_user != null)
                     {
-                        _linkedEntity = _contact;
+                        _linkedEntity = _user;
                     }
                     else if (_organization != null)
                     {
                         _linkedEntity = _organization;
+                    }
+                    else if (_annonymousUser != null)
+                    {
+                        _linkedEntity = _annonymousUser;
                     }
                 }
                 return _linkedEntity;
@@ -70,14 +75,37 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _linkedEntity = value;
 
-                if (value is Contact contact)
+                // Clear all navigation properties first
+                _user = null;
+                User = null;
+                UserId = null;
+                _organization = null;
+                Organization = null;
+                OrganizationId = null;
+                _annonymousUser = null;
+                AnnonymousUser = null;
+                AnnonymousUserId = null;
+
+                // Set the appropriate navigation property based on type
+                if (value is User user)
                 {
-                    _contact = contact;
+                    _user = user;
+                    User = user;
+                    UserId = user.Id;
                 }
                 else if (value is Organization organization)
                 {
                     _organization = organization;
+                    Organization = organization;
+                    OrganizationId = organization.Id;
                 }
+                else if (value is AnnonymousUser annonymousUser)
+                {
+                    _annonymousUser = annonymousUser;
+                    AnnonymousUser = annonymousUser;
+                    AnnonymousUserId = annonymousUser.Id;
+                }
+
                 ModifiedDate = DateTime.UtcNow;
             }
         }
@@ -103,7 +131,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             set => _accountId = value;
         }
 
-        [ForeignKey(nameof(AccountId))]
+        [ForeignKey(nameof(AccountId))
+]
         [Required, JsonPropertyName("account")]
         public IAccount? Account
         {
@@ -123,16 +152,22 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         // Foreign key and navigation properties for EF Core
         [JsonIgnore]
-        public int? ContactId { get; set; }
+        public int? UserId { get; set; }
 
-        [JsonIgnore, ForeignKey(nameof(ContactId))]
-        public Contact? Contact { get; set; }
+        [JsonIgnore, ForeignKey(nameof(UserId))]
+        public User? User { get; set; }
 
         [JsonIgnore]
         public int? OrganizationId { get; set; }
 
         [JsonIgnore, ForeignKey(nameof(OrganizationId))]
         public Organization? Organization { get; set; }
+
+        [JsonIgnore]
+        public int? AnnonymousUserId { get; set; }
+
+        [JsonIgnore, ForeignKey(nameof(AnnonymousUserId))]
+        public AnnonymousUser? AnnonymousUser { get; set; }
         #endregion
 
         #region Constructors
@@ -156,7 +191,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         public SubAccount(
-            IDomainEntity? linkedEntity,
+         IDomainEntity? linkedEntity,
             IAccount? account)
         {
             LinkedEntity = linkedEntity;
@@ -167,9 +202,18 @@ namespace OrganizerCompanion.Core.Models.Domain
         public SubAccount(ISubAccountDTO account)
         {
             _id = account.Id;
-            _linkedEntity = account.LinkedEntity?.Cast<IDomainEntity>();
+            _linkedEntity = account.LinkedEntity; // Already an IDomainEntity, no need to cast
             _accountId = account.AccountId;
-            _account = account.Account?.Cast<IAccount>();
+            // For DTOs, we store the DTO itself which implements IAccount through IAccountDTO
+            if (account.Account is IAccount accountDomain)
+            {
+                _account = accountDomain;
+            }
+            else if (account.Account != null)
+            {
+                // Create a new Account from the DTO
+                _account = new Account(account.Account);
+            }
             _createdDate = account.CreatedDate;
             ModifiedDate = account.ModifiedDate;
         }
@@ -219,6 +263,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                         _account!.Cast<AccountDTO>(),
                         _createdDate,
                         ModifiedDate);
+
                     return (T)(IDomainEntity)dto;
                 }
                 else

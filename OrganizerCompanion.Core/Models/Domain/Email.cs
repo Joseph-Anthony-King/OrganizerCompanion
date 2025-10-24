@@ -91,6 +91,30 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
+
+                // Assign to appropriate backing field based on entity type
+                if (value is Contact contact)
+                {
+                    _contact = contact;
+                    _contactId = contact.Id;
+                    _organization = null;
+                    _organizationId = null;
+                }
+                else if (value is Organization organization)
+                {
+                    _organization = organization;
+                    _organizationId = organization.Id;
+                    _contact = null;
+                    _contactId = null;
+                }
+                else if (value == null)
+                {
+                    _contact = null;
+                    _contactId = null;
+                    _organization = null;
+                    _organizationId = null;
+                }
+
                 ModifiedDate = DateTime.UtcNow;
             }
         }

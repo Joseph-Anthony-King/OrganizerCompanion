@@ -28,7 +28,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private Types? _type = null;
         private bool _isPrimary = false;
         private IDomainEntity? _linkedEntity = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties

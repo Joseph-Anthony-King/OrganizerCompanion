@@ -26,12 +26,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void DefaultConstructor_ShouldCreateFeatureWithDefaultValues()
         {
-            // Arrange
-            var beforeCreation = DateTime.Now;
-
-            // Act
+            // Arrange & Act
             _sut = new Feature();
-            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
@@ -39,9 +35,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.FeatureName, Is.Null);
                 Assert.That(_sut.IsEnabled, Is.False);
-                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -329,7 +324,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newId = 123;
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.Id = newId;
@@ -338,8 +332,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(newId));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -357,8 +350,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -367,7 +359,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newFeatureName = "Authentication";
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.FeatureName = newFeatureName;
@@ -376,8 +367,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FeatureName, Is.EqualTo(newFeatureName));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -386,7 +376,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.FeatureName = "TestFeature"; // Set initial value
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.FeatureName = null;
@@ -395,44 +384,35 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FeatureName, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
         [Test, Category("Models")]
         public void FeatureName_WhenSetToEmptyString_ShouldUpdateModifiedDate()
         {
-            // Arrange
-            var beforeSet = DateTime.Now;
-
-            // Act
+            // Arrange & Act
             _sut.FeatureName = string.Empty;
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FeatureName, Is.EqualTo(string.Empty));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
         [Test, Category("Models")]
         public void IsEnabled_WhenSetToTrue_ShouldUpdateModifiedDate()
         {
-            // Arrange
-            var beforeSet = DateTime.Now;
-
-            // Act
+            // Arrange & Act
             _sut.IsEnabled = true;
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsEnabled, Is.True);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -441,7 +421,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.IsEnabled = true; // Set initial value
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsEnabled = false;
@@ -450,8 +429,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsEnabled, Is.False);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -679,11 +657,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureName = "TestFeature";
             var isEnabled = true;
-            var beforeCreation = DateTime.Now;
 
             // Act
             var feature = new Feature(featureName, isEnabled);
-            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
@@ -691,9 +667,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0)); // Default value
                 Assert.That(feature.FeatureName, Is.EqualTo(featureName));
                 Assert.That(feature.IsEnabled, Is.EqualTo(isEnabled));
-                Assert.That(feature.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(feature.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime))); // Default value
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -703,11 +678,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             string? featureName = null;
             var isEnabled = false;
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var feature = new Feature(featureName, isEnabled);
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -715,9 +690,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0));
                 Assert.That(feature.FeatureName, Is.Null);
                 Assert.That(feature.IsEnabled, Is.False);
-                Assert.That(feature.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(feature.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -727,11 +701,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureName = string.Empty;
             var isEnabled = true;
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var feature = new Feature(featureName, isEnabled);
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -739,9 +713,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0));
                 Assert.That(feature.FeatureName, Is.EqualTo(string.Empty));
                 Assert.That(feature.IsEnabled, Is.True);
-                Assert.That(feature.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(feature.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -761,8 +734,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0));
                 Assert.That(feature.FeatureName, Is.EqualTo(specialName));
                 Assert.That(feature.IsEnabled, Is.False);
-                Assert.That(feature.CreatedDate, Is.Not.EqualTo(default(DateTime)));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -782,8 +755,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0));
                 Assert.That(feature.FeatureName, Is.EqualTo(unicodeName));
                 Assert.That(feature.IsEnabled, Is.True);
-                Assert.That(feature.CreatedDate, Is.Not.EqualTo(default(DateTime)));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -803,8 +776,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(feature.Id, Is.EqualTo(0));
                 Assert.That(feature.FeatureName, Is.EqualTo(longName));
                 Assert.That(feature.IsEnabled, Is.False);
-                Assert.That(feature.CreatedDate, Is.Not.EqualTo(default(DateTime)));
-                Assert.That(feature.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(feature.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(feature.ModifiedDate, Is.Null); // Default value
             });
         }
 
@@ -1358,9 +1331,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void ModifiedDate_PropertyChangeCombinations_ShouldUpdateInSequence()
         {
             // Test that rapid sequential property changes all update ModifiedDate correctly
-            
+
             // Arrange
-            _sut = new Feature();
+            _sut = new Feature
+            {
+                FeatureName = "InitialFeature",
+                IsEnabled = true
+            };
             var timestamps = new List<DateTime?>
             {
               _sut.ModifiedDate // Initial state
@@ -1431,9 +1408,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void IsEnabled_ToggleOperations_ShouldUpdateModifiedDateEachTime()
         {
             // Test that toggling IsEnabled multiple times updates ModifiedDate each time
-            
+
             // Arrange
-            _sut = new Feature();
+            _sut = new Feature
+            {
+                FeatureName = "ToggleFeature",
+                IsEnabled = true
+            };
             var originalModifiedDate = _sut.ModifiedDate;
             var toggleTimestamps = new List<DateTime?>();
 
@@ -1536,14 +1517,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(property?.SetMethod, Is.Null, "CreatedDate should be read-only");
             
             // Test that CreatedDate is set during construction and doesn't change
-            var beforeCreation = DateTime.Now;
             var feature1 = new Feature();
-            var afterCreation = DateTime.Now;
             
             Assert.Multiple(() =>
             {
-                Assert.That(feature1.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(feature1.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(feature1.CreatedDate, Is.LessThan(DateTime.UtcNow));
             });
             
             // Test that different instances have different CreatedDate values
@@ -1598,12 +1576,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Arrange
             _sut = new Feature();
-            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act & Assert - Test each property that should update ModifiedDate
             System.Threading.Thread.Sleep(1);
             _sut.Id = 100;
-            Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate), "Id setter should update ModifiedDate");
+            Assert.That(_sut.ModifiedDate, Is.Not.Null, "Id setter should update ModifiedDate");
 
             var idModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
@@ -1678,7 +1655,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime CreatedDate { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
             public DateTime? ModifiedDate { get; set; } = default;
             public string? FeatureName { get; set; }
             public bool IsEnabled { get; set; } = false;

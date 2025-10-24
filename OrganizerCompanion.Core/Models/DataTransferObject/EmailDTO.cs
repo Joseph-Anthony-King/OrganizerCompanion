@@ -37,7 +37,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public bool IsConfirmed { get; set; } = false;
 
         [Required, JsonPropertyName("createdDate")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         [Required, JsonPropertyName("modifiedDate")]
         public DateTime? ModifiedDate { get; set; } = default;

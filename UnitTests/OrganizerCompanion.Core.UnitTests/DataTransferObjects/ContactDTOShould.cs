@@ -47,7 +47,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.PhoneNumbers, Is.Empty);
                 Assert.That(_sut.Addresses, Is.Not.Null);
                 Assert.That(_sut.Addresses, Is.Empty);
-                Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.UtcNow).Within(TimeSpan.FromSeconds(1)));
                 Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
@@ -596,7 +596,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut = new ContactDTO();
 
             // Assert
-            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.UtcNow).Within(TimeSpan.FromSeconds(1)));
         }
 
         [Test, Category("DataTransferObjects")]

@@ -33,7 +33,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
         private bool? _isSuperUser = null;
-        private readonly DateTime _createdDate = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties

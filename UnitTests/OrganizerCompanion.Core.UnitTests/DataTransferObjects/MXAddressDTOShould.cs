@@ -38,7 +38,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.IsPrimary, Is.False);
-                Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }

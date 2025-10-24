@@ -45,7 +45,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(usAddressDTO.Country, Is.Null);
                 Assert.That(usAddressDTO.Type, Is.Null);
                 Assert.That(usAddressDTO.IsPrimary, Is.False);
-                Assert.That(usAddressDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(usAddressDTO.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(usAddressDTO.ModifiedDate, Is.Null);
             });
         }
@@ -1464,7 +1464,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(newInstance.Country, Is.Null);
                 Assert.That(newInstance.Type, Is.Null);
                 Assert.That(newInstance.IsPrimary, Is.False);
-                Assert.That(newInstance.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.CreatedDate, Is.LessThan(DateTime.UtcNow));
                 Assert.That(newInstance.ModifiedDate, Is.Null);
             });
         }

@@ -5,7 +5,6 @@ using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Extensions;
-using OrganizerCompanion.Core.Models.Type;
 
 namespace OrganizerCompanion.Core.UnitTests.Models
 {
@@ -28,11 +27,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreateOrganizationWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new Organization();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -51,7 +50,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Accounts, Is.Empty);
                 Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -274,11 +273,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var organization = new Organization();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -976,7 +975,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _sut = new Organization(dto);
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -2056,9 +2055,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Organization_ReadOnlyCreatedDate_ShouldNotBeModifiable()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
             var organization = new Organization();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert - CreatedDate should be read-only and set during construction
             Assert.Multiple(() =>

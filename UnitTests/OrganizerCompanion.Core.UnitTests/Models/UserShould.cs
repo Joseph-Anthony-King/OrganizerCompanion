@@ -29,11 +29,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreatePersonWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new User();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -57,7 +57,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.IsSuperUser, Is.Null);
                 Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -598,11 +598,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var person = new User();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -2683,9 +2683,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.FirstName = "John";
             _sut.LastName = "Doe";
-            _sut.Emails = new List<Email> { new() };
-            _sut.PhoneNumbers = new List<PhoneNumber> { new() };
-            _sut.Addresses = new List<IAddress> { new USAddress() };
+            _sut.Emails = [new()];
+            _sut.PhoneNumbers = [new()];
+            _sut.Addresses = [new USAddress()];
 
             // Act
             var result = _sut.Cast<Contact>();
@@ -2709,9 +2709,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.FirstName = "John";
             _sut.LastName = "Doe";
-            _sut.Emails = new List<Email>();
-            _sut.PhoneNumbers = new List<PhoneNumber>();
-            _sut.Addresses = new List<IAddress>();
+            _sut.Emails = [];
+            _sut.PhoneNumbers = [];
+            _sut.Addresses = [];
 
             // Act
             var result = _sut.Cast<Contact>();
@@ -2757,9 +2757,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 new DateTime(1990, 5, 15),
                 new DateTime(2020, 12, 25),
                 new DateTime(2015, 3, 10),
-                new List<Email>(),
-                new List<PhoneNumber>(),
-                new List<IAddress>(),
+                [],
+                [],
+                [],
                 true,
                 false,
                 true,

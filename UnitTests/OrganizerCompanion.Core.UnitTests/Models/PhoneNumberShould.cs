@@ -47,11 +47,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreatePhoneNumberWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new PhoneNumber();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -62,7 +62,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
                 Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -110,7 +110,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newId = 999;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Id = newId;
@@ -120,7 +120,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Id, Is.EqualTo(newId));
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -129,7 +129,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newPhone = "+1-555-987-6543";
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Phone = newPhone;
@@ -139,7 +139,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Phone, Is.EqualTo(newPhone));
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -148,7 +148,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Phone = "+1-555-123-4567";
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Phone = null;
@@ -158,7 +158,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Phone, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -167,7 +167,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newType = OrganizerCompanion.Core.Enums.Types.Mobil;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Type = newType;
@@ -177,7 +177,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Type, Is.EqualTo(newType));
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -186,7 +186,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Type = null;
@@ -196,7 +196,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Type, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -205,7 +205,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var newCountry = OrganizerCompanion.Core.Enums.Countries.Canada;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Country = newCountry;
@@ -215,7 +215,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Country, Is.EqualTo(newCountry));
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -224,7 +224,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.UnitedStates;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.Country = null;
@@ -234,7 +234,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Country, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -242,11 +242,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             var phoneNumber = new PhoneNumber();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -260,7 +260,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonConstructor_SetsCreatedDateFromParameter()
         {
             // Arrange
-            var specificDate = DateTime.Now.AddDays(-10);
+            var specificDate = DateTime.UtcNow.AddDays(-10);
 
             // Act
             var phoneNumber = new PhoneNumber(
@@ -960,7 +960,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var mockEntity = new MockDomainEntity { Id = 123 };
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.LinkedEntity = mockEntity;
@@ -971,7 +971,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -980,7 +980,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.LinkedEntity = new MockDomainEntity { Id = 123 };
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
 
             // Act
             _sut.LinkedEntity = null;
@@ -991,7 +991,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 

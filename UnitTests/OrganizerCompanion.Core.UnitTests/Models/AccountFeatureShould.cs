@@ -175,7 +175,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 AccountName = "Test Account",
                 AccountNumber = "ACC123",
                 License = "LIC456",
-                Features = new List<FeatureDTO>(),
+                Features = [],
                 Accounts = null,
                 CreatedDate = DateTime.Now,
                 ModifiedDate = null

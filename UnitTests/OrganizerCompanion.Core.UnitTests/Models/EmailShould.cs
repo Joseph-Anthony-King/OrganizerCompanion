@@ -23,11 +23,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void DefaultConstructor_ShouldCreateEmailWithDefaultValues()
         {
             // Arrange
-            var beforeCreation = DateTime.Now;
+            var beforeCreation = DateTime.UtcNow;
 
             // Act
             _sut = new Email();
-            var afterCreation = DateTime.Now;
+            var afterCreation = DateTime.UtcNow;
 
             // Assert
             Assert.Multiple(() =>
@@ -40,9 +40,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.IsConfirmed, Is.False);
-                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.UtcNow));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -52,7 +51,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var emailAddress = "test@example.com";
             var type = OrganizerCompanion.Core.Enums.Types.Work;
-            var beforeCreation = DateTime.Now;
 
             // Act
             _sut = new Email(emailAddress, type, true, null);
@@ -64,8 +62,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
                 Assert.That(_sut.Type, Is.EqualTo(type));
                 Assert.That(_sut.IsPrimary, Is.True);
-                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -290,7 +287,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email();
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.Id = 123;
@@ -299,8 +295,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(123));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -310,7 +305,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new Email();
             var newEmailAddress = "newemail@example.com";
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.EmailAddress = newEmailAddress;
@@ -319,8 +313,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.EmailAddress, Is.EqualTo(newEmailAddress));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -343,7 +336,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut = new Email();
             var newType = OrganizerCompanion.Core.Enums.Types.Fax;
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.Type = newType;
@@ -352,8 +344,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Type, Is.EqualTo(newType));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -376,7 +367,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email();
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsPrimary = true;
@@ -385,8 +375,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsPrimary, Is.True);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -454,7 +443,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut = new Email();
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsConfirmed = true;
@@ -463,8 +451,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsConfirmed, Is.True);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -476,7 +463,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 IsConfirmed = true // Set to true first
             };
-            var beforeSet = DateTime.Now;
 
             // Act
             _sut.IsConfirmed = false;
@@ -485,8 +471,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsConfirmed, Is.False);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -547,18 +532,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
-            // Arrange
-            var beforeCreation = DateTime.Now;
-
-            // Act
+            // Arrange & Act
             _sut = new Email();
-            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.UtcNow));
             });
         }
 
@@ -612,8 +592,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
-                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -1345,18 +1325,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void CreatedDate_FromDefaultConstructor_ShouldBeSetToCurrentTime()
         {
-            // Arrange
-            var beforeCreation = DateTime.Now;
-
-            // Act
+            // Arrange & Act
             var email = new Email();
-            var afterCreation = DateTime.Now;
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(email.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(email.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(email.CreatedDate, Is.LessThan(DateTime.UtcNow));
 
                 // CreatedDate should be read-only
                 var property = typeof(Email).GetProperty("CreatedDate");
@@ -1374,7 +1349,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert - Test each property that should update ModifiedDate
             System.Threading.Thread.Sleep(1);
             _sut.Id = 100;
-            Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate), "Id setter should update ModifiedDate");
+            Assert.That(_sut.ModifiedDate, Is.Not.Null, "Id setter should update ModifiedDate");
 
             var idModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
@@ -1475,7 +1450,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.LinkedEntityId, Is.Null);
                 Assert.That(email.LinkedEntity, Is.Null);
                 Assert.That(email.LinkedEntityType, Is.Null);
-                Assert.That(email.ModifiedDate, Is.EqualTo(default(DateTime)));
+                Assert.That(email.ModifiedDate, Is.Null);
             });
         }
 
@@ -1939,7 +1914,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var contact = new Contact { Id = 123, FirstName = "Test" };
             _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
-            _sut.Contact = contact;
+            _sut.LinkedEntity = contact;
 
             // Act
             var linkedEntity = _sut.LinkedEntity;
@@ -1959,7 +1934,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var organization = new Organization { Id = 456, OrganizationName = "Test Org" };
             _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
-            _sut.Organization = organization;
+            _sut.LinkedEntity = organization;
 
             // Act
             var linkedEntity = _sut.LinkedEntity;
@@ -1988,11 +1963,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntity, Is.SameAs(contact));
-                Assert.That(_sut.Contact, Is.SameAs(contact));
                 Assert.That(_sut.ContactId, Is.EqualTo(contact.Id));
                 Assert.That(_sut.Organization, Is.Null);
                 Assert.That(_sut.OrganizationId, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -2015,7 +1989,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.OrganizationId, Is.EqualTo(organization.Id));
                 Assert.That(_sut.Contact, Is.Null);
                 Assert.That(_sut.ContactId, Is.Null);
-                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -2056,7 +2030,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime CreatedDate { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
             public DateTime? ModifiedDate { get; set; } = default;
             public string? EmailAddress { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }

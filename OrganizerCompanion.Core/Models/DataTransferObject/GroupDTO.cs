@@ -55,7 +55,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public AccountDTO? Account { get; set; } = null;
 
         [Required, JsonPropertyName("createdDate")]
-        public DateTime CreatedDate { get; set; } = DateTime.Now;
+        public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
         [Required, JsonPropertyName("modifiedDate")]
         public DateTime? ModifiedDate { get; set; } = default;

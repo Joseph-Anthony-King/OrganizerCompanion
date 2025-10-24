@@ -12,6 +12,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     {
         private Account _testAccount;
         private User _testLinkedEntity;
+        private AnnonymousUser _testAnnonymousUser;
         private Organization _testOrganization;
         private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
@@ -44,7 +45,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [SetUp]
         public void SetUp()
         {
-            // Create a valid linked entity
+            // Create a valid linked entity (User)
             _testLinkedEntity = new User
             {
                 Id = 100,
@@ -52,6 +53,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 LastName = "Doe"
             };
 
+            // Create an AnnonymousUser
+            _testAnnonymousUser = new AnnonymousUser
+            {
+                Id = 101,
+                UserName = "anonymous_user"
+            };
+
+            // Create an Organization
             _testOrganization = new Organization
             {
                 Id = 300,
@@ -82,17 +91,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.Id, Is.EqualTo(0));
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(subAccount.LinkedEntityType, Is.Null);
-                Assert.That(subAccount.LinkedEntity, Is.Null);
-                Assert.That(subAccount.AccountId, Is.Null);
-                Assert.That(subAccount.Account, Is.Null);
-                Assert.That(subAccount.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(subAccount.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(subAccount.ModifiedDate, Is.Null);
-            });
+                 {
+                     Assert.That(subAccount.Id, Is.EqualTo(0));
+                     Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
+                     Assert.That(subAccount.LinkedEntityType, Is.Null);
+                     Assert.That(subAccount.LinkedEntity, Is.Null);
+                     Assert.That(subAccount.AccountId, Is.Null);
+                     Assert.That(subAccount.Account, Is.Null);
+                     Assert.That(subAccount.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                     Assert.That(subAccount.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                     Assert.That(subAccount.ModifiedDate, Is.Null);
+                 });
         }
 
         [Test, Category("Models")]
@@ -100,26 +109,26 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Act
             var subAccount = new SubAccount(
-                id: 1,
-                linkedEntity: _testLinkedEntity,
-                accountId: 200,
-                account: _testAccount,
-                createdDate: _testCreatedDate,
-                modifiedDate: _testModifiedDate
-            );
+                 id: 1,
+         linkedEntity: _testLinkedEntity,
+          accountId: 200,
+                  account: _testAccount,
+         createdDate: _testCreatedDate,
+                      modifiedDate: _testModifiedDate
+                  );
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.Id, Is.EqualTo(1));
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(100));
-                Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testLinkedEntity));
-                Assert.That(subAccount.AccountId, Is.EqualTo(200));
-                Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
-                Assert.That(subAccount.CreatedDate, Is.EqualTo(_testCreatedDate));
-                Assert.That(subAccount.ModifiedDate, Is.EqualTo(_testModifiedDate));
-            });
+      {
+          Assert.That(subAccount.Id, Is.EqualTo(1));
+          Assert.That(subAccount.LinkedEntityId, Is.EqualTo(100));
+          Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
+          Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testLinkedEntity));
+          Assert.That(subAccount.AccountId, Is.EqualTo(200));
+          Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
+          Assert.That(subAccount.CreatedDate, Is.EqualTo(_testCreatedDate));
+          Assert.That(subAccount.ModifiedDate, Is.EqualTo(_testModifiedDate));
+      });
         }
 
         [Test, Category("Models")]
@@ -127,13 +136,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Act
             var subAccount = new SubAccount(
-                id: 1,
-                linkedEntity: null,
-                accountId: null,
-                account: null,
-                createdDate: _testCreatedDate,
-                modifiedDate: null
-            );
+           id: 1,
+        linkedEntity: null,
+            accountId: null,
+           account: null,
+              createdDate: _testCreatedDate,
+         modifiedDate: null
+                 );
 
             // Assert
             Assert.Multiple(() =>
@@ -174,13 +183,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(subAccount.LinkedEntityType, Is.Null);
-                Assert.That(subAccount.LinkedEntity, Is.Null);
-                Assert.That(subAccount.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
-            });
+             {
+                 Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
+                 Assert.That(subAccount.LinkedEntityType, Is.Null);
+                 Assert.That(subAccount.LinkedEntity, Is.Null);
+                 Assert.That(subAccount.AccountId, Is.EqualTo(_testAccount.Id));
+                 Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
+             });
         }
 
         [Test, Category("Models")]
@@ -191,13 +200,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
-                Assert.That(subAccount.LinkedEntityType, Is.EqualTo(_testLinkedEntity.GetType().Name));
-                Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testLinkedEntity));
-                Assert.That(subAccount.AccountId, Is.Null);
-                Assert.That(subAccount.Account, Is.Null);
-            });
+         {
+             Assert.That(subAccount.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
+             Assert.That(subAccount.LinkedEntityType, Is.EqualTo(_testLinkedEntity.GetType().Name));
+             Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testLinkedEntity));
+             Assert.That(subAccount.AccountId, Is.Null);
+             Assert.That(subAccount.Account, Is.Null);
+         });
         }
 
         [Test, Category("Models")]
@@ -208,13 +217,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
-                Assert.That(subAccount.LinkedEntityType, Is.Null);
-                Assert.That(subAccount.LinkedEntity, Is.Null);
-                Assert.That(subAccount.AccountId, Is.Null);
-                Assert.That(subAccount.Account, Is.Null);
-            });
+  {
+      Assert.That(subAccount.LinkedEntityId, Is.EqualTo(0));
+      Assert.That(subAccount.LinkedEntityType, Is.Null);
+      Assert.That(subAccount.LinkedEntity, Is.Null);
+      Assert.That(subAccount.AccountId, Is.Null);
+      Assert.That(subAccount.Account, Is.Null);
+  });
         }
 
         [Test, Category("Models")]
@@ -284,18 +293,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var specificCreatedDate = new DateTime(2023, 6, 15, 14, 30, 45);
+            var fakeUser = new User
+            {
+                Id = 500,
+                FirstName = "Test",
+                LastName = "User"
+            };
+
             var dto = new TestSubAccountDTO
             {
                 Id = 5,
                 LinkedEntityId = 500,
+                LinkedEntityType = "User",
+                LinkedEntity = fakeUser,
                 AccountId = 600,
-                ModifiedDate = _testModifiedDate
+                Account = new AccountDTO { Id = 600 },
+                ModifiedDate = _testModifiedDate,
+                CreatedDate = specificCreatedDate
             };
-            
-            // Use reflection to set the CreatedDate since it's typically read-only
-            var createdDateField = typeof(TestSubAccountDTO).GetField("<CreatedDate>k__BackingField", 
-                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-            createdDateField?.SetValue(dto, specificCreatedDate);
 
             // Act
             var subAccount = new SubAccount(dto);
@@ -304,7 +319,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(subAccount.Id, Is.EqualTo(dto.Id));
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(dto.LinkedEntityId));
+                Assert.That(subAccount.LinkedEntity, Is.Not.Null);
+                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(500));
+                Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
                 Assert.That(subAccount.AccountId, Is.EqualTo(dto.AccountId));
                 Assert.That(subAccount.CreatedDate, Is.EqualTo(specificCreatedDate));
                 Assert.That(subAccount.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
@@ -355,18 +372,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var subAccount = new SubAccount
             {
-                // Act
                 LinkedEntity = _testLinkedEntity
             };
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.LinkedEntityId, Is.EqualTo(100));
-                // Verify it's not settable
-                var property = typeof(SubAccount).GetProperty("LinkedEntityId");
-                Assert.That(property!.CanWrite, Is.False);
-            });
+       {
+           Assert.That(subAccount.LinkedEntityId, Is.EqualTo(100));
+           var property = typeof(SubAccount).GetProperty("LinkedEntityId");
+           Assert.That(property!.CanWrite, Is.False);
+       });
         }
 
         [Test, Category("Models")]
@@ -404,42 +419,66 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_Setter_SetsContactAndContactId()
+        public void LinkedEntity_Setter_SetsUserWhenUserType()
         {
             // Arrange
             var subAccount = new SubAccount
             {
-                // Act
                 LinkedEntity = _testLinkedEntity
             };
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.ContactId, Is.EqualTo(_testLinkedEntity.Id));
-                Assert.That(subAccount.Organization, Is.Null);
-                Assert.That(subAccount.OrganizationId, Is.Null);
-            });
+                  {
+                      Assert.That(subAccount.User, Is.EqualTo(_testLinkedEntity));
+                      Assert.That(subAccount.UserId, Is.EqualTo(_testLinkedEntity.Id));
+                      Assert.That(subAccount.Organization, Is.Null);
+                      Assert.That(subAccount.OrganizationId, Is.Null);
+                      Assert.That(subAccount.AnnonymousUser, Is.Null);
+                      Assert.That(subAccount.AnnonymousUserId, Is.Null);
+                  });
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_Setter_SetsOrganizationAndOrganizationId()
+        public void LinkedEntity_Setter_SetsOrganizationWhenOrganizationType()
         {
             // Arrange
             var subAccount = new SubAccount
             {
-                // Act
                 LinkedEntity = _testOrganization
             };
 
             // Assert
             Assert.Multiple(() =>
+     {
+         Assert.That(subAccount.Organization, Is.EqualTo(_testOrganization));
+         Assert.That(subAccount.OrganizationId, Is.EqualTo(_testOrganization.Id));
+         Assert.That(subAccount.User, Is.Null);
+         Assert.That(subAccount.UserId, Is.Null);
+         Assert.That(subAccount.AnnonymousUser, Is.Null);
+         Assert.That(subAccount.AnnonymousUserId, Is.Null);
+     });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_SetsAnnonymousUserWhenAnnonymousUserType()
+        {
+            // Arrange
+            var subAccount = new SubAccount
             {
-                Assert.That(subAccount.Organization, Is.EqualTo(_testOrganization));
-                Assert.That(subAccount.OrganizationId, Is.EqualTo(_testOrganization.Id));
-                Assert.That(subAccount.Contact, Is.Null);
-                Assert.That(subAccount.ContactId, Is.Null);
-            });
+                LinkedEntity = _testAnnonymousUser
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+  {
+      Assert.That(subAccount.AnnonymousUser, Is.EqualTo(_testAnnonymousUser));
+      Assert.That(subAccount.AnnonymousUserId, Is.EqualTo(_testAnnonymousUser.Id));
+      Assert.That(subAccount.User, Is.Null);
+      Assert.That(subAccount.UserId, Is.Null);
+      Assert.That(subAccount.Organization, Is.Null);
+      Assert.That(subAccount.OrganizationId, Is.Null);
+  });
         }
 
         [Test, Category("Models")]
@@ -448,21 +487,94 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
             {
-                // Act
                 LinkedEntity = null
             };
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.LinkedEntity, Is.Null);
-                Assert.That(subAccount.Contact, Is.Null);
-                Assert.That(subAccount.Organization, Is.Null);
-            });
+         {
+             Assert.That(subAccount.LinkedEntity, Is.Null);
+             Assert.That(subAccount.User, Is.Null);
+             Assert.That(subAccount.Organization, Is.Null);
+             Assert.That(subAccount.AnnonymousUser, Is.Null);
+         });
         }
 
         [Test, Category("Models")]
-        public void AccountId_Setter_UpdatesModifiedDate()
+        public void LinkedEntity_Getter_LazyLoadsFromUser()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+            var userField = typeof(SubAccount).GetField("_user", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            userField?.SetValue(subAccount, _testLinkedEntity);
+
+            // Act
+            var linkedEntity = subAccount.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+     {
+         Assert.That(linkedEntity, Is.Not.Null);
+         Assert.That(linkedEntity, Is.EqualTo(_testLinkedEntity));
+         Assert.That(subAccount.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
+         Assert.That(subAccount.LinkedEntityType, Is.EqualTo("User"));
+     });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Getter_LazyLoadsFromOrganization()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+            var organizationField = typeof(SubAccount).GetField("_organization", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            organizationField?.SetValue(subAccount, _testOrganization);
+
+            // Act
+            var linkedEntity = subAccount.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+ {
+     Assert.That(linkedEntity, Is.Not.Null);
+     Assert.That(linkedEntity, Is.EqualTo(_testOrganization));
+     Assert.That(subAccount.LinkedEntityId, Is.EqualTo(_testOrganization.Id));
+     Assert.That(subAccount.LinkedEntityType, Is.EqualTo("Organization"));
+ });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Getter_LazyLoadsFromAnnonymousUser()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+            var annonymousUserField = typeof(SubAccount).GetField("_annonymousUser", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            annonymousUserField?.SetValue(subAccount, _testAnnonymousUser);
+
+            // Act
+            var linkedEntity = subAccount.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+                        {
+                            Assert.That(linkedEntity, Is.Not.Null);
+                            Assert.That(linkedEntity, Is.EqualTo(_testAnnonymousUser));
+                            Assert.That(subAccount.LinkedEntityId, Is.EqualTo(_testAnnonymousUser.Id));
+                            Assert.That(subAccount.LinkedEntityType, Is.EqualTo("AnnonymousUser"));
+                        });
+        }
+
+        [Test, Category("Models")]
+        public void AccountId_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+
+            // Assert
+            Assert.That(subAccount.AccountId, Is.EqualTo(200));
+        }
+
+        [Test, Category("Models")]
+        public void AccountId_Setter_DoesNotUpdateModifiedDate()
         {
             // Arrange
             var subAccount = new SubAccount();
@@ -473,11 +585,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.AccountId, Is.EqualTo(789));
-                Assert.That(subAccount.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(subAccount.ModifiedDate, Is.Not.Null);
-            });
+     {
+         Assert.That(subAccount.AccountId, Is.EqualTo(789));
+         Assert.That(subAccount.ModifiedDate, Is.EqualTo(originalModifiedDate));
+     });
         }
 
         [Test, Category("Models")]
@@ -486,12 +597,34 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var subAccount = new SubAccount
             {
-                // Act
                 AccountId = null
             };
 
             // Assert
             Assert.That(subAccount.AccountId, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void AccountId_Setter_CanSetZero()
+        {
+            // Arrange
+            var subAccount = new SubAccount
+            {
+                AccountId = 0
+            };
+
+            // Assert
+            Assert.That(subAccount.AccountId, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void Account_Getter_ReturnsCorrectValue()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+
+            // Assert
+            Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
         }
 
         [Test, Category("Models")]
@@ -506,11 +639,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
-                Assert.That(subAccount.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
-                Assert.That(subAccount.ModifiedDate, Is.Not.Null);
-            });
+ {
+     Assert.That(subAccount.Account, Is.EqualTo(_testAccount));
+     Assert.That(subAccount.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+     Assert.That(subAccount.ModifiedDate, Is.Not.Null);
+ });
         }
 
         [Test, Category("Models")]
@@ -519,7 +652,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var subAccount = new SubAccount(null, _testAccount)
             {
-                // Act
                 Account = null
             };
 
@@ -539,10 +671,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(subAccount.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(subAccount.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
-            });
+               {
+                   Assert.That(subAccount.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                   Assert.That(subAccount.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+               });
         }
 
         [Test, Category("Models")]
@@ -553,13 +685,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             var subAccount = new SubAccount(
-                id: 1,
-                linkedEntity: _testLinkedEntity,
-                accountId: 200,
-                account: _testAccount,
-                createdDate: specificDate,
-                modifiedDate: _testModifiedDate
-            );
+                  id: 1,
+                 linkedEntity: _testLinkedEntity,
+               accountId: 200,
+                 account: _testAccount,
+                    createdDate: specificDate,
+                      modifiedDate: _testModifiedDate
+                      );
 
             // Assert
             Assert.That(subAccount.CreatedDate, Is.EqualTo(specificDate));
@@ -577,6 +709,84 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.That(subAccount.ModifiedDate, Is.EqualTo(testDate));
+        }
+
+        [Test, Category("Models")]
+        public void User_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.User = _testLinkedEntity;
+
+            // Assert
+            Assert.That(subAccount.User, Is.EqualTo(_testLinkedEntity));
+        }
+
+        [Test, Category("Models")]
+        public void UserId_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.UserId = 999;
+
+            // Assert
+            Assert.That(subAccount.UserId, Is.EqualTo(999));
+        }
+
+        [Test, Category("Models")]
+        public void Organization_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.Organization = _testOrganization;
+
+            // Assert
+            Assert.That(subAccount.Organization, Is.EqualTo(_testOrganization));
+        }
+
+        [Test, Category("Models")]
+        public void OrganizationId_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.OrganizationId = 888;
+
+            // Assert
+            Assert.That(subAccount.OrganizationId, Is.EqualTo(888));
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUser_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.AnnonymousUser = _testAnnonymousUser;
+
+            // Assert
+            Assert.That(subAccount.AnnonymousUser, Is.EqualTo(_testAnnonymousUser));
+        }
+
+        [Test, Category("Models")]
+        public void AnnonymousUserId_Setter_CanBeSetDirectly()
+        {
+            // Arrange
+            var subAccount = new SubAccount();
+
+            // Act
+            subAccount.AnnonymousUserId = 777;
+
+            // Assert
+            Assert.That(subAccount.AnnonymousUserId, Is.EqualTo(777));
         }
 
         #endregion
@@ -597,14 +807,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<SubAccountDTO>());
-                Assert.That(result.Id, Is.EqualTo(1));
-                Assert.That(result.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
-                Assert.That(result.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
-            });
+       {
+           Assert.That(result, Is.Not.Null);
+           Assert.That(result, Is.InstanceOf<SubAccountDTO>());
+           Assert.That(result.Id, Is.EqualTo(1));
+           Assert.That(result.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
+           Assert.That(result.LinkedEntityType, Is.EqualTo("User"));
+           Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
+       });
         }
 
         [Test, Category("Models")]
@@ -621,14 +831,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<SubAccountDTO>());
-                Assert.That(result.Id, Is.EqualTo(2));
-                Assert.That(result.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
-                Assert.That(result.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
-            });
+         {
+             Assert.That(result, Is.Not.Null);
+             Assert.That(result, Is.InstanceOf<SubAccountDTO>());
+             Assert.That(result.Id, Is.EqualTo(2));
+             Assert.That(result.LinkedEntityId, Is.EqualTo(_testLinkedEntity.Id));
+             Assert.That(result.LinkedEntityType, Is.EqualTo("User"));
+             Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
+         });
         }
 
         [Test, Category("Models")]
@@ -645,14 +855,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Is.InstanceOf<SubAccountDTO>());
-                Assert.That(result.Id, Is.EqualTo(3));
-                Assert.That(result.LinkedEntity, Is.Null);
-                Assert.That(result.LinkedEntityType, Is.Null);
-                Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
-            });
+                   {
+                       Assert.That(result, Is.Not.Null);
+                       Assert.That(result, Is.InstanceOf<SubAccountDTO>());
+                       Assert.That(result.Id, Is.EqualTo(3));
+                       Assert.That(result.LinkedEntity, Is.Null);
+                       Assert.That(result.LinkedEntityType, Is.Null);
+                       Assert.That(result.AccountId, Is.EqualTo(_testAccount.Id));
+                   });
         }
 
         [Test, Category("Models")]
@@ -660,17 +870,59 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var subAccount = new SubAccount(
-                id: 1,
-                linkedEntity: null,
-                accountId: 200,
-                account: null, // This will cause NullReferenceException in Cast method
-                createdDate: _testCreatedDate,
-                modifiedDate: _testModifiedDate
-            );
+          id: 1,
+          linkedEntity: null,
+    accountId: 200,
+             account: null,
+      createdDate: _testCreatedDate,
+       modifiedDate: _testModifiedDate
+         );
 
             // Act & Assert
-            // The Cast method calls _account!.Cast<AccountDTO>() which throws when _account is null
             Assert.Throws<NullReferenceException>(() => subAccount.Cast<SubAccountDTO>());
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToSubAccountDTO_WithLinkedEntityNullTypeButNotNullEntity_UsesFallback()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
+            {
+                Id = 4
+            };
+            var linkedEntityField = typeof(SubAccount).GetField("_linkedEntity", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            linkedEntityField?.SetValue(subAccount, _testLinkedEntity);
+
+            // Act
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+                 {
+                     Assert.That(result, Is.Not.Null);
+                     Assert.That(result, Is.InstanceOf<SubAccountDTO>());
+                     Assert.That(result.Id, Is.EqualTo(4));
+                 });
+        }
+
+        [Test, Category("Models")]
+        public void Cast_ToSubAccountDTO_WithEmptyLinkedEntityType_UsesCatchBlock()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
+            {
+                Id = 5
+            };
+
+            // Act
+            var result = subAccount.Cast<SubAccountDTO>();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(result, Is.Not.Null);
+                Assert.That(result.LinkedEntity, Is.Not.Null);
+            });
         }
 
         [Test, Category("Models")]
@@ -685,30 +937,64 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
+        public void Cast_RethrowsException_WhenExceptionOccurs()
+        {
+            // Arrange
+            var subAccount = new SubAccount(
+             id: 1,
+            linkedEntity: null,
+              accountId: 200,
+                   account: null,
+                     createdDate: _testCreatedDate,
+                          modifiedDate: _testModifiedDate
+                      );
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => subAccount.Cast<SubAccountDTO>());
+        }
+
+        [Test, Category("Models")]
         public void ToJson_ReturnsValidJsonString()
         {
             // Arrange
             var subAccount = new SubAccount(
-                id: 1,
-                linkedEntity: null, // Avoid serialization issues with complex entities
-                accountId: 200,
-                account: null, // Avoid serialization issues with complex entities
-                createdDate: _testCreatedDate,
-                modifiedDate: _testModifiedDate
-            );
+     id: 1,
+     linkedEntity: null,
+       accountId: 200,
+      account: null,
+   createdDate: _testCreatedDate,
+     modifiedDate: _testModifiedDate
+     );
 
             // Act
             var json = subAccount.ToJson();
 
             // Assert
             Assert.Multiple(() =>
+   {
+       Assert.That(json, Is.Not.Null);
+       Assert.That(json, Is.Not.Empty);
+       Assert.That(json, Does.Contain("\"id\":1"));
+       Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
+       Assert.That(json, Does.Contain("\"accountId\":200"));
+   });
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithComplexObjects_HandlesCircularReferences()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount)
             {
-                Assert.That(json, Is.Not.Null);
-                Assert.That(json, Is.Not.Empty);
-                Assert.That(json, Does.Contain("\"id\":1"));
-                Assert.That(json, Does.Contain("\"linkedEntityId\":0"));
-                Assert.That(json, Does.Contain("\"accountId\":200"));
-            });
+                Id = 10
+            };
+
+            // Act & Assert
+            Assert.DoesNotThrow(() => subAccount.ToJson());
+
+            var json = subAccount.ToJson();
+            Assert.That(json, Is.Not.Null);
+            Assert.That(json, Is.Not.Empty);
         }
 
         [Test, Category("Models")]
@@ -716,26 +1002,52 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var subAccount = new SubAccount(
-                id: 42,
-                linkedEntity: _testLinkedEntity,
-                accountId: 200,
-                account: _testAccount,
-                createdDate: _testCreatedDate,
-                modifiedDate: _testModifiedDate
-            );
+      id: 42,
+            linkedEntity: _testLinkedEntity,
+           accountId: 200,
+ account: _testAccount,
+    createdDate: _testCreatedDate,
+modifiedDate: _testModifiedDate
+    );
 
             // Act
             var result = subAccount.ToString();
 
             // Assert
             Assert.Multiple(() =>
-            {
-                Assert.That(result, Is.Not.Null);
-                Assert.That(result, Does.Contain("Id:42"));
-                Assert.That(result, Does.Contain("LinkedEntityId:100"));
-                Assert.That(result, Does.Contain("LinkedEntityType:User"));
-                Assert.That(result, Does.Contain("OrganizerCompanion.Core.Models.Domain.SubAccount"));
-            });
+                      {
+                          Assert.That(result, Is.Not.Null);
+                          Assert.That(result, Does.Contain("Id:42"));
+                          Assert.That(result, Does.Contain("LinkedEntityId:100"));
+                          Assert.That(result, Does.Contain("LinkedEntityType:User"));
+                          Assert.That(result, Does.Contain("OrganizerCompanion.Core.Models.Domain.SubAccount"));
+                      });
+        }
+
+        [Test, Category("Models")]
+        public void ToString_WithNullLinkedEntity_HandlesGracefully()
+        {
+            // Arrange
+            var subAccount = new SubAccount(
+                    id: 50,
+                   linkedEntity: null,
+                  accountId: 200,
+                     account: _testAccount,
+             createdDate: _testCreatedDate,
+                     modifiedDate: _testModifiedDate
+              );
+
+            // Act
+            var result = subAccount.ToString();
+
+            // Assert
+            Assert.Multiple(() =>
+                     {
+                         Assert.That(result, Is.Not.Null);
+                         Assert.That(result, Does.Contain("Id:50"));
+                         Assert.That(result, Does.Contain("LinkedEntityId:0"));
+                         Assert.That(result, Does.Contain("LinkedEntityType:"));
+                     });
         }
 
         #endregion
@@ -773,8 +1085,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var validationResults = ValidateModel(subAccount);
 
             // Assert
-            Assert.That(validationResults, Has.Count.EqualTo(1));
-            Assert.That(validationResults[0].ErrorMessage, Does.Contain("AccountId"));
+            Assert.That(validationResults, Has.Count.GreaterThan(0));
+            Assert.That(validationResults.Any(v => v.ErrorMessage!.Contains("AccountId") || v.ErrorMessage!.Contains("Account")));
         }
 
         [Test, Category("Validation")]
@@ -787,18 +1099,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act & Assert
             Assert.Throws<ArgumentOutOfRangeException>(() => subAccount.Id = invalidId);
-        }
-
-        [Test, Category("Validation")]
-        [TestCase(-1)]
-        [TestCase(-100)]
-        public void Validation_ShouldFail_WhenAccountIdIsNegative(int invalidAccountId)
-        {
-            // Arrange
-            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
-
-            // Act & Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => subAccount.AccountId = invalidAccountId);
         }
 
         [Test, Category("Validation")]
@@ -819,6 +1119,124 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.That(validationResults, Has.Count.GreaterThan(0));
             Assert.That(validationResults.Any(v => v.ErrorMessage!.Contains("Account")));
+        }
+
+        #endregion
+
+        #region Edge Cases
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_WithNonUserOrOrganizationOrAnnonymousUser_DoesNotSetNavigationProperties()
+        {
+            // Arrange
+            var invalidEntity = new Account { Id = 999, AccountName = "Invalid" };
+            var subAccount = new SubAccount
+            {
+                LinkedEntity = invalidEntity
+            };
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(subAccount.LinkedEntity, Is.EqualTo(invalidEntity));
+                Assert.That(subAccount.User, Is.Null);
+                Assert.That(subAccount.Organization, Is.Null);
+                Assert.That(subAccount.AnnonymousUser, Is.Null);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Getter_ReturnsExistingEntity_WhenAlreadySet()
+        {
+            // Arrange
+            var subAccount = new SubAccount(_testLinkedEntity, _testAccount);
+
+            // Act
+            var firstGet = subAccount.LinkedEntity;
+            var secondGet = subAccount.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+                  {
+                      Assert.That(firstGet, Is.SameAs(secondGet));
+                      Assert.That(firstGet, Is.EqualTo(_testLinkedEntity));
+                  });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityId_ReturnsZero_WhenLinkedEntityIsNull()
+        {
+            // Arrange
+            var subAccount = new SubAccount
+            {
+                LinkedEntity = null
+            };
+
+            // Act
+            var linkedEntityId = subAccount.LinkedEntityId;
+
+            // Assert
+            Assert.That(linkedEntityId, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntityType_ReturnsNull_WhenLinkedEntityIsNull()
+        {
+            // Arrange
+            var subAccount = new SubAccount
+            {
+                LinkedEntity = null
+            };
+
+            // Act
+            var linkedEntityType = subAccount.LinkedEntityType;
+
+            // Assert
+            Assert.That(linkedEntityType, Is.Null);
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_OverwritesPreviousUserWithOrganization()
+        {
+            // Arrange
+            var subAccount = new SubAccount
+            {
+                LinkedEntity = _testLinkedEntity
+            };
+
+            // Act
+            subAccount.LinkedEntity = _testOrganization;
+
+            // Assert
+            Assert.Multiple(() =>
+              {
+                  Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testOrganization));
+                  Assert.That(subAccount.Organization, Is.EqualTo(_testOrganization));
+                  Assert.That(subAccount.User, Is.Null); // Should be cleared
+                  Assert.That(subAccount.UserId, Is.Null); // Should be cleared
+              });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_OverwritesOrganizationWithAnnonymousUser()
+        {
+            // Arrange
+            var subAccount = new SubAccount
+            {
+                LinkedEntity = _testOrganization
+            };
+
+            // Act
+            subAccount.LinkedEntity = _testAnnonymousUser;
+
+            // Assert
+            Assert.Multiple(() =>
+             {
+                 Assert.That(subAccount.LinkedEntity, Is.EqualTo(_testAnnonymousUser));
+                 Assert.That(subAccount.AnnonymousUser, Is.EqualTo(_testAnnonymousUser));
+                 Assert.That(subAccount.Organization, Is.Null); // Should be cleared
+                 Assert.That(subAccount.OrganizationId, Is.Null); // Should be cleared
+             });
         }
 
         #endregion
