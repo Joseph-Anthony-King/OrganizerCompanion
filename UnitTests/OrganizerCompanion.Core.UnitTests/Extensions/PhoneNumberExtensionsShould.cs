@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
@@ -109,7 +109,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainPhoneNumbers_WithListContainingDomainPhoneNumbers_ShouldReturnOnlyDomainPhoneNumbers()
         {
             // Arrange
-            var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Mobil, OrganizerCompanion.Core.Enums.Countries.Mexico, null, DateTime.Now, DateTime.Now);
+            var domainPhoneNumber2 = new PhoneNumber(3, "+1-555-333-4444", OrganizerCompanion.Core.Enums.Types.Mobile, OrganizerCompanion.Core.Enums.Countries.Mexico, null, DateTime.Now, DateTime.Now);
             var typePhoneNumbers = new List<Interfaces.Type.IPhoneNumber?>
             {
                 _domainPhoneNumber,         // This is a domain phone number (should be included)

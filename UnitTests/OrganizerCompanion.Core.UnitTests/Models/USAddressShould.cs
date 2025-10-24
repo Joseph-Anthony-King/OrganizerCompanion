@@ -1123,7 +1123,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.State = new USState { Name = "Florida", Abbreviation = "FL" };
             _sut.ZipCode = string.Empty;
             _sut.Country = string.Empty;
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
 
             // Act
             var result = _sut.Cast<USAddressDTO>();
@@ -1138,7 +1138,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.City, Is.EqualTo(string.Empty));
                 Assert.That(result.ZipCode, Is.EqualTo(string.Empty));
                 Assert.That(result.Country, Is.EqualTo(string.Empty));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobile));
             });
         }
 
@@ -1227,7 +1227,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 (OrganizerCompanion.Core.Enums.Types.Home, 1),
                 (OrganizerCompanion.Core.Enums.Types.Work, 2),
-                (OrganizerCompanion.Core.Enums.Types.Mobil, 3),
+                (OrganizerCompanion.Core.Enums.Types.Mobile, 3),
                 (OrganizerCompanion.Core.Enums.Types.Fax, 4),
                 (OrganizerCompanion.Core.Enums.Types.Billing, 5),
                 (OrganizerCompanion.Core.Enums.Types.Other, 6)

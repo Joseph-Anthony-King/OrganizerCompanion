@@ -623,7 +623,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 PhoneNumbers = [
                     new PhoneNumberDTO { Id = 1, Phone = "555-1111", Type = OrganizerCompanion.Core.Enums.Types.Home },
                     new PhoneNumberDTO { Id = 2, Phone = "555-2222", Type = OrganizerCompanion.Core.Enums.Types.Work },
-                    new PhoneNumberDTO { Id = 3, Phone = "555-3333", Type = OrganizerCompanion.Core.Enums.Types.Mobil }
+                    new PhoneNumberDTO { Id = 3, Phone = "555-3333", Type = OrganizerCompanion.Core.Enums.Types.Mobile }
                 ],
                 Addresses = []
             };

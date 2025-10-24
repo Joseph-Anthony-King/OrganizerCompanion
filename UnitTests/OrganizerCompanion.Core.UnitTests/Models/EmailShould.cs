@@ -888,7 +888,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut = new Email(
                 1,
                 "test@example.com",
-                OrganizerCompanion.Core.Enums.Types.Mobil,
+                OrganizerCompanion.Core.Enums.Types.Mobile,
                 true,
                 null,
                 false,
@@ -916,7 +916,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void JsonSerialization_WithAllTypesEnum_ShouldProduceValidJson()
         {
             // Test all enum values
-            var enumValues = new[] { OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Types.Work, OrganizerCompanion.Core.Enums.Types.Mobil, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Types.Billing, OrganizerCompanion.Core.Enums.Types.Other };
+            var enumValues = new[] { OrganizerCompanion.Core.Enums.Types.Home, OrganizerCompanion.Core.Enums.Types.Work, OrganizerCompanion.Core.Enums.Types.Mobile, OrganizerCompanion.Core.Enums.Types.Fax, OrganizerCompanion.Core.Enums.Types.Billing, OrganizerCompanion.Core.Enums.Types.Other };
 
             foreach (var enumValue in enumValues)
             {
@@ -1662,7 +1662,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var fullEmail = new Email(
                 id: 999,
                 emailAddress: "complete@test.com",
-                type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                type: OrganizerCompanion.Core.Enums.Types.Mobile,
                 isPrimary: false,
                 linkedEntity: new MockDomainEntity { Id = 42 },
                 isConfirmed: true,
@@ -1680,7 +1680,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.InstanceOf<EmailDTO>());
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.EmailAddress, Is.EqualTo("complete@test.com"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobile));
                 Assert.That(result.CreatedDate, Is.EqualTo(createdDate));
                 Assert.That(result.ModifiedDate, Is.EqualTo(modifiedDate));
                 // Note: LinkedEntity, LinkedEntityId, IsConfirmed, etc. are not part of EmailDTO
@@ -1835,7 +1835,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = int.MaxValue;
             _sut.EmailAddress = "maxint@test.com";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
 
             // Act
             var result = _sut.Cast<EmailDTO>();

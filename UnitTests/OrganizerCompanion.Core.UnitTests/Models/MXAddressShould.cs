@@ -401,7 +401,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 OrganizerCompanion.Core.Enums.Types.Home,
                 OrganizerCompanion.Core.Enums.Types.Work,
-                OrganizerCompanion.Core.Enums.Types.Mobil,
+                OrganizerCompanion.Core.Enums.Types.Mobile,
                 OrganizerCompanion.Core.Enums.Types.Fax,
             };
 
@@ -1923,7 +1923,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 city: "Multi City",
                 state: MXStates.Jalisco.ToStateModel(),
                 country: "México",
-                type: OrganizerCompanion.Core.Enums.Types.Mobil,
+                type: OrganizerCompanion.Core.Enums.Types.Mobile,
                 isPrimary: true,
                 linkedEntityId: linkedEntityId,
                 linkedEntityType: linkedEntity.GetType().Name,

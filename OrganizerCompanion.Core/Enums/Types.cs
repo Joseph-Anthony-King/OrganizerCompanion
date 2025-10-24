@@ -4,7 +4,7 @@ namespace OrganizerCompanion.Core.Enums
     {
         Home,
         Work,
-        Mobil,
+        Mobile,
         Fax,
         Billing,
         Shipping,

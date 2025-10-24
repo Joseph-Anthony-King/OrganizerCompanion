@@ -166,7 +166,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Type_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
-            var newType = OrganizerCompanion.Core.Enums.Types.Mobil;
+            var newType = OrganizerCompanion.Core.Enums.Types.Mobile;
             var beforeSet = DateTime.UtcNow;
 
             // Act
@@ -282,7 +282,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 456;
             var phone = "+1-555-987-6543";
-            var type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            var type = OrganizerCompanion.Core.Enums.Types.Mobile;
             var country = OrganizerCompanion.Core.Enums.Countries.Canada;
             var createdDate = DateTime.Now.AddDays(-5);
             var modifiedDate = DateTime.Now.AddHours(-3);
@@ -762,7 +762,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act & Assert - This should not throw due to ReferenceHandler.IgnoreCycles
@@ -1039,7 +1039,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 1;
             _sut.Phone = "+1-555-123-4567";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
             _sut.LinkedEntity = null;
 
             // Act
@@ -1304,7 +1304,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             _sut.Id = 456;
             _sut.Phone = "+1-800-CALL-NOW";
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            _sut.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
             _sut.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
 
             // Act
@@ -1317,7 +1317,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.InstanceOf<PhoneNumberDTO>());
                 Assert.That(result.Id, Is.EqualTo(456));
                 Assert.That(result.Phone, Is.EqualTo("+1-800-CALL-NOW"));
-                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
+                Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobile));
                 Assert.That(result.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
             });
         }
@@ -1471,7 +1471,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 (OrganizerCompanion.Core.Enums.Types.Home, 1),
                 (OrganizerCompanion.Core.Enums.Types.Work, 2),
-                (OrganizerCompanion.Core.Enums.Types.Mobil, 3),
+                (OrganizerCompanion.Core.Enums.Types.Mobile, 3),
                 (OrganizerCompanion.Core.Enums.Types.Fax, 4),
                 (OrganizerCompanion.Core.Enums.Types.Billing, 5),
                 (OrganizerCompanion.Core.Enums.Types.Other, 6)

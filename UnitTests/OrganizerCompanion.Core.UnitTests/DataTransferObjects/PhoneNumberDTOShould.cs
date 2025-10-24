@@ -673,13 +673,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange & Act
             IPhoneNumberDTO interfacePhone = _phoneNumberDTO;
             interfacePhone.Phone = "555-TYPE-TEST";
-            interfacePhone.Type = OrganizerCompanion.Core.Enums.Types.Mobil;
+            interfacePhone.Type = OrganizerCompanion.Core.Enums.Types.Mobile;
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_phoneNumberDTO.Phone, Is.EqualTo("555-TYPE-TEST"));
-                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
+                Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobile));
                 Assert.That(interfacePhone.Phone, Is.EqualTo(_phoneNumberDTO.Phone));
                 Assert.That(interfacePhone.Type, Is.EqualTo(_phoneNumberDTO.Type));
             });
@@ -996,7 +996,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 new { Id = 1, Phone = (string?)"555-0001", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Home },
                 new { Id = 2, Phone = (string?)null, Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Work },
                 new { Id = 3, Phone = (string?)"", Type = (OrganizerCompanion.Core.Enums.Types?)null },
-                new { Id = 4, Phone = (string?)"555-0004", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Mobil }
+                new { Id = 4, Phone = (string?)"555-0004", Type = (OrganizerCompanion.Core.Enums.Types?)OrganizerCompanion.Core.Enums.Types.Mobile }
             };
 
             // Act & Assert

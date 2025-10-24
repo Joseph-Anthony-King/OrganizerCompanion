@@ -1116,7 +1116,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 PhoneNumbers = [
                     new PhoneNumberDTO { Id = 1, Phone = "555-1234", Type = OrganizerCompanion.Core.Enums.Types.Work },
                     new PhoneNumberDTO { Id = 2, Phone = "555-5678", Type = OrganizerCompanion.Core.Enums.Types.Home },
-                    new PhoneNumberDTO { Id = 3, Phone = "555-9999", Type = OrganizerCompanion.Core.Enums.Types.Mobil }
+                    new PhoneNumberDTO { Id = 3, Phone = "555-9999", Type = OrganizerCompanion.Core.Enums.Types.Mobile }
                 ],
                 Addresses = [],
                 Members = [],

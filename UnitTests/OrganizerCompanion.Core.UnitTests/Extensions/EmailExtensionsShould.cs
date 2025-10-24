@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.Domain;
@@ -134,7 +134,7 @@ namespace OrganizerCompanion.Core.UnitTests.Extensions
         public void AsDomainEmails_WithListContainingDomainEmails_ShouldReturnOnlyDomainEmails()
     {
       // Arrange
-      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobil, true, null);
+      var domainEmail2 = new Email("test2@example.com", OrganizerCompanion.Core.Enums.Types.Mobile, true, null);
             var typeEmails = new List<Interfaces.Type.IEmail?> 
             { 
                 _sut,      // This is a domain email (should be included)

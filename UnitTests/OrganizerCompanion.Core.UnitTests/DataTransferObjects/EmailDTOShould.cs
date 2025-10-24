@@ -201,7 +201,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var enumValues = new[] { 
                 OrganizerCompanion.Core.Enums.Types.Home,
                 OrganizerCompanion.Core.Enums.Types.Work,
-                OrganizerCompanion.Core.Enums.Types.Mobil,
+                OrganizerCompanion.Core.Enums.Types.Mobile,
                 OrganizerCompanion.Core.Enums.Types.Fax,
                 OrganizerCompanion.Core.Enums.Types.Billing,
                 OrganizerCompanion.Core.Enums.Types.Other
