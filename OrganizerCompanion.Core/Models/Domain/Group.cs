@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -21,7 +22,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private List<Contact> _members = [];
         private int _accountId = 0;
         private Account? _account = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -33,7 +34,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 Members = [.. value!.Cast<Contact>()];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -44,11 +45,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 Account = (Account)value!;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        [Key]
+        [Column("GroupId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -61,7 +64,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -72,7 +75,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _groupName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -83,10 +86,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _description = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("members")]
         public List<Contact> Members
         {
@@ -94,7 +98,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _members = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -109,10 +113,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                     throw new ArgumentException("Account Id must be a non-negative number.");
                 }
                 _accountId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [ForeignKey("AccountId")]
         [Required, JsonPropertyName("account")]
         public Account? Account
         {
@@ -120,15 +125,19 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate
+        {
+            get => _createdDate;
+            set => _createdDate = value;
+        }
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -142,8 +151,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             List<Contact> members,
             int accountId,
             Account? account,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             Id = id;
             GroupName = groupName;
@@ -151,8 +160,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             Members = members;
             AccountId = accountId;
             Account = account;
-            DateCreated = dateCreated;
-            DateModified = dateModified;
+            CreatedDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Group(
@@ -182,8 +191,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _members = dto.Members.ConvertAll(member => new Contact(member));
             _accountId = dto.AccountId;
             _account = dto.Account != null ? new Account(dto.Account) : null;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -202,8 +211,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Members = Members.ConvertAll(member => member.Cast<ContactDTO>()),
                         AccountId = AccountId,
                         Account = Account?.Cast<AccountDTO>(),
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)dto;
                 }

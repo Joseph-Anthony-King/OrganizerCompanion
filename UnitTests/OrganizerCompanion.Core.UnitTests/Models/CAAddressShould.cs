@@ -51,9 +51,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntityId, Is.Null);
                 Assert.That(caAddress.LinkedEntity, Is.Null);
                 Assert.That(caAddress.LinkedEntityType, Is.Null);
-                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(caAddress.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(caAddress.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -71,8 +71,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var type = OrganizerCompanion.Core.Enums.Types.Home;
             var isPrimary = true;
             var linkedEntity = new MockDomainEntity();
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-2);
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
             var caAddress = new CAAddress(
@@ -86,8 +86,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: type,
                 isPrimary: isPrimary,
                 linkedEntity: linkedEntity,
-                dateCreated: dateCreated,
-                dateModified: dateModified
+                createdDate: createdDate,
+                modifiedDate: modifiedDate
             );
 
             // Assert
@@ -105,8 +105,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntity.GetType().Name));
-                Assert.That(caAddress.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(caAddress.DateModified, Is.EqualTo(dateModified));
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -154,9 +154,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntity.GetType().Name));
-                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(caAddress.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(caAddress.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -203,9 +203,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntity, Is.Null);
                 Assert.That(caAddress.LinkedEntityId, Is.Null);
                 Assert.That(caAddress.LinkedEntityType, Is.Null);
-                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(caAddress.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(caAddress.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -323,10 +323,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Id_Setter_UpdatesDateModified()
+        public void Id_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Id = 456;
@@ -335,16 +335,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(456));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Street1_Setter_UpdatesDateModified()
+        public void Street1_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Street1 = "789 Queen Street";
@@ -353,16 +353,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Street1, Is.EqualTo("789 Queen Street"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Street2_Setter_UpdatesDateModified()
+        public void Street2_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Street2 = "Unit 12";
@@ -371,16 +371,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Street2, Is.EqualTo("Unit 12"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void City_Setter_UpdatesDateModified()
+        public void City_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.City = "Vancouver";
@@ -389,16 +389,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.City, Is.EqualTo("Vancouver"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Province_Setter_UpdatesDateModified()
+        public void Province_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
             var province = CAProvinces.BritishColumbia.ToStateModel();
 
             // Act
@@ -408,16 +408,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Province, Is.EqualTo(province));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void ZipCode_Setter_UpdatesDateModified()
+        public void ZipCode_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.ZipCode = "V6B 4N8";
@@ -426,16 +426,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ZipCode, Is.EqualTo("V6B 4N8"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Country_Setter_UpdatesDateModified()
+        public void Country_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Country = "Canada";
@@ -444,16 +444,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Country, Is.EqualTo("Canada"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Type_Setter_UpdatesDateModified()
+        public void Type_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
@@ -462,16 +462,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void IsPrimary_Setter_UpdatesDateModified()
+        public void IsPrimary_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.IsPrimary = true;
@@ -480,8 +480,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsPrimary, Is.True);
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -546,10 +546,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_Setter_UpdatesDateModified()
+        public void LinkedEntity_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
             var mockEntity = new MockDomainEntity(); // Create a mock domain entity
 
             // Act
@@ -559,13 +559,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly_AndSetDuringConstruction()
+        public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -577,22 +577,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(caAddress.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(caAddress.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(caAddress.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(caAddress.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("Models")]
-        public void DateModified_CanBeSetDirectly()
+        public void ModifiedDate_CanBeSetDirectly()
         {
             // Arrange
             var testDate = new DateTime(2023, 5, 15, 10, 30, 45);
 
             // Act
-            _sut.DateModified = testDate;
+            _sut.ModifiedDate = testDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(testDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(testDate));
         }
 
         [Test, Category("Models")]
@@ -608,7 +608,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Country = "Canada";
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Work;
             _sut.IsPrimary = true;
-            _sut.DateModified = new DateTime(2023, 1, 1, 12, 0, 0);
+            _sut.ModifiedDate = new DateTime(2023, 1, 1, 12, 0, 0);
 
             // Act
             var json = _sut.ToJson();
@@ -645,11 +645,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("isPrimary", out var isPrimaryProperty), Is.True);
                 Assert.That(isPrimaryProperty.GetBoolean(), Is.True);
 
-                Assert.That(root.TryGetProperty("dateCreated", out var dateCreatedProperty), Is.True);
-                Assert.That(dateCreatedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+                Assert.That(root.TryGetProperty("createdDate", out var createdDateProperty), Is.True);
+                Assert.That(createdDateProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
 
-                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
-                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+                Assert.That(root.TryGetProperty("modifiedDate", out var modifiedDateProperty), Is.True);
+                Assert.That(modifiedDateProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
             });
         }
 
@@ -665,7 +665,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ZipCode = null;
             _sut.Type = null;
             _sut.IsPrimary = false;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             var json = _sut.ToJson();
@@ -701,8 +701,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("linkedEntityType", out var linkedEntityTypeProperty), Is.True);
                 Assert.That(linkedEntityTypeProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
 
-                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
-                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                Assert.That(root.TryGetProperty("modifiedDate", out var modifiedDateProperty), Is.True);
+                Assert.That(modifiedDateProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
         }
 
@@ -828,8 +828,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.LinkedEntity = null;
             Assert.That(_sut.LinkedEntity, Is.Null);
 
-            _sut.DateModified = null;
-            Assert.That(_sut.DateModified, Is.Null);
+            _sut.ModifiedDate = null;
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -844,7 +844,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             const string zipCode = "S7K 0J5";
             const string country = "Canada";
             var linkedEntity = new MockDomainEntity();
-            var dateModified = new DateTime(2023, 12, 25, 15, 30, 0);
+            var modifiedDate = new DateTime(2023, 12, 25, 15, 30, 0);
 
             // Act
             _sut.Id = id;
@@ -856,7 +856,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Country = country;
             _sut.Type = Enums.Types.Billing;
             _sut.LinkedEntity = linkedEntity;
-            _sut.DateModified = dateModified;
+            _sut.ModifiedDate = modifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -871,8 +871,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Type, Is.EqualTo(Enums.Types.Billing));
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
-                Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -895,8 +895,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: Enums.Types.Home,
                 isPrimary: true,
                 linkedEntity: null,
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
 
             // Assert
@@ -1010,8 +1010,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
                 Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1046,8 +1046,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Country, Is.EqualTo(_sut.Country));
                 Assert.That(result.Type, Is.EqualTo(_sut.Type));
                 Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1064,7 +1064,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Country = null;
             _sut.Type = null;
             _sut.IsPrimary = false;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             var result = _sut.Cast<CAAddressDTO>();
@@ -1082,8 +1082,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Country, Is.Null);
                 Assert.That(result.Type, Is.Null);
                 Assert.That(result.IsPrimary, Is.False);
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.Null);
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.Null);
             });
         }
 
@@ -1129,8 +1129,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange - Set up CAAddress with comprehensive data
             var province = CAProvinces.Quebec.ToStateModel();
-            var dateCreated = DateTime.Now.AddDays(-5);
-            var dateModified = DateTime.Now.AddHours(-2);
+            var createdDate = DateTime.Now.AddDays(-5);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             var fullAddress = new CAAddress(
                 id: 777,
@@ -1143,8 +1143,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
                 isPrimary: true,
                 linkedEntity: null,
-                dateCreated: dateCreated,
-                dateModified: dateModified
+                createdDate: createdDate,
+                modifiedDate: modifiedDate
             );
 
             // Act
@@ -1164,8 +1164,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.ZipCode, Is.EqualTo("H1A 0A1"));
                 Assert.That(result.Country, Is.EqualTo("Canada"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
-                Assert.That(result.DateCreated, Is.EqualTo(fullAddress.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(fullAddress.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(fullAddress.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(fullAddress.ModifiedDate));
             });
         }
 
@@ -1189,8 +1189,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(888));
                 Assert.That(result.Street1, Is.EqualTo("Interface Test Street"));
                 Assert.That(result.City, Is.EqualTo("Calgary"));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1213,20 +1213,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result1, Is.Not.SameAs(result2)); // Different instances
                 Assert.That(result1.Id, Is.EqualTo(result2.Id)); // Same data
                 Assert.That(result1.Street1, Is.EqualTo(result2.Street1)); // Same data
-                Assert.That(result1.DateCreated, Is.EqualTo(result2.DateCreated)); // Same DateCreated
-                Assert.That(result1.DateModified, Is.EqualTo(result2.DateModified)); // Same DateModified
+                Assert.That(result1.CreatedDate, Is.EqualTo(result2.CreatedDate)); // Same CreatedDate
+                Assert.That(result1.ModifiedDate, Is.EqualTo(result2.ModifiedDate)); // Same ModifiedDate
             });
         }
 
         [Test, Category("Models")]
-        public void Cast_ToCAAddressDTO_WithSpecificDateModified_ShouldPreserveDateModified()
+        public void Cast_ToCAAddressDTO_WithSpecificModifiedDate_ShouldPreserveModifiedDate()
         {
             // Arrange
-            var specificDateModified = new DateTime(2024, 3, 15, 14, 30, 45);
+            var specificModifiedDate = new DateTime(2024, 3, 15, 14, 30, 45);
             _sut.Id = 321;
             _sut.Street1 = "Date Test Street";
             _sut.City = "Test City";
-            _sut.DateModified = specificDateModified;
+            _sut.ModifiedDate = specificModifiedDate;
 
             // Act
             var result = _sut.Cast<CAAddressDTO>();
@@ -1238,9 +1238,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(321));
                 Assert.That(result.Street1, Is.EqualTo("Date Test Street"));
                 Assert.That(result.City, Is.EqualTo("Test City"));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(specificDateModified));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(specificModifiedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1263,8 +1263,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: OrganizerCompanion.Core.Enums.Types.Home,
                 isPrimary: true,
                 linkedEntity: linkedEntity,
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
 
             // Assert - Verify that the object is created correctly and unused parameters don't affect it
@@ -1278,8 +1278,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.ZipCode, Is.EqualTo("M1M 1M1"));
                 Assert.That(caAddress.Country, Is.EqualTo("Canada"));
                 Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
-                Assert.That(caAddress.DateCreated, Is.EqualTo(testDate));
-                Assert.That(caAddress.DateModified, Is.EqualTo(testDate));
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(testDate));
             });
         }
 
@@ -1401,7 +1401,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var mockEntity = new MockDomainEntity();
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.LinkedEntity = mockEntity;
@@ -1411,8 +1411,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -1424,7 +1424,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.LinkedEntity = mockEntity; // First set to non-null
             Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity")); // Confirm it's set
 
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.LinkedEntity = null;
@@ -1434,8 +1434,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -1465,8 +1465,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: OrganizerCompanion.Core.Enums.Types.Billing,
                 isPrimary: false,
                 linkedEntity: linkedEntity,
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
 
             // Test all property setters and getters
@@ -1479,7 +1479,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultAddress.Country = "Canada";
             defaultAddress.Type = OrganizerCompanion.Core.Enums.Types.Other;
             defaultAddress.LinkedEntity = new MockDomainEntity();
-            defaultAddress.DateModified = testDate;
+            defaultAddress.ModifiedDate = testDate;
 
             // Act & Assert - Verify all properties are set correctly
             Assert.Multiple(() =>
@@ -1493,8 +1493,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(parameterizedAddress.ZipCode, Is.EqualTo("R3C 0V8"));
                 Assert.That(parameterizedAddress.Country, Is.EqualTo("Canada"));
                 Assert.That(parameterizedAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
-                Assert.That(parameterizedAddress.DateCreated, Is.EqualTo(testDate));
-                Assert.That(parameterizedAddress.DateModified, Is.EqualTo(testDate));
+                Assert.That(parameterizedAddress.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(parameterizedAddress.ModifiedDate, Is.EqualTo(testDate));
 
                 // Test property setter results
                 Assert.That(defaultAddress.Id, Is.EqualTo(54321));
@@ -1508,8 +1508,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultAddress.LinkedEntityId, Is.EqualTo(1)); // MockDomainEntity has Id = 1
                 Assert.That(defaultAddress.LinkedEntity, Is.Not.Null);
                 Assert.That(defaultAddress.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-                Assert.That(defaultAddress.DateModified, Is.EqualTo(testDate));
-                Assert.That(defaultAddress.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(defaultAddress.ModifiedDate, Is.EqualTo(testDate));
+                Assert.That(defaultAddress.CreatedDate, Is.Not.EqualTo(default(DateTime)));
             });
 
             // Test Cast functionality
@@ -1556,8 +1556,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: OrganizerCompanion.Core.Enums.Types.Other,
                 isPrimary: false,
                 linkedEntity: linkedEntity,
-                dateCreated: testDate,
-                dateModified: null
+                createdDate: testDate,
+                modifiedDate: null
             );
 
             // Assert
@@ -1571,8 +1571,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.ZipCode, Is.EqualTo(""));
                 Assert.That(caAddress.Country, Is.EqualTo(""));
                 Assert.That(caAddress.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
-                Assert.That(caAddress.DateCreated, Is.EqualTo(testDate));
-                Assert.That(caAddress.DateModified, Is.Null);
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(caAddress.ModifiedDate, Is.Null);
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(linkedEntity.Id)); // Use actual linkedEntity.Id (which is 1)
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(caAddress.LinkedEntityType, Is.EqualTo(linkedEntityType));
@@ -1619,24 +1619,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Properties_SetToSameValue_ShouldStillUpdateDateModified()
+        public void Properties_SetToSameValue_ShouldStillUpdateModifiedDate()
         {
             // Arrange
             _sut.Street1 = "Test Street";
-            var firstDateModified = _sut.DateModified;
+            var firstModifiedDate = _sut.ModifiedDate;
 
             // Small delay to ensure different timestamp
             System.Threading.Thread.Sleep(1);
 
             // Act - Set to the same value
             _sut.Street1 = "Test Street";
-            var secondDateModified = _sut.DateModified;
+            var secondModifiedDate = _sut.ModifiedDate;
 
-            // Assert - DateModified should still be updated even when setting the same value
+            // Assert - ModifiedDate should still be updated even when setting the same value
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Street1, Is.EqualTo("Test Street"));
-                Assert.That(secondDateModified, Is.GreaterThan(firstDateModified));
+                Assert.That(secondModifiedDate, Is.GreaterThan(firstModifiedDate));
             });
         }
 
@@ -1645,8 +1645,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange - Set up a complete CAAddress with all fields populated
             var linkedEntity = new MockDomainEntity();
-            var specificDateCreated = new DateTime(2023, 6, 15, 9, 30, 0);
-            var specificDateModified = new DateTime(2023, 6, 16, 14, 45, 30);
+            var specificCreatedDate = new DateTime(2023, 6, 15, 9, 30, 0);
+            var specificModifiedDate = new DateTime(2023, 6, 16, 14, 45, 30);
             var province = CAProvinces.Yukon.ToStateModel();
 
             var completeAddress = new CAAddress(
@@ -1660,8 +1660,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 type: OrganizerCompanion.Core.Enums.Types.Work,
                 isPrimary: false, 
                 linkedEntity: linkedEntity,
-                dateCreated: specificDateCreated,
-                dateModified: specificDateModified
+                createdDate: specificCreatedDate,
+                modifiedDate: specificModifiedDate
             );
 
             // Act
@@ -1680,8 +1680,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(dto.ZipCode, Is.EqualTo("Y1A 1A1"));
                 Assert.That(dto.Country, Is.EqualTo("Canada"));
                 Assert.That(dto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-                Assert.That(dto.DateCreated, Is.EqualTo(specificDateCreated));
-                Assert.That(dto.DateModified, Is.EqualTo(specificDateModified));
+                Assert.That(dto.CreatedDate, Is.EqualTo(specificCreatedDate));
+                Assert.That(dto.ModifiedDate, Is.EqualTo(specificModifiedDate));
             });
         }
 
@@ -1700,8 +1700,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Country = "Canada",
                 Type = OrganizerCompanion.Core.Enums.Types.Work,
                 IsPrimary = true,
-                DateCreated = DateTime.Now.AddDays(-5),
-                DateModified = DateTime.Now.AddDays(-2)
+                CreatedDate = DateTime.Now.AddDays(-5),
+                ModifiedDate = DateTime.Now.AddDays(-2)
             };
             var linkedEntity = new MockDomainEntity { Id = 555 };
 
@@ -1724,8 +1724,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity), "LinkedEntity should be set correctly");
                 Assert.That(caAddress.LinkedEntityId, Is.EqualTo(555), "LinkedEntityId should match linked entity");
                 Assert.That(caAddress.LinkedEntityType, Is.EqualTo("MockDomainEntity"), "LinkedEntityType should be correct");
-                Assert.That(caAddress.DateCreated, Is.EqualTo(dto.DateCreated), "DateCreated should match DTO");
-                Assert.That(caAddress.DateModified, Is.EqualTo(dto.DateModified), "DateModified should match DTO");
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(dto.CreatedDate), "CreatedDate should match DTO");
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(dto.ModifiedDate), "ModifiedDate should match DTO");
             });
         }
 
@@ -1744,8 +1744,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Country = "Canada",
                 Type = OrganizerCompanion.Core.Enums.Types.Home,
                 IsPrimary = false,
-                DateCreated = DateTime.Now.AddDays(-3),
-                DateModified = DateTime.Now.AddHours(-6)
+                CreatedDate = DateTime.Now.AddDays(-3),
+                ModifiedDate = DateTime.Now.AddHours(-6)
             };
 
             // Act
@@ -1767,8 +1767,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.LinkedEntity, Is.Null, "LinkedEntity should be null");
                 Assert.That(caAddress.LinkedEntityId, Is.Null, "LinkedEntityId should be null when LinkedEntity is null");
                 Assert.That(caAddress.LinkedEntityType, Is.Null, "LinkedEntityType should be null when LinkedEntity is null");
-                Assert.That(caAddress.DateCreated, Is.EqualTo(dto.DateCreated), "DateCreated should match DTO");
-                Assert.That(caAddress.DateModified, Is.EqualTo(dto.DateModified), "DateModified should match DTO");
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(dto.CreatedDate), "CreatedDate should match DTO");
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(dto.ModifiedDate), "ModifiedDate should match DTO");
             });
         }
 
@@ -1818,8 +1818,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Country = null,
                 Type = null,
                 IsPrimary = false,
-                DateCreated = DateTime.Now.AddDays(-1),
-                DateModified = null
+                CreatedDate = DateTime.Now.AddDays(-1),
+                ModifiedDate = null
             };
             var linkedEntity = new MockDomainEntity { Id = 999 };
 
@@ -1839,8 +1839,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(caAddress.Type, Is.Null, "Type should be null");
                 Assert.That(caAddress.IsPrimary, Is.False, "IsPrimary should match DTO");
                 Assert.That(caAddress.LinkedEntity, Is.EqualTo(linkedEntity), "LinkedEntity should be set");
-                Assert.That(caAddress.DateCreated, Is.EqualTo(dto.DateCreated), "DateCreated should match DTO");
-                Assert.That(caAddress.DateModified, Is.Null, "DateModified should be null when DTO DateModified is null");
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(dto.CreatedDate), "CreatedDate should match DTO");
+                Assert.That(caAddress.ModifiedDate, Is.Null, "ModifiedDate should be null when DTO ModifiedDate is null");
             });
         }
 
@@ -1931,8 +1931,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Country = "Canada",
                 Type = OrganizerCompanion.Core.Enums.Types.Other,
                 IsPrimary = true,
-                DateCreated = specificCreationDate,
-                DateModified = specificModificationDate
+                CreatedDate = specificCreationDate,
+                ModifiedDate = specificModificationDate
             };
 
             // Act
@@ -1941,14 +1941,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(caAddress.DateCreated, Is.EqualTo(specificCreationDate), 
-                    "DateCreated should preserve exact precision from DTO");
-                Assert.That(caAddress.DateModified, Is.EqualTo(specificModificationDate), 
-                    "DateModified should preserve exact precision from DTO");
-                Assert.That(caAddress.DateCreated.Millisecond, Is.EqualTo(123), 
-                    "DateCreated milliseconds should be preserved");
-                Assert.That(caAddress.DateModified?.Millisecond, Is.EqualTo(456), 
-                    "DateModified milliseconds should be preserved");
+                Assert.That(caAddress.CreatedDate, Is.EqualTo(specificCreationDate), 
+                    "CreatedDate should preserve exact precision from DTO");
+                Assert.That(caAddress.ModifiedDate, Is.EqualTo(specificModificationDate), 
+                    "ModifiedDate should preserve exact precision from DTO");
+                Assert.That(caAddress.CreatedDate.Millisecond, Is.EqualTo(123), 
+                    "CreatedDate milliseconds should be preserved");
+                Assert.That(caAddress.ModifiedDate?.Millisecond, Is.EqualTo(456), 
+                    "ModifiedDate milliseconds should be preserved");
             });
         }
 
@@ -1999,8 +1999,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
@@ -2013,8 +2013,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";

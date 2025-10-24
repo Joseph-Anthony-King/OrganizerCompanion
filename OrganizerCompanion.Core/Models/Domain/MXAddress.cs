@@ -1,12 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Interfaces.Type;
 using OrganizerCompanion.Core.Models.DataTransferObject;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
@@ -28,10 +29,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         private Types? _type = null;
         private bool _isPrimary = false;
         private IDomainEntity? _linkedEntity = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
+        [Key]
+        [Column("MXAddressId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -44,7 +47,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -55,7 +58,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _street = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
 
         }
@@ -67,7 +70,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _neighborhood = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -78,7 +81,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _postalCode = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -89,10 +92,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _city = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("state")]
         public Interfaces.Type.INationalSubdivision? State
         {
@@ -100,7 +104,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _state = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
+            }
+        }
+
+        [JsonIgnore]
+        public MXStates? StateEnum
+        {
+            get => null; // Cannot reverse-lookup from IState to enum
+            set
+            {
+                _state = value?.ToStateModel();
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -111,7 +126,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _country = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -122,7 +137,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _type = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -133,10 +148,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isPrimary = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -144,21 +160,23 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
         public int? LinkedEntityId => _linkedEntity?.Id ?? null;
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => _linkedEntity?.GetType().Name;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
 
 
         #endregion
@@ -180,8 +198,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             int linkedEntityId,
             string? linkedEntityType,
             IDomainEntity? linkedEntity,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _street = street;
@@ -193,8 +211,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = type;
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public MXAddress(IMXAddressDTO dto, IDomainEntity? linkedEntity = null)
@@ -209,8 +227,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = dto.Type;
             _isPrimary = dto.IsPrimary;
             _linkedEntity = linkedEntity;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -232,8 +250,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Country = Country,
                         Type = Type,
                         IsPrimary = IsPrimary,
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)dto;
                 }

@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 
@@ -35,7 +35,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
                 // Assert
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(0));
-                Assert.That(projectAssignmentDTO.Name, Is.EqualTo(string.Empty));
+                Assert.That(projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(string.Empty));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
                 Assert.That(projectAssignmentDTO.AssigneeId, Is.Null);
                 Assert.That(projectAssignmentDTO.Assignee, Is.Null);
@@ -44,10 +44,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.Location, Is.Null);
                 Assert.That(projectAssignmentDTO.Groups, Is.Null);
                 Assert.That(projectAssignmentDTO.IsCompleted, Is.False);
-                Assert.That(projectAssignmentDTO.DateDue, Is.Null);
-                Assert.That(projectAssignmentDTO.DateCompleted, Is.Null);
-                Assert.That(projectAssignmentDTO.DateCreated, Is.Not.EqualTo(default(DateTime)));
-                Assert.That(projectAssignmentDTO.DateModified, Is.Null);
+                Assert.That(projectAssignmentDTO.DueDate, Is.Null);
+                Assert.That(projectAssignmentDTO.CompletedDate, Is.Null);
+                Assert.That(projectAssignmentDTO.CreatedDate, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(projectAssignmentDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -77,21 +77,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var taskId = 10;
             var task = new ProjectTaskDTO();
             var isCompleted = true;
-            var dateDue = DateTime.Now.AddDays(7);
-            var dateCompleted = DateTime.Now.AddDays(-1);
-            var dateCreated = DateTime.Now.AddDays(-10);
-            var dateModified = DateTime.Now.AddDays(-2);
+            var dueDate = DateTime.Now.AddDays(7);
+            var completedDate = DateTime.Now.AddDays(-1);
+            var createdDate = DateTime.Now.AddDays(-10);
+            var modifiedDate = DateTime.Now.AddDays(-2);
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
                 id, name, description, assignee, locationId, locationType, location, groups, taskId, task, isCompleted,
-                dateDue, dateCompleted, dateCreated, dateModified);
+                dueDate, completedDate, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
-                Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
+                Assert.That(projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.EqualTo(description));
                 Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(assignee.Id));
                 Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
@@ -102,10 +102,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.TaskId, Is.EqualTo(taskId));
                 Assert.That(projectAssignmentDTO.Task!.Id, Is.EqualTo(task.Id));
                 Assert.That(projectAssignmentDTO.IsCompleted, Is.EqualTo(isCompleted));
-                Assert.That(projectAssignmentDTO.DateDue, Is.EqualTo(dateDue));
-                Assert.That(projectAssignmentDTO.DateCompleted, Is.EqualTo(dateCompleted));
-                Assert.That(projectAssignmentDTO.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(projectAssignmentDTO.DateModified, Is.EqualTo(dateModified));
+                Assert.That(projectAssignmentDTO.DueDate, Is.EqualTo(dueDate));
+                Assert.That(projectAssignmentDTO.CompletedDate, Is.EqualTo(completedDate));
+                Assert.That(projectAssignmentDTO.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(projectAssignmentDTO.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -135,21 +135,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             int? taskId = null;
             ProjectTaskDTO? task = null;
             var isCompleted = false;
-            DateTime? dateDue = null;
-            DateTime? dateCompleted = null;
-            var dateCreated = DateTime.Now;
-            DateTime? dateModified = null;
+            DateTime? dueDate = null;
+            DateTime? completedDate = null;
+            var createdDate = DateTime.Now;
+            DateTime? modifiedDate = null;
 
             // Act
             var projectAssignmentDTO = new ProjectAssignmentDTO(
                 id, name, description, assignee, locationId, locationType, location, groups, taskId, task, isCompleted,
-                dateDue, dateCompleted, dateCreated, dateModified);
+                dueDate, completedDate, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(projectAssignmentDTO.Id, Is.EqualTo(id));
-                Assert.That(projectAssignmentDTO.Name, Is.EqualTo(name));
+                Assert.That(projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(name));
                 Assert.That(projectAssignmentDTO.Description, Is.Null);
                 Assert.That(projectAssignmentDTO.AssigneeId, Is.EqualTo(assignee.Id));
                 Assert.That(projectAssignmentDTO.Assignee, Is.EqualTo(assignee));
@@ -160,10 +160,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(projectAssignmentDTO.TaskId, Is.Null);
                 Assert.That(projectAssignmentDTO.Task, Is.Null);
                 Assert.That(projectAssignmentDTO.IsCompleted, Is.False);
-                Assert.That(projectAssignmentDTO.DateDue, Is.Null);
-                Assert.That(projectAssignmentDTO.DateCompleted, Is.Null);
-                Assert.That(projectAssignmentDTO.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(projectAssignmentDTO.DateModified, Is.Null);
+                Assert.That(projectAssignmentDTO.DueDate, Is.Null);
+                Assert.That(projectAssignmentDTO.CompletedDate, Is.Null);
+                Assert.That(projectAssignmentDTO.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(projectAssignmentDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -180,7 +180,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.Id = id;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.Id, Is.EqualTo(id));
         }
 
@@ -199,18 +199,18 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var name = "Test Assignment Name";
 
             // Act
-            _projectAssignmentDTO.Name = name;
+            _projectAssignmentDTO.ProjectAssignmentName = name;
 
-            // Assert - DTOs don't auto-update DateModified
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(name));
+            // Assert - DTOs don't auto-update ModifiedDate
+            Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(name));
         }
 
         [Test, Category("DataTransferObjects")]
         public void AcceptEmptyName()
         {
             // Act & Assert - DTOs don't validate, only domain entities do
-            Assert.DoesNotThrow(() => _projectAssignmentDTO.Name = "");
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(""));
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.ProjectAssignmentName = "");
+            Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(""));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -220,8 +220,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var longName = new string('a', 101);
 
             // Act & Assert - DTOs don't validate, only domain entities do
-            Assert.DoesNotThrow(() => _projectAssignmentDTO.Name = longName);
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(longName));
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.ProjectAssignmentName = longName);
+            Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(longName));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -233,7 +233,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.Description = description;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(description));
         }
 
@@ -270,7 +270,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.Groups = _testGroups;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.Groups, Is.EqualTo(_testGroups));
         }
 
@@ -296,7 +296,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.LocationId = locationId;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(locationId));
         }
 
@@ -349,7 +349,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.AssigneeId = assigneeId;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.AssigneeId, Is.EqualTo(assigneeId));
         }
 
@@ -402,7 +402,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.Assignee = testAssignee;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.Assignee, Is.EqualTo(testAssignee));
         }
 
@@ -423,7 +423,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.LocationType = locationType;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(locationType));
         }
 
@@ -463,7 +463,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Act
             _projectAssignmentDTO.Location = testLocation;
 
-            // Assert - DTOs don't auto-update DateModified
+            // Assert - DTOs don't auto-update ModifiedDate
             Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(testLocation));
         }
 
@@ -483,9 +483,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
 
-                // Assert - DTOs don't auto-update DateCompleted or DateModified
+                // Assert - DTOs don't auto-update CompletedDate or ModifiedDate
                 Assert.That(_projectAssignmentDTO.IsCompleted, Is.True);
-                Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted is readonly and stays null
+                Assert.That(_projectAssignmentDTO.CompletedDate, Is.Null); // CompletedDate is readonly and stays null
             });
         }
 
@@ -494,53 +494,53 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             _projectAssignmentDTO.IsCompleted = true; // Set to true first
-            Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null); // DateCompleted stays null in DTOs
+            Assert.That(_projectAssignmentDTO.CompletedDate, Is.Null); // CompletedDate stays null in DTOs
 
             // Act
             _projectAssignmentDTO.IsCompleted = false;
             Assert.Multiple(() =>
             {
 
-                // Assert - DTOs don't auto-manage DateCompleted
+                // Assert - DTOs don't auto-manage CompletedDate
                 Assert.That(_projectAssignmentDTO.IsCompleted, Is.False);
-                Assert.That(_projectAssignmentDTO.DateCompleted, Is.Null);
+                Assert.That(_projectAssignmentDTO.CompletedDate, Is.Null);
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void SetAndGetDateDue()
+        public void SetAndGetDueDate()
         {
             // Arrange
-            var dateDue = DateTime.Now.AddDays(7);
+            var dueDate = DateTime.Now.AddDays(7);
 
             // Act
-            _projectAssignmentDTO.DateDue = dateDue;
+            _projectAssignmentDTO.DueDate = dueDate;
 
-            // Assert - DTOs don't auto-update DateModified
-            Assert.That(_projectAssignmentDTO.DateDue, Is.EqualTo(dateDue));
+            // Assert - DTOs don't auto-update ModifiedDate
+            Assert.That(_projectAssignmentDTO.DueDate, Is.EqualTo(dueDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void GetDateCompletedReadOnly()
+        public void GetCompletedDateReadOnly()
         {
             // Arrange
-            var initialValue = _projectAssignmentDTO.DateCompleted;
+            var initialValue = _projectAssignmentDTO.CompletedDate;
 
             // Act
-            var retrievedValue = _projectAssignmentDTO.DateCompleted;
+            var retrievedValue = _projectAssignmentDTO.CompletedDate;
 
             // Assert
             Assert.That(retrievedValue, Is.EqualTo(initialValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void GetDateCreatedReadOnly()
+        public void GetCreatedDateReadOnly()
         {
             // Arrange
-            var initialValue = _projectAssignmentDTO.DateCreated;
+            var initialValue = _projectAssignmentDTO.CreatedDate;
 
             // Act
-            var retrievedValue = _projectAssignmentDTO.DateCreated;
+            var retrievedValue = _projectAssignmentDTO.CreatedDate;
 
             // Assert
             Assert.That(retrievedValue, Is.EqualTo(initialValue));
@@ -722,7 +722,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             _projectAssignmentDTO.Id = 1;
-            _projectAssignmentDTO.Name = "Test Assignment";
+            _projectAssignmentDTO.ProjectAssignmentName = "Test Assignment";
             _projectAssignmentDTO.Description = "Test Description";
             _projectAssignmentDTO.IsCompleted = false;
 
@@ -735,7 +735,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             _projectAssignmentDTO.Id = 0;
-            _projectAssignmentDTO.Name = "Minimal Assignment";
+            _projectAssignmentDTO.ProjectAssignmentName = "Minimal Assignment";
             // Leave other properties as default/null
 
             // Act & Assert
@@ -747,7 +747,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         {
             // Arrange
             _projectAssignmentDTO.Id = 1;
-            _projectAssignmentDTO.Name = "Test Assignment";
+            _projectAssignmentDTO.ProjectAssignmentName = "Test Assignment";
             _projectAssignmentDTO.Groups = _testGroups;
 
             // Act & Assert
@@ -762,8 +762,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void AcceptSingleCharacterName()
         {
             // Act & Assert
-            Assert.DoesNotThrow(() => _projectAssignmentDTO.Name = "A");
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo("A"));
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.ProjectAssignmentName = "A");
+            Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo("A"));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -773,8 +773,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var longName = new string('a', 200); // Beyond typical validation limit
 
             // Act & Assert - DTOs accept any string length
-            Assert.DoesNotThrow(() => _projectAssignmentDTO.Name = longName);
-            Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(longName));
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.ProjectAssignmentName = longName);
+            Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(longName));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -819,8 +819,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void HandleNullDateValues()
         {
             // Act & Assert
-            Assert.DoesNotThrow(() => _projectAssignmentDTO.DateDue = null);
-            Assert.That(_projectAssignmentDTO.DateDue, Is.Null);
+            Assert.DoesNotThrow(() => _projectAssignmentDTO.DueDate = null);
+            Assert.That(_projectAssignmentDTO.DueDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -867,26 +867,26 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void SetAndGetDateModified()
+        public void SetAndGetModifiedDate()
         {
             // Arrange
             var dateTime = DateTime.Now;
 
             // Act
-            _projectAssignmentDTO.DateModified = dateTime;
+            _projectAssignmentDTO.ModifiedDate = dateTime;
 
             // Assert
-            Assert.That(_projectAssignmentDTO.DateModified, Is.EqualTo(dateTime));
+            Assert.That(_projectAssignmentDTO.ModifiedDate, Is.EqualTo(dateTime));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void SetDateModifiedToNull()
+        public void SetModifiedDateToNull()
         {
             // Act
-            _projectAssignmentDTO.DateModified = null;
+            _projectAssignmentDTO.ModifiedDate = null;
 
             // Assert
-            Assert.That(_projectAssignmentDTO.DateModified, Is.Null);
+            Assert.That(_projectAssignmentDTO.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -933,21 +933,21 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var taskId = 555;
             var task = new ProjectTaskDTO();
             var isCompleted = true;
-            var dateDue = new DateTime(2025, 12, 31, 23, 59, 59);
-            var dateCompleted = new DateTime(2025, 10, 15, 14, 30, 0);
-            var dateCreated = new DateTime(2025, 10, 1, 9, 0, 0);
-            var dateModified = new DateTime(2025, 10, 16, 16, 45, 30);
+            var dueDate = new DateTime(2025, 12, 31, 23, 59, 59);
+            var completedDate = new DateTime(2025, 10, 15, 14, 30, 0);
+            var createdDate = new DateTime(2025, 10, 1, 9, 0, 0);
+            var modifiedDate = new DateTime(2025, 10, 16, 16, 45, 30);
 
             // Act
             var dto = new ProjectAssignmentDTO(
                 id, name, description, assignee, locationId, locationType, location, groups, taskId, task,
-                isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+                isCompleted, dueDate, completedDate, createdDate, modifiedDate);
 
             // Assert - Verify all properties are set correctly
             Assert.Multiple(() =>
             {
                 Assert.That(dto.Id, Is.EqualTo(id));
-                Assert.That(dto.Name, Is.EqualTo(name));
+                Assert.That(dto.ProjectAssignmentName, Is.EqualTo(name));
                 Assert.That(dto.Description, Is.EqualTo(description));
                 Assert.That(dto.AssigneeId, Is.EqualTo(assignee.Id));
                 Assert.That(dto.Assignee, Is.EqualTo(assignee));
@@ -959,10 +959,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.TaskId, Is.EqualTo(taskId));
                 Assert.That(dto.Task, Is.EqualTo(task));
                 Assert.That(dto.IsCompleted, Is.EqualTo(isCompleted));
-                Assert.That(dto.DateDue, Is.EqualTo(dateDue));
-                Assert.That(dto.DateCompleted, Is.EqualTo(dateCompleted));
-                Assert.That(dto.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(dto.DateModified, Is.EqualTo(dateModified));
+                Assert.That(dto.DueDate, Is.EqualTo(dueDate));
+                Assert.That(dto.CompletedDate, Is.EqualTo(completedDate));
+                Assert.That(dto.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(dto.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -1039,13 +1039,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 123);
 
-            // Act & Assert for DateDue
-            _projectAssignmentDTO.DateDue = preciseDateTime;
-            Assert.That(_projectAssignmentDTO.DateDue, Is.EqualTo(preciseDateTime));
+            // Act & Assert for DueDate
+            _projectAssignmentDTO.DueDate = preciseDateTime;
+            Assert.That(_projectAssignmentDTO.DueDate, Is.EqualTo(preciseDateTime));
 
-            // Act & Assert for DateModified
-            _projectAssignmentDTO.DateModified = preciseDateTime;
-            Assert.That(_projectAssignmentDTO.DateModified, Is.EqualTo(preciseDateTime));
+            // Act & Assert for ModifiedDate
+            _projectAssignmentDTO.ModifiedDate = preciseDateTime;
+            Assert.That(_projectAssignmentDTO.ModifiedDate, Is.EqualTo(preciseDateTime));
         }
 
         [Test, Category("Unicode")]
@@ -1056,13 +1056,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var unicodeDescription = "这是一个测试描述 with émojis 🎯 and spëcial çhars";
 
             // Act
-            _projectAssignmentDTO.Name = unicodeName;
+            _projectAssignmentDTO.ProjectAssignmentName = unicodeName;
             _projectAssignmentDTO.Description = unicodeDescription;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_projectAssignmentDTO.Name, Is.EqualTo(unicodeName));
+                Assert.That(_projectAssignmentDTO.ProjectAssignmentName, Is.EqualTo(unicodeName));
                 Assert.That(_projectAssignmentDTO.Description, Is.EqualTo(unicodeDescription));
             });
         }

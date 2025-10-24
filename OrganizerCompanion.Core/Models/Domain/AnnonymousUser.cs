@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -22,7 +23,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isCast = null;
         private int? _castId = null;
         private string? _castType = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -33,11 +34,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = (SubAccount?)value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        [Key]
+        [Column("AnnonymousUserId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -50,7 +53,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -71,7 +74,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _userName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -82,10 +85,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accountId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [ForeignKey("AccountId")]
         [Required, JsonPropertyName("account")]
         public SubAccount? Account
         {
@@ -93,7 +97,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -104,7 +108,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isCast = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -115,7 +119,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _castId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -126,15 +130,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _castType = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -148,8 +152,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool? isCast,
             int? castId,
             string? castType,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _userName = userName;
@@ -157,8 +161,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isCast = isCast != null && (bool)isCast;
             _castId = castId != null ? (int)castId : 0;
             _castType = castType;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public AnnonymousUser(
@@ -177,8 +181,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isCast = dto.IsCast;
             _castId = dto.CastId;
             _castType = dto.CastType;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -198,8 +202,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         [],
                         [],
                         [],
-                        DateCreated,
-                        DateModified
+                        CreatedDate,
+                        ModifiedDate
                     );
 
                     IsCast = true;
@@ -227,8 +231,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         null,
                         null,
                         null,
-                        DateCreated,
-                        DateModified
+                        CreatedDate,
+                        ModifiedDate
                     );
 
                     IsCast = true;
@@ -241,11 +245,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     var result = (T)(IDomainEntity)new AnnonymousUserDTO
                     {
-                      Id = Id,
-                      UserName = UserName,
-                      AccountId = AccountId,
-                      DateCreated = DateCreated,
-                      DateModified = DateModified
+                        Id = Id,
+                        UserName = UserName,
+                        AccountId = AccountId,
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
 
                     return result;

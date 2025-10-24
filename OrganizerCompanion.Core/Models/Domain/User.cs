@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.ComponentModel.DataAnnotations.Schema;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -32,101 +33,104 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool? _isDeceased = null;
         private bool? _isAdmin = null;
         private bool? _isSuperUser = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
         #region Explicit Interface Properties
+        [NotMapped]
         List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
         {
             get => _emails.ConvertAll(email => (Interfaces.Type.IEmail)email);
             set
             {
                 _emails = value.ConvertAll(email => (Email)email) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
+        [NotMapped]
         List<Interfaces.Type.IPhoneNumber> Interfaces.Type.IPerson.PhoneNumbers
         {
             get => _phoneNumbers.ConvertAll(phone => (Interfaces.Type.IPhoneNumber)phone);
             set
             {
                 _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
+        [NotMapped]
         List<Interfaces.Type.IAddress> Interfaces.Type.IPerson.Addresses 
         { 
             get => _addresses.ConvertAll(address => (Interfaces.Type.IAddress)address);
             set 
             {
                 _addresses = value.ConvertAll(address => (IAddress)address);
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
         #endregion
 
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
+        [Key, Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
             get => _id; 
             set 
             { 
                 _id = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
-        [Required, JsonPropertyName("firstName")]
+        [Required, MaxLength(50), JsonPropertyName("firstName")]
         public string? FirstName 
         { 
             get => _firstName; 
             set 
             { 
                 _firstName = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
-        [Required, JsonPropertyName("middleName")]
+        [MaxLength(50), JsonPropertyName("middleName")]
         public string? MiddleName 
         { 
             get => _middleName; 
             set 
             { 
                 _middleName = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
-        [Required, JsonPropertyName("lastName")]
+        [Required, MaxLength(50), JsonPropertyName("lastName")]
         public string? LastName 
         { 
             get => _lastName; 
             set 
             { 
                 _lastName = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             }
         }
 
-        [Required, JsonPropertyName("fullName")]
+        [NotMapped, Required, JsonPropertyName("fullName")]
         public string? FullName => _firstName == null && _middleName == null && _lastName == null ? null :
             _firstName == null || _lastName == null ?
                 throw new ArgumentNullException("FirstName and/or LastName properties cannot be null.") :
             _middleName == null ?
                     $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
 
-        [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [MaxLength(256), JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public string? UserName 
         {
             get => _userName;
             set
             {
                 _userName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -137,7 +141,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _pronouns = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             }
         }
 
@@ -148,7 +152,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _birthDate = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -159,7 +163,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _deceasedDate = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             }
         }
 
@@ -170,40 +174,40 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _joinedDate = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
         [Required, JsonPropertyName("emails")]
-        public List<Email> Emails 
+        public virtual List<Email> Emails 
         { 
             get => _emails; 
             set 
             { 
                 _emails = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
         [Required, JsonPropertyName("phoneNumbers")]
-        public List<PhoneNumber> PhoneNumbers 
+        public virtual List<PhoneNumber> PhoneNumbers 
         { 
             get => _phoneNumbers; 
             set 
             { 
                 _phoneNumbers = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
         [Required, JsonPropertyName("addresses")]
-        public List<IAddress> Addresses 
+        public virtual List<IAddress> Addresses 
         { 
             get => _addresses; 
             set 
             { 
                 _addresses = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -214,7 +218,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _isActive = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -225,7 +229,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _isDeceased = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -236,7 +240,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _isAdmin = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -247,15 +251,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isSuperUser = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [NotMapped, Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -279,8 +283,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool? isDeceased,
             bool? isAdmin,
             bool? isSuperUser,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _firstName = firstName;
@@ -298,8 +302,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isDeceased = isDeceased;
             _isAdmin = isAdmin;
             _isSuperUser = isSuperUser;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public User(
@@ -316,7 +320,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool? isActive,
             bool? isDeceased,
             bool? isAdmin,
-            DateTime dateCreated)
+            DateTime createdDate)
         {
             _firstName = firstName;
             _middleName = middleName;
@@ -331,7 +335,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isActive = isActive;
             _isDeceased = isDeceased;
             _isAdmin = isAdmin;
-            _dateCreated = dateCreated;
+            _createdDate = createdDate;
         }
         #endregion
 
@@ -360,8 +364,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         IsDeceased = IsDeceased,
                         IsAdmin = IsAdmin,
                         IsSuperUser = IsSuperUser,
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)dto;
                 }
@@ -388,8 +392,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         0,
                         null,
                         null,
-                        DateCreated,
-                        DateModified
+                        CreatedDate,
+                        ModifiedDate
                     );
                     return (T)contact;
                 }

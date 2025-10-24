@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -8,7 +8,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class SubAccountDTO : ISubAccountDTO
     {
         #region Fields
-        private readonly DateTime _dateCreated = DateTime.UtcNow;
+        private readonly DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -36,10 +36,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public string? LinkedEntityType { get; } = null;
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity { get; set; } = null;
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = default;
         #endregion
 
         #region Constructors
@@ -53,8 +53,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             IDomainEntity? linkedEntity,
             int? accountId,
             AccountDTO account,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             Id = id;
             LinkedEntityId = linkedEntityId;
@@ -62,16 +62,16 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             LinkedEntity = linkedEntity;
             AccountId = accountId;
             Account = account;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public SubAccountDTO(
             int id,
             IDomainEntity? linkedEntity,
             AccountDTO account,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             Id = id;
             LinkedEntityId = linkedEntity!.Id;
@@ -79,8 +79,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             LinkedEntity = linkedEntity;
             AccountId = account.Id;
             Account = account;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
         #endregion
     }

@@ -1,4 +1,4 @@
-﻿namespace OrganizerCompanion.Core.Interfaces.Type
+namespace OrganizerCompanion.Core.Interfaces.Type
 {
     internal interface ICAAddress : IAddress
     {

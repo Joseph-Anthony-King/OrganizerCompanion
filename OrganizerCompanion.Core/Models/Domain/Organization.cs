@@ -24,7 +24,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private List<Contact> _members = [];
         private List<Contact> _contacts = [];
         private List<Account> _accounts = [];
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
@@ -36,7 +36,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _emails = value.ConvertAll(email => (Email)email) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -47,7 +47,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -58,7 +58,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _members = value.ConvertAll(member => (Contact)member) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -69,7 +69,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _contacts = value.ConvertAll(contact => (Contact)contact) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -80,7 +80,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accounts = value.ConvertAll(account => (Account)account) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
         #endregion
@@ -97,7 +97,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -108,7 +108,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _organizationName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -119,7 +119,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _emails = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -130,7 +130,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _phoneNumbers = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -141,7 +141,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _address = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -152,7 +152,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _members = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -163,7 +163,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _contacts = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -174,15 +174,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accounts = value ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -198,8 +198,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             List<Contact> members,
             List<Contact> contacts,
             List<Account> accounts,
-            DateTime dateCreated,
-            DateTime? dateModified,
+            DateTime createdDate,
+            DateTime? modifiedDate,
             bool? isCast = null,
             int? castId = null,
             string? castType = null)
@@ -214,8 +214,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _members = members ?? [];
                 _contacts = contacts ?? [];
                 _accounts = accounts ?? [];
-                _dateCreated = dateCreated;
-                DateModified = dateModified;
+                _createdDate = createdDate;
+                ModifiedDate = modifiedDate;
             }
             catch (Exception ex)
             {
@@ -242,8 +242,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _members = dto.Members.ConvertAll(memberDto => new Contact(memberDto));
             _contacts = dto.Contacts.ConvertAll(contactDto => new Contact(contactDto));
             _accounts = dto.Accounts.ConvertAll(accountDto => new Account(accountDto));
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -274,8 +274,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         caAddressDto.ZipCode = caAddress.ZipCode;
                                         caAddressDto.Country = caAddress.Country;
                                         caAddressDto.Type = caAddress.Type;
-                                        caAddressDto.DateCreated = caAddress.DateCreated;
-                                        caAddressDto.DateModified = caAddress.DateModified;
+                                        caAddressDto.CreatedDate = caAddress.CreatedDate;
+                                        caAddressDto.ModifiedDate = caAddress.ModifiedDate;
                                     }
                                     else if (item is MXAddress mxAddress && addressDto is MXAddressDTO mxAddressDto)
                                     {
@@ -287,8 +287,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         mxAddressDto.State = mxAddress.State;
                                         mxAddressDto.Country = mxAddress.Country;
                                         mxAddressDto.Type = mxAddress.Type;
-                                        mxAddressDto.DateCreated = mxAddress.DateCreated;
-                                        mxAddressDto.DateModified = mxAddress.DateModified;
+                                        mxAddressDto.CreatedDate = mxAddress.CreatedDate;
+                                        mxAddressDto.ModifiedDate = mxAddress.ModifiedDate;
                                     }
                                     else if (item is USAddress usAddress && addressDto is USAddressDTO usAddressDto)
                                     {
@@ -300,8 +300,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                                         usAddressDto.ZipCode = usAddress.ZipCode;
                                         usAddressDto.Country = usAddress.Country;
                                         usAddressDto.Type = usAddress.Type;
-                                        usAddressDto.DateCreated = usAddress.DateCreated;
-                                        usAddressDto.DateModified = usAddress.DateModified;
+                                        usAddressDto.CreatedDate = usAddress.CreatedDate;
+                                        usAddressDto.ModifiedDate = usAddress.ModifiedDate;
                                     }
                                     addressesDto.Add(addressDto);
                                 }
@@ -317,16 +317,16 @@ namespace OrganizerCompanion.Core.Models.Domain
                             Id = email.Id,
                             EmailAddress = email.EmailAddress,
                             Type = email.Type,
-                            DateCreated = email.DateCreated,
-                            DateModified = email.DateModified
+                            CreatedDate = email.CreatedDate,
+                            ModifiedDate = email.ModifiedDate
                         }),
                         PhoneNumbers = PhoneNumbers.ConvertAll(phone => new PhoneNumberDTO
                         {
                             Id = phone.Id,
                             Phone = phone.Phone,
                             Type = phone.Type,
-                            DateCreated = phone.DateCreated,
-                            DateModified = phone.DateModified
+                            CreatedDate = phone.CreatedDate,
+                            ModifiedDate = phone.ModifiedDate
                         }),
                         Addresses = addressesDto,
                         Members = Members.ConvertAll(member => new ContactDTO
@@ -335,8 +335,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                             FirstName = member.FirstName,
                             LastName = member.LastName,
                             MiddleName = member.MiddleName,
-                            DateCreated = member.DateCreated,
-                            DateModified = member.DateModified
+                            CreatedDate = member.CreatedDate,
+                            ModifiedDate = member.ModifiedDate
                         }),
                         Contacts = Contacts.ConvertAll(contact => new ContactDTO
                         {
@@ -344,8 +344,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                             FirstName = contact.FirstName,
                             LastName = contact.LastName,
                             MiddleName = contact.MiddleName,
-                            DateCreated = contact.DateCreated,
-                            DateModified = contact.DateModified
+                            CreatedDate = contact.CreatedDate,
+                            ModifiedDate = contact.ModifiedDate
                         }),
                         Accounts = Accounts.ConvertAll(account => new AccountDTO
                         {
@@ -353,11 +353,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                             AccountName = account.AccountName,
                             AccountNumber = account.AccountNumber,
                             Features = [],
-                            DateCreated = account.DateCreated,
-                            DateModified = account.DateModified
+                            CreatedDate = account.CreatedDate,
+                            ModifiedDate = account.ModifiedDate
                         }),
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)(IDomainEntity)dto;
                 }

@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -8,8 +8,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class ProjectTaskDTO : IProjectTaskDTO
     {
         #region Fields
-        private readonly DateTime? _dateCompleted = null;
-        private readonly DateTime _dateCreated = DateTime.UtcNow;
+        private readonly DateTime? _completedDate = null;
+        private readonly DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -26,7 +26,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         public int Id { get; set; } = 0;
 
         [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name { get; set; } = string.Empty;
+        public string ProjectTaskName { get; set; } = string.Empty;
 
         [Required, JsonPropertyName("description"), MinLength(1, ErrorMessage = "Description must be at least 1 character long"), MaxLength(1000, ErrorMessage = "Name cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
@@ -37,34 +37,34 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; } = false;
 
-        [Required, JsonPropertyName("dateDue")]
-        public DateTime? DateDue { get; set; } = null;
+        [Required, JsonPropertyName("dueDate")]
+        public DateTime? DueDate { get; set; } = null;
 
-        [Required, JsonPropertyName("dateCompleted")]
-        public DateTime? DateCompleted => _dateCompleted;
+        [Required, JsonPropertyName("completedDate")]
+        public DateTime? CompletedDate => _completedDate;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = default;
         #endregion
 
         #region Constructors
         public ProjectTaskDTO() { }
 
         [JsonConstructor]
-        public ProjectTaskDTO(int id, string name, string? description, List<ProjectAssignmentDTO>? assignments, bool isCompleted, DateTime? dateDue, DateTime? dateCompleted, DateTime dateCreated, DateTime? dateModified)
+        public ProjectTaskDTO(int id, string name, string? description, List<ProjectAssignmentDTO>? assignments, bool isCompleted, DateTime? dueDate, DateTime? completedDate, DateTime createdDate, DateTime? modifiedDate)
         {
             Id = id;
-            Name = name;
+            ProjectTaskName = name;
             Description = description;
             Assignments = assignments;
             IsCompleted = isCompleted;
-            DateDue = dateDue;
-            _dateCompleted = dateCompleted;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            DueDate = dueDate;
+            _completedDate = completedDate;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
         #endregion
 

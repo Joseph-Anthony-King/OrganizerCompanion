@@ -1,8 +1,8 @@
-﻿using OrganizerCompanion.Core.Enums;
+using OrganizerCompanion.Core.Enums;
 
 namespace OrganizerCompanion.Core.Interfaces.Type
 {
-    internal interface IEmail
+    public interface IEmail
     {
         string? EmailAddress { get; set; }
         Types? Type { get; set; }

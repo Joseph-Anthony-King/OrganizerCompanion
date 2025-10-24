@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -18,10 +19,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private string? _featureName = null;
         private bool _isEnabled = false;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
+        [Key]
+        [Column("FeatureId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -34,7 +37,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -45,7 +48,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _featureName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -56,15 +59,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isEnabled = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -75,14 +78,14 @@ namespace OrganizerCompanion.Core.Models.Domain
             int id,
             string? featureName,
             bool isEnabled,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _featureName = featureName;
             _isEnabled = isEnabled;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Feature(
@@ -98,8 +101,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _id = dto.Id;
             _featureName = dto.FeatureName;
             _isEnabled = dto.IsEnabled;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -115,8 +118,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Id = Id,
                         FeatureName = FeatureName,
                         IsEnabled = IsEnabled,
-                        DateCreated = DateCreated,
-                        DateModified = DateModified,
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate,
                     };
                     return (T)dto;
                 }

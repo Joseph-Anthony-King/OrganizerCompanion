@@ -1,6 +1,6 @@
-﻿namespace OrganizerCompanion.Core.Enums
+namespace OrganizerCompanion.Core.Enums
 {
-    internal enum Pronouns
+    public enum Pronouns
     {
         // Traditional pronouns
         HeHim,

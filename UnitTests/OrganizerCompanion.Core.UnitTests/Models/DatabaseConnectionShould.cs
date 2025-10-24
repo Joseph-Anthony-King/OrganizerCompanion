@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -11,8 +11,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     {
         private DatabaseConnection _sut;
         private Account _testAccount;
-        private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
-        private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+        private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
+        private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
 
         [SetUp]
         public void SetUp()
@@ -46,9 +46,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.Id, Is.EqualTo(0));
                 Assert.That(databaseConnection.ConnectionString, Is.Null);
                 Assert.That(databaseConnection.DatabaseType, Is.Null);
-                Assert.That(databaseConnection.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(databaseConnection.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(databaseConnection.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(databaseConnection.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(databaseConnection.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -61,8 +61,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 connectionString: "Server=localhost;Database=Test;Trusted_Connection=true;",
                 databaseType: SupportedDatabases.SQLServer,
                 account: _testAccount,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Assert
@@ -73,8 +73,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.DatabaseType, Is.EqualTo(SupportedDatabases.SQLServer));
                 Assert.That(databaseConnection.Account, Is.EqualTo(_testAccount));
                 Assert.That(databaseConnection.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(databaseConnection.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(databaseConnection.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(databaseConnection.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -102,9 +102,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.DatabaseType, Is.EqualTo(databaseType));
                 Assert.That(databaseConnection.Account, Is.EqualTo(_testAccount));
                 Assert.That(databaseConnection.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(databaseConnection.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(databaseConnection.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(databaseConnection.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(databaseConnection.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(databaseConnection.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -158,10 +158,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Property Tests
 
         [Test, Category("Models")]
-        public void Id_Setter_UpdatesDateModified()
+        public void Id_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Id = 456;
@@ -170,8 +170,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(456));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -188,10 +188,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ConnectionString_Setter_UpdatesDateModified()
+        public void ConnectionString_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
             var connectionString = "Server=test;Database=db;";
 
             // Act
@@ -201,17 +201,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ConnectionString, Is.EqualTo(connectionString));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void ConnectionString_Setter_WithNull_UpdatesDateModified()
+        public void ConnectionString_Setter_WithNull_UpdatesModifiedDate()
         {
             // Arrange
             _sut.ConnectionString = "Initial value";
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.ConnectionString = null;
@@ -220,16 +220,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.ConnectionString, Is.Null);
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void DatabaseType_Setter_UpdatesDateModified()
+        public void DatabaseType_Setter_UpdatesModifiedDate()
         {
             // Arrange
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.DatabaseType = SupportedDatabases.MySQL;
@@ -238,17 +238,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void DatabaseType_Setter_WithNull_UpdatesDateModified()
+        public void DatabaseType_Setter_WithNull_UpdatesModifiedDate()
         {
             // Arrange
             _sut.DatabaseType = SupportedDatabases.SQLServer;
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.DatabaseType = null;
@@ -257,17 +257,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DatabaseType, Is.Null);
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
         [Test, Category("Models")]
-        public void Account_Setter_UpdatesDateModified()
+        public void Account_Setter_UpdatesModifiedDate()
         {
             // Arrange
             var newAccount = new Account { Id = 999, AccountName = "New Account" };
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             _sut.Account = newAccount;
@@ -277,8 +277,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Account, Is.EqualTo(newAccount));
                 Assert.That(_sut.AccountId, Is.EqualTo(newAccount.Id));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -296,28 +296,28 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly()
+        public void CreatedDate_IsReadOnly()
         {
             // Arrange & Act
-            var dateCreated = _sut.DateCreated;
+            var createdDate = _sut.CreatedDate;
 
             // Assert - Verify property is read-only by checking it has no setter
-            var property = typeof(DatabaseConnection).GetProperty(nameof(DatabaseConnection.DateCreated));
+            var property = typeof(DatabaseConnection).GetProperty(nameof(DatabaseConnection.CreatedDate));
             Assert.That(property?.CanWrite, Is.False);
-            Assert.That(dateCreated, Is.TypeOf<DateTime>());
+            Assert.That(createdDate, Is.TypeOf<DateTime>());
         }
 
         [Test, Category("Models")]
-        public void DateModified_CanBeSetDirectly()
+        public void ModifiedDate_CanBeSetDirectly()
         {
             // Arrange
             var testDate = new DateTime(2023, 5, 15, 10, 30, 45);
 
             // Act
-            _sut.DateModified = testDate;
+            _sut.ModifiedDate = testDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(testDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(testDate));
         }
 
         #endregion
@@ -339,12 +339,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ExplicitInterfaceAccount_Setter_UpdatesAccountAndDateModified()
+        public void ExplicitInterfaceAccount_Setter_UpdatesAccountAndModifiedDate()
         {
             // Arrange
             var newAccount = new Account { Id = 789, AccountName = "Interface Test Account" };
             IDatabaseConnection databaseConnection = _sut;
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Act
             databaseConnection.Account = newAccount;
@@ -354,8 +354,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Account, Is.EqualTo(newAccount));
                 Assert.That(_sut.AccountId, Is.EqualTo(newAccount.Id));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
             });
         }
 
@@ -381,7 +381,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ConnectionString = "Server=localhost;Database=TestDB;";
             _sut.DatabaseType = SupportedDatabases.SQLServer;
             _sut.Account = _testAccount;
-            _sut.DateModified = new DateTime(2023, 1, 1, 12, 0, 0);
+            _sut.ModifiedDate = new DateTime(2023, 1, 1, 12, 0, 0);
 
             // Act
             var json = _sut.ToJson();
@@ -415,11 +415,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("account", out var accountProperty), Is.True);
                 Assert.That(accountProperty.ValueKind, Is.EqualTo(JsonValueKind.Object));
                 
-                Assert.That(root.TryGetProperty("dateCreated", out var dateCreatedProperty), Is.True);
-                Assert.That(dateCreatedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+                Assert.That(root.TryGetProperty("createdDate", out var createdDateProperty), Is.True);
+                Assert.That(createdDateProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
                 
-                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
-                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
+                Assert.That(root.TryGetProperty("modifiedDate", out var modifiedDateProperty), Is.True);
+                Assert.That(modifiedDateProperty.ValueKind, Is.EqualTo(JsonValueKind.String));
             });
         }
 
@@ -431,7 +431,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.ConnectionString = null;
             _sut.DatabaseType = null;
             _sut.Account = _testAccount;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             var json = _sut.ToJson();
@@ -458,8 +458,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("databaseType", out var databaseTypeProperty), Is.True);
                 Assert.That(databaseTypeProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
                 
-                Assert.That(root.TryGetProperty("dateModified", out var dateModifiedProperty), Is.True);
-                Assert.That(dateModifiedProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
+                Assert.That(root.TryGetProperty("modifiedDate", out var modifiedDateProperty), Is.True);
+                Assert.That(modifiedDateProperty.ValueKind, Is.EqualTo(JsonValueKind.Null));
             });
         }
 
@@ -508,36 +508,36 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Edge Cases and Comprehensive Tests
 
         [Test, Category("Models")]
-        public void Properties_UpdateDateModified_IndependentlyForDifferentPropertyChanges()
+        public void Properties_UpdateModifiedDate_IndependentlyForDifferentPropertyChanges()
         {
             // Arrange
             _sut.Account = _testAccount;
-            var initialDateModified = _sut.DateModified;
+            var initialModifiedDate = _sut.ModifiedDate;
             
             System.Threading.Thread.Sleep(1); // Ensure time difference
 
-            // Act & Assert - Test each property setter updates DateModified
+            // Act & Assert - Test each property setter updates ModifiedDate
             _sut.Id = 100;
-            var afterIdChange = _sut.DateModified;
-            Assert.That(afterIdChange, Is.GreaterThan(initialDateModified));
+            var afterIdChange = _sut.ModifiedDate;
+            Assert.That(afterIdChange, Is.GreaterThan(initialModifiedDate));
             
             System.Threading.Thread.Sleep(1);
             
             _sut.ConnectionString = "New Connection String";
-            var afterConnectionStringChange = _sut.DateModified;
+            var afterConnectionStringChange = _sut.ModifiedDate;
             Assert.That(afterConnectionStringChange, Is.GreaterThan(afterIdChange));
             
             System.Threading.Thread.Sleep(1);
             
             _sut.DatabaseType = SupportedDatabases.PostgreSQL;
-            var afterDatabaseTypeChange = _sut.DateModified;
+            var afterDatabaseTypeChange = _sut.ModifiedDate;
             Assert.That(afterDatabaseTypeChange, Is.GreaterThan(afterConnectionStringChange));
             
             System.Threading.Thread.Sleep(1);
             
             var newAccount = new Account { Id = 888, AccountName = "Final Account" };
             _sut.Account = newAccount;
-            var afterAccountChange = _sut.DateModified;
+            var afterAccountChange = _sut.ModifiedDate;
             Assert.That(afterAccountChange, Is.GreaterThan(afterDatabaseTypeChange));
         }
 
@@ -550,8 +550,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 connectionString: "MaxValue Connection String",
                 databaseType: SupportedDatabases.PostgreSQL,
                 account: _testAccount,
-                dateCreated: DateTime.MaxValue,
-                dateModified: DateTime.MaxValue
+                createdDate: DateTime.MaxValue,
+                modifiedDate: DateTime.MaxValue
             );
 
             // Assert
@@ -561,8 +561,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.ConnectionString, Is.EqualTo("MaxValue Connection String"));
                 Assert.That(databaseConnection.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
                 Assert.That(databaseConnection.Account, Is.EqualTo(_testAccount));
-                Assert.That(databaseConnection.DateCreated, Is.EqualTo(DateTime.MaxValue));
-                Assert.That(databaseConnection.DateModified, Is.EqualTo(DateTime.MaxValue));
+                Assert.That(databaseConnection.CreatedDate, Is.EqualTo(DateTime.MaxValue));
+                Assert.That(databaseConnection.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
             });
         }
 
@@ -575,8 +575,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 connectionString: "",
                 databaseType: SupportedDatabases.SQLServer,
                 account: _testAccount,
-                dateCreated: DateTime.MinValue,
-                dateModified: null
+                createdDate: DateTime.MinValue,
+                modifiedDate: null
             );
 
             // Assert
@@ -586,8 +586,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(databaseConnection.ConnectionString, Is.EqualTo(""));
                 Assert.That(databaseConnection.DatabaseType, Is.EqualTo(SupportedDatabases.SQLServer));
                 Assert.That(databaseConnection.Account, Is.EqualTo(_testAccount));
-                Assert.That(databaseConnection.DateCreated, Is.EqualTo(DateTime.MinValue));
-                Assert.That(databaseConnection.DateModified, Is.Null);
+                Assert.That(databaseConnection.CreatedDate, Is.EqualTo(DateTime.MinValue));
+                Assert.That(databaseConnection.ModifiedDate, Is.Null);
             });
         }
 
@@ -642,8 +642,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 connectionString: "Comprehensive Test Connection String",
                 databaseType: SupportedDatabases.PostgreSQL,
                 account: _testAccount,
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
 
             // Test parameterized constructor
@@ -658,7 +658,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultConnection.ConnectionString = "Setter Test Connection";
             defaultConnection.DatabaseType = SupportedDatabases.MySQL;
             defaultConnection.Account = _testAccount;
-            defaultConnection.DateModified = testDate;
+            defaultConnection.ModifiedDate = testDate;
 
             // Act & Assert - Verify all properties are set correctly
             Assert.Multiple(() =>
@@ -669,8 +669,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(parameterizedConnection.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
                 Assert.That(parameterizedConnection.Account, Is.EqualTo(_testAccount));
                 Assert.That(parameterizedConnection.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(parameterizedConnection.DateCreated, Is.EqualTo(testDate));
-                Assert.That(parameterizedConnection.DateModified, Is.EqualTo(testDate));
+                Assert.That(parameterizedConnection.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(parameterizedConnection.ModifiedDate, Is.EqualTo(testDate));
 
                 // Simple constructor tests
                 Assert.That(simpleConnection.Id, Is.EqualTo(0));
@@ -685,7 +685,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultConnection.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
                 Assert.That(defaultConnection.Account, Is.EqualTo(_testAccount));
                 Assert.That(defaultConnection.AccountId, Is.EqualTo(_testAccount.Id));
-                Assert.That(defaultConnection.DateModified, Is.EqualTo(testDate));
+                Assert.That(defaultConnection.ModifiedDate, Is.EqualTo(testDate));
             });
 
             // Test Cast method throws NotImplementedException
@@ -720,24 +720,329 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(defaultConnection.AccountId, Is.EqualTo(newAccount.Id));
         }
 
-        // Helper mock class for testing Cast method
-        private class MockDomainEntity : IDomainEntity
+        [Test, Category("Models")]
+        public void Id_Setter_WithIntMinValue_ThrowsArgumentOutOfRangeException()
         {
-            public int Id { get; set; } = 1;
-            public bool IsCast { get; set; } = false;
-            public int CastId { get; set; } = 0;
-            public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            // Arrange
+            _sut.Account = _testAccount;
 
-            public T Cast<T>() where T : IDomainEntity
+            // Act & Assert
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => _sut.Id = int.MinValue);
+            Assert.Multiple(() =>
             {
-                throw new NotImplementedException();
-            }
-
-            public string ToJson() => "{}";
+                Assert.That(exception, Is.Not.Null);
+                Assert.That(exception.ParamName, Is.EqualTo("Id"));
+                Assert.That(exception.Message, Does.Contain("Id must be a non-negative number."));
+            });
         }
 
-        #endregion
+        [Test, Category("Models")]
+        public void Id_Setter_WithZero_AcceptsValue()
+        {
+            // Arrange
+            _sut.Account = _testAccount;
+
+            // Act
+            _sut.Id = 0;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(0));
+        }
+
+        [Test, Category("Models")]
+        public void Id_Setter_WithMaxInt_AcceptsValue()
+        {
+            // Arrange
+            _sut.Account = _testAccount;
+
+            // Act
+            _sut.Id = int.MaxValue;
+
+            // Assert
+            Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
+        }
+
+        [Test, Category("Models")]
+        public void ToJson_WithCircularReferences_HandlesCorrectly()
+        {
+            // Arrange - Set up circular reference scenario
+            _sut.Id = 100;
+            _sut.ConnectionString = "Circular Test";
+            _sut.DatabaseType = SupportedDatabases.SQLServer;
+            _sut.Account = _testAccount;
+
+            // Act - Should not throw due to ReferenceHandler.IgnoreCycles
+            var json = _sut.ToJson();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(json, Is.Not.Empty);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
+        }
+
+        [Test, Category("Models")]
+        public void CreatedDate_PropertyInfo_IsReadOnly()
+        {
+            // Arrange & Act
+            var property = typeof(DatabaseConnection).GetProperty(nameof(DatabaseConnection.CreatedDate));
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(property, Is.Not.Null);
+                Assert.That(property!.CanRead, Is.True);
+                Assert.That(property.GetSetMethod(), Is.Null, "CreatedDate should not have a public setter");
+            });
+        }
+
+        [Test, Category("Models")]
+        public void TypeInformation_ShouldBeCorrect()
+        {
+            // Arrange & Act
+            var connection = new DatabaseConnection();
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(connection.GetType(), Is.EqualTo(typeof(DatabaseConnection)));
+                Assert.That(connection.GetType().Name, Is.EqualTo("DatabaseConnection"));
+                Assert.That(connection.GetType().Namespace, Is.EqualTo("OrganizerCompanion.Core.Models.Domain"));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void AllProperties_GettersAndSetters_WorkCorrectly()
+        {
+            // Arrange
+            var connection = new DatabaseConnection();
+            var testDate = new DateTime(2025, 5, 15, 10, 30, 45);
+
+            // Act & Assert - Test all property setters and getters
+            connection.Id = 12345;
+            Assert.That(connection.Id, Is.EqualTo(12345));
+
+ connection.ConnectionString = "Comprehensive Test";
+        Assert.That(connection.ConnectionString, Is.EqualTo("Comprehensive Test"));
+
+  connection.DatabaseType = SupportedDatabases.PostgreSQL;
+Assert.That(connection.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
+
+   connection.Account = _testAccount;
+        Assert.That(connection.Account, Is.EqualTo(_testAccount));
+            Assert.That(connection.AccountId, Is.EqualTo(_testAccount.Id));
+
+        connection.ModifiedDate = testDate;
+ Assert.Multiple(() =>
+{
+           Assert.That(connection.ModifiedDate, Is.EqualTo(testDate));
+     Assert.That(connection.CreatedDate, Is.Not.EqualTo(default(DateTime)));
+  });
+  }
+
+    [Test, Category("Models")]
+   public void ToString_WithAllDatabaseTypes_FormatsCorrectly()
+        {
+            // Arrange & Act & Assert - Test with all supported database types
+            var databaseTypes = new[]
+    {
+     SupportedDatabases.SQLServer,
+ SupportedDatabases.MySQL,
+    SupportedDatabases.PostgreSQL,
+    SupportedDatabases.SQLite
+            };
+
+  foreach (var dbType in databaseTypes)
+{
+    _sut.Id = 100;
+     _sut.DatabaseType = dbType;
+
+          var result = _sut.ToString();
+
+                Assert.Multiple(() =>
+{
+             Assert.That(result, Is.Not.Null);
+  Assert.That(result, Does.Contain("DatabaseConnection"));
+               Assert.That(result, Does.Contain("Id:100"));
+         Assert.That(result, Does.Contain($"DatabaseType:{dbType}"));
+      });
+  }
+        }
+
+      [Test, Category("Models")]
+        public void ExplicitInterfaceAccount_Getter_CastsCorrectly()
+ {
+      // Arrange
+       _sut.Account = _testAccount;
+       IDatabaseConnection databaseConnection = _sut;
+
+            // Act
+         var result = databaseConnection.Account;
+
+    // Assert
+            Assert.Multiple(() =>
+       {
+           Assert.That(result, Is.Not.Null);
+      Assert.That(result, Is.InstanceOf<IAccount>());
+      Assert.That(result, Is.SameAs(_testAccount));
+   Assert.That(result.Id, Is.EqualTo(_testAccount.Id));
+            });
+}
+
+        [Test, Category("Models")]
+        public void ExplicitInterfaceAccount_Setter_CastsAndUpdatesModifiedDate()
+        {
+         // Arrange
+            IAccount interfaceAccount = new Account { Id = 555, AccountName = "Interface Cast Test" };
+ IDatabaseConnection databaseConnection = _sut;
+        var originalModifiedDate = _sut.ModifiedDate;
+            System.Threading.Thread.Sleep(1);
+
+ // Act
+      databaseConnection.Account = interfaceAccount;
+
+         // Assert
+          Assert.Multiple(() =>
+            {
+          Assert.That(_sut.Account, Is.Not.Null);
+           Assert.That(_sut.Account, Is.InstanceOf<Account>());
+         Assert.That(_sut.Account.Id, Is.EqualTo(555));
+              Assert.That(_sut.AccountId, Is.EqualTo(555));
+       Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+          });
+        }
+
+        [Test, Category("Models")]
+        public void JsonConstructor_WithNullModifiedDate_SetsCorrectly()
+        {
+     // Arrange & Act
+         var connection = new DatabaseConnection(
+     id: 777,
+    connectionString: "Null Modified Test",
+        databaseType: SupportedDatabases.MySQL,
+       account: _testAccount,
+                createdDate: _testCreatedDate,
+             modifiedDate: null
+       );
+
+            // Assert
+ Assert.Multiple(() =>
+            {
+        Assert.That(connection.Id, Is.EqualTo(777));
+    Assert.That(connection.ConnectionString, Is.EqualTo("Null Modified Test"));
+           Assert.That(connection.DatabaseType, Is.EqualTo(SupportedDatabases.MySQL));
+       Assert.That(connection.Account, Is.EqualTo(_testAccount));
+        Assert.That(connection.CreatedDate, Is.EqualTo(_testCreatedDate));
+           Assert.That(connection.ModifiedDate, Is.Null);
+            });
+  }
+
+        [Test, Category("Models")]
+   public void Properties_SetToSameValue_ShouldStillUpdateModifiedDate()
+  {
+       // Arrange
+        _sut.Account = _testAccount;
+  _sut.ConnectionString = "Test String";
+            var firstModifiedDate = _sut.ModifiedDate;
+
+            // Small delay to ensure different timestamp
+     System.Threading.Thread.Sleep(1);
+
+       // Act - Set to the same value
+ _sut.ConnectionString = "Test String";
+            var secondModifiedDate = _sut.ModifiedDate;
+
+     // Assert - ModifiedDate should still be updated even when setting the same value
+            Assert.Multiple(() =>
+    {
+            Assert.That(_sut.ConnectionString, Is.EqualTo("Test String"));
+ Assert.That(secondModifiedDate, Is.GreaterThan(firstModifiedDate));
+   });
+        }
+
+        [Test, Category("Models")]
+        public void JsonSerializer_UsesIgnoreCycles()
+        {
+            // Arrange
+      _sut.Id = 666;
+            _sut.ConnectionString = "Serialization Test";
+    _sut.DatabaseType = SupportedDatabases.PostgreSQL;
+            _sut.Account = _testAccount;
+
+     // Act
+      var json = _sut.ToJson();
+var document = JsonDocument.Parse(json);
+
+ // Assert
+  Assert.Multiple(() =>
+          {
+     Assert.That(json, Is.Not.Null);
+     Assert.That(document.RootElement.TryGetProperty("id", out _), Is.True);
+             Assert.That(document.RootElement.TryGetProperty("connectionString", out _), Is.True);
+                Assert.That(document.RootElement.TryGetProperty("databaseType", out _), Is.True);
+     Assert.That(document.RootElement.TryGetProperty("account", out _), Is.True);
+          });
+        }
+
+   [Test, Category("Models")]
+        public void AllConstructors_InitializeCorrectly()
+      {
+            // Test default constructor
+         var conn1 = new DatabaseConnection();
+    Assert.That(conn1.Id, Is.EqualTo(0));
+
+       // Test parameterized constructor (without dates)
+          var conn2 = new DatabaseConnection(
+     connectionString: "Test",
+      databaseType: SupportedDatabases.MySQL,
+        account: _testAccount
+       );
+            Assert.That(conn2.ConnectionString, Is.EqualTo("Test"));
+
+  // Test JSON constructor
+          var testDate = DateTime.UtcNow;
+        var conn3 = new DatabaseConnection(
+       id: 1,
+          connectionString: "Test",
+         databaseType: SupportedDatabases.SQLServer,
+   account: _testAccount,
+        createdDate: testDate,
+   modifiedDate: testDate
+ );
+            Assert.That(conn3.CreatedDate, Is.EqualTo(testDate));
+}
+
+  [Test, Category("Models")]
+ public void Cast_WithAnyType_AlwaysThrowsNotImplementedException()
+        {
+    // Arrange
+  _sut.Account = _testAccount;
+
+   // Act & Assert - Test that Cast always throws regardless of type
+            Assert.Throws<NotImplementedException>(() => _sut.Cast<MockDomainEntity>());
+   Assert.Throws<NotImplementedException>(() => _sut.Cast<Account>());
+        }
+
+        // Helper mock class for testing Cast method
+ private class MockDomainEntity : IDomainEntity
+        {
+       public int Id { get; set; } = 1;
+ public bool IsCast { get; set; } = false;
+            public int CastId { get; set; } = 0;
+  public string? CastType { get; set; } = null;
+    public DateTime CreatedDate { get; } = DateTime.Now;
+       public DateTime? ModifiedDate { get; set; } = default;
+
+public T Cast<T>() where T : IDomainEntity
+    {
+          throw new NotImplementedException();
+   }
+
+            public string ToJson() => "{}";
+ }
+
+     #endregion
     }
 }

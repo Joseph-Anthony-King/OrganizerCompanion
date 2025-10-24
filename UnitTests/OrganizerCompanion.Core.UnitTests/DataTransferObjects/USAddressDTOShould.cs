@@ -45,8 +45,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(usAddressDTO.Country, Is.Null);
                 Assert.That(usAddressDTO.Type, Is.Null);
                 Assert.That(usAddressDTO.IsPrimary, Is.False);
-                Assert.That(usAddressDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-                Assert.That(usAddressDTO.DateModified, Is.Null);
+                Assert.That(usAddressDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(usAddressDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -389,39 +389,39 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldGetAndSetCorrectly()
+        public void CreatedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 10, 15, 14, 30, 0);
 
             // Act
-            _usAddressDTO.DateCreated = expectedDate;
+            _usAddressDTO.CreatedDate = expectedDate;
 
             // Assert
-            Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(expectedDate));
+            Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetCorrectly()
+        public void ModifiedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 10, 16, 10, 15, 0);
 
             // Act
-            _usAddressDTO.DateModified = expectedDate;
+            _usAddressDTO.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_usAddressDTO.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNull()
+        public void ModifiedDate_ShouldAcceptNull()
         {
             // Act
-            _usAddressDTO.DateModified = null;
+            _usAddressDTO.ModifiedDate = null;
 
             // Assert
-            Assert.That(_usAddressDTO.DateModified, Is.Null);
+            Assert.That(_usAddressDTO.ModifiedDate, Is.Null);
         }
 
         #endregion
@@ -591,10 +591,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        public void CreatedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
+            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CreatedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -604,15 +604,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("createdDate"));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        public void ModifiedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
+            var property = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.ModifiedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -622,7 +622,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -661,8 +661,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var countryProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Country));
             var typeProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.Type));
             var isPrimaryProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.IsPrimary));
-            var dateCreatedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateCreated));
-            var dateModifiedProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.DateModified));
+            var createdDateProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.CreatedDate));
+            var modifiedDateProperty = typeof(USAddressDTO).GetProperty(nameof(USAddressDTO.ModifiedDate));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -676,8 +676,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(countryProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(typeProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
                 Assert.That(isPrimaryProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
+                Assert.That(createdDateProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
+                Assert.That(modifiedDateProperty?.GetCustomAttributes(typeof(RequiredAttribute), false), Is.Not.Empty);
             });
         }
 
@@ -915,8 +915,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"country\":\"USA\""));
                 Assert.That(json, Contains.Substring("\"type\":"));
                 Assert.That(json, Contains.Substring("\"isPrimary\":true"));
-                Assert.That(json, Contains.Substring("\"dateCreated\":"));
-                Assert.That(json, Contains.Substring("\"dateModified\":"));
+                Assert.That(json, Contains.Substring("\"createdDate\":"));
+                Assert.That(json, Contains.Substring("\"modifiedDate\":"));
             });
         }
 
@@ -1202,33 +1202,33 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var minDateTime = DateTime.MinValue;
             var maxDateTime = DateTime.MaxValue;
 
-            // Act & Assert for DateCreated
+            // Act & Assert for CreatedDate
             Assert.Multiple(() =>
             {
-                _usAddressDTO.DateCreated = preciseDateTime;
-                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(preciseDateTime));
+                _usAddressDTO.CreatedDate = preciseDateTime;
+                Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(preciseDateTime));
 
-                _usAddressDTO.DateCreated = minDateTime;
-                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(minDateTime));
+                _usAddressDTO.CreatedDate = minDateTime;
+                Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(minDateTime));
 
-                _usAddressDTO.DateCreated = maxDateTime;
-                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(maxDateTime));
+                _usAddressDTO.CreatedDate = maxDateTime;
+                Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(maxDateTime));
             });
 
-            // Act & Assert for DateModified
+            // Act & Assert for ModifiedDate
             Assert.Multiple(() =>
             {
-                _usAddressDTO.DateModified = preciseDateTime;
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(preciseDateTime));
+                _usAddressDTO.ModifiedDate = preciseDateTime;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(preciseDateTime));
 
-                _usAddressDTO.DateModified = minDateTime;
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(minDateTime));
+                _usAddressDTO.ModifiedDate = minDateTime;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(minDateTime));
 
-                _usAddressDTO.DateModified = maxDateTime;
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(maxDateTime));
+                _usAddressDTO.ModifiedDate = maxDateTime;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(maxDateTime));
 
-                _usAddressDTO.DateModified = null;
-                Assert.That(_usAddressDTO.DateModified, Is.Null);
+                _usAddressDTO.ModifiedDate = null;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -1285,8 +1285,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.IsPrimary, Is.True);
 
                 var testDate = DateTime.Now;
-                usAddressInterface.DateModified = testDate;
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+                usAddressInterface.ModifiedDate = testDate;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(testDate));
             });
         }
 
@@ -1303,8 +1303,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 domainEntity.Id = 555;
                 Assert.That(_usAddressDTO.Id, Is.EqualTo(555));
 
-                domainEntity.DateModified = testDate;
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+                domainEntity.ModifiedDate = testDate;
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(testDate));
 
                 // Test Cast and ToJson methods throw NotImplementedException
                 Assert.Throws<NotImplementedException>(() => domainEntity.Cast<MockDomainEntity>());
@@ -1386,8 +1386,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Home;
             _usAddressDTO.IsPrimary = true;
             var testDate = DateTime.Now;
-            _usAddressDTO.DateCreated = testDate;
-            _usAddressDTO.DateModified = testDate;
+            _usAddressDTO.CreatedDate = testDate;
+            _usAddressDTO.ModifiedDate = testDate;
 
             // Assert - All properties should maintain their values independently
             Assert.Multiple(() =>
@@ -1401,8 +1401,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.Country, Is.EqualTo("Test Country"));
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 Assert.That(_usAddressDTO.IsPrimary, Is.True);
-                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(testDate));
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(testDate));
+                Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(testDate));
             });
         }
 
@@ -1464,8 +1464,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(newInstance.Country, Is.Null);
                 Assert.That(newInstance.Type, Is.Null);
                 Assert.That(newInstance.IsPrimary, Is.False);
-                Assert.That(newInstance.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-                Assert.That(newInstance.DateModified, Is.Null);
+                Assert.That(newInstance.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.ModifiedDate, Is.Null);
             });
         }
 
@@ -1482,7 +1482,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => _usAddressDTO.ZipCode = null);
                 Assert.DoesNotThrow(() => _usAddressDTO.Country = null);
                 Assert.DoesNotThrow(() => _usAddressDTO.Type = null);
-                Assert.DoesNotThrow(() => _usAddressDTO.DateModified = null);
+                Assert.DoesNotThrow(() => _usAddressDTO.ModifiedDate = null);
 
                 Assert.That(_usAddressDTO.Street1, Is.Null);
                 Assert.That(_usAddressDTO.Street2, Is.Null);
@@ -1491,7 +1491,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.ZipCode, Is.Null);
                 Assert.That(_usAddressDTO.Country, Is.Null);
                 Assert.That(_usAddressDTO.Type, Is.Null);
-                Assert.That(_usAddressDTO.DateModified, Is.Null);
+                Assert.That(_usAddressDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -1513,8 +1513,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _usAddressDTO.Country = "United States";
             _usAddressDTO.Type = OrganizerCompanion.Core.Enums.Types.Work;
             _usAddressDTO.IsPrimary = true;
-            _usAddressDTO.DateCreated = createdDate;
-            _usAddressDTO.DateModified = modifiedDate;
+            _usAddressDTO.CreatedDate = createdDate;
+            _usAddressDTO.ModifiedDate = modifiedDate;
 
             // Assert - Verify complete address
             Assert.Multiple(() =>
@@ -1530,8 +1530,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_usAddressDTO.Country, Is.EqualTo("United States"));
                 Assert.That(_usAddressDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(_usAddressDTO.IsPrimary, Is.True);
-                Assert.That(_usAddressDTO.DateCreated, Is.EqualTo(createdDate));
-                Assert.That(_usAddressDTO.DateModified, Is.EqualTo(modifiedDate));
+                Assert.That(_usAddressDTO.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_usAddressDTO.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -1548,8 +1548,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity
             {

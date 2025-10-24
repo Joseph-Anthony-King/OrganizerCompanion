@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -18,7 +19,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _connectionString = null;
         private SupportedDatabases? _databaseType = null;
         private Account _account = null!;
-        private DateTime _dateCreated = DateTime.UtcNow;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -29,11 +30,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = (Account)value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        [Key]
+        [Column("DatabaseConnectionId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -46,7 +49,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -57,7 +60,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _connectionString = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -68,13 +71,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _databaseType = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "AccountId must be a non-negative number.")]
         public int AccountId => _account.Id;
 
+        [ForeignKey("AccountId")]
         [Required, JsonPropertyName("account")]
         public Account Account
         {
@@ -82,15 +87,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -102,15 +107,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? connectionString,
             SupportedDatabases? databaseType,
             Account account,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _connectionString = connectionString;
             _databaseType = databaseType;
             _account = account;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public DatabaseConnection(

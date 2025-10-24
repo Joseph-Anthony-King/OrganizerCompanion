@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.Domain;
 
@@ -14,10 +15,12 @@ namespace OrganizerCompanion.Core.Models.Domain
         private DateTime? _expirationDate = null;
         private int _accountId = 0;
         private IAccount? _account = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
+        [Key]
+        [Column("PasswordId")]
         [JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id 
         { 
@@ -30,7 +33,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -47,7 +50,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                     }
                     _previousPasswords.Add(_passwordValue!);
                     _passwordValue = null;
-                    DateModified = DateTime.Now;
+                    ModifiedDate = DateTime.Now;
                     throw new InvalidOperationException("Cannot set a new password after the expiration date.");
                 }
 
@@ -74,7 +77,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
                 _passwordValue = value;
                 _expirationDate = DateTime.Now.AddMonths(3);
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
@@ -89,13 +92,15 @@ namespace OrganizerCompanion.Core.Models.Domain
                     throw new ArgumentException("Password Hint cannot exceed 256 characters.", nameof(PasswordHint));
                 }
                 _passwordHint = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             }
         }
 
+        [NotMapped]
         [JsonPropertyName("previousPasswords")]
         public List<string> PreviousPasswords => _previousPasswords!;
 
+        [NotMapped]
         [JsonPropertyName("expirationDate")]
         public DateTime? ExpirationDate => _expirationDate;
 
@@ -111,10 +116,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _accountId = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             } 
         }
 
+        [ForeignKey(nameof(AccountId))]
         [JsonPropertyName("account")]
         public IAccount? Account 
         { 
@@ -122,15 +128,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             set 
             { 
                 _account = value; 
-                DateModified = DateTime.Now; 
+                ModifiedDate = DateTime.Now; 
             }
         }
 
-        [JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -144,8 +150,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             List<string>? previousPasswords,
             int accountId,
             IAccount? account,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _passwordValue = passwordValue;
@@ -153,8 +159,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _previousPasswords = previousPasswords ?? [];
             _accountId = accountId;
             _account = account;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Password(
@@ -169,7 +175,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 _accountId = account.Id;
             }
             _account = account;
-            _dateCreated = DateTime.Now;
+            _createdDate = DateTime.Now;
         }
         #endregion
 

@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -55,9 +55,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.IsDeceased, Is.Null);
                 Assert.That(_sut.IsAdmin, Is.Null);
                 Assert.That(_sut.IsSuperUser, Is.Null);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -81,12 +81,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var isDeceased = false;
             var isAdmin = true;
             var isSuperUser = false;
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-2);
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
             var person = new User(id, firstName, middleName, lastName, userName, pronouns, birthDate, deceasedDate, joinedDate,
-                emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, dateCreated, dateModified);
+                emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, isSuperUser, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -108,8 +108,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.IsDeceased, Is.EqualTo(isDeceased));
                 Assert.That(person.IsAdmin, Is.EqualTo(isAdmin));
                 Assert.That(person.IsSuperUser, Is.EqualTo(isSuperUser));
-                Assert.That(person.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(person.DateModified, Is.EqualTo(dateModified));
+                Assert.That(person.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(person.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -146,11 +146,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var isActive = true;
             var isDeceased = false;
             var isAdmin = false;
-            var dateCreated = DateTime.Now.AddDays(-1);
+            var createdDate = DateTime.Now.AddDays(-1);
 
             // Act
             var person = new User(firstName, middleName, lastName, userName, pronouns, birthDate, joinedDate,
-                emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, dateCreated);
+                emails, phoneNumbers, addresses, isActive, isDeceased, isAdmin, createdDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -167,13 +167,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(person.IsActive, Is.EqualTo(isActive));
                 Assert.That(person.IsDeceased, Is.EqualTo(isDeceased));
                 Assert.That(person.IsAdmin, Is.EqualTo(isAdmin));
-                Assert.That(person.DateCreated, Is.EqualTo(dateCreated));
+                Assert.That(person.CreatedDate, Is.EqualTo(createdDate));
                 Assert.That(person.IsSuperUser, Is.Null); // Not set in this constructor
             });
         }
 
         [Test, Category("Models")]
-        public void Id_WhenSet_ShouldUpdateDateModified()
+        public void Id_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newId = 999;
@@ -186,13 +186,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(newId));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void FirstName_WhenSet_ShouldUpdateDateModified()
+        public void FirstName_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newFirstName = "Alice";
@@ -205,13 +205,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FirstName, Is.EqualTo(newFirstName));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void FirstName_WhenSetToNull_ShouldUpdateDateModified()
+        public void FirstName_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.FirstName = "Initial";
@@ -224,13 +224,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FirstName, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void MiddleName_WhenSet_ShouldUpdateDateModified()
+        public void MiddleName_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newMiddleName = "Rose";
@@ -243,13 +243,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.MiddleName, Is.EqualTo(newMiddleName));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void MiddleName_WhenSetToNull_ShouldUpdateDateModified()
+        public void MiddleName_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.MiddleName = "Initial";
@@ -262,13 +262,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.MiddleName, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void LastName_WhenSet_ShouldUpdateDateModified()
+        public void LastName_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newLastName = "Johnson";
@@ -281,13 +281,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LastName, Is.EqualTo(newLastName));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void LastName_WhenSetToNull_ShouldUpdateDateModified()
+        public void LastName_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.LastName = "Initial";
@@ -300,8 +300,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LastName, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -405,7 +405,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Pronouns_WhenSet_ShouldUpdateDateModified()
+        public void Pronouns_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newPronouns = Pronouns.TheyThem;
@@ -418,13 +418,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Pronouns, Is.EqualTo(newPronouns));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void BirthDate_WhenSet_ShouldUpdateDateModified()
+        public void BirthDate_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newBirthDate = DateTime.Now.AddYears(-25);
@@ -437,13 +437,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.BirthDate, Is.EqualTo(newBirthDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void joinedDate_WhenSet_ShouldUpdateDateModified()
+        public void joinedDate_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newjoinedDate = DateTime.Now.AddMonths(-3);
@@ -456,13 +456,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.JoinedDate, Is.EqualTo(newjoinedDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void Emails_WhenSet_ShouldUpdateDateModified()
+        public void Emails_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newEmails = new List<Email> { new() };
@@ -475,13 +475,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Emails, Is.EqualTo(newEmails));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void PhoneNumbers_WhenSet_ShouldUpdateDateModified()
+        public void PhoneNumbers_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newPhoneNumbers = new List<PhoneNumber> { new() };
@@ -494,13 +494,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.PhoneNumbers, Is.EqualTo(newPhoneNumbers));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void Addresses_WhenSet_ShouldUpdateDateModified()
+        public void Addresses_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newAddresses = new List<IAddress> { new USAddress() };
@@ -513,13 +513,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Addresses, Is.EqualTo(newAddresses));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void IsActive_WhenSet_ShouldUpdateDateModified()
+        public void IsActive_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newIsActive = true;
@@ -532,13 +532,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsActive, Is.EqualTo(newIsActive));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void IsDeceased_WhenSet_ShouldUpdateDateModified()
+        public void IsDeceased_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newIsDeceased = true;
@@ -551,13 +551,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsDeceased, Is.EqualTo(newIsDeceased));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void IsAdmin_WhenSet_ShouldUpdateDateModified()
+        public void IsAdmin_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newIsAdmin = true;
@@ -570,13 +570,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsAdmin, Is.EqualTo(newIsAdmin));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void IsSuperUser_WhenSet_ShouldUpdateDateModified()
+        public void IsSuperUser_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newIsSuperUser = true;
@@ -589,13 +589,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsSuperUser, Is.EqualTo(newIsSuperUser));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly_AndSetDuringConstruction()
+        public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -607,13 +607,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(person.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(person.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(person.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(person.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_SetsDateCreatedFromParameter()
+        public void JsonConstructor_SetsCreatedDateFromParameter()
         {
             // Arrange
             var specificDate = DateTime.Now.AddDays(-10);
@@ -623,20 +623,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 [], [], [], null, null, null, null, specificDate, null);
 
             // Assert
-            Assert.That(person.DateCreated, Is.EqualTo(specificDate));
+            Assert.That(person.CreatedDate, Is.EqualTo(specificDate));
         }
 
         [Test, Category("Models")]
-        public void DateModified_CanBeSetAndRetrieved()
+        public void ModifiedDate_CanBeSetAndRetrieved()
         {
             // Arrange
-            var dateModified = DateTime.Now.AddHours(-2);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
-            _sut.DateModified = dateModified;
+            _sut.ModifiedDate = modifiedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
         }
 
         [Test, Category("Models")]
@@ -793,7 +793,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Person_MultiplePropertyChanges_ShouldUpdateDateModifiedEachTime()
+        public void Person_MultiplePropertyChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             var initialTime = DateTime.Now;
@@ -801,32 +801,32 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             System.Threading.Thread.Sleep(1); // Ensure time difference
             _sut.Id = 1;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
 
             System.Threading.Thread.Sleep(1);
             _sut.FirstName = "John";
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.LastName = "Doe";
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.Pronouns = Pronouns.HeHim;
-            var fourthModified = _sut.DateModified;
+            var fourthModified = _sut.ModifiedDate;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.DeceasedDate = DateTime.Now.AddYears(-1);
-            var fifthModified = _sut.DateModified;
+            var fifthModified = _sut.ModifiedDate;
             Assert.That(fifthModified, Is.GreaterThan(fourthModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.IsActive = true;
-            var sixthModified = _sut.DateModified;
+            var sixthModified = _sut.ModifiedDate;
             Assert.That(sixthModified, Is.GreaterThan(fifthModified));
         }
 
@@ -1005,7 +1005,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DeceasedDate_WhenSet_ShouldUpdateDateModified()
+        public void DeceasedDate_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newDeceasedDate = DateTime.Now.AddYears(-1);
@@ -1018,13 +1018,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DeceasedDate, Is.EqualTo(newDeceasedDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void DeceasedDate_WhenSetToNull_ShouldUpdateDateModified()
+        public void DeceasedDate_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.DeceasedDate = DateTime.Now.AddYears(-1);
@@ -1037,8 +1037,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DeceasedDate, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -1130,7 +1130,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DeceasedDate_MultipleChanges_ShouldUpdateDateModifiedEachTime()
+        public void DeceasedDate_MultipleChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             var firstDate = DateTime.Now.AddYears(-3);
@@ -1140,21 +1140,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             System.Threading.Thread.Sleep(1);
             _sut.DeceasedDate = firstDate;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
 
             System.Threading.Thread.Sleep(1);
             _sut.DeceasedDate = secondDate;
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.DeceasedDate = thirdDate;
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.DeceasedDate = null;
-            var fourthModified = _sut.DateModified;
+            var fourthModified = _sut.ModifiedDate;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
         }
 
@@ -1184,7 +1184,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void UserName_WhenSet_ShouldUpdateDateModified()
+        public void UserName_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newUserName = "johndoe123";
@@ -1197,13 +1197,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.UserName, Is.EqualTo(newUserName));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void UserName_WhenSetToNull_ShouldUpdateDateModified()
+        public void UserName_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.UserName = "initialUser";
@@ -1216,13 +1216,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.UserName, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void UserName_WhenSetToEmptyString_ShouldUpdateDateModified()
+        public void UserName_WhenSetToEmptyString_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -1234,8 +1234,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.UserName, Is.EqualTo(string.Empty));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -1266,7 +1266,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void UserName_MultipleChanges_ShouldUpdateDateModifiedEachTime()
+        public void UserName_MultipleChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             var initialTime = DateTime.Now;
@@ -1274,17 +1274,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             System.Threading.Thread.Sleep(1);
             _sut.UserName = "user1";
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
 
             System.Threading.Thread.Sleep(1);
             _sut.UserName = "user2";
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.UserName = null;
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
         }
 
@@ -1418,8 +1418,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.IsSuperUser = null;
             Assert.That(_sut.IsSuperUser, Is.Null);
 
-            _sut.DateModified = null;
-            Assert.That(_sut.DateModified, Is.Null);
+            _sut.ModifiedDate = null;
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -1443,7 +1443,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void AllPropertiesUpdate_ShouldUpdateDateModifiedIndependently()
+        public void AllPropertiesUpdate_ShouldUpdateModifiedDateIndependently()
         {
             // Arrange
             var properties = new Dictionary<string, Action>
@@ -1469,15 +1469,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             foreach (var property in properties)
             {
-                var originalDateModified = _sut.DateModified;
+                var originalModifiedDate = _sut.ModifiedDate;
                 System.Threading.Thread.Sleep(1); // Ensure time difference
 
                 property.Value.Invoke();
 
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified), 
-                    $"Property {property.Key} should update DateModified");
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
-                    $"Property {property.Key} should set DateModified to current time");
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate), 
+                    $"Property {property.Key} should update ModifiedDate");
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)), 
+                    $"Property {property.Key} should set ModifiedDate to current time");
             }
         }
 
@@ -1551,7 +1551,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.IsDeceased = null;
             _sut.IsAdmin = null;
             _sut.IsSuperUser = null;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             var json = _sut.ToJson();
@@ -1610,12 +1610,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var id = 1;
             var firstName = "John";
             var lastName = "Doe";
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-1);
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now.AddHours(-1);
             
             // Act - Test that the JsonConstructor works with the proper parameters
             var user = new User(id, firstName, null, lastName, null, null, null, null, null,
-                [], [], [], null, null, null, null, dateCreated, dateModified);
+                [], [], [], null, null, null, null, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -1623,8 +1623,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(user.Id, Is.EqualTo(id));
                 Assert.That(user.FirstName, Is.EqualTo(firstName));
                 Assert.That(user.LastName, Is.EqualTo(lastName));
-                Assert.That(user.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(user.DateModified, Is.EqualTo(dateModified));
+                Assert.That(user.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(user.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -1668,8 +1668,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.IsDeceased, Is.EqualTo(false));
                 Assert.That(result.IsAdmin, Is.EqualTo(true));
                 Assert.That(result.IsSuperUser, Is.EqualTo(false));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -2255,8 +2255,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
         }
@@ -2452,7 +2452,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ExplicitInterfaceProperties_Emails_WithValidInput_ShouldUpdateDateModified()
+        public void ExplicitInterfaceProperties_Emails_WithValidInput_ShouldUpdateModifiedDate()
     {
       // Arrange
       var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
@@ -2465,13 +2465,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
       {
 
         // Assert
-        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         Assert.That(_sut.Emails, Is.Not.Null);
       });
     }
 
     [Test, Category("Models")]
-        public void ExplicitInterfaceProperties_PhoneNumbers_WithValidInput_ShouldUpdateDateModified()
+        public void ExplicitInterfaceProperties_PhoneNumbers_WithValidInput_ShouldUpdateModifiedDate()
     {
       // Arrange
       var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
@@ -2484,13 +2484,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
       {
 
         // Assert
-        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         Assert.That(_sut.PhoneNumbers, Is.Not.Null);
       });
     }
 
     [Test, Category("Models")]
-        public void ExplicitInterfaceProperties_Addresses_WithValidInput_ShouldUpdateDateModified()
+        public void ExplicitInterfaceProperties_Addresses_WithValidInput_ShouldUpdateModifiedDate()
     {
       // Arrange
       var typePerson = (OrganizerCompanion.Core.Interfaces.Type.IPerson)_sut;
@@ -2503,7 +2503,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
       {
 
         // Assert
-        Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+        Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         Assert.That(_sut.Addresses, Is.Not.Null);
       });
     }
@@ -2598,8 +2598,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.LinkedEntityId, Is.EqualTo(0)); // LinkedEntityId is set to 0 in cast
                 Assert.That(result.LinkedEntity, Is.Null); // LinkedEntity is set to null in cast
                 Assert.That(result.LinkedEntityType, Is.Null); // LinkedEntityType is set to null in cast
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -2639,8 +2639,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.LinkedEntityId, Is.EqualTo(0)); // LinkedEntityId is set to 0 in cast
                 Assert.That(result.LinkedEntity, Is.Null); // LinkedEntity is set to null in cast
                 Assert.That(result.LinkedEntityType, Is.Null); // LinkedEntityType is set to null in cast
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -2743,10 +2743,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.IsDeceased = false;
             _sut.IsAdmin = true;
             _sut.IsSuperUser = true;
-            var specificDateCreated = DateTime.Now.AddDays(-100);
-            var specificDateModified = DateTime.Now.AddDays(-50);
+            var specificCreatedDate = DateTime.Now.AddDays(-100);
+            var specificModifiedDate = DateTime.Now.AddDays(-50);
 
-            // Use a User constructor that allows setting DateCreated
+            // Use a User constructor that allows setting CreatedDate
             var userWithDates = new User(
                 999,
                 "Test",
@@ -2764,8 +2764,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 false,
                 true,
                 true,
-                specificDateCreated,
-                specificDateModified
+                specificCreatedDate,
+                specificModifiedDate
             );
 
             // Act
@@ -2790,8 +2790,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.IsDeceased, Is.EqualTo(false));
                 Assert.That(result.IsAdmin, Is.EqualTo(true));
                 Assert.That(result.IsSuperUser, Is.EqualTo(true));
-                Assert.That(result.DateCreated, Is.EqualTo(specificDateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(specificDateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(specificCreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(specificModifiedDate));
                 
                 // Contact-specific properties that should be set to defaults
                 Assert.That(result.Id, Is.EqualTo(0)); // Contact ID is always 0 in cast
@@ -2814,8 +2814,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public IDomainEntity? LinkedEntity { get; set; }
             public int? LinkedEntityId => LinkedEntity?.Id;
             public string? LinkedEntityType => LinkedEntity?.GetType().Name;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }

@@ -12,8 +12,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     internal class GroupShould
     {
         private Group _sut;
-        private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
-        private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+        private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
+        private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
         private List<Contact> _testMembers;
         private Account _testAccount;
 
@@ -68,9 +68,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.Members, Is.Empty);
                 Assert.That(group.AccountId, Is.EqualTo(0));
                 Assert.That(group.Account, Is.Null);
-                Assert.That(group.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(group.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(group.DateModified, Is.Null);
+                Assert.That(group.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(group.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(group.ModifiedDate, Is.Null);
             });
         }
 
@@ -85,8 +85,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: _testMembers,
                 accountId: 123,
                 account: _testAccount,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Assert
@@ -98,8 +98,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.Members, Is.SameAs(_testMembers));
                 Assert.That(group.AccountId, Is.EqualTo(123));
                 Assert.That(group.Account, Is.SameAs(_testAccount));
-                Assert.That(group.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(group.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(group.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(group.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -114,8 +114,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: [],
                 accountId: 0,
                 account: null,
-                dateCreated: _testDateCreated,
-                dateModified: null
+                createdDate: _testCreatedDate,
+                modifiedDate: null
             );
 
             // Assert
@@ -128,8 +128,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.Members, Is.Empty);
                 Assert.That(group.AccountId, Is.EqualTo(0));
                 Assert.That(group.Account, Is.Null);
-                Assert.That(group.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(group.DateModified, Is.Null);
+                Assert.That(group.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(group.ModifiedDate, Is.Null);
             });
         }
 
@@ -160,8 +160,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Members = [contactDto],
                 AccountId = 456,
                 Account = accountDto,
-                DateCreated = DateTime.Now.AddDays(-2),
-                DateModified = DateTime.Now.AddDays(-1)
+                CreatedDate = DateTime.Now.AddDays(-2),
+                ModifiedDate = DateTime.Now.AddDays(-1)
             };
             var beforeCreation = DateTime.Now;
 
@@ -180,10 +180,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
                 Assert.That(_sut.Account, Is.Not.Null);
                 Assert.That(_sut.Account!.Id, Is.EqualTo(dto.Account!.Id));
-                // DateCreated should be set to current time, not DTO's DateCreated
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                // CreatedDate should be set to current time, not DTO's CreatedDate
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -212,10 +212,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.Members, Is.Empty);
                 Assert.That(_sut.AccountId, Is.EqualTo(dto.AccountId));
                 Assert.That(_sut.Account, Is.Null);
-                // DateCreated should be set to current time
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                // CreatedDate should be set to current time
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -556,37 +556,37 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly()
+        public void CreatedDate_IsReadOnly()
         {
             // Arrange
-            var originalDateCreated = _sut.DateCreated;
+            var originalCreatedDate = _sut.CreatedDate;
 
             // Act - Property should be read-only, so we can only verify the getter works
-            var dateCreated = _sut.DateCreated;
+            var createdDate = _sut.CreatedDate;
 
             // Assert
-            Assert.That(dateCreated, Is.EqualTo(originalDateCreated));
-            // Note: DateCreated is set in constructor and should not change
+            Assert.That(createdDate, Is.EqualTo(originalCreatedDate));
+            // Note: CreatedDate is set in constructor and should not change
         }
 
         [Test, Category("Models")]
-        public void DateModified_GetSet_WorksCorrectly()
+        public void ModifiedDate_GetSet_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.DateModified = _testDateModified;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(_testDateModified));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(_testModifiedDate));
         }
 
         [Test, Category("Models")]
-        public void DateModified_SetNull_WorksCorrectly()
+        public void ModifiedDate_SetNull_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         #endregion
@@ -637,10 +637,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
                 Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         [Test, Category("Models")]
@@ -660,10 +660,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Is.Empty);
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         #endregion
@@ -680,8 +680,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
             _sut.Account = null; // Set to null to avoid casting issues
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = _testDateModified;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Act
             var groupDTO = _sut.Cast<GroupDTO>();
@@ -700,8 +700,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.Members[1], Is.InstanceOf<ContactDTO>());
                 Assert.That(groupDTO.AccountId, Is.EqualTo(123));
                 Assert.That(groupDTO.Account, Is.Null);
-                Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(groupDTO.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(groupDTO.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(groupDTO.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -715,8 +715,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = _testMembers;
             _sut.AccountId = 456;
             _sut.Account = null; // Set to null to avoid casting issues
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = _testDateModified;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Act
             var groupDTO = _sut.Cast<IGroupDTO>();
@@ -731,8 +731,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.GroupName, Is.EqualTo("Interface Test Group"));
                 Assert.That(groupDTO.Description, Is.EqualTo("Interface Test Description"));
                 Assert.That(groupDTO.AccountId, Is.EqualTo(456));
-                Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(groupDTO.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(groupDTO.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(groupDTO.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -755,8 +755,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = [];
             _sut.AccountId = 789;
             _sut.Account = null;
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = null;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = null;
 
             // Act
             var groupDTO = _sut.Cast<GroupDTO>();
@@ -772,8 +772,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.Members, Is.Empty);
                 Assert.That(groupDTO.AccountId, Is.EqualTo(789));
                 Assert.That(groupDTO.Account, Is.Null);
-                Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(groupDTO.DateModified, Is.Null);
+                Assert.That(groupDTO.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(groupDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -787,8 +787,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
             _sut.Account = null;
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = _testDateModified;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Act
             var groupDTO = _sut.Cast<GroupDTO>();
@@ -805,8 +805,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(groupDTO.Members, Has.Count.EqualTo(2));
                 Assert.That(groupDTO.AccountId, Is.EqualTo(123));
                 Assert.That(groupDTO.Account, Is.Null);
-                Assert.That(groupDTO.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(groupDTO.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(groupDTO.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(groupDTO.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -824,8 +824,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = _testMembers;
             _sut.AccountId = 123;
             _sut.Account = null; // Set to null to avoid serialization issues with Account's not-implemented properties
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = _testDateModified;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Act
             var json = _sut.ToJson();
@@ -855,7 +855,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = [];
             _sut.AccountId = 0;
             _sut.Account = null;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             var json = _sut.ToJson();
@@ -896,14 +896,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #endregion
 
-        #region DateModified Update Tests
+        #region ModifiedDate Update Tests
 
         [Test, Category("Models")]
-        public void IGroup_Members_Set_UpdatesDateModified_WhenNull()
+        public void IGroup_Members_Set_UpdatesModifiedDate_WhenNull()
         {
             // Arrange
             var beforeModified = DateTime.Now;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
             var groupInterface = (IGroup)_sut;
             var interfaceMembers = _testMembers.Cast<IContact>().ToList();
 
@@ -912,16 +912,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var afterModified = DateTime.Now;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         [Test, Category("Models")]
-        public void IGroup_Members_Set_UpdatesDateModified_WhenAlreadySet()
+        public void IGroup_Members_Set_UpdatesModifiedDate_WhenAlreadySet()
         {
             // Arrange
-            _sut.DateModified = _testDateModified;
+            _sut.ModifiedDate = _testModifiedDate;
             var beforeSet = DateTime.Now;
             var groupInterface = (IGroup)_sut;
             var interfaceMembers = _testMembers.Cast<IContact>().ToList();
@@ -931,10 +931,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var afterSet = DateTime.Now;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.Not.EqualTo(_testDateModified));
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(_testModifiedDate));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
         }
 
         #endregion
@@ -954,8 +954,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: _testMembers,
                 accountId: 456,
                 account: _testAccount,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Assert - Verify that the object is created correctly and unused parameters don't affect it
@@ -967,8 +967,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(group.Members, Is.SameAs(_testMembers));
                 Assert.That(group.AccountId, Is.EqualTo(456));
                 Assert.That(group.Account, Is.SameAs(_testAccount));
-                Assert.That(group.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(group.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(group.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(group.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -1004,8 +1004,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: _testMembers,
                 accountId: 123,
                 account: null, // Avoid potential serialization cycles
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Act & Assert - Multiple serialization calls should work consistently
@@ -1051,8 +1051,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: _testMembers,
                 accountId: account.Id,
                 account: account,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Act - Cast to different supported types
@@ -1101,7 +1101,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Set initial members
             groupInterface.Members = _testMembers.Cast<IContact>().ToList();
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Has.Count.EqualTo(2));
@@ -1112,7 +1112,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Replace with additional members
             groupInterface.Members = additionalMembers.Cast<IContact>().ToList();
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Has.Count.EqualTo(2));
@@ -1125,7 +1125,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             
             // Clear members
             groupInterface.Members = [];
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Has.Count.EqualTo(0));
@@ -1147,8 +1147,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Members = _testMembers,
                 AccountId = 123,
                 Account = null, // Set to null to avoid casting issues
-                DateCreated = _testDateCreated,
-                DateModified = _testDateModified
+                CreatedDate = _testCreatedDate,
+                ModifiedDate = _testModifiedDate
             };
 
             // Act
@@ -1177,8 +1177,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Members = _testMembers;
             _sut.AccountId = 999;
             _sut.Account = null;
-            _sut.DateCreated = _testDateCreated;
-            _sut.DateModified = _testDateModified;
+            _sut.CreatedDate = _testCreatedDate;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Act
             var json = _sut.ToJson();
@@ -1210,7 +1210,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(defaultGroup, Is.Not.Null);
-                Assert.That(defaultGroup.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(defaultGroup.CreatedDate, Is.Not.EqualTo(default(DateTime)));
                 Assert.That(defaultGroup.Members, Is.Not.Null);
                 Assert.That(defaultGroup.Members, Is.Empty);
             });
@@ -1223,8 +1223,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 members: _testMembers,
                 accountId: 789,
                 account: null, // Set to null to avoid casting issues in Cast method
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
             
             // Verify comprehensive properties
@@ -1236,8 +1236,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(comprehensiveGroup.Members, Is.SameAs(_testMembers));
                 Assert.That(comprehensiveGroup.AccountId, Is.EqualTo(789));
                 Assert.That(comprehensiveGroup.Account, Is.Null);
-                Assert.That(comprehensiveGroup.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(comprehensiveGroup.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(comprehensiveGroup.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(comprehensiveGroup.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
             
             // Test all property setters
@@ -1247,7 +1247,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             defaultGroup.Members = _testMembers;
             defaultGroup.AccountId = 999;
             defaultGroup.Account = null; // Set to null to avoid casting issues
-            defaultGroup.DateModified = DateTime.Now;
+            defaultGroup.ModifiedDate = DateTime.Now;
             
             Assert.Multiple(() =>
             {
@@ -1257,7 +1257,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultGroup.Members, Is.SameAs(_testMembers));
                 Assert.That(defaultGroup.AccountId, Is.EqualTo(999));
                 Assert.That(defaultGroup.Account, Is.Null);
-                Assert.That(defaultGroup.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(defaultGroup.CreatedDate, Is.Not.EqualTo(default(DateTime)));
             });
             
             // Test Cast functionality
@@ -1340,8 +1340,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 ],
                 AccountId = 123,
                 Account = null,
-                DateCreated = _testDateCreated,
-                DateModified = _testDateModified
+                CreatedDate = _testCreatedDate,
+                ModifiedDate = _testModifiedDate
             };
 
             // Act
@@ -1361,9 +1361,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateCreated_AutoProperty_ShouldBeSetInDefaultConstructor()
+        public void CreatedDate_AutoProperty_ShouldBeSetInDefaultConstructor()
         {
-            // Test that DateCreated is automatically set in default constructor
+            // Test that CreatedDate is automatically set in default constructor
             
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -1375,9 +1375,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(group.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(group.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(group.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(group.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(group.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(group.CreatedDate, Is.Not.EqualTo(default(DateTime)));
             });
         }
 
@@ -1412,7 +1412,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.GroupName = new string('A', 10000); // Very long name
             _sut.Description = new string('B', 10000); // Very long description
             _sut.AccountId = int.MaxValue;
-            _sut.DateModified = DateTime.MaxValue;
+            _sut.ModifiedDate = DateTime.MaxValue;
             
             // Assert
             Assert.Multiple(() =>
@@ -1421,7 +1421,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.GroupName, Has.Length.EqualTo(10000));
                 Assert.That(_sut.Description, Has.Length.EqualTo(10000));
                 Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));
-                Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
             });
             
             // Test that these extreme values can be serialized

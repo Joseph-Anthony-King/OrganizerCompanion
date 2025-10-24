@@ -42,9 +42,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.ExpirationDate, Is.Null);
                 Assert.That(_sut.AccountId, Is.EqualTo(0));
                 Assert.That(_sut.Account, Is.Null);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -58,8 +58,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var previousPasswords = new List<string> { "OldPassword1", "OldPassword2" };
             var accountId = 456;
             IAccount? account = null; // Using null as we don't have concrete implementation
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now.AddHours(-2);
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
             var password = new Password(
@@ -69,8 +69,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 previousPasswords, 
                 accountId, 
                 account, 
-                dateCreated, 
-                dateModified);
+                createdDate, 
+                modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -83,8 +83,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(password.PreviousPasswords, Contains.Item("OldPassword1"));
                 Assert.That(password.AccountId, Is.EqualTo(accountId));
                 Assert.That(password.Account, Is.EqualTo(account));
-                Assert.That(password.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(password.DateModified, Is.EqualTo(dateModified));
+                Assert.That(password.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(password.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -110,13 +110,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(password.PreviousPasswords, Is.Empty);
                 Assert.That(password.Account, Is.EqualTo(account));
                 Assert.That(password.AccountId, Is.EqualTo(0)); // Should be 0 when account is null
-                Assert.That(password.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(password.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(password.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(password.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("Models")]
-        public void Id_WhenSet_ShouldUpdateDateModified()
+        public void Id_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newId = 999;
@@ -129,13 +129,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(newId));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void PasswordValue_WhenSet_ShouldUpdateDateModified()
+        public void PasswordValue_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newPassword = "NewSecurePassword456!";
@@ -148,8 +148,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 // Can't access PasswordValue due to implementation bug, so we test other properties
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
                 Assert.That(_sut.ExpirationDate, Is.Not.Null);
                 Assert.That(_sut.ExpirationDate, Is.GreaterThanOrEqualTo(beforeSet.AddMonths(3)));
                 Assert.That(_sut.ExpirationDate, Is.LessThanOrEqualTo(DateTime.Now.AddMonths(3)));
@@ -157,7 +157,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void PasswordValue_WhenSetToNull_ShouldUpdateDateModified()
+        public void PasswordValue_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.PasswordValue = "InitialPassword";
@@ -170,8 +170,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 // Can't access PasswordValue due to implementation bug, so we test other properties  
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
                 Assert.That(_sut.ExpirationDate, Is.Not.Null);
                 Assert.That(_sut.ExpirationDate, Is.GreaterThanOrEqualTo(beforeSet.AddMonths(3)));
                 Assert.That(_sut.ExpirationDate, Is.LessThanOrEqualTo(DateTime.Now.AddMonths(3)));
@@ -363,7 +363,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void PasswordHint_WhenSet_ShouldUpdateDateModified()
+        public void PasswordHint_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newHint = "Think of your pet's name";
@@ -376,13 +376,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.PasswordHint, Is.EqualTo(newHint));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void PasswordHint_WhenSetToNull_ShouldUpdateDateModified()
+        public void PasswordHint_WhenSetToNull_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut.PasswordHint = "Initial hint";
@@ -395,13 +395,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.PasswordHint, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void AccountId_WhenSet_ShouldUpdateDateModified()
+        public void AccountId_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var newAccountId = 789;
@@ -414,13 +414,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.AccountId, Is.EqualTo(newAccountId));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void Account_WhenSet_ShouldUpdateDateModified()
+        public void Account_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             IAccount? newAccount = null; // Using null as we don't have concrete implementation
@@ -433,13 +433,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Account, Is.EqualTo(newAccount));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly_AndSetDuringConstruction()
+        public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -451,13 +451,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(password.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(password.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(password.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(password.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_SetsDateCreatedFromParameter()
+        public void JsonConstructor_SetsCreatedDateFromParameter()
         {
             // Arrange
             var specificDate = DateTime.Now.AddDays(-10);
@@ -466,20 +466,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var password = new Password(1, "test", "hint", [], 1, null, specificDate, null);
 
             // Assert
-            Assert.That(password.DateCreated, Is.EqualTo(specificDate));
+            Assert.That(password.CreatedDate, Is.EqualTo(specificDate));
         }
 
         [Test, Category("Models")]
-        public void DateModified_CanBeSetAndRetrieved()
+        public void ModifiedDate_CanBeSetAndRetrieved()
         {
             // Arrange
-            var dateModified = DateTime.Now.AddHours(-2);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
-            _sut.DateModified = dateModified;
+            _sut.ModifiedDate = modifiedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
         }
 
         [Test, Category("Models")]
@@ -537,7 +537,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Password_MultiplePropertyChanges_ShouldUpdateDateModifiedEachTime()
+        public void Password_MultiplePropertyChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             var initialTime = DateTime.Now;
@@ -545,27 +545,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             System.Threading.Thread.Sleep(1); // Ensure time difference
             _sut.Id = 1;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
 
             System.Threading.Thread.Sleep(1);
             _sut.PasswordValue = "NewPassword";
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.PasswordHint = "New Hint";
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.AccountId = 123;
-            var fourthModified = _sut.DateModified;
+            var fourthModified = _sut.ModifiedDate;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.Account = null;
-            var fifthModified = _sut.DateModified;
+            var fifthModified = _sut.ModifiedDate;
             Assert.That(fifthModified, Is.GreaterThan(fourthModified));
         }
 
@@ -1011,7 +1011,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DefaultConstructor_DateCreated_ShouldBeSetToConstructionTime()
+        public void DefaultConstructor_CreatedDate_ShouldBeSetToConstructionTime()
         {
             // Arrange
             var beforeConstruction = DateTime.Now;
@@ -1023,9 +1023,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(password.DateCreated, Is.GreaterThanOrEqualTo(beforeConstruction));
-                Assert.That(password.DateCreated, Is.LessThanOrEqualTo(afterConstruction));
-                Assert.That(password.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(password.CreatedDate, Is.GreaterThanOrEqualTo(beforeConstruction));
+                Assert.That(password.CreatedDate, Is.LessThanOrEqualTo(afterConstruction));
+                Assert.That(password.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -1039,13 +1039,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var previousPasswords = new List<string> { "Prev1", "Prev2" };
             var accountId = 888;
             var account = new MockAccount { Id = 777 };
-            var dateCreated = DateTime.Now.AddDays(-10);
-            var dateModified = DateTime.Now.AddHours(-5);
+            var createdDate = DateTime.Now.AddDays(-10);
+            var modifiedDate = DateTime.Now.AddHours(-5);
 
             // Act
             var password = new Password(
                 id, passwordValue, passwordHint, previousPasswords,
-                accountId, account, dateCreated, dateModified);
+                accountId, account, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -1056,8 +1056,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(password.PreviousPasswords, Is.EqualTo(previousPasswords));
                 Assert.That(password.AccountId, Is.EqualTo(accountId));
                 Assert.That(password.Account, Is.EqualTo(account));
-                Assert.That(password.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(password.DateModified, Is.EqualTo(dateModified));
+                Assert.That(password.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(password.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -1104,8 +1104,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 previousPasswords: null,
                 accountId: 456,
                 account: null,
-                dateCreated: DateTime.Now.AddDays(-1),
-                dateModified: null);
+                createdDate: DateTime.Now.AddDays(-1),
+                modifiedDate: null);
 
             // Assert
             Assert.Multiple(() =>
@@ -1117,7 +1117,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(password.PreviousPasswords, Is.Empty);
                 Assert.That(password.AccountId, Is.EqualTo(456));
                 Assert.That(password.Account, Is.Null);
-                Assert.That(password.DateModified, Is.Null);
+                Assert.That(password.ModifiedDate, Is.Null);
             });
         }
 
@@ -1167,16 +1167,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateModified_WhenSetToSpecificValue_ShouldRetainValue()
+        public void ModifiedDate_WhenSetToSpecificValue_ShouldRetainValue()
         {
             // Arrange
             var specificDate = DateTime.Now.AddDays(-5);
 
             // Act
-            _sut.DateModified = specificDate;
+            _sut.ModifiedDate = specificDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(specificDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(specificDate));
         }
 
         [Test, Category("Models")]
@@ -1210,8 +1210,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public List<IAccountFeature> Features { get; set; } = [];
             public int? MainAccountId { get; set; }
             public List<ISubAccount>? Accounts { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }

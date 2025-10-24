@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -16,7 +17,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
-        private string _name = string.Empty;
+        private string _projectAssignmentName = string.Empty;
         private string? _description = null;
         private SubAccount? _assignee = null;
         private int? _locationId = null;
@@ -26,9 +27,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int? _taskId = null;
         private ProjectTask? _task = null;
         private bool _isCompleted = false;
-        private DateTime? _dateDue = null;
-        private DateTime? _dateCompleted = null;
-        private DateTime _dateCreated = DateTime.Now;
+        private DateTime? _dueDate = null;
+        private DateTime? _completedDate = null;
+        private DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
@@ -40,7 +41,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _assignee = (SubAccount?)value;
-                DateModified = DateTime.UtcNow;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -51,7 +52,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _location = value!;
-                DateModified = DateTime.UtcNow;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -70,6 +71,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
+        [Key]
+        [Column("ProjectAssignmentId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -82,23 +85,23 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name
+        [Required, JsonPropertyName("projectAssignmentName"), MinLength(1, ErrorMessage = "ProjectAssignmentName must be at least 1 character long."), MaxLength(100, ErrorMessage = "ProjectAssignmentName cannot exceed 100 characters.")]
+        public string ProjectAssignmentName
         {
-            get => _name;
+            get => _projectAssignmentName;
             set
             {
                 if (value.Length < 1 || value.Length > 100)
                 {
-                    throw new ArgumentException("Name must be between 1 and 100 characters long.", nameof(Name));
+                    throw new ArgumentException("ProjectAssignmentName must be between 1 and 100 characters long.", nameof(ProjectAssignmentName));
                 }
 
-                _name = value;
-                DateModified = DateTime.Now;
+                _projectAssignmentName = value;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -114,7 +117,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _description = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -124,6 +127,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _assignee?.Id;
         }
 
+        [ForeignKey(nameof(AssigneeId))]
         [JsonPropertyName("assignee"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public SubAccount? Assignee
         {
@@ -131,7 +135,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _assignee = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -147,7 +151,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _locationId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -158,10 +162,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _locationType = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
+        [NotMapped]
         [JsonPropertyName("location"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public IAddress? Location
         {
@@ -169,10 +174,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _location = value!;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("groups")]
         public List<Group>? Groups
         {
@@ -181,7 +187,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _groups ??= [];
                 _groups = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -197,10 +203,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _taskId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
+        [ForeignKey(nameof(TaskId))]
         [JsonPropertyName("task")]
         public ProjectTask? Task
         {
@@ -208,7 +215,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _task = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -220,47 +227,48 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _isCompleted = value;
 
-                _dateCompleted = value ? DateTime.Now : null;
+                _completedDate = value ? DateTime.Now : null;
 
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateDue")]
-        public DateTime? DateDue
+        [Required, JsonPropertyName("dueDate")]
+        public DateTime? DueDate
         {
-            get => _dateDue;
+            get => _dueDate;
             set
             {
-                _dateDue = value;
-                DateModified = DateTime.Now;
+                _dueDate = value;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateCompleted")]
-        public DateTime? DateCompleted
+        [NotMapped]
+        [Required, JsonPropertyName("completedDate")]
+        public DateTime? CompletedDate
         {
-            get => _dateCompleted;
+            get => _completedDate;
             set
             {
-                _dateCompleted = value;
-                DateModified = DateTime.Now;
+                _completedDate = value;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate
         {
-            get => _dateCreated;
+            get => _createdDate;
             set
             {
-                _dateCreated = value;
-                DateModified = DateTime.Now;
+                _createdDate = value;
+                ModifiedDate = DateTime.Now;
             }
         }
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -279,13 +287,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             int? taskId,
             ProjectTask? task,
             bool isCompleted,
-            DateTime? dateDue,
-            DateTime? dateCompleted,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime? dueDate,
+            DateTime? completedDate,
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
-            _name = name;
+            _projectAssignmentName = name;
             _description = description;
             _assignee = assignee;
             _locationId = locationId;
@@ -295,16 +303,16 @@ namespace OrganizerCompanion.Core.Models.Domain
             _taskId = taskId;
             _task = task;
             _isCompleted = isCompleted;
-            _dateDue = dateDue;
-            _dateCompleted = dateCompleted;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _dueDate = dueDate;
+            _completedDate = completedDate;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public ProjectAssignment(IProjectAssignmentDTO assignment)
         {
             _id = assignment.Id;
-            _name = assignment.Name;
+            _projectAssignmentName = assignment.ProjectAssignmentName;
             _description = assignment.Description;
             _assignee = (SubAccount?)assignment.Assignee;
             _locationId = assignment.LocationId;
@@ -314,10 +322,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             _taskId = assignment.TaskId;
             _task = (ProjectTask?)assignment.Task;
             _isCompleted = assignment.IsCompleted;
-            _dateDue = assignment.DateDue;
-            _dateCompleted = assignment.DateCompleted;
-            _dateCreated = assignment.DateCreated;
-            DateModified = assignment.DateModified;
+            _dueDate = assignment.DueDate;
+            _completedDate = assignment.CompletedDate;
+            _createdDate = assignment.CreatedDate;
+            ModifiedDate = assignment.ModifiedDate;
         }
         #endregion
 
@@ -330,7 +338,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 {
                     var dto = new ProjectAssignmentDTO(
                         Id,
-                        Name,
+                        ProjectAssignmentName,
                         Description,
                         Assignee?.Cast<SubAccountDTO>(),
                         LocationId,
@@ -340,10 +348,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                         TaskId,
                         Task!.Cast<ProjectTaskDTO>(),
                         IsCompleted,
-                        DateDue,
-                        DateCompleted,
-                        DateCreated,
-                        DateModified
+                        DueDate,
+                        CompletedDate,
+                        CreatedDate,
+                        ModifiedDate
                     );
 
                     return (T)(object)dto;
@@ -361,7 +369,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}.IsCompleted:{2}", _id, _name, _isCompleted);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}.IsCompleted:{2}", _id, _projectAssignmentName, _isCompleted);
         #endregion
     }
 }

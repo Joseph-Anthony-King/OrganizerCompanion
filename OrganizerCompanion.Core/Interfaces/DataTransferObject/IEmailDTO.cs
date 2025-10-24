@@ -1,8 +1,8 @@
-﻿using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IEmailDTO : IDomainEntity, Type.IEmail
+    public interface IEmailDTO : IDomainEntity, Type.IEmail
     {
         bool IsConfirmed { get; set; }
     }

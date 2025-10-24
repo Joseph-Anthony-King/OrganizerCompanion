@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Models.Domain;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -16,14 +16,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private class TestProjectTaskDTO : IProjectTaskDTO
         {
             public int Id { get; set; }
-            public string Name { get; set; } = string.Empty;
+            public string ProjectTaskName { get; set; } = string.Empty;
             public string? Description { get; set; }
             public List<IProjectAssignmentDTO>? Assignments { get; set; }
             public bool IsCompleted { get; set; }
-            public DateTime? DateDue { get; set; }
-            public DateTime? DateCompleted { get; private set; }
-            public DateTime DateCreated { get; private set; } = DateTime.UtcNow;
-            public DateTime? DateModified { get; set; }
+            public DateTime? DueDate { get; set; }
+            public DateTime? CompletedDate { get; private set; }
+            public DateTime CreatedDate { get; private set; } = DateTime.UtcNow;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => throw new NotImplementedException();
@@ -47,14 +47,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
-                Assert.That(_sut.Name, Is.EqualTo(string.Empty));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(string.Empty));
                 Assert.That(_sut.Description, Is.Null);
                 Assert.That(_sut.Assignments, Is.Null);
                 Assert.That(_sut.IsCompleted, Is.False);
-                Assert.That(_sut.DateDue, Is.Null);
-                Assert.That(_sut.DateCompleted, Is.Null);
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.DueDate, Is.Null);
+                Assert.That(_sut.CompletedDate, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -67,26 +67,26 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var description = "Test Description";
             var assignments = new List<ProjectAssignment>();
             var isCompleted = true;
-            var dateDue = DateTime.Now.AddDays(7);
-            var dateCompleted = DateTime.Now;
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now;
+            var dueDate = DateTime.Now.AddDays(7);
+            var completedDate = DateTime.Now;
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now;
 
             // Act
-            _sut = new ProjectTask(id, name, description, assignments, isCompleted, dateDue, dateCompleted, dateCreated, dateModified);
+            _sut = new ProjectTask(id, name, description, assignments, isCompleted, dueDate, completedDate, createdDate, modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(id));
-                Assert.That(_sut.Name, Is.EqualTo(name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(name));
                 Assert.That(_sut.Description, Is.EqualTo(description));
                 Assert.That(_sut.Assignments, Is.EqualTo(assignments));
                 Assert.That(_sut.IsCompleted, Is.EqualTo(isCompleted));
-                Assert.That(_sut.DateDue, Is.EqualTo(dateDue));
-                Assert.That(_sut.DateCompleted, Is.EqualTo(dateCompleted));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+                Assert.That(_sut.DueDate, Is.EqualTo(dueDate));
+                Assert.That(_sut.CompletedDate, Is.EqualTo(completedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -96,23 +96,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var id = 2;
             var name = "Another Task";
-            var dateCreated = DateTime.Now;
+            var createdDate = DateTime.Now;
 
             // Act
-            _sut = new ProjectTask(id, name, null, null, false, null, null, dateCreated, null);
+            _sut = new ProjectTask(id, name, null, null, false, null, null, createdDate, null);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(id));
-                Assert.That(_sut.Name, Is.EqualTo(name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(name));
                 Assert.That(_sut.Description, Is.Null);
                 Assert.That(_sut.Assignments, Is.Null);
                 Assert.That(_sut.IsCompleted, Is.False);
-                Assert.That(_sut.DateDue, Is.Null);
-                Assert.That(_sut.DateCompleted, Is.Null);
-                Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.DueDate, Is.Null);
+                Assert.That(_sut.CompletedDate, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -123,16 +123,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new ProjectTaskDTO
             {
                 Id = 1,
-                Name = "DTO Task",
+                ProjectTaskName = "DTO Task",
                 Description = "DTO Description",
                 Assignments = new List<ProjectAssignmentDTO>
                 {
-                    new ProjectAssignmentDTO { Id = 1, Name = "Assignment 1", Groups = new List<GroupDTO>() },
-                    new ProjectAssignmentDTO { Id = 2, Name = "Assignment 2", Groups = new List<GroupDTO>() }
+                    new ProjectAssignmentDTO { Id = 1, ProjectAssignmentName = "Assignment 1", Groups = new List<GroupDTO>() },
+                    new ProjectAssignmentDTO { Id = 2, ProjectAssignmentName = "Assignment 2", Groups = new List<GroupDTO>() }
                 },
                 IsCompleted = true,
-                DateDue = DateTime.Now.AddDays(7),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(7),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -142,15 +142,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(dto.Id));
-                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(dto.ProjectTaskName));
                 Assert.That(_sut.Description, Is.EqualTo(dto.Description));
                 Assert.That(_sut.Assignments, Is.Not.Null);
                 Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
                 Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
-                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(_sut.CompletedDate, Is.EqualTo(dto.CompletedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -162,12 +162,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectTaskDTO
             {
                 Id = 2,
-                Name = "DTO Task No Assignments",
+                ProjectTaskName = "DTO Task No Assignments",
                 Description = "DTO Description",
                 Assignments = null,
                 IsCompleted = false,
-                DateDue = null,
-                DateModified = null
+                DueDate = null,
+                ModifiedDate = null
             };
 
             // Act
@@ -177,14 +177,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(dto.Id));
-                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(dto.ProjectTaskName));
                 Assert.That(_sut.Description, Is.EqualTo(dto.Description));
                 Assert.That(_sut.Assignments, Is.Null);
                 Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
-                Assert.That(_sut.DateDue, Is.Null);
-                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.DueDate, Is.Null);
+                Assert.That(_sut.CompletedDate, Is.EqualTo(dto.CompletedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -195,12 +195,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new ProjectTaskDTO
             {
                 Id = 3,
-                Name = "DTO Task Empty Assignments",
+                ProjectTaskName = "DTO Task Empty Assignments",
                 Description = "DTO Description",
                 Assignments = new List<ProjectAssignmentDTO>(),
                 IsCompleted = false,
-                DateDue = DateTime.Now.AddDays(14),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(14),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -210,15 +210,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(dto.Id));
-                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(dto.ProjectTaskName));
                 Assert.That(_sut.Description, Is.EqualTo(dto.Description));
                 Assert.That(_sut.Assignments, Is.Not.Null);
                 Assert.That(_sut.Assignments, Is.Empty);
                 Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
-                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(_sut.CompletedDate, Is.EqualTo(dto.CompletedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -229,12 +229,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectTaskDTO
             {
                 Id = 4,
-                Name = "DTO Task No Description",
+                ProjectTaskName = "DTO Task No Description",
                 Description = null,
                 Assignments = null,
                 IsCompleted = true,
-                DateDue = DateTime.Now.AddDays(3),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(3),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -244,14 +244,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(dto.Id));
-                Assert.That(_sut.Name, Is.EqualTo(dto.Name));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo(dto.ProjectTaskName));
                 Assert.That(_sut.Description, Is.Null);
                 Assert.That(_sut.Assignments, Is.Null);
                 Assert.That(_sut.IsCompleted, Is.EqualTo(dto.IsCompleted));
-                Assert.That(_sut.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(_sut.DateCompleted, Is.EqualTo(dto.DateCompleted));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(_sut.CompletedDate, Is.EqualTo(dto.CompletedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -262,12 +262,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectTaskDTO
             {
                 Id = 0,
-                Name = "A", // Minimum valid name
+                ProjectTaskName = "A", // Minimum valid name
                 Description = null,
                 Assignments = null,
                 IsCompleted = false,
-                DateDue = null,
-                DateModified = null
+                DueDate = null,
+                ModifiedDate = null
             };
 
             // Act
@@ -277,14 +277,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(0));
-                Assert.That(_sut.Name, Is.EqualTo("A"));
+                Assert.That(_sut.ProjectTaskName, Is.EqualTo("A"));
                 Assert.That(_sut.Description, Is.Null);
                 Assert.That(_sut.Assignments, Is.Null);
                 Assert.That(_sut.IsCompleted, Is.False);
-                Assert.That(_sut.DateDue, Is.Null);
-                Assert.That(_sut.DateCompleted, Is.Null);
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.DueDate, Is.Null);
+                Assert.That(_sut.CompletedDate, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -333,7 +333,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Id_WhenSet_ShouldUpdateDateModified()
+        public void Id_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
@@ -342,8 +342,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Id = 1;
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
@@ -357,10 +357,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var name = "Valid Task Name";
 
             // Act
-            _sut.Name = name;
+            _sut.ProjectTaskName = name;
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(name));
+            Assert.That(_sut.ProjectTaskName, Is.EqualTo(name));
         }
 
         [Test, Category("Models")]
@@ -370,10 +370,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var name = new string('A', 100);
 
             // Act
-            _sut.Name = name;
+            _sut.ProjectTaskName = name;
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(name));
+            Assert.That(_sut.ProjectTaskName, Is.EqualTo(name));
         }
 
         [Test, Category("Models")]
@@ -383,31 +383,31 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var name = "A";
 
             // Act
-            _sut.Name = name;
+            _sut.ProjectTaskName = name;
 
             // Assert
-            Assert.That(_sut.Name, Is.EqualTo(name));
+            Assert.That(_sut.ProjectTaskName, Is.EqualTo(name));
         }
 
         [Test, Category("Models")]
         public void Name_WhenSetToNull_ShouldThrowArgumentException()
         {
             // Arrange, Act & Assert
-            Assert.Throws<ArgumentException>(() => _sut.Name = null!);
+            Assert.Throws<ArgumentException>(() => _sut.ProjectTaskName = null!);
         }
 
         [Test, Category("Models")]
         public void Name_WhenSetToEmptyString_ShouldThrowArgumentException()
         {
             // Arrange, Act & Assert
-            Assert.Throws<ArgumentException>(() => _sut.Name = string.Empty);
+            Assert.Throws<ArgumentException>(() => _sut.ProjectTaskName = string.Empty);
         }
 
         [Test, Category("Models")]
         public void Name_WhenSetToWhitespace_ShouldThrowArgumentException()
         {
             // Arrange, Act & Assert
-            Assert.Throws<ArgumentException>(() => _sut.Name = "   ");
+            Assert.Throws<ArgumentException>(() => _sut.ProjectTaskName = "   ");
         }
 
         [Test, Category("Models")]
@@ -417,21 +417,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var name = new string('A', 101);
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _sut.Name = name);
+            Assert.Throws<ArgumentException>(() => _sut.ProjectTaskName = name);
         }
 
         [Test, Category("Models")]
-        public void Name_WhenSet_ShouldUpdateDateModified()
+        public void Name_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
             
             // Act
-            _sut.Name = "Test Name";
+            _sut.ProjectTaskName = "Test Name";
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
@@ -509,7 +509,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Description_WhenSet_ShouldUpdateDateModified()
+        public void Description_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
@@ -518,8 +518,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Description = "Test Description";
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
@@ -532,8 +532,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var assignments = new List<ProjectAssignment>
             {
-                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
-                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
+                new ProjectAssignment { Id = 1, ProjectAssignmentName = "Assignment 1" },
+                new ProjectAssignment { Id = 2, ProjectAssignmentName = "Assignment 2" }
             };
 
             // Act
@@ -567,7 +567,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Assignments_WhenSet_ShouldUpdateDateModified()
+        public void Assignments_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
@@ -577,8 +577,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.Assignments = assignments;
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
@@ -606,7 +606,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsCompleted_WhenSet_ShouldUpdateDateModified()
+        public void IsCompleted_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
@@ -615,94 +615,94 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.IsCompleted = true;
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
 
-        #region DateDue Property Tests
+        #region DueDate Property Tests
 
         [Test, Category("Models")]
-        public void DateDue_WhenSetToValidDate_ShouldReturnCorrectValue()
+        public void DueDate_WhenSetToValidDate_ShouldReturnCorrectValue()
         {
             // Arrange
-            var dateDue = DateTime.Now.AddDays(7);
+            var dueDate = DateTime.Now.AddDays(7);
 
             // Act
-            _sut.DateDue = dateDue;
+            _sut.DueDate = dueDate;
 
             // Assert
-            Assert.That(_sut.DateDue, Is.EqualTo(dateDue));
+            Assert.That(_sut.DueDate, Is.EqualTo(dueDate));
         }
 
         [Test, Category("Models")]
-        public void DateDue_WhenSetToNull_ShouldReturnNull()
+        public void DueDate_WhenSetToNull_ShouldReturnNull()
         {
             // Arrange & Act
-            _sut.DateDue = null;
+            _sut.DueDate = null;
 
             // Assert
-            Assert.That(_sut.DateDue, Is.Null);
+            Assert.That(_sut.DueDate, Is.Null);
         }
 
         [Test, Category("Models")]
-        public void DateDue_WhenSet_ShouldUpdateDateModified()
+        public void DueDate_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.UtcNow;
-            var dateDue = DateTime.Now.AddDays(7);
+            var dueDate = DateTime.Now.AddDays(7);
             
             // Act
-            _sut.DateDue = dateDue;
+            _sut.DueDate = dueDate;
             
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
         }
 
         #endregion
 
-        #region DateCompleted Property Tests
+        #region CompletedDate Property Tests
 
         [Test, Category("Models")]
-        public void DateCompleted_ShouldReturnReadOnlyValue()
+        public void CompletedDate_ShouldReturnReadOnlyValue()
         {
             // Arrange
-            var dateCompleted = DateTime.Now;
-            _sut = new ProjectTask(1, "Test", "Desc", null, false, null, dateCompleted, DateTime.Now, null);
+            var completedDate = DateTime.Now;
+            _sut = new ProjectTask(1, "Test", "Desc", null, false, null, completedDate, DateTime.Now, null);
 
             // Act & Assert
-            Assert.That(_sut.DateCompleted, Is.EqualTo(dateCompleted));
+            Assert.That(_sut.CompletedDate, Is.EqualTo(completedDate));
         }
 
         [Test, Category("Models")]
-        public void DateCompleted_WhenNull_ShouldReturnNull()
+        public void CompletedDate_WhenNull_ShouldReturnNull()
         {
             // Arrange
             _sut = new ProjectTask(1, "Test", "Desc", null, false, null, null, DateTime.Now, null);
 
             // Act & Assert
-            Assert.That(_sut.DateCompleted, Is.Null);
+            Assert.That(_sut.CompletedDate, Is.Null);
         }
 
         #endregion
 
-        #region DateCreated Property Tests
+        #region CreatedDate Property Tests
 
         [Test, Category("Models")]
-        public void DateCreated_ShouldReturnReadOnlyValue()
+        public void CreatedDate_ShouldReturnReadOnlyValue()
         {
             // Arrange
-            var dateCreated = DateTime.Now.AddDays(-1);
-            _sut = new ProjectTask(1, "Test", "Desc", null, false, null, null, dateCreated, null);
+            var createdDate = DateTime.Now.AddDays(-1);
+            _sut = new ProjectTask(1, "Test", "Desc", null, false, null, null, createdDate, null);
 
             // Act & Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(createdDate));
         }
 
         [Test, Category("Models")]
-        public void DateCreated_WithDefaultConstructor_ShouldBeCloseToNow()
+        public void CreatedDate_WithDefaultConstructor_ShouldBeCloseToNow()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -712,7 +712,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var afterCreation = DateTime.Now;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.InRange(beforeCreation, afterCreation));
+            Assert.That(_sut.CreatedDate, Is.InRange(beforeCreation, afterCreation));
         }
 
         #endregion
@@ -724,8 +724,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     {
       // Arrange 
       var task = (IProjectTask)_sut;
-            var assignment1 = new ProjectAssignment { Id = 1, Name = "Assignment 1" };
-            var assignment2 = new ProjectAssignment { Id = 2, Name = "Assignment 2" };
+            var assignment1 = new ProjectAssignment { Id = 1, ProjectAssignmentName = "Assignment 1" };
+            var assignment2 = new ProjectAssignment { Id = 2, ProjectAssignmentName = "Assignment 2" };
             var assignments = new List<IProjectAssignment> { assignment1, assignment2 };
 
             // Act
@@ -748,8 +748,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var task = (IProjectTask)_sut;
             var assignments = new List<ProjectAssignment>
             {
-                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
-                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
+                new ProjectAssignment { Id = 1, ProjectAssignmentName = "Assignment 1" },
+                new ProjectAssignment { Id = 2, ProjectAssignmentName = "Assignment 2" }
             };
             _sut.Assignments = assignments;
 
@@ -786,10 +786,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 ""description"": ""JSON Description"",
                 ""assignments"": [],
                 ""isCompleted"": true,
-                ""dateDue"": ""2025-12-31T00:00:00"",
-                ""dateCompleted"": ""2025-10-20T12:00:00"",
-                ""dateCreated"": ""2025-10-19T12:00:00"",
-                ""dateModified"": ""2025-10-20T12:00:00""
+                ""dueDate"": ""2025-12-31T00:00:00"",
+                ""completedDate"": ""2025-10-20T12:00:00"",
+                ""createdDate"": ""2025-10-19T12:00:00"",
+                ""modifiedDate"": ""2025-10-20T12:00:00""
             }";
 
             // Act
@@ -800,10 +800,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
       Assert.Multiple(() =>
       {
         Assert.That(task.Id, Is.EqualTo(1));
-        Assert.That(task.Name, Is.EqualTo("JSON Task"));
+        Assert.That(task.ProjectTaskName, Is.EqualTo("JSON Task"));
         Assert.That(task.Description, Is.EqualTo("JSON Description"));
         Assert.That(task.IsCompleted, Is.True);
-        Assert.That(task.DateDue, Is.EqualTo(new DateTime(2025, 12, 31)));
+        Assert.That(task.DueDate, Is.EqualTo(new DateTime(2025, 12, 31)));
       });
     }
 
@@ -812,7 +812,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     #region Edge Case Tests
 
     [Test, Category("Models")]
-        public void MultiplePropertyChanges_ShouldUpdateDateModifiedEachTime()
+        public void MultiplePropertyChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             var initialTime = DateTime.UtcNow;
@@ -820,22 +820,22 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act & Assert - First change
             _sut.Id = 1;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.That(firstModified, Is.Not.Null);
             Assert.That(firstModified, Is.GreaterThan(initialTime));
 
             System.Threading.Thread.Sleep(1); // Ensure different timestamps
 
             // Act & Assert - Second change  
-            _sut.Name = "Test Name";
-            var secondModified = _sut.DateModified;
+            _sut.ProjectTaskName = "Test Name";
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1); // Ensure different timestamps
 
             // Act & Assert - Third change
             _sut.IsCompleted = true;
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
         }
 
@@ -846,33 +846,33 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var assignment1 = new ProjectAssignment 
             { 
                 Id = 1, 
-                Name = "Complex Assignment 1",
+                ProjectAssignmentName = "Complex Assignment 1",
                 Description = "Description 1"
             };
             var assignment2 = new ProjectAssignment 
             { 
                 Id = 2, 
-                Name = "Complex Assignment 2",
+                ProjectAssignmentName = "Complex Assignment 2",
                 Description = "Description 2"
             };
             var assignments = new List<ProjectAssignment> { assignment1, assignment2 };
 
             // Act
             _sut.Id = 1;
-            _sut.Name = "Complex Task";
+            _sut.ProjectTaskName = "Complex Task";
             _sut.Description = "Complex Description";
             _sut.Assignments = assignments;
             _sut.IsCompleted = false;
-            _sut.DateDue = DateTime.Now.AddDays(30);
+            _sut.DueDate = DateTime.Now.AddDays(30);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Assignments, Is.Not.Null);
                 Assert.That(_sut.Assignments, Has.Count.EqualTo(2));
-                Assert.That(_sut.Assignments[0].Name, Is.EqualTo("Complex Assignment 1"));
-                Assert.That(_sut.Assignments[1].Name, Is.EqualTo("Complex Assignment 2"));
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.Assignments[0].ProjectAssignmentName, Is.EqualTo("Complex Assignment 1"));
+                Assert.That(_sut.Assignments[1].ProjectAssignmentName, Is.EqualTo("Complex Assignment 2"));
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
         }
 
@@ -887,11 +887,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Id, Is.EqualTo(int.MaxValue));
 
             // Test Name boundary
-            _sut.Name = "A"; // Minimum length
-            Assert.That(_sut.Name, Is.EqualTo("A"));
+            _sut.ProjectTaskName = "A"; // Minimum length
+            Assert.That(_sut.ProjectTaskName, Is.EqualTo("A"));
 
-            _sut.Name = new string('B', 100); // Maximum length
-            Assert.That(_sut.Name, Is.EqualTo(new string('B', 100)));
+            _sut.ProjectTaskName = new string('B', 100); // Maximum length
+            Assert.That(_sut.ProjectTaskName, Is.EqualTo(new string('B', 100)));
 
             // Test Description boundary
             _sut.Description = "C"; // Minimum length
@@ -909,7 +909,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.Assignments, Is.Null);
 
             // Act - Set again to trigger the ??= logic
-            var newAssignments = new List<ProjectAssignment> { new ProjectAssignment { Id = 1, Name = "Test" } };
+            var newAssignments = new List<ProjectAssignment> { new ProjectAssignment { Id = 1, ProjectAssignmentName = "Test" } };
             _sut.Assignments = newAssignments;
 
             // Assert
@@ -968,7 +968,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange - Test the try-catch block in Cast method
             _sut.Id = 1;
-            _sut.Name = "Test Task";
+            _sut.ProjectTaskName = "Test Task";
 
             // Act & Assert - Should not throw for valid types
             Assert.DoesNotThrow(() => _sut.Cast<OrganizerCompanion.Core.Models.DataTransferObject.ProjectTaskDTO>());
@@ -983,10 +983,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 1;
-            _sut.Name = "Test Task";
+            _sut.ProjectTaskName = "Test Task";
             _sut.Description = "Test Description";
             _sut.IsCompleted = false;
-            _sut.DateDue = new DateTime(2025, 12, 31);
+            _sut.DueDate = new DateTime(2025, 12, 31);
 
             // Act
             var json = _sut.ToJson();
@@ -1005,7 +1005,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 0;
-            _sut.Name = "Minimal Task";
+            _sut.ProjectTaskName = "Minimal Task";
             _sut.Description = "Simple Description";
             // Leave other properties as default/null
 
@@ -1024,12 +1024,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.Id = 1;
-            _sut.Name = "Task with Assignments";
+            _sut.ProjectTaskName = "Task with Assignments";
             _sut.Description = "Test Description";
             _sut.Assignments =
             [
-                new ProjectAssignment { Id = 1, Name = "Assignment 1" },
-                new ProjectAssignment { Id = 2, Name = "Assignment 2" }
+                new ProjectAssignment { Id = 1, ProjectAssignmentName = "Assignment 1" },
+                new ProjectAssignment { Id = 2, ProjectAssignmentName = "Assignment 2" }
             ];
 
             // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles

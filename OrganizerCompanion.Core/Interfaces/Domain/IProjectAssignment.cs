@@ -1,8 +1,8 @@
-﻿namespace OrganizerCompanion.Core.Interfaces.Domain
+namespace OrganizerCompanion.Core.Interfaces.Domain
 {
     internal interface IProjectAssignment : IDomainEntity
     {
-        string Name { get; set; }
+        string ProjectAssignmentName { get; set; }
         string? Description { get; set; }
         int? AssigneeId { get; }
         ISubAccount? Assignee { get; set; }
@@ -13,7 +13,7 @@
         int? TaskId { get; set; }
         IProjectTask? Task { get; set; }
         bool IsCompleted { get; set; }
-        DateTime? DateDue { get; set; }
-        DateTime? DateCompleted { get; }
+        DateTime? DueDate { get; set; }
+        DateTime? CompletedDate { get; }
     }
 }

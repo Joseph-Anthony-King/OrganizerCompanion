@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -86,11 +86,11 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonPropertyName("superUser"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public bool? IsSuperUser { get; set; } = null;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = default;
         #endregion
     }
 }

@@ -39,8 +39,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(phoneNumberDTO.Phone, Is.Null);
                 Assert.That(phoneNumberDTO.Type, Is.Null);
                 Assert.That(phoneNumberDTO.Country, Is.Null);
-                Assert.That(phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-                Assert.That(phoneNumberDTO.DateModified, Is.Null);
+                Assert.That(phoneNumberDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(phoneNumberDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -211,39 +211,39 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         #region IDomainEntity Property Tests
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldGetAndSetCorrectly()
+        public void CreatedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 10, 15, 14, 30, 0);
 
             // Act
-            _phoneNumberDTO.DateCreated = expectedDate;
+            _phoneNumberDTO.CreatedDate = expectedDate;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(expectedDate));
+            Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetCorrectly()
+        public void ModifiedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 10, 16, 10, 15, 0);
 
             // Act
-            _phoneNumberDTO.DateModified = expectedDate;
+            _phoneNumberDTO.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNull()
+        public void ModifiedDate_ShouldAcceptNull()
         {
             // Act
-            _phoneNumberDTO.DateModified = null;
+            _phoneNumberDTO.ModifiedDate = null;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateModified, Is.Null);
+            Assert.That(_phoneNumberDTO.ModifiedDate, Is.Null);
         }
 
         #endregion
@@ -341,10 +341,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        public void CreatedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateCreated));
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CreatedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -354,15 +354,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("createdDate"));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        public void ModifiedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateModified));
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.ModifiedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -372,7 +372,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -437,10 +437,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveRequiredAttribute()
+        public void CreatedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateCreated));
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.CreatedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
@@ -451,10 +451,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveRequiredAttribute()
+        public void ModifiedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.DateModified));
+            var property = typeof(PhoneNumberDTO).GetProperty(nameof(PhoneNumberDTO.ModifiedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttributes(typeof(RequiredAttribute), false)
@@ -578,8 +578,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"phone\":\"555-123-4567\""));
                 Assert.That(json, Contains.Substring("\"type\":"));
                 Assert.That(json, Contains.Substring("\"country\":"));
-                Assert.That(json, Contains.Substring("\"dateCreated\":"));
-                Assert.That(json, Contains.Substring("\"dateModified\":"));
+                Assert.That(json, Contains.Substring("\"createdDate\":"));
+                Assert.That(json, Contains.Substring("\"modifiedDate\":"));
             });
         }
 
@@ -724,71 +724,71 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMinValue()
+        public void CreatedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _phoneNumberDTO.DateCreated = DateTime.MinValue;
+            _phoneNumberDTO.CreatedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMaxValue()
+        public void CreatedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _phoneNumberDTO.DateCreated = DateTime.MaxValue;
+            _phoneNumberDTO.CreatedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMinValue()
+        public void ModifiedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _phoneNumberDTO.DateModified = DateTime.MinValue;
+            _phoneNumberDTO.ModifiedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMaxValue()
+        public void ModifiedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _phoneNumberDTO.DateModified = DateTime.MaxValue;
+            _phoneNumberDTO.ModifiedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldMaintainPrecision()
+        public void CreatedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
 
             // Act
-            _phoneNumberDTO.DateCreated = preciseDate;
+            _phoneNumberDTO.CreatedDate = preciseDate;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(preciseDate));
-            Assert.That(_phoneNumberDTO.DateCreated.Millisecond, Is.EqualTo(123));
+            Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(preciseDate));
+            Assert.That(_phoneNumberDTO.CreatedDate.Millisecond, Is.EqualTo(123));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldMaintainPrecision()
+        public void ModifiedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
 
             // Act
-            _phoneNumberDTO.DateModified = preciseDate;
+            _phoneNumberDTO.ModifiedDate = preciseDate;
 
             // Assert
-            Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(preciseDate));
-            Assert.That(_phoneNumberDTO.DateModified?.Millisecond, Is.EqualTo(456));
+            Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(preciseDate));
+            Assert.That(_phoneNumberDTO.ModifiedDate?.Millisecond, Is.EqualTo(456));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -940,7 +940,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             interfaceDto.Phone = "555-INTERFACE";
             interfaceDto.Type = OrganizerCompanion.Core.Enums.Types.Work;
             interfaceDto.Country = OrganizerCompanion.Core.Enums.Countries.Canada;
-            interfaceDto.DateModified = testModified;
+            interfaceDto.ModifiedDate = testModified;
 
             // Assert
             Assert.Multiple(() =>
@@ -949,13 +949,13 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceDto.Phone, Is.EqualTo("555-INTERFACE"));
                 Assert.That(interfaceDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(interfaceDto.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.Canada));
-                Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
-                Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
+                Assert.That(interfaceDto.CreatedDate, Is.Not.EqualTo(default(DateTime))); // CreatedDate is read-only, check it has a value
+                Assert.That(interfaceDto.ModifiedDate, Is.EqualTo(testModified));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHandleNullToDateTransitions()
+        public void ModifiedDate_ShouldHandleNullToDateTransitions()
         {
             // Arrange
             var testDates = new DateTime[]
@@ -973,16 +973,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 foreach (var date in testDates)
                 {
                     // Start with null
-                    _phoneNumberDTO.DateModified = null;
-                    Assert.That(_phoneNumberDTO.DateModified, Is.Null);
+                    _phoneNumberDTO.ModifiedDate = null;
+                    Assert.That(_phoneNumberDTO.ModifiedDate, Is.Null);
 
                     // Assign date
-                    _phoneNumberDTO.DateModified = date;
-                    Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(date));
+                    _phoneNumberDTO.ModifiedDate = date;
+                    Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(date));
 
                     // Back to null
-                    _phoneNumberDTO.DateModified = null;
-                    Assert.That(_phoneNumberDTO.DateModified, Is.Null);
+                    _phoneNumberDTO.ModifiedDate = null;
+                    Assert.That(_phoneNumberDTO.ModifiedDate, Is.Null);
                 }
             });
         }
@@ -1025,16 +1025,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.Mexico;
             var testDate = DateTime.Now.AddDays(-5);
             var testModified = DateTime.Now.AddHours(-3);
-            _phoneNumberDTO.DateCreated = testDate;
-            _phoneNumberDTO.DateModified = testModified;
+            _phoneNumberDTO.CreatedDate = testDate;
+            _phoneNumberDTO.ModifiedDate = testModified;
 
             // Store original values
             var originalId = _phoneNumberDTO.Id;
             var originalPhone = _phoneNumberDTO.Phone;
             var originalType = _phoneNumberDTO.Type;
             var originalCountry = _phoneNumberDTO.Country;
-            var originalCreated = _phoneNumberDTO.DateCreated;
-            var originalModified = _phoneNumberDTO.DateModified;
+            var originalCreated = _phoneNumberDTO.CreatedDate;
+            var originalModified = _phoneNumberDTO.ModifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -1044,16 +1044,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_phoneNumberDTO.Phone, Is.EqualTo(originalPhone));
                 Assert.That(_phoneNumberDTO.Type, Is.EqualTo(originalType));
                 Assert.That(_phoneNumberDTO.Country, Is.EqualTo(originalCountry));
-                Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(originalModified));
 
                 // Change Phone, verify others unchanged
                 _phoneNumberDTO.Phone = "555-CHANGED";
                 Assert.That(_phoneNumberDTO.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_phoneNumberDTO.Type, Is.EqualTo(originalType));
                 Assert.That(_phoneNumberDTO.Country, Is.EqualTo(originalCountry));
-                Assert.That(_phoneNumberDTO.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_phoneNumberDTO.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_phoneNumberDTO.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_phoneNumberDTO.ModifiedDate, Is.EqualTo(originalModified));
             });
         }
 
@@ -1071,8 +1071,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Phone = "555-INITIALIZER",
                 Type = OrganizerCompanion.Core.Enums.Types.Billing,
                 Country = OrganizerCompanion.Core.Enums.Countries.UnitedKingdom,
-                DateCreated = testCreated,
-                DateModified = testModified
+                CreatedDate = testCreated,
+                ModifiedDate = testModified
             };
 
             // Assert
@@ -1082,8 +1082,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(phoneDto.Phone, Is.EqualTo("555-INITIALIZER"));
                 Assert.That(phoneDto.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
                 Assert.That(phoneDto.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.UnitedKingdom));
-                Assert.That(phoneDto.DateCreated, Is.EqualTo(testCreated));
-                Assert.That(phoneDto.DateModified, Is.EqualTo(testModified));
+                Assert.That(phoneDto.CreatedDate, Is.EqualTo(testCreated));
+                Assert.That(phoneDto.ModifiedDate, Is.EqualTo(testModified));
             });
         }
 
@@ -1207,8 +1207,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _phoneNumberDTO.Phone = "Complex Phone with 特殊字符 and emojis 📞📱";
             _phoneNumberDTO.Type = OrganizerCompanion.Core.Enums.Types.Other;
             _phoneNumberDTO.Country = OrganizerCompanion.Core.Enums.Countries.China;
-            _phoneNumberDTO.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
-            _phoneNumberDTO.DateModified = DateTime.MinValue.AddMilliseconds(1);
+            _phoneNumberDTO.CreatedDate = DateTime.MaxValue.AddMilliseconds(-1);
+            _phoneNumberDTO.ModifiedDate = DateTime.MinValue.AddMilliseconds(1);
 
             // Assert
             Assert.Multiple(() =>
@@ -1219,8 +1219,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_phoneNumberDTO.Phone, Contains.Substring("📞📱"));
                 Assert.That(_phoneNumberDTO.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
                 Assert.That(_phoneNumberDTO.Country, Is.EqualTo(OrganizerCompanion.Core.Enums.Countries.China));
-                Assert.That(_phoneNumberDTO.DateCreated, Is.LessThan(DateTime.MaxValue));
-                Assert.That(_phoneNumberDTO.DateModified, Is.GreaterThan(DateTime.MinValue));
+                Assert.That(_phoneNumberDTO.CreatedDate, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_phoneNumberDTO.ModifiedDate, Is.GreaterThan(DateTime.MinValue));
             });
         }
 
@@ -1275,8 +1275,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity
             {

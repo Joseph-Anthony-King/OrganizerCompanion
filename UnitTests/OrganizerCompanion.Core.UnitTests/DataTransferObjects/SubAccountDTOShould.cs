@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
@@ -28,7 +28,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _testEntity = new MockDomainEntity
             {
                 Id = 50,
-                DateModified = DateTime.UtcNow
+                ModifiedDate = DateTime.UtcNow
             };
         }
 
@@ -49,8 +49,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.LinkedEntity, Is.Null);
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.UtcNow));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -69,8 +69,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 linkedEntity: _testEntity,
                 accountId: 100,
                 account: _testAccount,
-                dateCreated: testDate,
-                dateModified: modifiedDate);
+                createdDate: testDate,
+                modifiedDate: modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -81,8 +81,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.LinkedEntity, Is.SameAs(_testEntity));
                 Assert.That(_sut.AccountId, Is.EqualTo(100));
                 Assert.That(_sut.Account, Is.SameAs(_testAccount));
-                Assert.That(_sut.DateCreated, Is.EqualTo(testDate));
-                Assert.That(_sut.DateModified, Is.EqualTo(modifiedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -98,8 +98,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 id: 789,
                 linkedEntity: _testEntity,
                 account: _testAccount,
-                dateCreated: testDate,
-                dateModified: modifiedDate);
+                createdDate: testDate,
+                modifiedDate: modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -110,8 +110,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.LinkedEntity, Is.SameAs(_testEntity));
                 Assert.That(_sut.AccountId, Is.EqualTo(_testAccount.Id));
                 Assert.That(_sut.Account, Is.SameAs(_testAccount));
-                Assert.That(_sut.DateCreated, Is.EqualTo(testDate));
-                Assert.That(_sut.DateModified, Is.EqualTo(modifiedDate));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -128,8 +128,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                     id: 999,
                     linkedEntity: null,
                     account: _testAccount,
-                    dateCreated: testDate,
-                    dateModified: null);
+                    createdDate: testDate,
+                    modifiedDate: null);
             });
         }
 
@@ -241,10 +241,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldReturnFieldValue()
+        public void CreatedDate_ShouldReturnFieldValue()
         {
             // Arrange & Act
-            var createdDate = _sut.DateCreated;
+            var createdDate = _sut.CreatedDate;
 
             // Assert
             Assert.That(createdDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
@@ -252,26 +252,26 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetValue()
+        public void ModifiedDate_ShouldGetAndSetValue()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 6, 20, 14, 15, 30);
 
             // Act
-            _sut.DateModified = expectedDate;
+            _sut.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNullValue()
+        public void ModifiedDate_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         #endregion
@@ -540,10 +540,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveRequiredAttribute()
+        public void CreatedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.DateCreated));
+            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.CreatedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -553,10 +553,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        public void CreatedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.DateCreated));
+            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.CreatedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttribute<JsonPropertyNameAttribute>();
@@ -565,15 +565,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("dateCreated"));
+                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("createdDate"));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveRequiredAttribute()
+        public void ModifiedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.DateModified));
+            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.ModifiedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -583,10 +583,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        public void ModifiedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.DateModified));
+            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.ModifiedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttribute<JsonPropertyNameAttribute>();
@@ -595,7 +595,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("dateModified"));
+                Assert.That(jsonPropertyNameAttribute?.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -697,7 +697,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Account = _testAccount;
             _sut.LinkedEntityId = 50;
             _sut.LinkedEntity = _testEntity;
-            _sut.DateModified = modifiedDate;
+            _sut.ModifiedDate = modifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -707,8 +707,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Account, Is.SameAs(_testAccount));
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(50));
                 Assert.That(_sut.LinkedEntity, Is.SameAs(_testEntity));
-                Assert.That(_sut.DateModified, Is.EqualTo(modifiedDate));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.UtcNow));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
                 Assert.That(_sut.LinkedEntityType, Is.Null);
             });
         }
@@ -724,7 +724,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Account = _testAccount,
                 LinkedEntityId = _testEntity.Id,
                 LinkedEntity = _testEntity,
-                DateModified = DateTime.UtcNow
+                ModifiedDate = DateTime.UtcNow
             };
 
             // Assert
@@ -735,8 +735,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(subAccountDTO.Account, Is.SameAs(_testAccount));
                 Assert.That(subAccountDTO.LinkedEntityId, Is.EqualTo(_testEntity.Id));
                 Assert.That(subAccountDTO.LinkedEntity, Is.SameAs(_testEntity));
-                Assert.That(subAccountDTO.DateModified, Is.Not.Null);
-                Assert.That(subAccountDTO.DateCreated, Is.LessThanOrEqualTo(DateTime.UtcNow));
+                Assert.That(subAccountDTO.ModifiedDate, Is.Not.Null);
+                Assert.That(subAccountDTO.CreatedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
             });
         }
 
@@ -752,8 +752,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 id: 100,
                 linkedEntity: _testEntity,
                 account: _testAccount,
-                dateCreated: testDate,
-                dateModified: modifiedDate);
+                createdDate: testDate,
+                modifiedDate: modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -808,25 +808,25 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange
             var preciseDateTime = new DateTime(2025, 10, 20, 14, 35, 42, 999);
 
-            // Act & Assert for DateModified
-            _sut.DateModified = preciseDateTime;
-            Assert.That(_sut.DateModified, Is.EqualTo(preciseDateTime));
+            // Act & Assert for ModifiedDate
+            _sut.ModifiedDate = preciseDateTime;
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(preciseDateTime));
 
             // Test null assignment
-            _sut.DateModified = null;
-            Assert.That(_sut.DateModified, Is.Null);
+            _sut.ModifiedDate = null;
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("Threading")]
-        public void DateCreated_FromMultipleAccesses_ShouldMaintainConsistentValue()
+        public void CreatedDate_FromMultipleAccesses_ShouldMaintainConsistentValue()
         {
             // Arrange
-            var originalDate = _sut.DateCreated;
+            var originalDate = _sut.CreatedDate;
 
             // Act - Access multiple times
-            var date1 = _sut.DateCreated;
-            var date2 = _sut.DateCreated;
-            var date3 = _sut.DateCreated;
+            var date1 = _sut.CreatedDate;
+            var date2 = _sut.CreatedDate;
+            var date3 = _sut.CreatedDate;
 
             // Assert - Should all be the same
             Assert.Multiple(() =>
@@ -849,7 +849,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Account = _testAccount;
             _sut.LinkedEntityId = 777;
             _sut.LinkedEntity = _testEntity;
-            _sut.DateModified = testDate;
+            _sut.ModifiedDate = testDate;
 
             var interfaceView = (ISubAccountDTO)_sut;
 
@@ -862,8 +862,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceView.LinkedEntityId, Is.EqualTo(_sut.LinkedEntityId));
                 Assert.That(interfaceView.LinkedEntityType, Is.EqualTo(_sut.LinkedEntityType));
                 Assert.That(interfaceView.LinkedEntity, Is.SameAs(_sut.LinkedEntity));
-                Assert.That(interfaceView.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(interfaceView.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(interfaceView.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(interfaceView.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -895,8 +895,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 linkedEntity: null,
                 accountId: null,
                 account: null!,
-                dateCreated: testDate,
-                dateModified: null);
+                createdDate: testDate,
+                modifiedDate: null);
 
             // Assert
             Assert.Multiple(() =>
@@ -907,8 +907,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.LinkedEntity, Is.Null);
                 Assert.That(dto.AccountId, Is.Null);
                 Assert.That(dto.Account, Is.Null);
-                Assert.That(dto.DateCreated, Is.EqualTo(testDate));
-                Assert.That(dto.DateModified, Is.Null);
+                Assert.That(dto.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(dto.ModifiedDate, Is.Null);
             });
         }
 
@@ -920,8 +920,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var linkedEntityId = 8888;
             var linkedEntityType = "TestEntityType";
             var accountId = 7777;
-            var dateCreated = new DateTime(2025, 1, 1, 12, 0, 0);
-            var dateModified = new DateTime(2025, 1, 2, 15, 30, 45);
+            var createdDate = new DateTime(2025, 1, 1, 12, 0, 0);
+            var modifiedDate = new DateTime(2025, 1, 2, 15, 30, 45);
 
             // Act
             var dto = new SubAccountDTO(
@@ -931,8 +931,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 linkedEntity: _testEntity,
                 accountId: accountId,
                 account: _testAccount,
-                dateCreated: dateCreated,
-                dateModified: dateModified);
+                createdDate: createdDate,
+                modifiedDate: modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -943,8 +943,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(dto.LinkedEntity, Is.SameAs(_testEntity));
                 Assert.That(dto.AccountId, Is.EqualTo(accountId));
                 Assert.That(dto.Account, Is.SameAs(_testAccount));
-                Assert.That(dto.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(dto.DateModified, Is.EqualTo(dateModified));
+                Assert.That(dto.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(dto.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -966,10 +966,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("Validation")]
-        public void DateCreated_ReadOnlyProperty_ShouldNotHavePublicSetter()
+        public void CreatedDate_ReadOnlyProperty_ShouldNotHavePublicSetter()
         {
             // Arrange
-            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.DateCreated));
+            var property = typeof(SubAccountDTO).GetProperty(nameof(SubAccountDTO.CreatedDate));
 
             // Act & Assert
             Assert.Multiple(() =>
@@ -1022,9 +1022,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(freshDTO.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(freshDTO.LinkedEntityType, Is.Null);
                 Assert.That(freshDTO.LinkedEntity, Is.Null);
-                Assert.That(freshDTO.DateCreated, Is.LessThanOrEqualTo(DateTime.UtcNow));
-                Assert.That(freshDTO.DateCreated, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
-                Assert.That(freshDTO.DateModified, Is.Null);
+                Assert.That(freshDTO.CreatedDate, Is.LessThanOrEqualTo(DateTime.UtcNow));
+                Assert.That(freshDTO.CreatedDate, Is.GreaterThan(DateTime.UtcNow.AddSeconds(-1)));
+                Assert.That(freshDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -1037,12 +1037,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => _sut.AccountId = null);
                 Assert.DoesNotThrow(() => _sut.Account = null);
                 Assert.DoesNotThrow(() => _sut.LinkedEntity = null);
-                Assert.DoesNotThrow(() => _sut.DateModified = null);
+                Assert.DoesNotThrow(() => _sut.ModifiedDate = null);
 
                 Assert.That(_sut.AccountId, Is.Null);
                 Assert.That(_sut.Account, Is.Null);
                 Assert.That(_sut.LinkedEntity, Is.Null);
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -1050,7 +1050,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void PropertyAssignments_ShouldNotAffectOtherProperties()
         {
             // Arrange
-            var originalDateCreated = _sut.DateCreated;
+            var originalCreatedDate = _sut.CreatedDate;
             var originalLinkedEntityType = _sut.LinkedEntityType;
 
             // Act - Set various properties
@@ -1059,12 +1059,12 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Account = _testAccount;
             _sut.LinkedEntityId = 777;
             _sut.LinkedEntity = _testEntity;
-            _sut.DateModified = DateTime.UtcNow;
+            _sut.ModifiedDate = DateTime.UtcNow;
 
             // Assert - Read-only properties should remain unchanged
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalDateCreated));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreatedDate));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo(originalLinkedEntityType));
             });
         }
@@ -1079,8 +1079,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; } = DateTime.UtcNow;
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; } = DateTime.UtcNow;
+            public DateTime? ModifiedDate { get; set; } = default;
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => throw new NotImplementedException();
         }

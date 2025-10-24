@@ -37,9 +37,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.IsCast, Is.EqualTo(false));
                 Assert.That(_sut.CastId, Is.EqualTo(0));
                 Assert.That(_sut.CastType, Is.Null);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.Null);
                 Assert.That(_sut, Is.Not.Null);
             });
         }
@@ -291,7 +291,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_Get_ShouldReturnValue()
+        public void CreatedDate_Get_ShouldReturnValue()
         {
             // Arrange
             var beforeCreation = DateTime.Now.AddSeconds(-1);
@@ -299,60 +299,60 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var afterCreation = DateTime.Now.AddSeconds(1);
 
             // Act
-            var dateCreated = dto.DateCreated;
+            var createdDate = dto.CreatedDate;
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(dateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(dateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(createdDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(createdDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldGetAndSetValue()
+        public void CreatedDate_ShouldGetAndSetValue()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 5, 15, 10, 30, 45);
 
             // Act
-            _sut.DateCreated = expectedDate;
+            _sut.CreatedDate = expectedDate;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetValue()
+        public void ModifiedDate_ShouldGetAndSetValue()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 6, 20, 14, 15, 30);
 
             // Act
-            _sut.DateModified = expectedDate;
+            _sut.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNullValue()
+        public void ModifiedDate_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_DefaultValue_ShouldBeNull()
+        public void ModifiedDate_DefaultValue_ShouldBeNull()
         {
             // Arrange & Act
             var dto = new AnnonymousUserDTO();
 
             // Assert
-            Assert.That(dto.DateModified, Is.Null);
+            Assert.That(dto.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -560,10 +560,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveRequiredAttribute()
+        public void CreatedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.DateCreated));
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.CreatedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -573,10 +573,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveRequiredAttribute()
+        public void ModifiedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.DateModified));
+            var property = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.ModifiedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -620,8 +620,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 IsCast = true,
                 CastId = 321,
                 CastType = "TestCastType",
-                DateCreated = testDate,
-                DateModified = testDate.AddDays(1)
+                CreatedDate = testDate,
+                ModifiedDate = testDate.AddDays(1)
             };
 
             // Assert
@@ -633,8 +633,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(anonymousUserDTO.IsCast, Is.EqualTo(true));
                 Assert.That(anonymousUserDTO.CastId, Is.EqualTo(321));
                 Assert.That(anonymousUserDTO.CastType, Is.EqualTo("TestCastType"));
-                Assert.That(anonymousUserDTO.DateCreated, Is.EqualTo(testDate));
-                Assert.That(anonymousUserDTO.DateModified, Is.EqualTo(testDate.AddDays(1)));
+                Assert.That(anonymousUserDTO.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(anonymousUserDTO.ModifiedDate, Is.EqualTo(testDate.AddDays(1)));
             });
         }
 
@@ -687,8 +687,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var accountIdProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.AccountId));
             var isCastProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.IsCast));
             var castIdProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.CastId));
-            var dateCreatedProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.DateCreated));
-            var dateModifiedProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.DateModified));
+            var createdDateProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.CreatedDate));
+            var modifiedDateProperty = typeof(AnnonymousUserDTO).GetProperty(nameof(AnnonymousUserDTO.ModifiedDate));
 
             // Act
             var idJsonAttribute = idProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
@@ -696,8 +696,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var accountIdJsonAttribute = accountIdProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
             var isCastJsonAttribute = isCastProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
             var castIdJsonAttribute = castIdProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
-            var dateCreatedJsonAttribute = dateCreatedProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
-            var dateModifiedJsonAttribute = dateModifiedProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+            var createdDateJsonAttribute = createdDateProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
+            var modifiedDateJsonAttribute = modifiedDateProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>();
 
             // Assert
             Assert.Multiple(() =>
@@ -712,10 +712,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(isCastJsonAttribute?.Name, Is.EqualTo("isCast"));
                 Assert.That(castIdJsonAttribute, Is.Not.Null);
                 Assert.That(castIdJsonAttribute?.Name, Is.EqualTo("castId"));
-                Assert.That(dateCreatedJsonAttribute, Is.Not.Null);
-                Assert.That(dateCreatedJsonAttribute?.Name, Is.EqualTo("dateCreated"));
-                Assert.That(dateModifiedJsonAttribute, Is.Not.Null);
-                Assert.That(dateModifiedJsonAttribute?.Name, Is.EqualTo("dateModified"));
+                Assert.That(createdDateJsonAttribute, Is.Not.Null);
+                Assert.That(createdDateJsonAttribute?.Name, Is.EqualTo("createdDate"));
+                Assert.That(modifiedDateJsonAttribute, Is.Not.Null);
+                Assert.That(modifiedDateJsonAttribute?.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -776,8 +776,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var testIsCast = true;
             var testCastId = 777;
             var testCastType = "ConsistencyTestType";
-            var testDateCreated = new DateTime(2023, 8, 15, 10, 0, 0);
-            var testDateModified = new DateTime(2023, 8, 16, 12, 30, 0);
+            var testCreatedDate = new DateTime(2023, 8, 15, 10, 0, 0);
+            var testModifiedDate = new DateTime(2023, 8, 16, 12, 30, 0);
 
             // Act
             _sut.Id = testId;
@@ -786,8 +786,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.IsCast = testIsCast;
             _sut.CastId = testCastId;
             _sut.CastType = testCastType;
-            _sut.DateCreated = testDateCreated;
-            _sut.DateModified = testDateModified;
+            _sut.CreatedDate = testCreatedDate;
+            _sut.ModifiedDate = testModifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -798,8 +798,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.IsCast, Is.EqualTo(testIsCast));
                 Assert.That(_sut.CastId, Is.EqualTo(testCastId));
                 Assert.That(_sut.CastType, Is.EqualTo(testCastType));
-                Assert.That(_sut.DateCreated, Is.EqualTo(testDateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(testDateModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(testCreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(testModifiedDate));
             });
         }
 
@@ -813,8 +813,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var testIsCast = true;
             var testCastId = 300;
             var testCastType = "InterfaceTest";
-            var testDateCreated = new DateTime(2023, 9, 1, 8, 0, 0);
-            var testDateModified = new DateTime(2023, 9, 2, 10, 0, 0);
+            var testCreatedDate = new DateTime(2023, 9, 1, 8, 0, 0);
+            var testModifiedDate = new DateTime(2023, 9, 2, 10, 0, 0);
 
             _sut.Id = testId;
             _sut.UserName = testUserName;
@@ -822,8 +822,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.IsCast = testIsCast;
             _sut.CastId = testCastId;
             _sut.CastType = testCastType;
-            _sut.DateCreated = testDateCreated;
-            _sut.DateModified = testDateModified;
+            _sut.CreatedDate = testCreatedDate;
+            _sut.ModifiedDate = testModifiedDate;
 
             // Act
             var interfaceInstance = (IAnnonymousUserDTO)_sut;
@@ -834,8 +834,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceInstance.Id, Is.EqualTo(testId));
                 Assert.That(interfaceInstance.UserName, Is.EqualTo(testUserName));
                 Assert.That(interfaceInstance.AccountId, Is.EqualTo(testAccountId));
-                Assert.That(interfaceInstance.DateCreated, Is.EqualTo(testDateCreated));
-                Assert.That(interfaceInstance.DateModified, Is.EqualTo(testDateModified));
+                Assert.That(interfaceInstance.CreatedDate, Is.EqualTo(testCreatedDate));
+                Assert.That(interfaceInstance.ModifiedDate, Is.EqualTo(testModifiedDate));
                 
                 // Verify concrete type still has all properties
                 Assert.That(_sut.IsCast, Is.EqualTo(testIsCast));
@@ -930,43 +930,43 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMinDateTime()
+        public void CreatedDate_ShouldAcceptMinDateTime()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MinValue;
+            _sut.CreatedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMaxDateTime()
+        public void CreatedDate_ShouldAcceptMaxDateTime()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MaxValue;
+            _sut.CreatedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMinDateTime()
+        public void ModifiedDate_ShouldAcceptMinDateTime()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MinValue;
+            _sut.ModifiedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMaxDateTime()
+        public void ModifiedDate_ShouldAcceptMaxDateTime()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MaxValue;
+            _sut.ModifiedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -1015,8 +1015,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.IsCast = true;
             _sut.CastId = 54321;
             _sut.CastType = "TypeTest";
-            _sut.DateCreated = testDate;
-            _sut.DateModified = testDate.AddHours(2);
+            _sut.CreatedDate = testDate;
+            _sut.ModifiedDate = testDate.AddHours(2);
 
             // Assert
             Assert.Multiple(() =>
@@ -1026,8 +1026,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.IsCast, Is.TypeOf<bool>());
                 Assert.That(_sut.CastId, Is.TypeOf<int>());
                 Assert.That(_sut.CastType, Is.TypeOf<string>());
-                Assert.That(_sut.DateCreated, Is.TypeOf<DateTime>());
-                Assert.That(_sut.DateModified, Is.TypeOf<DateTime>(), "DateModified should be DateTime when set to non-null value");
+                Assert.That(_sut.CreatedDate, Is.TypeOf<DateTime>());
+                Assert.That(_sut.ModifiedDate, Is.TypeOf<DateTime>(), "ModifiedDate should be DateTime when set to non-null value");
             });
         }
 
@@ -1046,8 +1046,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(freshDto.IsCast, Is.EqualTo(false), "IsCast should default to false");
                 Assert.That(freshDto.CastId, Is.EqualTo(0), "CastId should default to 0");
                 Assert.That(freshDto.CastType, Is.Null, "CastType should default to null");
-                Assert.That(freshDto.DateCreated, Is.TypeOf<DateTime>(), "DateCreated should be DateTime");
-                Assert.That(freshDto.DateModified, Is.Null, "DateModified should default to null");
+                Assert.That(freshDto.CreatedDate, Is.TypeOf<DateTime>(), "CreatedDate should be DateTime");
+                Assert.That(freshDto.ModifiedDate, Is.Null, "ModifiedDate should default to null");
             });
         }
 
@@ -1139,19 +1139,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
-                // Test DateCreated with boundary values
-                _sut.DateCreated = DateTime.MinValue;
-                Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
-                _sut.DateCreated = DateTime.MaxValue;
-                Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+                // Test CreatedDate with boundary values
+                _sut.CreatedDate = DateTime.MinValue;
+                Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MinValue));
+                _sut.CreatedDate = DateTime.MaxValue;
+                Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MaxValue));
 
-                // Test DateModified with boundary values and null
-                _sut.DateModified = DateTime.MinValue;
-                Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
-                _sut.DateModified = DateTime.MaxValue;
-                Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
-                _sut.DateModified = null;
-                Assert.That(_sut.DateModified, Is.Null);
+                // Test ModifiedDate with boundary values and null
+                _sut.ModifiedDate = DateTime.MinValue;
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MinValue));
+                _sut.ModifiedDate = DateTime.MaxValue;
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
+                _sut.ModifiedDate = null;
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -1198,15 +1198,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(castTypeProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonIgnoreAttribute>()?.Condition, 
                     Is.EqualTo(System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull));
 
-                // DateCreated property attributes
-                var dateCreatedProperty = type.GetProperty(nameof(AnnonymousUserDTO.DateCreated));
-                Assert.That(dateCreatedProperty?.GetCustomAttribute<RequiredAttribute>(), Is.Not.Null);
-                Assert.That(dateCreatedProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>()?.Name, Is.EqualTo("dateCreated"));
+                // CreatedDate property attributes
+                var createdDateProperty = type.GetProperty(nameof(AnnonymousUserDTO.CreatedDate));
+                Assert.That(createdDateProperty?.GetCustomAttribute<RequiredAttribute>(), Is.Not.Null);
+                Assert.That(createdDateProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>()?.Name, Is.EqualTo("createdDate"));
 
-                // DateModified property attributes
-                var dateModifiedProperty = type.GetProperty(nameof(AnnonymousUserDTO.DateModified));
-                Assert.That(dateModifiedProperty?.GetCustomAttribute<RequiredAttribute>(), Is.Not.Null);
-                Assert.That(dateModifiedProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>()?.Name, Is.EqualTo("dateModified"));
+                // ModifiedDate property attributes
+                var modifiedDateProperty = type.GetProperty(nameof(AnnonymousUserDTO.ModifiedDate));
+                Assert.That(modifiedDateProperty?.GetCustomAttribute<RequiredAttribute>(), Is.Not.Null);
+                Assert.That(modifiedDateProperty?.GetCustomAttribute<System.Text.Json.Serialization.JsonPropertyNameAttribute>()?.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -1217,8 +1217,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; }
+            public DateTime? ModifiedDate { get; set; } = default;
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => throw new NotImplementedException();
         }

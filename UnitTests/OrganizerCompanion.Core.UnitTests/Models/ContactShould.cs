@@ -13,8 +13,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     internal class ContactShould
     {
         private Contact _sut;
-        private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
-        private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+        private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
+        private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
         private List<Email> _testEmails;
         private List<PhoneNumber> _testPhoneNumbers;
         private List<IAddress> _testAddresses;
@@ -103,9 +103,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.LinkedEntityId, Is.EqualTo(0));
                 Assert.That(contact.LinkedEntity, Is.Null);
                 Assert.That(contact.LinkedEntityType, Is.Null);
-                Assert.That(contact.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(contact.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(contact.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(contact.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(contact.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -133,8 +133,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 1,
                 linkedEntity: _linkedUser,
                 linkedEntityType: "User",
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Assert
@@ -159,8 +159,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.LinkedEntityId, Is.EqualTo(1));
                 Assert.That(contact.LinkedEntity, Is.EqualTo(_linkedUser));
                 Assert.That(contact.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(contact.DateCreated, Is.EqualTo(_testDateCreated));
-                Assert.That(contact.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(contact.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -188,8 +188,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
-                dateCreated: _testDateCreated,
-                dateModified: _testDateModified
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
             );
 
             // Assert
@@ -264,9 +264,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.LinkedEntityId, Is.EqualTo(linkedEntityId));
                 Assert.That(contact.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(contact.LinkedEntityType, Is.EqualTo(linkedEntityType));
-                Assert.That(contact.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(contact.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(contact.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(contact.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(contact.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -479,8 +479,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Emails = [new EmailDTO { Id = 1, EmailAddress = "jane@example.com", Type = OrganizerCompanion.Core.Enums.Types.Home }],
                 PhoneNumbers = [new PhoneNumberDTO { Id = 2, Phone = "555-9876", Type = OrganizerCompanion.Core.Enums.Types.Work }],
                 Addresses = [],
-                DateCreated = _testDateCreated,
-                DateModified = _testDateModified
+                CreatedDate = _testCreatedDate,
+                ModifiedDate = _testModifiedDate
             };
 
             // Act
@@ -508,7 +508,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.PhoneNumbers, Has.Count.EqualTo(1));
                 Assert.That(contact.PhoneNumbers[0].Phone, Is.EqualTo("555-9876"));
                 Assert.That(contact.Addresses, Is.Empty);
-                Assert.That(contact.DateModified, Is.EqualTo(_testDateModified));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
         }
 
@@ -554,7 +554,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.Emails, Is.Empty);
                 Assert.That(contact.PhoneNumbers, Is.Empty);
                 Assert.That(contact.Addresses, Is.Empty);
-                Assert.That(contact.DateModified, Is.Null);
+                Assert.That(contact.ModifiedDate, Is.Null);
             });
         }
 
@@ -580,7 +580,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Emails = [],
                 PhoneNumbers = [],
                 Addresses = [],
-                DateModified = null
+                ModifiedDate = null
             };
 
             // Act
@@ -606,7 +606,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.Emails, Is.Empty);
                 Assert.That(contact.PhoneNumbers, Is.Empty);
                 Assert.That(contact.Addresses, Is.Empty);
-                Assert.That(contact.DateModified, Is.Null);
+                Assert.That(contact.ModifiedDate, Is.Null);
             });
         }
 
@@ -692,8 +692,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void IContactDTOConstructor_SetsDatesCorrectly()
         {
             // Arrange
-            var specificDateCreated = new DateTime(2023, 1, 1, 10, 0, 0);
-            var specificDateModified = new DateTime(2023, 6, 15, 14, 30, 0);
+            var specificCreatedDate = new DateTime(2023, 1, 1, 10, 0, 0);
+            var specificModifiedDate = new DateTime(2023, 6, 15, 14, 30, 0);
             
             var contactDto = new ContactDTO
             {
@@ -708,8 +708,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Emails = [],
                 PhoneNumbers = [],
                 Addresses = [],
-                DateCreated = specificDateCreated,
-                DateModified = specificDateModified
+                CreatedDate = specificCreatedDate,
+                ModifiedDate = specificModifiedDate
             };
 
             // Act
@@ -718,9 +718,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                // DateCreated is set during construction and should be close to DateTime.Now, not copied from DTO
-                Assert.That(contact.DateCreated, Is.EqualTo(specificDateCreated));
-                Assert.That(contact.DateModified, Is.EqualTo(specificDateModified));
+                // CreatedDate is set during construction and should be close to DateTime.Now, not copied from DTO
+                Assert.That(contact.CreatedDate, Is.EqualTo(specificCreatedDate));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(specificModifiedDate));
             });
         }
 
@@ -729,7 +729,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Property Tests
 
         [Test, Category("Models")]
-        public void Id_Set_UpdatesDateModified()
+        public void Id_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -742,13 +742,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(123));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void FirstName_Set_UpdatesDateModified()
+        public void FirstName_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -761,13 +761,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.FirstName, Is.EqualTo("Jane"));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void MiddleName_Set_UpdatesDateModified()
+        public void MiddleName_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -780,13 +780,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.MiddleName, Is.EqualTo("Marie"));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void LastName_Set_UpdatesDateModified()
+        public void LastName_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -799,13 +799,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LastName, Is.EqualTo("Smith"));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void UserName_Set_UpdatesDateModified()
+        public void UserName_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -818,13 +818,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.UserName, Is.EqualTo("janesmith"));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void Pronouns_Set_UpdatesDateModified()
+        public void Pronouns_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -837,13 +837,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Pronouns, Is.EqualTo(Pronouns.SheHer));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void BirthDate_Set_UpdatesDateModified()
+        public void BirthDate_Set_UpdatesModifiedDate()
         {
             // Arrange
             var birthDate = new DateTime(1985, 5, 15);
@@ -857,13 +857,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.BirthDate, Is.EqualTo(birthDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void DeceasedDate_Set_UpdatesDateModified()
+        public void DeceasedDate_Set_UpdatesModifiedDate()
         {
             // Arrange
             var deceasedDate = new DateTime(2023, 12, 25);
@@ -877,13 +877,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.DeceasedDate, Is.EqualTo(deceasedDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void JoinedDate_Set_UpdatesDateModified()
+        public void JoinedDate_Set_UpdatesModifiedDate()
         {
             // Arrange
             var joinedDate = new DateTime(2023, 1, 15);
@@ -897,13 +897,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.JoinedDate, Is.EqualTo(joinedDate));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void Emails_Set_UpdatesDateModified()
+        public void Emails_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -916,13 +916,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Emails, Has.Count.EqualTo(1));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void PhoneNumbers_Set_UpdatesDateModified()
+        public void PhoneNumbers_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -935,13 +935,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.PhoneNumbers, Has.Count.EqualTo(1));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void Addresses_Set_UpdatesDateModified()
+        public void Addresses_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -954,13 +954,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Addresses, Has.Count.EqualTo(1));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void IsActive_Set_UpdatesDateModified()
+        public void IsActive_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -973,13 +973,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsActive, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void IsDeceased_Set_UpdatesDateModified()
+        public void IsDeceased_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -992,13 +992,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsDeceased, Is.False);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void IsAdmin_Set_UpdatesDateModified()
+        public void IsAdmin_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -1011,13 +1011,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsAdmin, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void IsSuperUser_Set_UpdatesDateModified()
+        public void IsSuperUser_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -1030,13 +1030,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsSuperUser, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void LinkedEntityId_Set_UpdatesDateModified()
+        public void LinkedEntityId_Set_UpdatesModifiedDate()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -1049,13 +1049,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(42));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_Set_UpdatesDateModifiedAndLinkedEntityType()
+        public void LinkedEntity_Set_UpdatesModifiedDateAndLinkedEntityType()
         {
             // Arrange
             var beforeSet = DateTime.Now;
@@ -1069,13 +1069,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(_linkedUser));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_SetToNull_UpdatesDateModifiedAndLinkedEntityType()
+        public void LinkedEntity_SetToNull_UpdatesModifiedDateAndLinkedEntityType()
         {
             // Arrange
             _sut.LinkedEntity = _linkedUser;
@@ -1090,8 +1090,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
             });
         }
 
@@ -1329,8 +1329,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(root.TryGetProperty("linkedEntityId", out _), Is.True);
                 Assert.That(root.TryGetProperty("linkedEntity", out _), Is.True);
                 Assert.That(root.TryGetProperty("linkedEntityType", out _), Is.True);
-                Assert.That(root.TryGetProperty("dateCreated", out _), Is.True);
-                Assert.That(root.TryGetProperty("dateModified", out _), Is.True);
+                Assert.That(root.TryGetProperty("createdDate", out _), Is.True);
+                Assert.That(root.TryGetProperty("modifiedDate", out _), Is.True);
             });
         }
 
@@ -1462,8 +1462,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 nameof(Contact.IsAdmin),
                 nameof(Contact.LinkedEntity),
                 nameof(Contact.LinkedEntityType),
-                nameof(Contact.DateCreated),
-                nameof(Contact.DateModified)
+                nameof(Contact.CreatedDate),
+                nameof(Contact.ModifiedDate)
             };
 
             // Act & Assert
@@ -1665,8 +1665,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToContactDTO_WithCompleteData_ShouldPreserveAllData()
         {
             // Arrange - Set up Contact with comprehensive data (without addresses due to DTO interface issues)
-            var dateCreated = DateTime.Now.AddDays(-10);
-            var dateModified = DateTime.Now.AddHours(-1);
+            var createdDate = DateTime.Now.AddDays(-10);
+            var modifiedDate = DateTime.Now.AddHours(-1);
 
             var fullContact = new Contact(
                 id: 555,
@@ -1688,8 +1688,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 42,
                 linkedEntity: _linkedUser,
                 linkedEntityType: "User",
-                dateCreated: dateCreated,
-                dateModified: dateModified
+                createdDate: createdDate,
+                modifiedDate: modifiedDate
             );
 
             // Act
@@ -1823,8 +1823,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
@@ -1842,8 +1842,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
@@ -1854,10 +1854,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #region Edge Cases and Error Conditions
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly_CannotBeSet()
+        public void CreatedDate_IsReadOnly_CannotBeSet()
         {
             // Arrange
-            var property = typeof(Contact).GetProperty(nameof(Contact.DateCreated));
+            var property = typeof(Contact).GetProperty(nameof(Contact.CreatedDate));
 
             // Act & Assert
             Assert.That(property?.CanWrite, Is.False);
@@ -1941,8 +1941,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 0,
                 linkedEntity: null,
                 linkedEntityType: null,
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
 
             // Assert - Verify that the object is created correctly with all constructor parameters
@@ -1960,8 +1960,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(contact.IsDeceased, Is.False);
                 Assert.That(contact.IsAdmin, Is.False);
                 Assert.That(contact.IsSuperUser, Is.False);
-                Assert.That(contact.DateCreated, Is.EqualTo(testDate));
-                Assert.That(contact.DateModified, Is.EqualTo(testDate));
+                Assert.That(contact.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(contact.ModifiedDate, Is.EqualTo(testDate));
             });
         }
 
@@ -2144,33 +2144,33 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void ExplicitInterfaceProperties_UpdateDateModified()
+        public void ExplicitInterfaceProperties_UpdateModifiedDate()
         {
-            // Test that explicit interface property setters update DateModified
+            // Test that explicit interface property setters update ModifiedDate
             
             var personInterface = (Interfaces.Type.IPerson)_sut;
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
             // Test Emails property
             personInterface.Emails = _testEmails.Cast<Interfaces.Type.IEmail>().ToList();
-            var emailsDateModified = _sut.DateModified;
-            Assert.That(emailsDateModified, Is.GreaterThan(originalDateModified));
+            var emailsModifiedDate = _sut.ModifiedDate;
+            Assert.That(emailsModifiedDate, Is.GreaterThan(originalModifiedDate));
 
             // Small delay for timestamp difference
             System.Threading.Thread.Sleep(1);
 
             // Test PhoneNumbers property  
             personInterface.PhoneNumbers = _testPhoneNumbers.Cast<Interfaces.Type.IPhoneNumber>().ToList();
-            var phoneNumbersDateModified = _sut.DateModified;
-            Assert.That(phoneNumbersDateModified, Is.GreaterThan(emailsDateModified));
+            var phoneNumbersModifiedDate = _sut.ModifiedDate;
+            Assert.That(phoneNumbersModifiedDate, Is.GreaterThan(emailsModifiedDate));
 
             // Small delay for timestamp difference
             System.Threading.Thread.Sleep(1);
 
             // Test Addresses property
             personInterface.Addresses = _testAddresses.Cast<Interfaces.Type.IAddress>().ToList();
-            var addressesDateModified = _sut.DateModified;
-            Assert.That(addressesDateModified, Is.GreaterThan(phoneNumbersDateModified));
+            var addressesModifiedDate = _sut.ModifiedDate;
+            Assert.That(addressesModifiedDate, Is.GreaterThan(phoneNumbersModifiedDate));
         }
 
         [Test, Category("Models")]
@@ -2204,8 +2204,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 linkedEntityId: 999,
                 linkedEntity: _linkedUser,
                 linkedEntityType: "User",
-                dateCreated: testDate,
-                dateModified: testDate
+                createdDate: testDate,
+                modifiedDate: testDate
             );
             
             // Verify comprehensive properties
@@ -2227,8 +2227,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(fullContact.LinkedEntityId, Is.EqualTo(999));
                 Assert.That(fullContact.LinkedEntity, Is.EqualTo(_linkedUser));
                 Assert.That(fullContact.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(fullContact.DateCreated, Is.EqualTo(testDate));
-                Assert.That(fullContact.DateModified, Is.EqualTo(testDate));
+                Assert.That(fullContact.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(fullContact.ModifiedDate, Is.EqualTo(testDate));
             });
             
             // Test all property setters
@@ -2260,7 +2260,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(defaultContact.LastName, Is.EqualTo("Name"));
                 Assert.That(defaultContact.FullName, Is.EqualTo("Updated Middle Name"));
                 Assert.That(defaultContact.LinkedEntityType, Is.EqualTo("User"));
-                Assert.That(defaultContact.DateCreated, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(defaultContact.CreatedDate, Is.Not.EqualTo(default(DateTime)));
             });
             
             // Test Cast functionality without addresses to avoid interface issues
@@ -2309,8 +2309,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool? IsDeceased { get; set; } = false;
             public bool? IsAdmin { get; set; } = false;
             public bool? IsSuperUser { get; set; } = false;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = null;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
             {
@@ -2351,8 +2351,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool? IsDeceased { get; set; } = false;
             public bool? IsAdmin { get; set; } = false;
             public bool? IsSuperUser { get; set; } = false;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = null;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
             {
@@ -2393,8 +2393,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool? IsDeceased { get; set; } = false;
             public bool? IsAdmin { get; set; } = false;
             public bool? IsSuperUser { get; set; } = false;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = null;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             List<Interfaces.Type.IEmail> Interfaces.Type.IPerson.Emails
             {

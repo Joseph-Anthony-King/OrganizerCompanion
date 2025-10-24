@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -36,7 +37,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _linkedEntityId = 0;
         private IDomainEntity? _linkedEntity = null;
         private string? _linkedEntityType = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -48,7 +49,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _emails = value?.ConvertAll(email => (Email)email) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -59,7 +60,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _phoneNumbers = value.ConvertAll(phone => (PhoneNumber)phone) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -70,11 +71,12 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _addresses = value.ConvertAll(address => (IAddress)address) ?? [];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        [Key]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -87,7 +89,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -98,7 +100,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _firstName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -109,7 +111,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _middleName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -120,16 +122,17 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _lastName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("fullName")]
         public string? FullName => _firstName == null && _middleName == null && _lastName == null ? null :
             _firstName == null || _lastName == null ?
-                throw new ArgumentNullException("FirstName and/or LastName properties cannot be null.") :
+            throw new ArgumentNullException("FirstName and/or LastName properties cannot be null.") :
             _middleName == null ?
-                    $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
+            $"{_firstName} {_lastName}" : $"{_firstName} {_middleName} {_lastName}";
 
         [JsonPropertyName("userName"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull), UserNameValidator]
         public string? UserName
@@ -138,7 +141,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _userName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -149,7 +152,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _pronouns = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -160,7 +163,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _birthDate = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -171,7 +174,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _deceasedDate = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -182,10 +185,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _joinedDate = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("emails"), EmailsValidator]
         public List<Email> Emails
         {
@@ -193,10 +197,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _emails = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("phoneNumbers"), PhoneNumbersValidator]
         public List<PhoneNumber> PhoneNumbers
         {
@@ -204,10 +209,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _phoneNumbers = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("addresses")]
         public List<IAddress> Addresses
         {
@@ -215,7 +221,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _addresses = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -226,7 +232,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isActive = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -237,7 +243,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isDeceased = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -248,7 +254,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isAdmin = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -259,7 +265,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isSuperUser = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -270,10 +276,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntityId = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -282,18 +289,19 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _linkedEntity = value;
                 _linkedEntityType = value?.GetType().Name;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => _linkedEntityType;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -320,8 +328,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             int linkedEntityId,
             IDomainEntity? linkedEntity,
             string? linkedEntityType,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _firstName = firstName;
@@ -342,8 +350,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _linkedEntityId = linkedEntityId;
             _linkedEntity = linkedEntity;
             _linkedEntityType = linkedEntityType;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Contact(
@@ -380,7 +388,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _linkedEntityType = linkedEntityType;
         }
 
-        public Contact(IContactDTO dto)
+        internal Contact(IContactDTO dto)
         {
             _id = dto.Id;
             _firstName = dto.FirstName;
@@ -395,18 +403,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isDeceased = dto.IsDeceased;
             _isAdmin = dto.IsAdmin;
             _isSuperUser = dto.IsSuperUser;
-            
+
             // Access collections through the interface properties
             var emails = ((Interfaces.Type.IPerson)dto).Emails;
             var phoneNumbers = ((Interfaces.Type.IPerson)dto).PhoneNumbers;
             var addresses = ((Interfaces.Type.IPerson)dto).Addresses;
-            
+
             _emails = emails?.ConvertAll(emailInterface => emailInterface switch
             {
                 EmailDTO emailDto => new Email(emailDto),
                 _ => throw new InvalidOperationException($"Unknown email type: {emailInterface.GetType().Name}.")
             }) ?? [];
-            
+
             _phoneNumbers = phoneNumbers?.ConvertAll(phoneInterface => phoneInterface switch
             {
                 PhoneNumberDTO phoneDto => new PhoneNumber(phoneDto),
@@ -420,9 +428,9 @@ namespace OrganizerCompanion.Core.Models.Domain
                 USAddressDTO usAddressDto => new USAddress(usAddressDto),
                 _ => throw new InvalidOperationException($"Unknown address type: {addressInterface.GetType().Name}.")
             }) ?? [];
-            
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -452,8 +460,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Emails = Emails.ConvertAll(email => email.Cast<EmailDTO>()),
                         PhoneNumbers = PhoneNumbers.ConvertAll(phone => phone.Cast<PhoneNumberDTO>()),
                         Addresses = Addresses.ConvertAll(address => (IAddressDTO)CastAddressByType(address)),
-                        DateCreated = DateCreated,
-                        DateModified = DateModified,
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate,
                     };
                     return (T)dto;
                 }

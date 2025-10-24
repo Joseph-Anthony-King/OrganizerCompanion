@@ -1,10 +1,10 @@
-﻿namespace OrganizerCompanion.Core.Interfaces.Domain
+namespace OrganizerCompanion.Core.Interfaces.Domain
 {
-    internal interface IDomainEntity
+    public interface IDomainEntity
     {
         int Id { get; set; }
-        DateTime DateCreated { get; }
-        DateTime? DateModified { get; set; }
+        DateTime CreatedDate { get; }
+        DateTime? ModifiedDate { get; set; }
         string ToJson();
         T Cast<T>() where T : IDomainEntity;
     }

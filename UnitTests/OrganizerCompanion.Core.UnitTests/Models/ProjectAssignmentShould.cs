@@ -18,7 +18,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private class TestProjectAssignmentDTO : IProjectAssignmentDTO
         {
             public int Id { get; set; }
-            public string Name { get; set; } = string.Empty;
+            public string ProjectAssignmentName { get; set; } = string.Empty;
             public string? Description { get; set; }
             public int? AssigneeId { get; set; }
             public ISubAccountDTO? Assignee { get; set; }
@@ -29,10 +29,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public int? TaskId { get; set; }
             public IProjectTaskDTO? Task { get; set; }
             public bool IsCompleted { get; set; }
-            public DateTime? DateDue { get; set; }
-            public DateTime? DateCompleted { get; private set; }
-            public DateTime DateCreated { get; private set; } = DateTime.UtcNow;
-            public DateTime? DateModified { get; set; }
+            public DateTime? DueDate { get; set; }
+            public DateTime? CompletedDate { get; private set; }
+            public DateTime CreatedDate { get; private set; } = DateTime.UtcNow;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => throw new NotImplementedException();
@@ -76,7 +76,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(assignment.Id, Is.EqualTo(0));
-                Assert.That(assignment.Name, Is.EqualTo(string.Empty));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(string.Empty));
                 Assert.That(assignment.Description, Is.Null);
                 Assert.That(assignment.AssigneeId, Is.Null);
                 Assert.That(assignment.Assignee, Is.Null);
@@ -85,10 +85,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Location, Is.Null);
                 Assert.That(assignment.Groups, Is.Null);
                 Assert.That(assignment.IsCompleted, Is.False);
-                Assert.That(assignment.DateDue, Is.Null);
-                Assert.That(assignment.DateCompleted, Is.Null);
-                Assert.That(assignment.DateCreated, Is.Not.EqualTo(default(DateTime)));
-                Assert.That(assignment.DateModified, Is.Null);
+                Assert.That(assignment.DueDate, Is.Null);
+                Assert.That(assignment.CompletedDate, Is.Null);
+                Assert.That(assignment.CreatedDate, Is.Not.EqualTo(default(DateTime)));
+                Assert.That(assignment.ModifiedDate, Is.Null);
             });
         }
 
@@ -115,10 +115,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var taskId = 100;
             var task = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
             var isCompleted = true;
-            var dateDue = DateTime.Now.AddDays(7);
-            var dateCompleted = DateTime.Now.AddDays(-1);
-            var dateCreated = DateTime.Now.AddDays(-10);
-            var dateModified = DateTime.Now.AddDays(-2);
+            var dueDate = DateTime.Now.AddDays(7);
+            var completedDate = DateTime.Now.AddDays(-1);
+            var createdDate = DateTime.Now.AddDays(-10);
+            var modifiedDate = DateTime.Now.AddDays(-2);
 
             // Act
             var assignment = new ProjectAssignment(
@@ -133,16 +133,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 taskId,
                 task,
                 isCompleted,
-                dateDue,
-                dateCompleted,
-                dateCreated,
-                dateModified);
+                dueDate,
+                completedDate,
+                createdDate,
+                modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(id));
-                Assert.That(assignment.Name, Is.EqualTo(name));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(name));
                 Assert.That(assignment.Description, Is.EqualTo(description));
                 Assert.That(assignment.AssigneeId, Is.EqualTo(assignee.Id));
                 Assert.That(assignment.Assignee, Is.EqualTo(assignee));
@@ -153,10 +153,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.TaskId, Is.EqualTo(taskId));
                 Assert.That(assignment.Task, Is.EqualTo(task));
                 Assert.That(assignment.IsCompleted, Is.EqualTo(isCompleted));
-                Assert.That(assignment.DateDue, Is.EqualTo(dateDue));
-                Assert.That(assignment.DateCompleted, Is.EqualTo(dateCompleted));
-                Assert.That(assignment.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(assignment.DateModified, Is.EqualTo(dateModified));
+                Assert.That(assignment.DueDate, Is.EqualTo(dueDate));
+                Assert.That(assignment.CompletedDate, Is.EqualTo(completedDate));
+                Assert.That(assignment.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(assignment.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -193,15 +193,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectAssignmentDTO
             {
                 Id = 1,
-                Name = "DTO Assignment",
+                ProjectAssignmentName = "DTO Assignment",
                 Description = "DTO Description",
                 AssigneeId = 5,
                 LocationId = 10,
                 LocationType = "USAddress",
                 TaskId = 100,
                 IsCompleted = true,
-                DateDue = DateTime.Now.AddDays(7),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(7),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -211,16 +211,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(dto.Id));
-                Assert.That(assignment.Name, Is.EqualTo(dto.Name));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(dto.ProjectAssignmentName));
                 Assert.That(assignment.Description, Is.EqualTo(dto.Description));
                 Assert.That(assignment.LocationId, Is.EqualTo(dto.LocationId));
                 Assert.That(assignment.LocationType, Is.EqualTo(dto.LocationType));
                 Assert.That(assignment.TaskId, Is.EqualTo(dto.TaskId));
                 Assert.That(assignment.IsCompleted, Is.EqualTo(dto.IsCompleted));
-                Assert.That(assignment.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(assignment.DateCompleted, Is.EqualTo(dto.DateCompleted));
-                Assert.That(assignment.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(assignment.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(assignment.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(assignment.CompletedDate, Is.EqualTo(dto.CompletedDate));
+                Assert.That(assignment.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(assignment.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -231,7 +231,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectAssignmentDTO
             {
                 Id = 2,
-                Name = "Minimal DTO Assignment",
+                ProjectAssignmentName = "Minimal DTO Assignment",
                 Description = null,
                 AssigneeId = null,
                 LocationId = null,
@@ -239,8 +239,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Groups = null,
                 TaskId = null,
                 IsCompleted = false,
-                DateDue = null,
-                DateModified = null
+                DueDate = null,
+                ModifiedDate = null
             };
 
             // Act
@@ -250,7 +250,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(dto.Id));
-                Assert.That(assignment.Name, Is.EqualTo(dto.Name));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(dto.ProjectAssignmentName));
                 Assert.That(assignment.Description, Is.Null);
                 Assert.That(assignment.Assignee, Is.Null);
                 Assert.That(assignment.LocationId, Is.Null);
@@ -261,10 +261,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.TaskId, Is.Null);
                 Assert.That(assignment.Task, Is.Null);
                 Assert.That(assignment.IsCompleted, Is.False);
-                Assert.That(assignment.DateDue, Is.Null);
-                Assert.That(assignment.DateCompleted, Is.Null);
-                Assert.That(assignment.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(assignment.DateModified, Is.Null);
+                Assert.That(assignment.DueDate, Is.Null);
+                Assert.That(assignment.CompletedDate, Is.Null);
+                Assert.That(assignment.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(assignment.ModifiedDate, Is.Null);
             });
         }
 
@@ -275,12 +275,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectAssignmentDTO
             {
                 Id = 3,
-                Name = "DTO Assignment Empty Groups",
+                ProjectAssignmentName = "DTO Assignment Empty Groups",
                 Description = "Description",
                 Groups = null, // Use null to avoid casting issues, constructor will create empty list
                 IsCompleted = false,
-                DateDue = DateTime.Now.AddDays(14),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(14),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -290,14 +290,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(dto.Id));
-                Assert.That(assignment.Name, Is.EqualTo(dto.Name));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(dto.ProjectAssignmentName));
                 Assert.That(assignment.Description, Is.EqualTo(dto.Description));
                 Assert.That(assignment.Groups, Is.Not.Null);
                 Assert.That(assignment.Groups, Is.Empty);
                 Assert.That(assignment.IsCompleted, Is.False);
-                Assert.That(assignment.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(assignment.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(assignment.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(assignment.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(assignment.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(assignment.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -308,7 +308,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectAssignmentDTO
             {
                 Id = 4,
-                Name = "Complete DTO Assignment",
+                ProjectAssignmentName = "Complete DTO Assignment",
                 Description = "Complete Description",
                 Assignee = null, // SubAccountDTO casting issue - use null for now
                 LocationId = 20,
@@ -316,8 +316,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Groups = null, // Use null to avoid GroupDTO casting issues
                 TaskId = 200,
                 IsCompleted = true,
-                DateDue = DateTime.Now.AddDays(10),
-                DateModified = DateTime.Now
+                DueDate = DateTime.Now.AddDays(10),
+                ModifiedDate = DateTime.Now
             };
 
             // Act
@@ -327,7 +327,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(dto.Id));
-                Assert.That(assignment.Name, Is.EqualTo(dto.Name));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo(dto.ProjectAssignmentName));
                 Assert.That(assignment.Description, Is.EqualTo(dto.Description));
                 Assert.That(assignment.Assignee, Is.Null);
                 Assert.That(assignment.LocationId, Is.EqualTo(dto.LocationId));
@@ -337,9 +337,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(assignment.Groups, Is.Empty);
                 Assert.That(assignment.TaskId, Is.EqualTo(dto.TaskId));
                 Assert.That(assignment.IsCompleted, Is.True);
-                Assert.That(assignment.DateDue, Is.EqualTo(dto.DateDue));
-                Assert.That(assignment.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(assignment.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(assignment.DueDate, Is.EqualTo(dto.DueDate));
+                Assert.That(assignment.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(assignment.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -350,11 +350,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var dto = new TestProjectAssignmentDTO
             {
                 Id = 0,
-                Name = "A", // Minimum valid name
+                ProjectAssignmentName = "A", // Minimum valid name
                 Description = null,
                 IsCompleted = false,
-                DateDue = null,
-                DateModified = null
+                DueDate = null,
+                ModifiedDate = null
             };
 
             // Act
@@ -364,13 +364,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(assignment.Id, Is.EqualTo(0));
-                Assert.That(assignment.Name, Is.EqualTo("A"));
+                Assert.That(assignment.ProjectAssignmentName, Is.EqualTo("A"));
                 Assert.That(assignment.Description, Is.Null);
                 Assert.That(assignment.IsCompleted, Is.False);
-                Assert.That(assignment.DateDue, Is.Null);
-                Assert.That(assignment.DateCompleted, Is.Null);
-                Assert.That(assignment.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(assignment.DateModified, Is.Null);
+                Assert.That(assignment.DueDate, Is.Null);
+                Assert.That(assignment.CompletedDate, Is.Null);
+                Assert.That(assignment.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(assignment.ModifiedDate, Is.Null);
             });
         }
 
@@ -383,7 +383,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var id = 42;
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Id = id;
@@ -392,9 +392,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.Id, Is.EqualTo(id));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -409,25 +409,25 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var name = "Test Assignment Name";
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
-            _assignment.Name = name;
+            _assignment.ProjectAssignmentName = name;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_assignment.Name, Is.EqualTo(name));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ProjectAssignmentName, Is.EqualTo(name));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
         public void ThrowExceptionForEmptyName()
         {
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _assignment.Name = "");
+            Assert.Throws<ArgumentException>(() => _assignment.ProjectAssignmentName = "");
         }
 
         [Test, Category("Models")]
@@ -437,7 +437,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var longName = new string('a', 101);
 
             // Act & Assert
-            Assert.Throws<ArgumentException>(() => _assignment.Name = longName);
+            Assert.Throws<ArgumentException>(() => _assignment.ProjectAssignmentName = longName);
         }
 
         [Test, Category("Models")]
@@ -445,7 +445,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var description = "Test description";
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Description = description;
@@ -454,9 +454,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.Description, Is.EqualTo(description));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -473,7 +473,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void SetAndGetGroups()
         {
             // Arrange
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Groups = _groups;
@@ -482,9 +482,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.Groups, Is.EqualTo(_groups));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -504,7 +504,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void SetAndGetContacts()
         {
             // Arrange
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Groups = _groups;
@@ -513,9 +513,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.Groups, Is.EqualTo(_groups));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -532,10 +532,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void SetIsCompletedToTrueAndUpdateDateCompleted()
+        public void SetIsCompletedToTrueAndUpcompletedDateDate()
         {
             // Arrange
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
             var beforeCompletion = DateTime.Now;
 
             // Act
@@ -546,23 +546,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.IsCompleted, Is.True);
-                Assert.That(_assignment.DateCompleted, Is.Not.Null);
+                Assert.That(_assignment.CompletedDate, Is.Not.Null);
             });
-            Assert.That(_assignment.DateCompleted, Is.GreaterThanOrEqualTo(beforeCompletion));
+            Assert.That(_assignment.CompletedDate, Is.GreaterThanOrEqualTo(beforeCompletion));
             Assert.Multiple(() =>
             {
-                Assert.That(_assignment.DateCompleted, Is.LessThanOrEqualTo(afterCompletion));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.CompletedDate, Is.LessThanOrEqualTo(afterCompletion));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
-        public void SetIsCompletedToFalseAndClearDateCompleted()
+        public void SetIsCompletedToFalseAndClearCompletedDate()
         {
             // Arrange
             _assignment.IsCompleted = true; // Set to true first
-            Assert.That(_assignment.DateCompleted, Is.Not.Null);
+            Assert.That(_assignment.CompletedDate, Is.Not.Null);
 
             // Act
             _assignment.IsCompleted = false;
@@ -571,65 +571,65 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.IsCompleted, Is.False);
-                Assert.That(_assignment.DateCompleted, Is.Null);
+                Assert.That(_assignment.CompletedDate, Is.Null);
             });
         }
 
         [Test, Category("Models")]
-        public void SetAndGetDateDue()
+        public void SetAndGetDueDate()
         {
             // Arrange
-            var dateDue = DateTime.Now.AddDays(7);
-            var initialDateModified = _assignment.DateModified;
+            var dueDate = DateTime.Now.AddDays(7);
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
-            _assignment.DateDue = dateDue;
+            _assignment.DueDate = dueDate;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_assignment.DateDue, Is.EqualTo(dateDue));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.DueDate, Is.EqualTo(dueDate));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
-        public void SetAndGetDateCompleted()
+        public void SetAndGetCompletedDate()
         {
             // Arrange
-            var dateCompleted = DateTime.Now;
-            var initialDateModified = _assignment.DateModified;
+            var completedDate = DateTime.Now;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
-            _assignment.DateCompleted = dateCompleted;
+            _assignment.CompletedDate = completedDate;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_assignment.DateCompleted, Is.EqualTo(dateCompleted));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.CompletedDate, Is.EqualTo(completedDate));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
-        public void SetAndGetDateCreated()
+        public void SetAndGetCreatedDate()
         {
             // Arrange
-            var dateCreated = DateTime.Now.AddDays(-5);
-            var initialDateModified = _assignment.DateModified;
+            var createdDate = DateTime.Now.AddDays(-5);
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
-            _assignment.DateCreated = dateCreated;
+            _assignment.CreatedDate = createdDate;
             Assert.Multiple(() =>
             {
 
                 // Assert
-                Assert.That(_assignment.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -637,7 +637,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var taskId = 42;
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.TaskId = taskId;
@@ -646,9 +646,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.TaskId, Is.EqualTo(taskId));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -671,7 +671,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var task = new OrganizerCompanion.Core.Models.Domain.ProjectTask();
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Task = task;
@@ -680,9 +680,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 // Assert
                 Assert.That(_assignment.Task, Is.EqualTo(task));
-                Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
             });
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -714,15 +714,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var locationId = 42;
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.LocationId = locationId;
 
-            // Assert - Domain entities auto-update DateModified
+            // Assert - Domain entities auto-update ModifiedDate
             Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
-            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -761,15 +761,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var locationType = "Conference Room";
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.LocationType = locationType;
 
-            // Assert - Domain entities auto-update DateModified
+            // Assert - Domain entities auto-update ModifiedDate
             Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
-            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -801,15 +801,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 State = USStates.California.ToStateModel(),
                 ZipCode = "12345"
             };
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Location = location;
 
-            // Assert - Domain entities auto-update DateModified
+            // Assert - Domain entities auto-update ModifiedDate
             Assert.That(_assignment.Location, Is.EqualTo(location));
-            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -825,15 +825,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             var assignee = new SubAccount { Id = 1 };
-            var initialDateModified = _assignment.DateModified;
+            var initialModifiedDate = _assignment.ModifiedDate;
 
             // Act
             _assignment.Assignee = assignee;
 
-            // Assert - Domain entities auto-update DateModified
+            // Assert - Domain entities auto-update ModifiedDate
             Assert.That(_assignment.Assignee, Is.EqualTo(assignee));
-            Assert.That(_assignment.DateModified, Is.Not.EqualTo(initialDateModified));
-            Assert.That(_assignment.DateModified, Is.Not.Null);
+            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
         [Test, Category("Models")]
@@ -885,7 +885,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
+            _assignment.ProjectAssignmentName = "Test Assignment";
             _assignment.Description = "Test Description";
             _assignment.IsCompleted = false;
 
@@ -906,7 +906,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _assignment.Id = 0;
-            _assignment.Name = "Minimal Assignment";
+            _assignment.ProjectAssignmentName = "Minimal Assignment";
             // Leave other properties as default/null
 
             // Act
@@ -924,7 +924,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _assignment.Id = 1;
-            _assignment.Name = "Test Assignment";
+            _assignment.ProjectAssignmentName = "Test Assignment";
             _assignment.Groups = _groups;
 
             // Act & Assert - Should not throw due to ReferenceHandler.IgnoreCycles
@@ -939,8 +939,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void AcceptMinimumValidName()
         {
             // Act & Assert
-            Assert.DoesNotThrow(() => _assignment.Name = "A");
-            Assert.That(_assignment.Name, Is.EqualTo("A"));
+            Assert.DoesNotThrow(() => _assignment.ProjectAssignmentName = "A");
+            Assert.That(_assignment.ProjectAssignmentName, Is.EqualTo("A"));
         }
 
         [Test, Category("Models")]
@@ -950,8 +950,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var maxName = new string('a', 100);
 
             // Act & Assert
-            Assert.DoesNotThrow(() => _assignment.Name = maxName);
-            Assert.That(_assignment.Name, Is.EqualTo(maxName));
+            Assert.DoesNotThrow(() => _assignment.ProjectAssignmentName = maxName);
+            Assert.That(_assignment.ProjectAssignmentName, Is.EqualTo(maxName));
         }
 
         [Test, Category("Models")]
@@ -1027,13 +1027,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             Assert.DoesNotThrow(() =>
                   {
-                      _assignment.DateDue = null;
-                      _assignment.DateCompleted = null;
+                      _assignment.DueDate = null;
+                      _assignment.CompletedDate = null;
                   });
             Assert.Multiple(() =>
             {
-                Assert.That(_assignment.DateDue, Is.Null);
-                Assert.That(_assignment.DateCompleted, Is.Null);
+                Assert.That(_assignment.DueDate, Is.Null);
+                Assert.That(_assignment.CompletedDate, Is.Null);
             });
         }
 
@@ -1064,7 +1064,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
                 Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
                 Assert.That(_assignment.Location, Is.EqualTo(location));
-                Assert.That(_assignment.DateModified, Is.Not.Null);
+                Assert.That(_assignment.ModifiedDate, Is.Not.Null);
             });
         }
 

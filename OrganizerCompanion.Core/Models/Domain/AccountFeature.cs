@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -18,31 +19,34 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private Account? _account = null;
         private Feature? _feature = null;
-        private readonly DateTime _dateCreated = DateTime.UtcNow;
+        private DateTime _createdDate = DateTime.UtcNow; // Remove readonly
         #endregion
 
-        #region Properties
         #region Explicit Interface Implementations
-        IFeature? IAccountFeature.Feature
-        {
-            get => Feature;
-            set
-            {
-                Feature = (Feature)value!;
-                DateModified = DateTime.Now;
-            }
-        }
         IAccount? IAccountFeature.Account
         {
             get => Account;
             set
             {
-                Account = (Account)value!;
-                DateModified = DateTime.Now;
+                Account = (Account?)value;
+                ModifiedDate = DateTime.UtcNow;
+            }
+        }
+
+        IFeature? IAccountFeature.Feature
+        {
+            get => Feature;
+            set
+            {
+                Feature = (Feature?)value;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        #region Properties
+        [Key]
+        [Column("AccountFeatureId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -54,67 +58,67 @@ namespace OrganizerCompanion.Core.Models.Domain
                     throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
                 }
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
-        public int AccountId
-        {
-            get => _account?.Id ?? 0;
-        }
+        public int AccountId => Account?.Id ?? 0;
 
-        [JsonIgnore]
-        public Account? Account
+        [NotMapped]
+        [Required, JsonPropertyName("featureId"), Range(0, int.MaxValue, ErrorMessage = "Feature Id must be a non-negative number.")]
+        public int FeatureId => Feature?.Id ?? 0;
+
+        [ForeignKey("AccountId")]
+        [JsonIgnore] // Don't serialize the navigation property directly
+        public virtual Account? Account
         {
             get => _account;
             set
             {
                 _account = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("featureId"), Range(0, int.MaxValue, ErrorMessage = "Feature Id must be a non-negative number.")]
-        public int FeatureId
-        {
-            get => _feature?.Id ?? 0;
-        }
-
+        [ForeignKey("FeatureId")]
         [JsonIgnore]
-        public Feature? Feature
+        public virtual Feature? Feature
         {
             get => _feature;
             set
             {
                 _feature = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
+        // Keep for EF Core
         public AccountFeature() { }
 
+        // For JSON deserialization only
         [JsonConstructor]
         public AccountFeature(
             int id,
             Account? account,
             Feature? feature,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _account = account;
             _feature = feature;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;    
         }
 
         public AccountFeature(
@@ -157,8 +161,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                 license: accountDTO.License,
                 features: [], // Empty to avoid infinite recursion
                 accounts: accountDTO.Accounts?.ConvertAll(sa => new SubAccount(sa)) ?? [],
-                dateCreated: accountDTO.DateCreated,
-                dateModified: accountDTO.DateModified);
+                createdDate: accountDTO.CreatedDate,
+                modifiedDate: accountDTO.ModifiedDate);
         }
         #endregion
 

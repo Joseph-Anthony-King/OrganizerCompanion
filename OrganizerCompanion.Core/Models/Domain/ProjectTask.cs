@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -16,13 +17,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
-        private string _name = string.Empty;
+        private string _projectTaskName = string.Empty;
         private string? _description = null;
         private List<ProjectAssignment>? _assignments = null;
         private bool _isCompleted = false;
-        private DateTime? _dateDue = null;
-        private readonly DateTime? _dateCompleted = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime? _dueDate = null;
+        private DateTime? _completedDate = null;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
@@ -35,6 +36,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
         #endregion
 
+        [Key]
+        [Column("ProjectTaskId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -47,28 +50,28 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.UtcNow;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name
+        [Required, JsonPropertyName("projectAssignmentName"), MinLength(1, ErrorMessage = "ProjectAssignmentName must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
+        public string ProjectTaskName
         {
-            get => _name;
+            get => _projectTaskName;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException("Name must be at least 1 character long.", nameof(Name));
+                    throw new ArgumentException("Name must be at least 1 character long.", nameof(ProjectTaskName));
                 }
 
                 if (value.Length > 100)
                 {
-                    throw new ArgumentException("Name cannot exceed 100 characters.", nameof(Name));
+                    throw new ArgumentException("Name cannot exceed 100 characters.", nameof(ProjectTaskName));
                 }
 
-                _name = value;
-                DateModified = DateTime.UtcNow;
+                _projectTaskName = value;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -89,10 +92,11 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _description = value;
-                DateModified = DateTime.UtcNow;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("assignments")]
         public List<ProjectAssignment>? Assignments
         {
@@ -101,7 +105,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _assignments ??= [];
                 _assignments = value;
-                DateModified = DateTime.UtcNow;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -112,29 +116,31 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isCompleted = value;
-                DateModified = DateTime.UtcNow;
+                _completedDate = value ? DateTime.UtcNow : null;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateDue")]
-        public DateTime? DateDue
+        [Required, JsonPropertyName("dueDate")]
+        public DateTime? DueDate
         {
-            get => _dateDue;
+            get => _dueDate;
             set
             {
-                _dateDue = value;
-                DateModified = DateTime.UtcNow;
+                _dueDate = value;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCompleted")]
-        public DateTime? DateCompleted => _dateCompleted;
+        [NotMapped]
+        [Required, JsonPropertyName("completedDate")]
+        public DateTime? CompletedDate => _completedDate;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -147,33 +153,33 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? description,
             List<ProjectAssignment>? assignments,
             bool isCompleted,
-            DateTime? dateDue,
-            DateTime? dateCompleted,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime? dueDate,
+            DateTime? completedDate,
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
-            _name = name;
+            _projectTaskName = name;
             _description = description;
             _assignments = assignments;
             _isCompleted = isCompleted;
-            _dateDue = dateDue;
-            _dateCompleted = dateCompleted;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _dueDate = dueDate;
+            _completedDate = completedDate;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public ProjectTask(IProjectTaskDTO task)
         {
             _id = task.Id;
-            _name = task.Name;
+            _projectTaskName = task.ProjectTaskName;
             _description = task.Description;
             _assignments = task.Assignments?.Select(a => new ProjectAssignment(a)).ToList();
             _isCompleted = task.IsCompleted;
-            _dateDue = task.DateDue;
-            _dateCompleted = task.DateCompleted;
-            _dateCreated = task.DateCreated;
-            DateModified = task.DateModified;
+            _dueDate = task.DueDate;
+            _completedDate = task.CompletedDate;
+            _createdDate = task.CreatedDate;
+            ModifiedDate = task.ModifiedDate;
         }
         #endregion
 
@@ -184,9 +190,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (typeof(T) == typeof(ProjectTaskDTO) || typeof(T) == typeof(IProjectTaskDTO))
                 {
-                    // ProjectTaskDTO is currently a stub implementation that throws NotImplementedException
-                    // for all properties and methods, so we just return a new instance
-                    var dto = new ProjectTaskDTO();
+                    var dto = new ProjectTaskDTO
+                    (
+                        _id,
+                        _projectTaskName,
+                        _description,
+                        _assignments?.Select(a => a.Cast<ProjectAssignmentDTO>()).ToList(),
+                        _isCompleted,
+                        _dueDate,
+                        _completedDate,
+                        _createdDate,
+                        ModifiedDate
+                    );
                     return (T)(object)dto;
                 }
                 else
@@ -202,7 +217,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         public string ToJson() => JsonSerializer.Serialize(this, _serializerOptions);
 
-        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}.IsCompleted:{2}", _id, _name, _isCompleted);
+        public override string? ToString() => string.Format(base.ToString() + ".Id:{0}.Name:{1}.IsCompleted:{2}", _id, _projectTaskName, _isCompleted);
         #endregion
     }
 }

@@ -23,7 +23,7 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             set
             {
                 Members = [.. value.Cast<ContactDTO>()];
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -54,11 +54,11 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [JsonPropertyName("account"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public AccountDTO? Account { get; set; } = null;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated { get; set; } = DateTime.Now;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate { get; set; } = DateTime.Now;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = default;
         #endregion
     }
 }

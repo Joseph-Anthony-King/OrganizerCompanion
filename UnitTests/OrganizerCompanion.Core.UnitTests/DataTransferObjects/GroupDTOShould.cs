@@ -12,8 +12,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
     internal class GroupDTOShould
     {
         private GroupDTO _sut;
-        private readonly DateTime _testDateCreated = new(2023, 1, 1, 12, 0, 0);
-        private readonly DateTime _testDateModified = new(2023, 1, 2, 12, 0, 0);
+        private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
+        private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
         private List<ContactDTO> _testMembers;
         private AccountDTO _testAccount;
 
@@ -68,9 +68,9 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(groupDTO.Members, Is.Empty);
                 Assert.That(groupDTO.AccountId, Is.EqualTo(0));
                 Assert.That(groupDTO.Account, Is.Null);
-                Assert.That(groupDTO.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(groupDTO.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(groupDTO.DateModified, Is.Null);
+                Assert.That(groupDTO.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(groupDTO.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(groupDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -184,33 +184,33 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_GetSet_WorksCorrectly()
+        public void CreatedDate_GetSet_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.DateCreated = _testDateCreated;
+            _sut.CreatedDate = _testCreatedDate;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(_testDateCreated));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(_testCreatedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_GetSet_WorksCorrectly()
+        public void ModifiedDate_GetSet_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.DateModified = _testDateModified;
+            _sut.ModifiedDate = _testModifiedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(_testDateModified));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(_testModifiedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_SetNull_WorksCorrectly()
+        public void ModifiedDate_SetNull_WorksCorrectly()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         #endregion
@@ -261,10 +261,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 Assert.That(_sut.Members[0].Id, Is.EqualTo(1));
                 Assert.That(_sut.Members[1].Id, Is.EqualTo(2));
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -284,10 +284,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Members, Is.Empty);
-                Assert.That(_sut.DateModified, Is.Not.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
             });
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         #endregion
@@ -391,27 +391,27 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
         #endregion
 
-        #region DateModified Update Tests
+        #region ModifiedDate Update Tests
 
         [Test, Category("DataTransferObjects")]
-        public void Members_Set_DoesNotUpdateDateModified()
+        public void Members_Set_DoesNotUpdateModifiedDate()
         {
             // Arrange
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Act
             _sut.Members = _testMembers;
 
-            // Assert - Note: Regular Members property doesn't update DateModified, only interface implementation does
-            Assert.That(_sut.DateModified, Is.Null);
+            // Assert - Note: Regular Members property doesn't update ModifiedDate, only interface implementation does
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IGroupDTO_Members_Set_UpdatesDateModified_WhenNull()
+        public void IGroupDTO_Members_Set_UpdatesModifiedDate_WhenNull()
         {
             // Arrange
             var beforeModified = DateTime.Now;
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
             var groupInterface = (IGroupDTO)_sut;
             var interfaceMembers = _testMembers.Cast<IContactDTO>().ToList();
 
@@ -420,16 +420,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var afterModified = DateTime.Now;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeModified));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterModified));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeModified));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterModified));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IGroupDTO_Members_Set_UpdatesDateModified_WhenAlreadySet()
+        public void IGroupDTO_Members_Set_UpdatesModifiedDate_WhenAlreadySet()
         {
             // Arrange
-            _sut.DateModified = _testDateModified;
+            _sut.ModifiedDate = _testModifiedDate;
             var beforeSet = DateTime.Now;
             var groupInterface = (IGroupDTO)_sut;
             var interfaceMembers = _testMembers.Cast<IContactDTO>().ToList();
@@ -439,10 +439,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var afterSet = DateTime.Now;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Not.Null);
-            Assert.That(_sut.DateModified, Is.Not.EqualTo(_testDateModified));
-            Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(afterSet));
+            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(_testModifiedDate));
+            Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
         }
 
         #endregion
@@ -699,71 +699,71 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMinValue()
+        public void CreatedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MinValue;
+            _sut.CreatedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMaxValue()
+        public void CreatedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MaxValue;
+            _sut.CreatedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMinValue()
+        public void ModifiedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MinValue;
+            _sut.ModifiedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMaxValue()
+        public void ModifiedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MaxValue;
+            _sut.ModifiedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldMaintainPrecision()
+        public void CreatedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
 
             // Act
-            _sut.DateCreated = preciseDate;
+            _sut.CreatedDate = preciseDate;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(preciseDate));
-            Assert.That(_sut.DateCreated.Millisecond, Is.EqualTo(123));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(preciseDate));
+            Assert.That(_sut.CreatedDate.Millisecond, Is.EqualTo(123));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldMaintainPrecision()
+        public void ModifiedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
 
             // Act
-            _sut.DateModified = preciseDate;
+            _sut.ModifiedDate = preciseDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(preciseDate));
-            Assert.That(_sut.DateModified?.Millisecond, Is.EqualTo(456));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(preciseDate));
+            Assert.That(_sut.ModifiedDate?.Millisecond, Is.EqualTo(456));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -873,8 +873,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Members = _testMembers,
                 AccountId = 123,
                 Account = _testAccount,
-                DateCreated = testCreated,
-                DateModified = testModified
+                CreatedDate = testCreated,
+                ModifiedDate = testModified
             };
 
             // Assert
@@ -886,8 +886,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(groupDto.Members, Is.SameAs(_testMembers));
                 Assert.That(groupDto.AccountId, Is.EqualTo(123));
                 Assert.That(groupDto.Account, Is.SameAs(_testAccount));
-                Assert.That(groupDto.DateCreated, Is.EqualTo(testCreated));
-                Assert.That(groupDto.DateModified, Is.EqualTo(testModified));
+                Assert.That(groupDto.CreatedDate, Is.EqualTo(testCreated));
+                Assert.That(groupDto.ModifiedDate, Is.EqualTo(testModified));
             });
         }
 
@@ -903,8 +903,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Account = _testAccount;
             var testDate = DateTime.Now.AddDays(-5);
             var testModified = DateTime.Now.AddHours(-3);
-            _sut.DateCreated = testDate;
-            _sut.DateModified = testModified;
+            _sut.CreatedDate = testDate;
+            _sut.ModifiedDate = testModified;
 
             // Store original values
             var originalId = _sut.Id;
@@ -913,8 +913,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var originalMembers = _sut.Members;
             var originalAccountId = _sut.AccountId;
             var originalAccount = _sut.Account;
-            var originalCreated = _sut.DateCreated;
-            var originalModified = _sut.DateModified;
+            var originalCreated = _sut.CreatedDate;
+            var originalModified = _sut.ModifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -926,8 +926,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Members, Is.SameAs(originalMembers));
                 Assert.That(_sut.AccountId, Is.EqualTo(originalAccountId));
                 Assert.That(_sut.Account, Is.SameAs(originalAccount));
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(originalModified));
 
                 // Change Name, verify others unchanged
                 _sut.GroupName = "Changed Name";
@@ -936,8 +936,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Members, Is.SameAs(originalMembers));
                 Assert.That(_sut.AccountId, Is.EqualTo(originalAccountId));
                 Assert.That(_sut.Account, Is.SameAs(originalAccount));
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(originalModified));
             });
         }
 
@@ -979,7 +979,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void IGroupDTO_Members_Set_ShouldUpdateDateModifiedMultipleTimes()
+        public void IGroupDTO_Members_Set_ShouldUpdateModifiedDateMultipleTimes()
         {
             // Arrange
             var groupInterface = (IGroupDTO)_sut;
@@ -991,7 +991,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             {
                 // First assignment
                 groupInterface.Members = firstMembers;
-                var firstModified = _sut.DateModified;
+                var firstModified = _sut.ModifiedDate;
                 Assert.That(firstModified, Is.Not.Null);
 
                 // Wait a moment to ensure different timestamp
@@ -999,7 +999,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
                 // Second assignment 
                 groupInterface.Members = secondMembers;
-                var secondModified = _sut.DateModified;
+                var secondModified = _sut.ModifiedDate;
                 Assert.That(secondModified, Is.Not.Null);
                 Assert.That(secondModified, Is.GreaterThan(firstModified));
             });
@@ -1034,7 +1034,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHandleNullToDateTransitions()
+        public void ModifiedDate_ShouldHandleNullToDateTransitions()
         {
             // Arrange
             var testDates = new DateTime[]
@@ -1052,16 +1052,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 foreach (var date in testDates)
                 {
                     // Start with null
-                    _sut.DateModified = null;
-                    Assert.That(_sut.DateModified, Is.Null);
+                    _sut.ModifiedDate = null;
+                    Assert.That(_sut.ModifiedDate, Is.Null);
 
                     // Assign date
-                    _sut.DateModified = date;
-                    Assert.That(_sut.DateModified, Is.EqualTo(date));
+                    _sut.ModifiedDate = date;
+                    Assert.That(_sut.ModifiedDate, Is.EqualTo(date));
 
                     // Back to null
-                    _sut.DateModified = null;
-                    Assert.That(_sut.DateModified, Is.Null);
+                    _sut.ModifiedDate = null;
+                    Assert.That(_sut.ModifiedDate, Is.Null);
                 }
             });
         }
@@ -1100,8 +1100,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.GroupName = "Complex Group with 特殊字符 and emojis 🌟⭐";
             _sut.Description = "Multi-line\ndescription with\ttabs and special chars !@#$%";
             _sut.AccountId = int.MaxValue;
-            _sut.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
-            _sut.DateModified = DateTime.MinValue.AddMilliseconds(1);
+            _sut.CreatedDate = DateTime.MaxValue.AddMilliseconds(-1);
+            _sut.ModifiedDate = DateTime.MinValue.AddMilliseconds(1);
 
             // Create complex members list
             var complexMembers = new List<ContactDTO>();
@@ -1127,8 +1127,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Description, Contains.Substring("!@#$%"));
                 Assert.That(_sut.AccountId, Is.EqualTo(int.MaxValue));
                 Assert.That(_sut.Members, Has.Count.EqualTo(100));
-                Assert.That(_sut.DateCreated, Is.LessThan(DateTime.MaxValue));
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.MinValue));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.MinValue));
             });
         }
 

@@ -5,11 +5,12 @@ using OrganizerCompanion.Core.Enums;
 using OrganizerCompanion.Core.Extensions;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.Type;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class USAddress : IUSAddress
+    internal class USAddress : Interfaces.Domain.IUSAddress
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -21,13 +22,13 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _street1 = null;
         private string? _street2 = null;
         private string? _city = null;
-        private Interfaces.Type.INationalSubdivision? _state = null;
+        private INationalSubdivision? _state = null;
         private string? _zipCode = null;
         private string? _country = Countries.UnitedStates.GetName();
         private Types? _type = null;
         private bool _isPrimary = false;
         private IDomainEntity? _linkedEntity = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
@@ -43,7 +44,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -54,7 +55,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _street1 = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -65,7 +66,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _street2 = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -76,7 +77,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _city = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -87,7 +88,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _state = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -98,7 +99,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _state = value?.ToStateModel();
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -109,7 +110,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _zipCode = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -120,7 +121,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _country = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -131,7 +132,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _type = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -142,7 +143,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isPrimary = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -153,7 +154,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.Now;
             }
         }
 
@@ -163,11 +164,11 @@ namespace OrganizerCompanion.Core.Models.Domain
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => LinkedEntity?.GetType().Name;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -185,8 +186,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             Types? type,
             bool isPrimary,
             IDomainEntity? linkedEntity,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _street1 = street1;
@@ -198,8 +199,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = type;
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public USAddress(IUSAddressDTO dto, IDomainEntity? linkedEntity = null)
@@ -214,8 +215,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = dto.Type;
             _isPrimary = dto.IsPrimary;
             _linkedEntity = linkedEntity;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -237,8 +238,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         Country = Country,
                         Type = Type,
                         IsPrimary = IsPrimary,
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)dto;
                 }

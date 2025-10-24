@@ -34,8 +34,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.Id, Is.EqualTo(0));
                 Assert.That(_sut.FeatureName, Is.Null);
                 Assert.That(_sut.IsEnabled, Is.False);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.Null);
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -242,20 +242,20 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldGetAndSetValue()
+        public void CreatedDate_ShouldGetAndSetValue()
         {
             // Arrange
             var expectedDate = DateTime.Now.AddDays(-1);
 
             // Act
-            _sut.DateCreated = expectedDate;
+            _sut.CreatedDate = expectedDate;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(expectedDate));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_DefaultValue_ShouldBeCurrentTime()
+        public void CreatedDate_DefaultValue_ShouldBeCurrentTime()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -265,40 +265,40 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var afterCreation = DateTime.Now;
 
             // Assert
-            Assert.That(featureDTO.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
+            Assert.That(featureDTO.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation).And.LessThanOrEqualTo(afterCreation));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetValue()
+        public void ModifiedDate_ShouldGetAndSetValue()
         {
             // Arrange
             var expectedDate = DateTime.Now.AddHours(-2);
 
             // Act
-            _sut.DateModified = expectedDate;
+            _sut.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNullValue()
+        public void ModifiedDate_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_DefaultValue_ShouldBeNull()
+        public void ModifiedDate_DefaultValue_ShouldBeNull()
         {
             // Arrange & Act
             var featureDTO = new FeatureDTO();
 
             // Assert
-            Assert.That(featureDTO.DateModified, Is.Null);
+            Assert.That(featureDTO.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
@@ -355,10 +355,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveRequiredAttribute()
+        public void CreatedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(FeatureDTO).GetProperty(nameof(FeatureDTO.DateCreated));
+            var property = typeof(FeatureDTO).GetProperty(nameof(FeatureDTO.CreatedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -368,10 +368,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveRequiredAttribute()
+        public void ModifiedDate_ShouldHaveRequiredAttribute()
         {
             // Arrange
-            var property = typeof(FeatureDTO).GetProperty(nameof(FeatureDTO.DateModified));
+            var property = typeof(FeatureDTO).GetProperty(nameof(FeatureDTO.ModifiedDate));
 
             // Act
             var requiredAttribute = property?.GetCustomAttribute<RequiredAttribute>();
@@ -413,8 +413,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Id = 999,
                 FeatureName = "Chained Feature",
                 IsEnabled = true,
-                DateCreated = testDate,
-                DateModified = testModifiedDate
+                CreatedDate = testDate,
+                ModifiedDate = testModifiedDate
             };
 
             // Assert
@@ -423,8 +423,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(featureDTO.Id, Is.EqualTo(999));
                 Assert.That(featureDTO.FeatureName, Is.EqualTo("Chained Feature"));
                 Assert.That(featureDTO.IsEnabled, Is.True);
-                Assert.That(featureDTO.DateCreated, Is.EqualTo(testDate));
-                Assert.That(featureDTO.DateModified, Is.EqualTo(testModifiedDate));
+                Assert.That(featureDTO.CreatedDate, Is.EqualTo(testDate));
+                Assert.That(featureDTO.ModifiedDate, Is.EqualTo(testModifiedDate));
             });
         }
 
@@ -437,8 +437,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 { nameof(FeatureDTO.Id), "id" },
                 { nameof(FeatureDTO.FeatureName), "featureName" },
                 { nameof(FeatureDTO.IsEnabled), "isEnabled" },
-                { nameof(FeatureDTO.DateCreated), "dateCreated" },
-                { nameof(FeatureDTO.DateModified), "dateModified" }
+                { nameof(FeatureDTO.CreatedDate), "createdDate" },
+                { nameof(FeatureDTO.ModifiedDate), "modifiedDate" }
             };
 
             // Act & Assert
@@ -478,23 +478,23 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _sut.IsEnabled = false;
                 Assert.That(_sut.IsEnabled, Is.False);
 
-                // Test DateCreated reassignments
+                // Test CreatedDate reassignments
                 var firstDate = DateTime.Now.AddDays(-1);
                 var secondDate = DateTime.Now.AddDays(-2);
-                _sut.DateCreated = firstDate;
-                Assert.That(_sut.DateCreated, Is.EqualTo(firstDate));
-                _sut.DateCreated = secondDate;
-                Assert.That(_sut.DateCreated, Is.EqualTo(secondDate));
+                _sut.CreatedDate = firstDate;
+                Assert.That(_sut.CreatedDate, Is.EqualTo(firstDate));
+                _sut.CreatedDate = secondDate;
+                Assert.That(_sut.CreatedDate, Is.EqualTo(secondDate));
 
-                // Test DateModified reassignments
+                // Test ModifiedDate reassignments
                 var firstModified = DateTime.Now.AddHours(-1);
                 var secondModified = DateTime.Now.AddHours(-2);
-                _sut.DateModified = firstModified;
-                Assert.That(_sut.DateModified, Is.EqualTo(firstModified));
-                _sut.DateModified = secondModified;
-                Assert.That(_sut.DateModified, Is.EqualTo(secondModified));
-                _sut.DateModified = null;
-                Assert.That(_sut.DateModified, Is.Null);
+                _sut.ModifiedDate = firstModified;
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(firstModified));
+                _sut.ModifiedDate = secondModified;
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(secondModified));
+                _sut.ModifiedDate = null;
+                Assert.That(_sut.ModifiedDate, Is.Null);
             });
         }
 
@@ -574,71 +574,71 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMinValue()
+        public void CreatedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MinValue;
+            _sut.CreatedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldAcceptMaxValue()
+        public void CreatedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _sut.DateCreated = DateTime.MaxValue;
+            _sut.CreatedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMinValue()
+        public void ModifiedDate_ShouldAcceptMinValue()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MinValue;
+            _sut.ModifiedDate = DateTime.MinValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MinValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MinValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptMaxValue()
+        public void ModifiedDate_ShouldAcceptMaxValue()
         {
             // Arrange & Act
-            _sut.DateModified = DateTime.MaxValue;
+            _sut.ModifiedDate = DateTime.MaxValue;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(DateTime.MaxValue));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(DateTime.MaxValue));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldMaintainPrecision()
+        public void CreatedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 12, 25, 14, 30, 45, 123);
 
             // Act
-            _sut.DateCreated = preciseDate;
+            _sut.CreatedDate = preciseDate;
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(preciseDate));
-            Assert.That(_sut.DateCreated.Millisecond, Is.EqualTo(123));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(preciseDate));
+            Assert.That(_sut.CreatedDate.Millisecond, Is.EqualTo(123));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldMaintainPrecision()
+        public void ModifiedDate_ShouldMaintainPrecision()
         {
             // Arrange
             var preciseDate = new DateTime(2023, 11, 15, 9, 45, 30, 456);
 
             // Act
-            _sut.DateModified = preciseDate;
+            _sut.ModifiedDate = preciseDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(preciseDate));
-            Assert.That(_sut.DateModified?.Millisecond, Is.EqualTo(456));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(preciseDate));
+            Assert.That(_sut.ModifiedDate?.Millisecond, Is.EqualTo(456));
         }
 
         [Test, Category("DataTransferObjects")]
@@ -652,7 +652,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             interfaceDto.Id = 100;
             interfaceDto.FeatureName = "Interface Feature";
             interfaceDto.IsEnabled = true;
-            interfaceDto.DateModified = testModified;
+            interfaceDto.ModifiedDate = testModified;
 
             // Assert
             Assert.Multiple(() =>
@@ -660,8 +660,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(interfaceDto.Id, Is.EqualTo(100));
                 Assert.That(interfaceDto.FeatureName, Is.EqualTo("Interface Feature"));
                 Assert.That(interfaceDto.IsEnabled, Is.True);
-                Assert.That(interfaceDto.DateCreated, Is.Not.EqualTo(default(DateTime))); // DateCreated is read-only, check it has a value
-                Assert.That(interfaceDto.DateModified, Is.EqualTo(testModified));
+                Assert.That(interfaceDto.CreatedDate, Is.Not.EqualTo(default(DateTime))); // CreatedDate is read-only, check it has a value
+                Assert.That(interfaceDto.ModifiedDate, Is.EqualTo(testModified));
             });
         }
 
@@ -745,7 +745,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHandleNullToDateTransitions()
+        public void ModifiedDate_ShouldHandleNullToDateTransitions()
         {
             // Arrange
             var testDates = new DateTime[]
@@ -763,16 +763,16 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 foreach (var date in testDates)
                 {
                     // Start with null
-                    _sut.DateModified = null;
-                    Assert.That(_sut.DateModified, Is.Null);
+                    _sut.ModifiedDate = null;
+                    Assert.That(_sut.ModifiedDate, Is.Null);
 
                     // Assign date
-                    _sut.DateModified = date;
-                    Assert.That(_sut.DateModified, Is.EqualTo(date));
+                    _sut.ModifiedDate = date;
+                    Assert.That(_sut.ModifiedDate, Is.EqualTo(date));
 
                     // Back to null
-                    _sut.DateModified = null;
-                    Assert.That(_sut.DateModified, Is.Null);
+                    _sut.ModifiedDate = null;
+                    Assert.That(_sut.ModifiedDate, Is.Null);
                 }
             });
         }
@@ -814,15 +814,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.IsEnabled = true;
             var testDate = DateTime.Now.AddDays(-5);
             var testModified = DateTime.Now.AddHours(-3);
-            _sut.DateCreated = testDate;
-            _sut.DateModified = testModified;
+            _sut.CreatedDate = testDate;
+            _sut.ModifiedDate = testModified;
 
             // Store original values
             var originalId = _sut.Id;
             var originalName = _sut.FeatureName;
             var originalEnabled = _sut.IsEnabled;
-            var originalCreated = _sut.DateCreated;
-            var originalModified = _sut.DateModified;
+            var originalCreated = _sut.CreatedDate;
+            var originalModified = _sut.ModifiedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -831,22 +831,22 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 _sut.Id = 1000;
                 Assert.That(_sut.FeatureName, Is.EqualTo(originalName));
                 Assert.That(_sut.IsEnabled, Is.EqualTo(originalEnabled));
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(originalModified));
 
                 // Change FeatureName, verify others unchanged
                 _sut.FeatureName = "Changed Feature";
                 Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_sut.IsEnabled, Is.EqualTo(originalEnabled));
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(originalModified));
 
                 // Change IsEnabled, verify others unchanged
                 _sut.IsEnabled = false;
                 Assert.That(_sut.Id, Is.EqualTo(1000)); // New value
                 Assert.That(_sut.FeatureName, Is.EqualTo("Changed Feature")); // New value
-                Assert.That(_sut.DateCreated, Is.EqualTo(originalCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(originalModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(originalCreated));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(originalModified));
             });
         }
 
@@ -863,8 +863,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Id = 555,
                 FeatureName = "Initializer Feature",
                 IsEnabled = true,
-                DateCreated = testCreated,
-                DateModified = testModified
+                CreatedDate = testCreated,
+                ModifiedDate = testModified
             };
 
             // Assert
@@ -873,8 +873,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(featureDto.Id, Is.EqualTo(555));
                 Assert.That(featureDto.FeatureName, Is.EqualTo("Initializer Feature"));
                 Assert.That(featureDto.IsEnabled, Is.True);
-                Assert.That(featureDto.DateCreated, Is.EqualTo(testCreated));
-                Assert.That(featureDto.DateModified, Is.EqualTo(testModified));
+                Assert.That(featureDto.CreatedDate, Is.EqualTo(testCreated));
+                Assert.That(featureDto.ModifiedDate, Is.EqualTo(testModified));
             });
         }
 
@@ -960,41 +960,41 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldSupportDateTimeOperations()
+        public void CreatedDate_ShouldSupportDateTimeOperations()
         {
             // Arrange
             var baseDate = new DateTime(2023, 6, 15, 12, 0, 0);
-            _sut.DateCreated = baseDate;
+            _sut.CreatedDate = baseDate;
 
             // Act & Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.DateCreated.AddDays(1), Is.EqualTo(new DateTime(2023, 6, 16, 12, 0, 0)));
-                Assert.That(_sut.DateCreated.AddHours(-1), Is.EqualTo(new DateTime(2023, 6, 15, 11, 0, 0)));
-                Assert.That(_sut.DateCreated.Date, Is.EqualTo(new DateTime(2023, 6, 15)));
-                Assert.That(_sut.DateCreated.Year, Is.EqualTo(2023));
-                Assert.That(_sut.DateCreated.Month, Is.EqualTo(6));
-                Assert.That(_sut.DateCreated.Day, Is.EqualTo(15));
+                Assert.That(_sut.CreatedDate.AddDays(1), Is.EqualTo(new DateTime(2023, 6, 16, 12, 0, 0)));
+                Assert.That(_sut.CreatedDate.AddHours(-1), Is.EqualTo(new DateTime(2023, 6, 15, 11, 0, 0)));
+                Assert.That(_sut.CreatedDate.Date, Is.EqualTo(new DateTime(2023, 6, 15)));
+                Assert.That(_sut.CreatedDate.Year, Is.EqualTo(2023));
+                Assert.That(_sut.CreatedDate.Month, Is.EqualTo(6));
+                Assert.That(_sut.CreatedDate.Day, Is.EqualTo(15));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldSupportNullableOperations()
+        public void ModifiedDate_ShouldSupportNullableOperations()
         {
             // Arrange, Act & Assert
             Assert.Multiple(() =>
             {
                 // Test null state
-                _sut.DateModified = null;
-                Assert.That(_sut.DateModified.HasValue, Is.False);
-                Assert.That(_sut.DateModified.GetValueOrDefault(), Is.EqualTo(default(DateTime)));
+                _sut.ModifiedDate = null;
+                Assert.That(_sut.ModifiedDate.HasValue, Is.False);
+                Assert.That(_sut.ModifiedDate.GetValueOrDefault(), Is.EqualTo(default(DateTime)));
 
                 // Test with value
                 var testDate = new DateTime(2023, 5, 10, 15, 30, 45);
-                _sut.DateModified = testDate;
-                Assert.That(_sut.DateModified.HasValue, Is.True);
-                Assert.That(_sut.DateModified.Value, Is.EqualTo(testDate));
-                Assert.That(_sut.DateModified.GetValueOrDefault(), Is.EqualTo(testDate));
+                _sut.ModifiedDate = testDate;
+                Assert.That(_sut.ModifiedDate.HasValue, Is.True);
+                Assert.That(_sut.ModifiedDate.Value, Is.EqualTo(testDate));
+                Assert.That(_sut.ModifiedDate.GetValueOrDefault(), Is.EqualTo(testDate));
             });
         }
 
@@ -1005,8 +1005,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _sut.Id = int.MaxValue;
             _sut.FeatureName = "Complex Feature with 特殊字符 and emojis 🚀✅";
             _sut.IsEnabled = true;
-            _sut.DateCreated = DateTime.MaxValue.AddMilliseconds(-1);
-            _sut.DateModified = DateTime.MinValue.AddMilliseconds(1);
+            _sut.CreatedDate = DateTime.MaxValue.AddMilliseconds(-1);
+            _sut.ModifiedDate = DateTime.MinValue.AddMilliseconds(1);
 
             // Assert
             Assert.Multiple(() =>
@@ -1016,8 +1016,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_sut.FeatureName, Contains.Substring("特殊字符"));
                 Assert.That(_sut.FeatureName, Contains.Substring("🚀✅"));
                 Assert.That(_sut.IsEnabled, Is.True);
-                Assert.That(_sut.DateCreated, Is.LessThan(DateTime.MaxValue));
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.MinValue));
+                Assert.That(_sut.CreatedDate, Is.LessThan(DateTime.MaxValue));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.MinValue));
             });
         }
 
@@ -1028,8 +1028,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; }
+            public DateTime? ModifiedDate { get; set; } = default;
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => throw new NotImplementedException();
         }

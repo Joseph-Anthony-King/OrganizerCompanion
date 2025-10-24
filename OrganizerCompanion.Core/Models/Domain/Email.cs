@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -8,7 +9,7 @@ using OrganizerCompanion.Core.Models.DataTransferObject;
 
 namespace OrganizerCompanion.Core.Models.Domain
 {
-    internal class Email : IEmail
+    public class Email : IEmail
     {
         #region Fields
         private readonly JsonSerializerOptions _serializerOptions = new()
@@ -22,10 +23,17 @@ namespace OrganizerCompanion.Core.Models.Domain
         private bool _isPrimary = false;
         private IDomainEntity? _linkedEntity = null;
         private bool _isConfirmed = false;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
+
+        private int? _contactId;
+        private Contact? _contact;
+        private int? _organizationId;
+        private Organization? _organization;
         #endregion
 
         #region Properties
+        [Key]
+        [Column("EmailId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -38,7 +46,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -49,7 +57,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _emailAddress = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -60,7 +68,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _type = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -71,10 +79,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isPrimary = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
@@ -82,16 +91,18 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _linkedEntity = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
         public int? LinkedEntityId
         {
             get => _linkedEntity?.Id ?? null;
         }
 
+        [NotMapped]
         [Required, JsonPropertyName("linkedEntityType")]
         public string? LinkedEntityType => _linkedEntity?.GetType().Name;
 
@@ -102,15 +113,24 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _isConfirmed = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
+
+        [JsonIgnore]
+        public int? ContactId { get => _contactId; set => _contactId = value; }
+        [NotMapped]
+        internal Contact? Contact { get => _contact; set => _contact = value; }
+        [JsonIgnore]
+        public int? OrganizationId { get => _organizationId; set => _organizationId = value; }
+        [NotMapped]
+        internal Organization? Organization { get => _organization; set => _organization = value; }
         #endregion
 
         #region Constructors
@@ -124,8 +144,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             bool isPrimary,
             IDomainEntity? linkedEntity,
             bool isConfirmed,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _emailAddress = emailAddress;
@@ -133,8 +153,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
             _isConfirmed = isConfirmed;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Email(
@@ -157,8 +177,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _isPrimary = dto.IsPrimary;
             _linkedEntity = linkedEntity;
             _isConfirmed = dto.IsConfirmed;
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -175,8 +195,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         EmailAddress = EmailAddress,
                         Type = Type,
                         IsPrimary = IsPrimary,
-                        DateCreated = DateCreated,
-                        DateModified = DateModified,
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate,
                     };
                     return (T)dto;
                 }

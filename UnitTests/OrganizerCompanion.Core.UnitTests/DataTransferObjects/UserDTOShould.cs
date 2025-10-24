@@ -56,8 +56,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(userDTO.IsDeceased, Is.Null);
                 Assert.That(userDTO.IsAdmin, Is.Null);
                 Assert.That(userDTO.IsSuperUser, Is.Null);
-                Assert.That(userDTO.DateModified, Is.Null);
-                Assert.That(userDTO.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(userDTO.ModifiedDate, Is.Null);
+                Assert.That(userDTO.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
             });
         }
 
@@ -433,54 +433,54 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldGetAndSetCorrectly()
+        public void ModifiedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 6, 20, 14, 15, 30);
 
             // Act
-            _userDTO.DateModified = expectedDate;
+            _userDTO.ModifiedDate = expectedDate;
 
             // Assert
-            Assert.That(_userDTO.DateModified, Is.EqualTo(expectedDate));
+            Assert.That(_userDTO.ModifiedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldAcceptNull()
+        public void ModifiedDate_ShouldAcceptNull()
         {
             // Act
-            _userDTO.DateModified = null;
+            _userDTO.ModifiedDate = null;
 
             // Assert
-            Assert.That(_userDTO.DateModified, Is.Null);
+            Assert.That(_userDTO.ModifiedDate, Is.Null);
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldGetAndSetCorrectly()
+        public void CreatedDate_ShouldGetAndSetCorrectly()
         {
             // Arrange
             var expectedDate = new DateTime(2023, 1, 1, 12, 0, 0);
 
             // Act
-            _userDTO.DateCreated = expectedDate;
+            _userDTO.CreatedDate = expectedDate;
 
             // Assert
-            Assert.That(_userDTO.DateCreated, Is.EqualTo(expectedDate));
+            Assert.That(_userDTO.CreatedDate, Is.EqualTo(expectedDate));
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldUsePrivateFieldCorrectly()
+        public void CreatedDate_ShouldUsePrivateFieldCorrectly()
         {
             // Arrange
             var firstDate = new DateTime(2023, 1, 1);
             var secondDate = new DateTime(2023, 12, 31);
 
             // Act
-            _userDTO.DateCreated = firstDate;
-            var retrievedFirst = _userDTO.DateCreated;
+            _userDTO.CreatedDate = firstDate;
+            var retrievedFirst = _userDTO.CreatedDate;
             
-            _userDTO.DateCreated = secondDate;
-            var retrievedSecond = _userDTO.DateCreated;
+            _userDTO.CreatedDate = secondDate;
+            var retrievedSecond = _userDTO.CreatedDate;
 
             // Assert
             Assert.Multiple(() =>
@@ -701,10 +701,10 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateCreated_ShouldHaveJsonPropertyNameAttribute()
+        public void CreatedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(UserDTO).GetProperty(nameof(UserDTO.DateCreated));
+            var property = typeof(UserDTO).GetProperty(nameof(UserDTO.CreatedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -714,15 +714,15 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateCreated"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("createdDate"));
             });
         }
 
         [Test, Category("DataTransferObjects")]
-        public void DateModified_ShouldHaveJsonPropertyNameAttribute()
+        public void ModifiedDate_ShouldHaveJsonPropertyNameAttribute()
         {
             // Arrange
-            var property = typeof(UserDTO).GetProperty(nameof(UserDTO.DateModified));
+            var property = typeof(UserDTO).GetProperty(nameof(UserDTO.ModifiedDate));
 
             // Act
             var jsonPropertyNameAttribute = property?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false)
@@ -732,7 +732,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             Assert.Multiple(() =>
             {
                 Assert.That(jsonPropertyNameAttribute, Is.Not.Null);
-                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("dateModified"));
+                Assert.That(jsonPropertyNameAttribute!.Name, Is.EqualTo("modifiedDate"));
             });
         }
 
@@ -760,8 +760,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 nameof(UserDTO.IsActive),
                 nameof(UserDTO.IsDeceased),
                 nameof(UserDTO.IsAdmin),
-                nameof(UserDTO.DateModified),
-                nameof(UserDTO.DateCreated)
+                nameof(UserDTO.ModifiedDate),
+                nameof(UserDTO.CreatedDate)
             };
 
             // Act & Assert
@@ -895,8 +895,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => _userDTO.BirthDate = date);
                 Assert.DoesNotThrow(() => _userDTO.DeceasedDate = date);
                 Assert.DoesNotThrow(() => _userDTO.JoinedDate = date);
-                Assert.DoesNotThrow(() => _userDTO.DateModified = date);
-                Assert.DoesNotThrow(() => _userDTO.DateCreated = date);
+                Assert.DoesNotThrow(() => _userDTO.ModifiedDate = date);
+                Assert.DoesNotThrow(() => _userDTO.CreatedDate = date);
             }
         }
 
@@ -927,8 +927,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(json, Contains.Substring("\"lastName\":\"Doe\""));
                 Assert.That(json, Contains.Substring("\"userName\":\"johndoe\""));
                 Assert.That(json, Contains.Substring("\"isActive\":true"));
-                Assert.That(json, Contains.Substring("\"dateCreated\":"));
-                Assert.That(json, Contains.Substring("\"dateModified\":"));
+                Assert.That(json, Contains.Substring("\"createdDate\":"));
+                Assert.That(json, Contains.Substring("\"modifiedDate\":"));
             });
         }
 
@@ -962,7 +962,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         public void UserDTO_ShouldDeserializeCorrectly()
         {
             // Arrange
-            const string json = "{\"id\":789,\"firstName\":\"Jane\",\"lastName\":\"Smith\",\"userName\":\"janesmith\",\"emails\":[],\"phoneNumbers\":[],\"addresses\":[],\"pronouns\":2,\"birthDate\":\"1990-05-15T00:00:00\",\"joinedDate\":\"2020-01-01T00:00:00\",\"isActive\":true,\"isDeceased\":false,\"isAdmin\":false,\"dateModified\":null,\"dateCreated\":\"2023-01-01T12:00:00\"}";
+            const string json = "{\"id\":789,\"firstName\":\"Jane\",\"lastName\":\"Smith\",\"userName\":\"janesmith\",\"emails\":[],\"phoneNumbers\":[],\"addresses\":[],\"pronouns\":2,\"birthDate\":\"1990-05-15T00:00:00\",\"joinedDate\":\"2020-01-01T00:00:00\",\"isActive\":true,\"isDeceased\":false,\"isAdmin\":false,\"modifiedDate\":null,\"createdDate\":\"2023-01-01T12:00:00\"}";
 
             // Act
             var userDTO = JsonSerializer.Deserialize<UserDTO>(json);
@@ -1150,24 +1150,24 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             var minDateTime = DateTime.MinValue;
             var maxDateTime = DateTime.MaxValue;
 
-            // Act & Assert for DateCreated
+            // Act & Assert for CreatedDate
             Assert.Multiple(() =>
             {
-                _userDTO.DateCreated = preciseDateTime;
-                Assert.That(_userDTO.DateCreated, Is.EqualTo(preciseDateTime));
+                _userDTO.CreatedDate = preciseDateTime;
+                Assert.That(_userDTO.CreatedDate, Is.EqualTo(preciseDateTime));
 
-                _userDTO.DateCreated = minDateTime;
-                Assert.That(_userDTO.DateCreated, Is.EqualTo(minDateTime));
+                _userDTO.CreatedDate = minDateTime;
+                Assert.That(_userDTO.CreatedDate, Is.EqualTo(minDateTime));
 
-                _userDTO.DateCreated = maxDateTime;
-                Assert.That(_userDTO.DateCreated, Is.EqualTo(maxDateTime));
+                _userDTO.CreatedDate = maxDateTime;
+                Assert.That(_userDTO.CreatedDate, Is.EqualTo(maxDateTime));
             });
 
-            // Act & Assert for DateModified, BirthDate, DeceasedDate, JoinedDate
+            // Act & Assert for ModifiedDate, BirthDate, DeceasedDate, JoinedDate
             Assert.Multiple(() =>
             {
-                _userDTO.DateModified = preciseDateTime;
-                Assert.That(_userDTO.DateModified, Is.EqualTo(preciseDateTime));
+                _userDTO.ModifiedDate = preciseDateTime;
+                Assert.That(_userDTO.ModifiedDate, Is.EqualTo(preciseDateTime));
 
                 _userDTO.BirthDate = preciseDateTime;
                 Assert.That(_userDTO.BirthDate, Is.EqualTo(preciseDateTime));
@@ -1243,8 +1243,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 userInterface.IsActive = true;
                 Assert.That(_userDTO.IsActive, Is.True);
 
-                userInterface.DateModified = testDate;
-                Assert.That(_userDTO.DateModified, Is.EqualTo(testDate));
+                userInterface.ModifiedDate = testDate;
+                Assert.That(_userDTO.ModifiedDate, Is.EqualTo(testDate));
             });
         }
 
@@ -1261,8 +1261,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 domainEntity.Id = 555;
                 Assert.That(_userDTO.Id, Is.EqualTo(555));
 
-                domainEntity.DateModified = testDate;
-                Assert.That(_userDTO.DateModified, Is.EqualTo(testDate));
+                domainEntity.ModifiedDate = testDate;
+                Assert.That(_userDTO.ModifiedDate, Is.EqualTo(testDate));
 
                 // Test Cast and ToJson methods throw NotImplementedException
                 Assert.Throws<NotImplementedException>(() => domainEntity.Cast<MockDomainEntity>());
@@ -1330,8 +1330,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(newInstance.IsDeceased, Is.Null);
                 Assert.That(newInstance.IsAdmin, Is.Null);
                 Assert.That(newInstance.IsSuperUser, Is.Null);
-                Assert.That(newInstance.DateCreated, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
-                Assert.That(newInstance.DateModified, Is.Null);
+                Assert.That(newInstance.CreatedDate, Is.EqualTo(DateTime.Now).Within(TimeSpan.FromSeconds(1)));
+                Assert.That(newInstance.ModifiedDate, Is.Null);
             });
         }
 
@@ -1380,8 +1380,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             _userDTO.IsDeceased = false;
             _userDTO.IsAdmin = true;
             _userDTO.IsSuperUser = false;
-            _userDTO.DateCreated = createdDate;
-            _userDTO.DateModified = modifiedDate;
+            _userDTO.CreatedDate = createdDate;
+            _userDTO.ModifiedDate = modifiedDate;
 
             // Assert - Verify complete user
             Assert.Multiple(() =>
@@ -1403,8 +1403,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_userDTO.IsDeceased, Is.False);
                 Assert.That(_userDTO.IsAdmin, Is.True);
                 Assert.That(_userDTO.IsSuperUser, Is.False);
-                Assert.That(_userDTO.DateCreated, Is.EqualTo(createdDate));
-                Assert.That(_userDTO.DateModified, Is.EqualTo(modifiedDate));
+                Assert.That(_userDTO.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_userDTO.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -1427,7 +1427,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.DoesNotThrow(() => _userDTO.IsDeceased = null);
                 Assert.DoesNotThrow(() => _userDTO.IsAdmin = null);
                 Assert.DoesNotThrow(() => _userDTO.IsSuperUser = null);
-                Assert.DoesNotThrow(() => _userDTO.DateModified = null);
+                Assert.DoesNotThrow(() => _userDTO.ModifiedDate = null);
 
                 Assert.That(_userDTO.FirstName, Is.Null);
                 Assert.That(_userDTO.MiddleName, Is.Null);
@@ -1442,7 +1442,7 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(_userDTO.IsDeceased, Is.Null);
                 Assert.That(_userDTO.IsAdmin, Is.Null);
                 Assert.That(_userDTO.IsSuperUser, Is.Null);
-                Assert.That(_userDTO.DateModified, Is.Null);
+                Assert.That(_userDTO.ModifiedDate, Is.Null);
             });
         }
 
@@ -1459,8 +1459,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity
             {
@@ -1487,8 +1487,8 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
             public bool IsCast { get; set; }
             public int CastId { get; set; }
             public string? CastType { get; set; }
-            public DateTime DateCreated { get; set; }
-            public DateTime? DateModified { get; set; }
+            public DateTime CreatedDate { get; set; }
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity
             {

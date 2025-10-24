@@ -1,8 +1,8 @@
-﻿using OrganizerCompanion.Core.Interfaces.Domain;
+using OrganizerCompanion.Core.Interfaces.Domain;
 
 namespace OrganizerCompanion.Core.Interfaces.DataTransferObject
 {
-    internal interface IPhoneNumberDTO : IDomainEntity, Type.IPhoneNumber
+    public interface IPhoneNumberDTO : IDomainEntity, Type.IPhoneNumber
     {
     }
 }

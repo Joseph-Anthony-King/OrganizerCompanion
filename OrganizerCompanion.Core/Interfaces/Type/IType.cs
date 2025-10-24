@@ -1,6 +1,6 @@
-﻿namespace OrganizerCompanion.Core.Interfaces.Type
+namespace OrganizerCompanion.Core.Interfaces.Type
 {
-    internal interface IType
+    public interface IType
     {
     }
 }

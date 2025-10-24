@@ -1,4 +1,4 @@
-﻿using System.Text.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -40,14 +40,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
                 Assert.That(_sut.IsConfirmed, Is.False);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
-                Assert.That(_sut.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
         [Test, Category("Models")]
-        public void Constructor_WithEmailAddressAndType_ShouldSetPropertiesAndDateCreated()
+        public void Constructor_WithEmailAddressAndType_ShouldSetPropertiesAndCreatedDate()
         {
             // Arrange
             var emailAddress = "test@example.com";
@@ -64,8 +64,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.EmailAddress, Is.EqualTo(emailAddress));
                 Assert.That(_sut.Type, Is.EqualTo(type));
                 Assert.That(_sut.IsPrimary, Is.True);
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -79,8 +79,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var isPrimary = true;
             var linkedEntity = new MockDomainEntity();
             var isConfirmed = true;
-            var dateCreated = DateTime.Now.AddDays(-1);
-            var dateModified = DateTime.Now;
+            var createdDate = DateTime.Now.AddDays(-1);
+            var modifiedDate = DateTime.Now;
 
             // Act
             _sut = new Email(
@@ -90,8 +90,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 isPrimary,
                 linkedEntity,
                 isConfirmed,
-                dateCreated,
-                dateModified);
+                createdDate,
+                modifiedDate);
 
             // Assert
             Assert.Multiple(() =>
@@ -104,8 +104,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
                 Assert.That(_sut.IsConfirmed, Is.EqualTo(isConfirmed));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
             });
         }
 
@@ -122,8 +122,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Type = OrganizerCompanion.Core.Enums.Types.Work,
                 IsPrimary = true,
                 IsConfirmed = true,
-                DateCreated = DateTime.Now.AddDays(-2),
-                DateModified = DateTime.Now.AddDays(-1)
+                CreatedDate = DateTime.Now.AddDays(-2),
+                ModifiedDate = DateTime.Now.AddDays(-1)
             };
             var linkedEntity = new MockDomainEntity();
 
@@ -141,8 +141,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(linkedEntity));
                 Assert.That(_sut.LinkedEntityId, Is.EqualTo(linkedEntity.Id));
                 Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -170,8 +170,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(_sut.LinkedEntity, Is.Null);
                 Assert.That(_sut.LinkedEntityId, Is.Null);
                 Assert.That(_sut.LinkedEntityType, Is.Null);
-                Assert.That(_sut.DateCreated, Is.EqualTo(dto.DateCreated));
-                Assert.That(_sut.DateModified, Is.EqualTo(dto.DateModified));
+                Assert.That(_sut.CreatedDate, Is.EqualTo(dto.CreatedDate));
+                Assert.That(_sut.ModifiedDate, Is.EqualTo(dto.ModifiedDate));
             });
         }
 
@@ -286,7 +286,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         #endregion
 
         [Test, Category("Models")]
-        public void Id_WhenSet_ShouldUpdateDateModified()
+        public void Id_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
@@ -299,13 +299,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Id, Is.EqualTo(123));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void EmailAddress_WhenSet_ShouldUpdateDateModified()
+        public void EmailAddress_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
@@ -319,8 +319,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.EmailAddress, Is.EqualTo(newEmailAddress));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -338,7 +338,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Type_WhenSet_ShouldUpdateDateModified()
+        public void Type_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
@@ -352,8 +352,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.Type, Is.EqualTo(newType));
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -372,7 +372,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsPrimary_WhenSet_ShouldUpdateDateModified()
+        public void IsPrimary_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
@@ -385,8 +385,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsPrimary, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -450,7 +450,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsConfirmed_WhenSet_ShouldUpdateDateModified()
+        public void IsConfirmed_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
@@ -463,13 +463,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsConfirmed, Is.True);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
         [Test, Category("Models")]
-        public void IsConfirmed_WhenSetToFalse_ShouldUpdateDateModified()
+        public void IsConfirmed_WhenSetToFalse_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email
@@ -485,8 +485,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.IsConfirmed, Is.False);
-                Assert.That(_sut.DateModified, Is.GreaterThanOrEqualTo(beforeSet));
-                Assert.That(_sut.DateModified, Is.LessThanOrEqualTo(DateTime.Now));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
+                Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(DateTime.Now));
             });
         }
 
@@ -511,16 +511,16 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void IsConfirmed_ToggleMultipleTimes_ShouldUpdateDateModifiedEachTime()
+        public void IsConfirmed_ToggleMultipleTimes_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             _sut = new Email();
             var initialTime = DateTime.Now;
 
-            // Act & Assert - Test sequential IsConfirmed changes update DateModified
+            // Act & Assert - Test sequential IsConfirmed changes update ModifiedDate
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
@@ -528,7 +528,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = false;
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(secondModified, Is.GreaterThan(firstModified));
@@ -536,7 +536,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             });
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.Multiple(() =>
             {
                 Assert.That(thirdModified, Is.GreaterThan(secondModified));
@@ -545,7 +545,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateCreated_IsReadOnly_AndSetDuringConstruction()
+        public void CreatedDate_IsReadOnly_AndSetDuringConstruction()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -557,13 +557,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(_sut.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(_sut.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(_sut.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(_sut.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
             });
         }
 
         [Test, Category("Models")]
-        public void JsonConstructor_SetsDateCreatedFromParameter()
+        public void JsonConstructor_SetsCreatedDateFromParameter()
         {
             // Arrange
             var specificDate = DateTime.Now.AddDays(-5);
@@ -580,29 +580,29 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 DateTime.Now);
 
             // Assert
-            Assert.That(_sut.DateCreated, Is.EqualTo(specificDate));
+            Assert.That(_sut.CreatedDate, Is.EqualTo(specificDate));
         }
 
         [Test, Category("Models")]
-        public void DateModified_CanBeSetAndRetrieved()
+        public void ModifiedDate_CanBeSetAndRetrieved()
         {
             // Arrange
             _sut = new Email();
-            var dateModified = DateTime.Now.AddHours(-2);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             // Act
-            _sut.DateModified = dateModified;
+            _sut.ModifiedDate = modifiedDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(dateModified));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(modifiedDate));
         }
 
         [Test, Category("Models")]
-        public void LinkedEntity_WhenSet_ShouldUpdateDateModified()
+        public void LinkedEntity_WhenSet_ShouldUpdateModifiedDate()
         {
             // Arrange
             var mockEntity = new MockDomainEntity();
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(10); // Ensure time difference
 
             // Act
@@ -612,8 +612,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Multiple(() =>
             {
                 Assert.That(_sut.LinkedEntity, Is.EqualTo(mockEntity));
-                Assert.That(_sut.DateModified, Is.Not.EqualTo(originalDateModified));
-                Assert.That(_sut.DateModified, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
+                Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(originalModifiedDate));
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(DateTime.Now.AddSeconds(-1)));
             });
         }
 
@@ -693,8 +693,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Does.Contain("\"linkedEntityId\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntity\":null"));
                 Assert.That(json, Does.Contain("\"linkedEntityType\":null"));
-                Assert.That(json, Does.Contain("\"dateCreated\":"));
-                Assert.That(json, Does.Contain("\"dateModified\":"));
+                Assert.That(json, Does.Contain("\"createdDate\":"));
+                Assert.That(json, Does.Contain("\"modifiedDate\":"));
 
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
@@ -924,8 +924,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(json, Is.Not.Null.And.Not.Empty);
                 Assert.That(json, Does.Contain("\"id\":1"));
                 Assert.That(json, Does.Contain("\"emailAddress\":\"test@example.com\""));
-                Assert.That(json, Does.Contain("\"dateCreated\":"));
-                Assert.That(json, Does.Contain("\"dateModified\":"));
+                Assert.That(json, Does.Contain("\"createdDate\":"));
+                Assert.That(json, Does.Contain("\"modifiedDate\":"));
 
                 // Verify JSON is well-formed
                 Assert.DoesNotThrow(() => JsonDocument.Parse(json));
@@ -954,7 +954,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 {
                     Assert.That(json, Is.Not.Null.And.Not.Empty, $"Failed for {enumValue}");
                     Assert.That(json, Does.Contain($"test{enumValue}@example.com"), $"Failed for {enumValue}");
-                    Assert.That(json, Does.Contain("\"dateCreated\":"), $"Failed for {enumValue}");
+                    Assert.That(json, Does.Contain("\"createdDate\":"), $"Failed for {enumValue}");
 
                     // Verify JSON is well-formed
                     Assert.DoesNotThrow(() => JsonDocument.Parse(json), $"Failed for {enumValue}");
@@ -986,7 +986,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void Email_MultiplePropertyChanges_ShouldUpdateDateModifiedEachTime()
+        public void Email_MultiplePropertyChanges_ShouldUpdateModifiedDateEachTime()
         {
             // Arrange
             _sut = new Email();
@@ -995,27 +995,27 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act & Assert
             System.Threading.Thread.Sleep(1); // Ensure time difference
             _sut.Id = 1;
-            var firstModified = _sut.DateModified;
+            var firstModified = _sut.ModifiedDate;
             Assert.That(firstModified, Is.GreaterThanOrEqualTo(initialTime));
 
             System.Threading.Thread.Sleep(1);
             _sut.EmailAddress = "test@example.com";
-            var secondModified = _sut.DateModified;
+            var secondModified = _sut.ModifiedDate;
             Assert.That(secondModified, Is.GreaterThan(firstModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
-            var thirdModified = _sut.DateModified;
+            var thirdModified = _sut.ModifiedDate;
             Assert.That(thirdModified, Is.GreaterThan(secondModified));
 
             System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntity = new MockDomainEntity { Id = 123 };
-            var fourthModified = _sut.DateModified;
+            _sut.LinkedEntity = new MockDomainEntity { Id = 999 };
+            var fourthModified = _sut.ModifiedDate;
             Assert.That(fourthModified, Is.GreaterThan(thirdModified));
 
             System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity();
-            var fifthModified = _sut.DateModified;
+            var fifthModified = _sut.ModifiedDate;
             Assert.That(fifthModified, Is.GreaterThan(fourthModified));
         }
 
@@ -1078,8 +1078,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 isPrimary: false,
                 linkedEntity: null,
                 isConfirmed: false,
-                dateCreated: DateTime.Now.AddDays(-1),
-                dateModified: null);
+                createdDate: DateTime.Now.AddDays(-1),
+                modifiedDate: null);
 
             // Assert
             Assert.Multiple(() =>
@@ -1090,7 +1090,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.LinkedEntityId, Is.Null);
                 Assert.That(email.LinkedEntity, Is.Null);
                 Assert.That(email.LinkedEntityType, Is.Null);
-                Assert.That(email.DateModified, Is.Null);
+                Assert.That(email.ModifiedDate, Is.Null);
             });
         }
 
@@ -1168,26 +1168,26 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateModified_WhenSetToNull_ShouldAcceptNullValue()
+        public void ModifiedDate_WhenSetToNull_ShouldAcceptNullValue()
         {
             // Arrange & Act
-            _sut.DateModified = null;
+            _sut.ModifiedDate = null;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.Null);
+            Assert.That(_sut.ModifiedDate, Is.Null);
         }
 
         [Test, Category("Models")]
-        public void DateModified_WhenSetToSpecificValue_ShouldRetainValue()
+        public void ModifiedDate_WhenSetToSpecificValue_ShouldRetainValue()
         {
             // Arrange
             var specificDate = DateTime.Now.AddDays(-3);
 
             // Act
-            _sut.DateModified = specificDate;
+            _sut.ModifiedDate = specificDate;
 
             // Assert
-            Assert.That(_sut.DateModified, Is.EqualTo(specificDate));
+            Assert.That(_sut.ModifiedDate, Is.EqualTo(specificDate));
         }
 
         [Test, Category("Models")]
@@ -1318,8 +1318,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 isPrimary: false,
                 linkedEntity: mockEntity,
                 isConfirmed: true,
-                dateCreated: DateTime.Now.AddDays(-1),
-                dateModified: DateTime.Now);
+                createdDate: DateTime.Now.AddDays(-1),
+                modifiedDate: DateTime.Now);
 
             // Assert - LinkedEntityType should be derived from LinkedEntity
             Assert.That(email.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
@@ -1343,7 +1343,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         }
 
         [Test, Category("Models")]
-        public void DateCreated_FromDefaultConstructor_ShouldBeSetToCurrentTime()
+        public void CreatedDate_FromDefaultConstructor_ShouldBeSetToCurrentTime()
         {
             // Arrange
             var beforeCreation = DateTime.Now;
@@ -1355,51 +1355,51 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(email.DateCreated, Is.GreaterThanOrEqualTo(beforeCreation));
-                Assert.That(email.DateCreated, Is.LessThanOrEqualTo(afterCreation));
+                Assert.That(email.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreation));
+                Assert.That(email.CreatedDate, Is.LessThanOrEqualTo(afterCreation));
 
-                // DateCreated should be read-only
-                var property = typeof(Email).GetProperty("DateCreated");
-                Assert.That(property?.SetMethod, Is.Null, "DateCreated should be read-only");
+                // CreatedDate should be read-only
+                var property = typeof(Email).GetProperty("CreatedDate");
+                Assert.That(property?.SetMethod, Is.Null, "CreatedDate should be read-only");
             });
         }
 
         [Test, Category("Models")]
-        public void AllPropertySetters_ShouldUpdateDateModified()
+        public void AllPropertySetters_ShouldUpdateModifiedDate()
         {
             // Arrange
             _sut = new Email();
-            var originalDateModified = _sut.DateModified;
+            var originalModifiedDate = _sut.ModifiedDate;
 
-            // Act & Assert - Test each property that should update DateModified
+            // Act & Assert - Test each property that should update ModifiedDate
             System.Threading.Thread.Sleep(1);
             _sut.Id = 100;
-            Assert.That(_sut.DateModified, Is.GreaterThan(originalDateModified), "Id setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate), "Id setter should update ModifiedDate");
 
-            var idModified = _sut.DateModified;
+            var idModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
             _sut.EmailAddress = "new@test.com";
-            Assert.That(_sut.DateModified, Is.GreaterThan(idModified), "EmailAddress setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(idModified), "EmailAddress setter should update ModifiedDate");
 
-            var emailModified = _sut.DateModified;
+            var emailModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
             _sut.Type = OrganizerCompanion.Core.Enums.Types.Fax;
-            Assert.That(_sut.DateModified, Is.GreaterThan(emailModified), "Type setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(emailModified), "Type setter should update ModifiedDate");
 
-            var typeModified = _sut.DateModified;
+            var typeModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity { Id = 999 };
-            Assert.That(_sut.DateModified, Is.GreaterThan(typeModified), "LinkedEntity setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(typeModified), "LinkedEntity setter should update ModifiedDate");
 
-            var linkedIdModified = _sut.DateModified;
+            var linkedIdModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
             _sut.LinkedEntity = new MockDomainEntity();
-            Assert.That(_sut.DateModified, Is.GreaterThan(linkedIdModified), "LinkedEntity setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(linkedIdModified), "LinkedEntity setter should update ModifiedDate");
 
-            var linkedEntityModified = _sut.DateModified;
+            var linkedEntityModified = _sut.ModifiedDate;
             System.Threading.Thread.Sleep(1);
             _sut.IsConfirmed = true;
-            Assert.That(_sut.DateModified, Is.GreaterThan(linkedEntityModified), "IsConfirmed setter should update DateModified");
+            Assert.That(_sut.ModifiedDate, Is.GreaterThan(linkedEntityModified), "IsConfirmed setter should update ModifiedDate");
         }
 
         [Test, Category("Models")]
@@ -1434,8 +1434,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
             var isConfirmedProperty = type.GetProperty("IsConfirmed");
-            var dateCreatedProperty = type.GetProperty("DateCreated");
-            var dateModifiedProperty = type.GetProperty("DateModified");
+            var createdDateProperty = type.GetProperty("CreatedDate");
+            var modifiedDateProperty = type.GetProperty("ModifiedDate");
 
             Assert.Multiple(() =>
             {
@@ -1453,10 +1453,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "LinkedEntityType should have JsonPropertyName attribute");
                 Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
                     Is.Not.Empty, "IsConfirmed should have JsonPropertyName attribute");
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
-                    Is.Not.Empty, "DateCreated should have JsonPropertyName attribute");
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
-                    Is.Not.Empty, "DateModified should have JsonPropertyName attribute");
+                Assert.That(createdDateProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
+                    Is.Not.Empty, "CreatedDate should have JsonPropertyName attribute");
+                Assert.That(modifiedDateProperty?.GetCustomAttributes(typeof(JsonPropertyNameAttribute), false),
+                    Is.Not.Empty, "ModifiedDate should have JsonPropertyName attribute");
             });
         }
 
@@ -1475,7 +1475,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.LinkedEntityId, Is.Null);
                 Assert.That(email.LinkedEntity, Is.Null);
                 Assert.That(email.LinkedEntityType, Is.Null);
-                Assert.That(email.DateModified, Is.EqualTo(default(DateTime)));
+                Assert.That(email.ModifiedDate, Is.EqualTo(default(DateTime)));
             });
         }
 
@@ -1507,8 +1507,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var linkedEntityProperty = type.GetProperty("LinkedEntity");
             var linkedEntityTypeProperty = type.GetProperty("LinkedEntityType");
             var isConfirmedProperty = type.GetProperty("IsConfirmed");
-            var dateCreatedProperty = type.GetProperty("DateCreated");
-            var dateModifiedProperty = type.GetProperty("DateModified");
+            var createdDateProperty = type.GetProperty("CreatedDate");
+            var modifiedDateProperty = type.GetProperty("ModifiedDate");
 
             Assert.Multiple(() =>
             {
@@ -1527,10 +1527,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                     Is.Not.Empty, "LinkedEntityType should have Required attribute");
                 Assert.That(isConfirmedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
                     Is.Not.Empty, "IsConfirmed should have Required attribute");
-                Assert.That(dateCreatedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
-                    Is.Not.Empty, "DateCreated should have Required attribute");
-                Assert.That(dateModifiedProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
-                    Is.Not.Empty, "DateModified should have Required attribute");
+                Assert.That(createdDateProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
+                    Is.Not.Empty, "CreatedDate should have Required attribute");
+                Assert.That(modifiedDateProperty?.GetCustomAttributes(typeof(System.ComponentModel.DataAnnotations.RequiredAttribute), false),
+                    Is.Not.Empty, "ModifiedDate should have Required attribute");
             });
         }
 
@@ -1577,8 +1577,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.EmailAddress, Is.EqualTo("test@example.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
                 Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1603,8 +1603,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.EmailAddress, Is.EqualTo("interface@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
                 Assert.That(result.IsPrimary, Is.EqualTo(_sut.IsPrimary));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1629,15 +1629,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.EmailAddress, Is.Null);
                 Assert.That(result.Type, Is.Null);
                 Assert.That(result.IsPrimary, Is.False);
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
         [Test, Category("Models")]
         public void Cast_ToEmailDTO_WithAllTypesEnum_ShouldPreserveTypeCorrectly()
         {
-            // Test each enum value
+            // Test all enum values
             var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
 
             foreach (var enumValue in enumValues)
@@ -1655,8 +1655,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 {
                     Assert.That(result.Type, Is.EqualTo(enumValue), $"Type {enumValue} should be preserved");
                     Assert.That(result.EmailAddress, Is.EqualTo($"test_{enumValue}@example.com"));
-                    Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                    Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                    Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                    Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
                 });
             }
         }
@@ -1681,8 +1681,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Cast_ToEmailDTO_WithCompleteData_ShouldPreserveAllData()
         {
             // Arrange - Set up Email with comprehensive data
-            var dateCreated = DateTime.Now.AddDays(-5);
-            var dateModified = DateTime.Now.AddHours(-2);
+            var createdDate = DateTime.Now.AddDays(-5);
+            var modifiedDate = DateTime.Now.AddHours(-2);
 
             var fullEmail = new Email(
                 id: 999,
@@ -1691,8 +1691,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 isPrimary: false,
                 linkedEntity: new MockDomainEntity { Id = 42 },
                 isConfirmed: true,
-                dateCreated: dateCreated,
-                dateModified: dateModified
+                createdDate: createdDate,
+                modifiedDate: modifiedDate
             );
 
             // Act
@@ -1706,8 +1706,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(999));
                 Assert.That(result.EmailAddress, Is.EqualTo("complete@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
-                Assert.That(result.DateCreated, Is.EqualTo(dateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(dateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(createdDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(modifiedDate));
                 // Note: LinkedEntity, LinkedEntityId, IsConfirmed, etc. are not part of EmailDTO
                 // This is by design as EmailDTO is a simplified representation
             });
@@ -1724,18 +1724,23 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Act
             var result1 = _sut.Cast<EmailDTO>();
             var result2 = _sut.Cast<EmailDTO>();
+            var iEmailDto = _sut.Cast<IEmailDTO>();
 
             // Assert
             Assert.Multiple(() =>
             {
-                Assert.That(result1, Is.Not.Null);
-                Assert.That(result2, Is.Not.Null);
-                Assert.That(result1, Is.Not.SameAs(result2), "Each cast should return a new instance");
-                Assert.That(result1.Id, Is.EqualTo(result2.Id));
-                Assert.That(result1.EmailAddress, Is.EqualTo(result2.EmailAddress));
-                Assert.That(result1.Type, Is.EqualTo(result2.Type));
-                Assert.That(result1.DateCreated, Is.EqualTo(result2.DateCreated));
-                Assert.That(result1.DateModified, Is.EqualTo(result2.DateModified));
+                Assert.That(result1, Is.Not.SameAs(result2));
+                Assert.That(result1, Is.Not.SameAs(iEmailDto));
+                Assert.That(result2, Is.Not.SameAs(iEmailDto));
+
+                // All should have same data
+                Assert.That(result1.Id, Is.EqualTo(777));
+                Assert.That(result2.Id, Is.EqualTo(777));
+                Assert.That(iEmailDto.Id, Is.EqualTo(777));
+
+                Assert.That(result1.EmailAddress, Is.EqualTo("instance@test.com"));
+                Assert.That(result2.EmailAddress, Is.EqualTo("instance@test.com"));
+                Assert.That(iEmailDto.EmailAddress, Is.EqualTo("instance@test.com"));
             });
         }
 
@@ -1756,8 +1761,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(string.Empty));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Other));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1779,8 +1784,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(specialEmail));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Billing));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1802,8 +1807,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.EmailAddress, Is.EqualTo(unicodeEmail));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1844,8 +1849,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result.Id, Is.EqualTo(0));
                 Assert.That(result.EmailAddress, Is.EqualTo("zero@test.com"));
                 Assert.That(result.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Home));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1866,8 +1871,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result.Id, Is.EqualTo(int.MaxValue));
                 Assert.That(result.EmailAddress, Is.EqualTo("maxint@test.com"));
-                Assert.That(result.DateCreated, Is.EqualTo(_sut.DateCreated));
-                Assert.That(result.DateModified, Is.EqualTo(_sut.DateModified));
+                Assert.That(result.CreatedDate, Is.EqualTo(_sut.CreatedDate));
+                Assert.That(result.ModifiedDate, Is.EqualTo(_sut.ModifiedDate));
             });
         }
 
@@ -1889,9 +1894,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 isPrimary: false,
                 linkedEntity: new MockDomainEntity { Id = 456 },
                 isConfirmed: true,
-                dateCreated: testDate.AddDays(-1),
-                dateModified: testDate
-            );
+                createdDate: testDate.AddDays(-1),
+                modifiedDate: testDate);
 
             // Assert - Verify that all properties are set correctly
             Assert.Multiple(() =>
@@ -1903,393 +1907,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(email.LinkedEntity, Is.Not.Null);
                 Assert.That(email.LinkedEntityType, Is.EqualTo("MockDomainEntity")); // Should be derived from LinkedEntity type
                 Assert.That(email.IsConfirmed, Is.True);
-                Assert.That(email.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
-                Assert.That(email.DateModified, Is.EqualTo(testDate));
+                Assert.That(email.CreatedDate, Is.EqualTo(testDate.AddDays(-1)));
+                Assert.That(email.ModifiedDate, Is.EqualTo(testDate));
             });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ExceptionHandling_RethrowsCorrectly()
-        {
-            // This test verifies that the catch block in the Cast method properly rethrows exceptions
-
-            // Arrange
-            _sut.Id = 1;
-            _sut.EmailAddress = "test@example.com";
-
-            // Act & Assert - Test that InvalidCastException is thrown and rethrown correctly
-            var ex = Assert.Throws<InvalidCastException>(() => _sut.Cast<MockDomainEntity>());
-            Assert.Multiple(() =>
-            {
-                Assert.That(ex, Is.Not.Null);
-                Assert.That(ex.Message, Does.Contain("Cannot cast Email to type MockDomainEntity"));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntity_WithComplexEntityTypeChange_ShouldUpdateLinkedEntityTypeCorrectly()
-        {
-            // Test comprehensive LinkedEntity behavior with type changes
-
-            // Arrange
-            var entity1 = new MockDomainEntity();
-            var entity2 = new AnotherMockEntity();
-            var originalDateModified = _sut.DateModified;
-
-            // Act & Assert - Test multiple entity changes
-            System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntity = entity1;
-            var firstModified = _sut.DateModified;
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity1));
-                Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-                Assert.That(firstModified, Is.GreaterThan(originalDateModified));
-            });
-
-            System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntity = entity2;
-            var secondModified = _sut.DateModified;
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntity, Is.EqualTo(entity2));
-                Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
-                Assert.That(secondModified, Is.GreaterThan(firstModified));
-            });
-
-            System.Threading.Thread.Sleep(1);
-            _sut.LinkedEntity = null;
-            var thirdModified = _sut.DateModified;
-            Assert.Multiple(() =>
-            {
-                Assert.That(_sut.LinkedEntity, Is.Null);
-                Assert.That(_sut.LinkedEntityType, Is.Null);
-                Assert.That(thirdModified, Is.GreaterThan(secondModified));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void ToString_WithExtremeValues_ShouldHandleAllScenarios()
-        {
-            // Test ToString with various extreme value combinations
-
-            // Case 1: Maximum values
-            _sut.Id = int.MaxValue;
-            _sut.EmailAddress = new string('a', 1000) + "@verylongdomain.com";
-            var maxResult = _sut.ToString();
-            Assert.Multiple(() =>
-            {
-                Assert.That(maxResult, Is.Not.Null);
-                Assert.That(maxResult, Does.Contain(int.MaxValue.ToString()));
-                Assert.That(maxResult, Does.Contain("Id:" + int.MaxValue));
-                Assert.That(maxResult, Does.Contain(_sut.EmailAddress));
-            });
-
-            // Case 2: Minimum/Zero values
-            _sut.Id = 0;
-            _sut.EmailAddress = "";
-            var minResult = _sut.ToString();
-            Assert.Multiple(() =>
-            {
-                Assert.That(minResult, Is.Not.Null);
-                Assert.That(minResult, Does.Contain("Id:0"));
-                Assert.That(minResult, Does.Contain("EmailAddress"));
-            });
-
-            // Case 3: Null email address
-            _sut.Id = 42;
-            _sut.EmailAddress = null;
-            var nullResult = _sut.ToString();
-            Assert.Multiple(() =>
-            {
-                Assert.That(nullResult, Is.Not.Null);
-                Assert.That(nullResult, Does.Contain("Id:42"));
-                Assert.That(nullResult, Does.Contain("EmailAddress"));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void SerializerOptions_CyclicalReferenceHandling_ComprehensiveTest()
-        {
-            // Test that the serialization options handle complex scenarios correctly
-
-            // Arrange - Create email with LinkedEntity that could cause cycles
-            var mockEntity = new MockDomainEntity { Id = 123 };
-            _sut = new Email(
-                id: 1,
-                emailAddress: "cycle@test.com",
-                type: OrganizerCompanion.Core.Enums.Types.Work,
-                isPrimary: true,
-                linkedEntity: mockEntity,
-                isConfirmed: true,
-                dateCreated: DateTime.Now.AddHours(-1),
-                dateModified: DateTime.Now
-            );
-
-            // Act & Assert - Multiple serialization calls should work consistently
-            string json1, json2, json3;
-            Assert.Multiple(() =>
-            {
-                Assert.DoesNotThrow(() => json1 = _sut.ToJson());
-                Assert.DoesNotThrow(() => json2 = _sut.ToJson());
-                Assert.DoesNotThrow(() => json3 = _sut.ToJson());
-            });
-
-            // All serializations should produce valid JSON
-            json1 = _sut.ToJson();
-            json2 = _sut.ToJson();
-            json3 = _sut.ToJson();
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(json1, Is.Not.Null.And.Not.Empty);
-                Assert.That(json2, Is.Not.Null.And.Not.Empty);
-                Assert.That(json3, Is.Not.Null.And.Not.Empty);
-                Assert.That(json1, Is.EqualTo(json2));
-                Assert.That(json2, Is.EqualTo(json3));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_ToMultipleDTOTypes_ShouldCreateIndependentInstances()
-        {
-            // Test that multiple Cast calls create independent DTO instances
-
-            // Arrange
-            _sut = new Email(
-                id: 100,
-                emailAddress: "multi@cast.com",
-                type: OrganizerCompanion.Core.Enums.Types.Mobil,
-                isPrimary: false,
-                linkedEntity: null,
-                isConfirmed: false,
-                dateCreated: DateTime.Now.AddDays(-1),
-                dateModified: DateTime.Now
-            );
-
-            // Act - Cast to different supported types
-            var emailDto1 = _sut.Cast<EmailDTO>();
-            var emailDto2 = _sut.Cast<EmailDTO>();
-            var iEmailDto = _sut.Cast<IEmailDTO>();
-
-            // Assert - All should be different instances but with same data
-            Assert.Multiple(() =>
-            {
-                Assert.That(emailDto1, Is.Not.SameAs(emailDto2));
-                Assert.That(emailDto1, Is.Not.SameAs(iEmailDto));
-                Assert.That(emailDto2, Is.Not.SameAs(iEmailDto));
-
-                // All should have same data
-                Assert.That(emailDto1.Id, Is.EqualTo(100));
-                Assert.That(emailDto2.Id, Is.EqualTo(100));
-                Assert.That(iEmailDto.Id, Is.EqualTo(100));
-
-                Assert.That(emailDto1.EmailAddress, Is.EqualTo("multi@cast.com"));
-                Assert.That(emailDto2.EmailAddress, Is.EqualTo("multi@cast.com"));
-                Assert.That(iEmailDto.EmailAddress, Is.EqualTo("multi@cast.com"));
-            });
-        }
-
-        [Test, Category("Models")]
-        public void AllEnumTypes_ComprehensiveCastAndSerializationTest()
-        {
-            // Test all enum values with Cast and serialization operations
-
-            var enumValues = Enum.GetValues<OrganizerCompanion.Core.Enums.Types>();
-
-            foreach (var enumValue in enumValues)
-            {
-                // Arrange
-                _sut = new Email(
-                    id: (int)enumValue,
-                    emailAddress: $"test{enumValue}@example.com",
-                    type: enumValue,
-                    isPrimary: false,
-                    linkedEntity: null,
-                    isConfirmed: (int)enumValue % 2 == 0,
-                    dateCreated: DateTime.Now.AddDays(-(int)enumValue),
-                    dateModified: DateTime.Now
-                );
-
-                // Act & Assert - Cast should work for all enum types
-                Assert.DoesNotThrow(() =>
-                {
-                    var dto = _sut.Cast<EmailDTO>();
-                    Assert.That(dto.Type, Is.EqualTo(enumValue));
-                });
-
-                // Act & Assert - Serialization should work for all enum types
-                Assert.DoesNotThrow(() =>
-                {
-                    var json = _sut.ToJson();
-                    Assert.That(json, Does.Contain(enumValue.ToString()));
-                });
-            }
-        }
-
-        [Test, Category("Models")]
-        public void DateModified_PropertyChangeCombinations_ShouldUpdateInSequence()
-        {
-            // Test that rapid sequential property changes all update DateModified correctly
-
-            // Arrange
-            _sut = new Email();
-            var timestamps = new List<DateTime?>
-            {
-              _sut.DateModified // Initial state
-            };
-
-            // Act & Assert - Test sequential property changes
-            System.Threading.Thread.Sleep(2);
-            _sut.Id = 1;
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
-            _sut.EmailAddress = "sequence@test.com";
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
-            _sut.Type = OrganizerCompanion.Core.Enums.Types.Home;
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
-            _sut.LinkedEntity = new MockDomainEntity { Id = 999 };
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
-            _sut.LinkedEntity = new MockDomainEntity();
-            timestamps.Add(_sut.DateModified);
-
-            System.Threading.Thread.Sleep(2);
-            _sut.IsConfirmed = true;
-            timestamps.Add(_sut.DateModified);
-
-            // Assert - Each timestamp should be greater than the previous
-            for (int i = 1; i < timestamps.Count; i++)
-            {
-                Assert.That(timestamps[i], Is.GreaterThan(timestamps[i - 1]),
-                    $"Timestamp at index {i} should be greater than timestamp at index {i - 1}");
-            }
-        }
-
-        [Test, Category("Models")]
-        public void Email_ComprehensiveFunctionalityIntegrationTest()
-        {
-            // Comprehensive test that exercises all major functionality together
-
-            // Test default constructor
-            var defaultEmail = new Email();
-            Assert.That(defaultEmail, Is.Not.Null);
-            Assert.That(defaultEmail.DateCreated, Is.Not.EqualTo(default(DateTime)));
-
-            // Test simple constructor
-            var simpleEmail = new Email("simple@test.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
-            Assert.Multiple(() =>
-            {
-                Assert.That(simpleEmail.EmailAddress, Is.EqualTo("simple@test.com"));
-                Assert.That(simpleEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Work));
-                Assert.That(simpleEmail.IsConfirmed, Is.False);
-            });
-
-            // Test JsonConstructor with comprehensive data
-            var testDate = DateTime.Now;
-            var linkedEntity = new MockDomainEntity { Id = 456 };
-            var comprehensiveEmail = new Email(
-                id: 12345,
-                emailAddress: "comprehensive@test.com",
-                type: OrganizerCompanion.Core.Enums.Types.Mobil,
-                isPrimary: false,
-                linkedEntity: linkedEntity,
-                isConfirmed: true,
-                dateCreated: testDate.AddDays(-1),
-                dateModified: testDate
-            );
-
-            // Verify comprehensive properties
-            Assert.Multiple(() =>
-            {
-                Assert.That(comprehensiveEmail.Id, Is.EqualTo(12345));
-                Assert.That(comprehensiveEmail.EmailAddress, Is.EqualTo("comprehensive@test.com"));
-                Assert.That(comprehensiveEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Mobil));
-                Assert.That(comprehensiveEmail.LinkedEntityId, Is.EqualTo(456));
-                Assert.That(comprehensiveEmail.LinkedEntity, Is.EqualTo(linkedEntity));
-                Assert.That(comprehensiveEmail.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-                Assert.That(comprehensiveEmail.IsConfirmed, Is.True);
-                Assert.That(comprehensiveEmail.DateCreated, Is.EqualTo(testDate.AddDays(-1)));
-                Assert.That(comprehensiveEmail.DateModified, Is.EqualTo(testDate));
-            });
-
-            // Test all property setters
-            defaultEmail.Id = 54321;
-            defaultEmail.EmailAddress = "updated@test.com";
-            defaultEmail.Type = OrganizerCompanion.Core.Enums.Types.Fax;
-            defaultEmail.LinkedEntity = new AnotherMockEntity { Id = 789 };
-            defaultEmail.IsConfirmed = true;
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(defaultEmail.Id, Is.EqualTo(54321));
-                Assert.That(defaultEmail.EmailAddress, Is.EqualTo("updated@test.com"));
-                Assert.That(defaultEmail.Type, Is.EqualTo(OrganizerCompanion.Core.Enums.Types.Fax));
-                Assert.That(defaultEmail.LinkedEntityId, Is.EqualTo(789));
-                Assert.That(defaultEmail.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
-                Assert.That(defaultEmail.IsConfirmed, Is.True);
-            });
-
-            // Test Cast functionality
-            var emailDto = defaultEmail.Cast<EmailDTO>();
-            var iEmailDto = defaultEmail.Cast<IEmailDTO>();
-
-            Assert.Multiple(() =>
-            {
-                Assert.That(emailDto, Is.InstanceOf<EmailDTO>());
-                Assert.That(iEmailDto, Is.InstanceOf<EmailDTO>());
-                Assert.That(emailDto.Id, Is.EqualTo(defaultEmail.Id));
-                Assert.That(iEmailDto.Id, Is.EqualTo(defaultEmail.Id));
-            });
-
-            // Test JSON serialization
-            var json = defaultEmail.ToJson();
-            Assert.That(json, Is.Not.Null.And.Not.Empty);
-
-            // Test ToString functionality
-            var stringResult = defaultEmail.ToString();
-            Assert.Multiple(() =>
-            {
-                Assert.That(stringResult, Is.Not.Null.And.Not.Empty);
-                Assert.That(stringResult, Does.Contain("updated@test.com"));
-                Assert.That(stringResult, Does.Contain("54321"));
-            });
-
-            // Test exception scenarios
-            Assert.Throws<InvalidCastException>(() => defaultEmail.Cast<MockDomainEntity>());
-        }
-
-        [Test, Category("Models")]
-        public void LinkedEntityType_ReadOnlyProperty_ComprehensiveBehaviorTest()
-        {
-            // Comprehensive test of LinkedEntityType read-only behavior
-
-            // Verify property is read-only
-            var property = typeof(Email).GetProperty("LinkedEntityType");
-            Assert.That(property?.SetMethod, Is.Null, "LinkedEntityType should be read-only");
-
-            // Test behavior with null LinkedEntity
-            _sut.LinkedEntity = null;
-            Assert.That(_sut.LinkedEntityType, Is.Null);
-
-            // Test behavior with various entity types
-            var mockEntity = new MockDomainEntity();
-            _sut.LinkedEntity = mockEntity;
-            Assert.That(_sut.LinkedEntityType, Is.EqualTo("MockDomainEntity"));
-
-            var anotherEntity = new AnotherMockEntity();
-            _sut.LinkedEntity = anotherEntity;
-            Assert.That(_sut.LinkedEntityType, Is.EqualTo("AnotherMockEntity"));
-
-            // Test that setting back to null clears the type
-            _sut.LinkedEntity = null;
-            Assert.That(_sut.LinkedEntityType, Is.Null);
         }
 
         [Test, Category("Models")]
@@ -2313,6 +1933,92 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.Throws<InvalidCastException>(() => _sut.Cast<AnotherMockEntity>());
         }
 
+        [Test, Category("Models")]
+        public void LinkedEntity_Getter_WhenLinkedEntityIsNull_ShouldReturnContact()
+        {
+            // Arrange
+            var contact = new Contact { Id = 123, FirstName = "Test" };
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
+            _sut.Contact = contact;
+
+            // Act
+            var linkedEntity = _sut.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(linkedEntity, Is.Not.Null);
+                Assert.That(linkedEntity, Is.SameAs(contact));
+                Assert.That(linkedEntity, Is.InstanceOf<Contact>());
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Getter_WhenLinkedEntityIsNull_ShouldReturnOrganization()
+        {
+            // Arrange
+            var organization = new Organization { Id = 456, OrganizationName = "Test Org" };
+            _sut = new Email("test@example.com", OrganizerCompanion.Core.Enums.Types.Work, true, null);
+            _sut.Organization = organization;
+
+            // Act
+            var linkedEntity = _sut.LinkedEntity;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(linkedEntity, Is.Not.Null);
+                Assert.That(linkedEntity, Is.SameAs(organization));
+                Assert.That(linkedEntity, Is.InstanceOf<Organization>());
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_WithContact_ShouldSetContactProperties()
+        {
+            // Arrange
+            var contact = new Contact { Id = 789, FirstName = "Setter Test" };
+            var originalModifiedDate = _sut.ModifiedDate;
+            System.Threading.Thread.Sleep(1);
+
+            // Act
+            _sut.LinkedEntity = contact;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.SameAs(contact));
+                Assert.That(_sut.Contact, Is.SameAs(contact));
+                Assert.That(_sut.ContactId, Is.EqualTo(contact.Id));
+                Assert.That(_sut.Organization, Is.Null);
+                Assert.That(_sut.OrganizationId, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+            });
+        }
+
+        [Test, Category("Models")]
+        public void LinkedEntity_Setter_WithOrganization_ShouldSetOrganizationProperties()
+        {
+            // Arrange
+            var organization = new Organization { Id = 101, OrganizationName = "Org Setter Test" };
+            var originalModifiedDate = _sut.ModifiedDate;
+            System.Threading.Thread.Sleep(1);
+
+            // Act
+            _sut.LinkedEntity = organization;
+
+            // Assert
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.LinkedEntity, Is.SameAs(organization));
+                Assert.That(_sut.Organization, Is.SameAs(organization));
+                Assert.That(_sut.OrganizationId, Is.EqualTo(organization.Id));
+                Assert.That(_sut.Contact, Is.Null);
+                Assert.That(_sut.ContactId, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.GreaterThan(originalModifiedDate));
+            });
+        }
+
         #endregion
 
         // Helper mock class for testing IDomainEntity
@@ -2322,8 +2028,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
@@ -2336,8 +2042,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
 
             public T Cast<T>() where T : IDomainEntity => throw new NotImplementedException();
             public string ToJson() => "{}";
@@ -2350,8 +2056,8 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             public bool IsCast { get; set; } = false;
             public int CastId { get; set; } = 0;
             public string? CastType { get; set; } = null;
-            public DateTime DateCreated { get; set; } = DateTime.Now;
-            public DateTime? DateModified { get; set; } = DateTime.Now;
+            public DateTime CreatedDate { get; set; } = DateTime.Now;
+            public DateTime? ModifiedDate { get; set; } = default;
             public string? EmailAddress { get; set; }
             public OrganizerCompanion.Core.Enums.Types? Type { get; set; }
             public bool IsPrimary { get; set; } = false;

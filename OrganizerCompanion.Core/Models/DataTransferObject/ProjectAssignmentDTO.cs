@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
 using OrganizerCompanion.Core.Interfaces.Domain;
@@ -8,8 +8,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
     internal class ProjectAssignmentDTO : IProjectAssignmentDTO
     {
         #region Fields
-        private readonly DateTime? _dateCompleted = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private readonly DateTime? _completedDate = null;
+        private readonly DateTime _createdDate = DateTime.Now;
         #endregion
 
         #region Properties
@@ -39,8 +39,8 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id { get; set; } = 0;
 
-        [Required, JsonPropertyName("name"), MinLength(1, ErrorMessage = "Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
-        public string Name { set; get; } = string.Empty;
+        [Required, JsonPropertyName("projectAssignmentName"), MinLength(1, ErrorMessage = "ProjectAssignmentName must be at least 1 character long."), MaxLength(100, ErrorMessage = "Name cannot exceed 100 characters.")]
+        public string ProjectAssignmentName { set; get; } = string.Empty;
 
         [JsonPropertyName("description"), MaxLength(1000, ErrorMessage = "Description cannot exceed 1000 characters.")]
         public string? Description { get; set; } = null;
@@ -72,17 +72,17 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
         [Required, JsonPropertyName("isCompleted")]
         public bool IsCompleted { get; set; } = false;
 
-        [Required, JsonPropertyName("dateDue")]
-        public DateTime? DateDue { get; set; } = null;
+        [Required, JsonPropertyName("dueDate")]
+        public DateTime? DueDate { get; set; } = null;
 
-        [Required, JsonPropertyName("dateCompleted")]
-        public DateTime? DateCompleted => _dateCompleted;
+        [Required, JsonPropertyName("completedDate")]
+        public DateTime? CompletedDate => _completedDate;
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [Required, JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = null;
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = default;
         #endregion
 
         #region Constructors
@@ -101,13 +101,13 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             int? taskId,
             ProjectTaskDTO? task,
             bool isCompleted,
-            DateTime? dateDue,
-            DateTime? dateCompleted,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime? dueDate,
+            DateTime? completedDate,
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             Id = id;
-            Name = name;
+            ProjectAssignmentName = name;
             Description = description;
             Assignee = assignee;
             AssigneeId = assignee!.Id;
@@ -118,10 +118,10 @@ namespace OrganizerCompanion.Core.Models.DataTransferObject
             TaskId = taskId;
             Task = task;
             IsCompleted = isCompleted;
-            DateDue = dateDue;
-            _dateCompleted = dateCompleted;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            DueDate = dueDate;
+            _completedDate = completedDate;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
         #endregion
 

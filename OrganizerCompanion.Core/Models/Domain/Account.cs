@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -22,7 +23,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _license = null;
         private List<AccountFeature> _features = [];
         private List<SubAccount>? _subAccounts = null;
-        private readonly DateTime _dateCreated = DateTime.Now;
+        private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
         #region Properties
@@ -34,7 +35,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _features = value.ConvertAll(feature => (AccountFeature)feature);
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -45,11 +46,13 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _subAccounts = value?.ConvertAll(account => (SubAccount)account);
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
         #endregion
 
+        [Key]
+        [Column("AccountId")]
         [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
@@ -62,7 +65,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                 }
 
                 _id = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -73,7 +76,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accountName = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -84,7 +87,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _accountNumber = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
@@ -95,10 +98,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _license = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }    
 
+        [NotMapped]
         [Required, JsonPropertyName("features")]
         public List<AccountFeature> Features
         {
@@ -106,10 +110,11 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _features = value;
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
+        [NotMapped]
         [JsonPropertyName("accounts"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public List<SubAccount>? Accounts
         {
@@ -118,15 +123,15 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 _subAccounts ??= [];
                 _subAccounts = value?.ConvertAll(account => account);
-                DateModified = DateTime.Now;
+                ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [Required, JsonPropertyName("dateCreated")]
-        public DateTime DateCreated => _dateCreated;
+        [Required, JsonPropertyName("createdDate")]
+        public DateTime CreatedDate => _createdDate;
 
-        [JsonPropertyName("dateModified")]
-        public DateTime? DateModified { get; set; } = default(DateTime);
+        [Required, JsonPropertyName("modifiedDate")]
+        public DateTime? ModifiedDate { get; set; } = null;
         #endregion
 
         #region Constructors
@@ -140,8 +145,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             string? license,
             List<AccountFeature> features,
             List<SubAccount> accounts,
-            DateTime dateCreated,
-            DateTime? dateModified)
+            DateTime createdDate,
+            DateTime? modifiedDate)
         {
             _id = id;
             _accountName = accountName;
@@ -149,8 +154,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _license = license;
             _features = features;
             _subAccounts = accounts;
-            _dateCreated = dateCreated;
-            DateModified = dateModified;
+            _createdDate = createdDate;
+            ModifiedDate = modifiedDate;
         }
 
         public Account(
@@ -175,8 +180,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             _license = dto.License;
             _features = dto.Features.ConvertAll(featureDTO => new AccountFeature(dto, featureDTO));
             _subAccounts = dto.Accounts?.ConvertAll(subAccountDTO => new SubAccount(subAccountDTO));
-            _dateCreated = dto.DateCreated;
-            DateModified = dto.DateModified;
+            _createdDate = dto.CreatedDate;
+            ModifiedDate = dto.ModifiedDate;
         }
         #endregion
 
@@ -195,8 +200,8 @@ namespace OrganizerCompanion.Core.Models.Domain
                         License = License,
                         Features = Features.ConvertAll(feature => feature.Cast<FeatureDTO>()),
                         Accounts = Accounts?.ConvertAll(account => account.Cast<SubAccountDTO>()),
-                        DateCreated = DateCreated,
-                        DateModified = DateModified
+                        CreatedDate = CreatedDate,
+                        ModifiedDate = ModifiedDate
                     };
                     return (T)dto;
                 }
