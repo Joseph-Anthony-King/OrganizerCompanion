@@ -53,7 +53,8 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [Key]
         [Column("AccountId")]
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
+        [Required, JsonPropertyName("id")]
+        [Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
             get => _id;

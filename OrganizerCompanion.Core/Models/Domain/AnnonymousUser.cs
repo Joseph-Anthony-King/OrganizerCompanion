@@ -41,7 +41,8 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [Key]
         [Column("AnnonymousUserId")]
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
+        [Required, JsonPropertyName("id")]
+        [Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
             get => _id;
@@ -57,7 +58,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("userName"), MinLength(1, ErrorMessage = "User Name must be at least 1 character long."), MaxLength(100, ErrorMessage = "User Name cannot exceed 100 characters.")]
+        [Required]
+        [JsonPropertyName("userName")]
+        [MinLength(1, ErrorMessage = "User Name must be at least 1 character long.")]
+        [MaxLength(100, ErrorMessage = "User Name cannot exceed 100 characters.")]
         public string UserName
         {
             get => _userName;
@@ -78,7 +82,8 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [Required, JsonPropertyName("accountId"), Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
+        [Required, JsonPropertyName("accountId")]
+        [Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
         public int AccountId
         {
             get => _accountId;
@@ -112,7 +117,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [JsonPropertyName("castId"), Range(0, int.MaxValue, ErrorMessage = "Converted Id must be a non-negative number."), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        [JsonPropertyName("castId")]
+        [Range(0, int.MaxValue, ErrorMessage = "Converted Id must be a non-negative number.")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public int? CastId
         {
             get => _castId;

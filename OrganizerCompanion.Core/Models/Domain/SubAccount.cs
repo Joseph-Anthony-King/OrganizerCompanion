@@ -131,8 +131,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set => _accountId = value;
         }
 
-        [ForeignKey(nameof(AccountId))
-]
+        [ForeignKey(nameof(AccountId))]
         [Required, JsonPropertyName("account")]
         public IAccount? Account
         {
