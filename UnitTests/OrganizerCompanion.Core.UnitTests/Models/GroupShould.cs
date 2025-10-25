@@ -911,7 +911,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange
             _sut.ModifiedDate = _testModifiedDate;
-            var beforeSet = DateTime.Now;
+            var beforeSet = DateTime.UtcNow;
             var groupInterface = (IGroup)_sut;
             var interfaceMembers = _testMembers.Cast<IContact>().ToList();
 
