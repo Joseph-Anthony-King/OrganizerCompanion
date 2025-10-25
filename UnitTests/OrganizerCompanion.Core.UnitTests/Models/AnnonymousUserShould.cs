@@ -1,6 +1,7 @@
 using System.Text.Json;
 using NUnit.Framework;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
+using OrganizerCompanion.Core.Interfaces.Domain;
 using OrganizerCompanion.Core.Models.DataTransferObject;
 using OrganizerCompanion.Core.Models.Domain;
 
@@ -12,13 +13,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private AnnonymousUser _sut;
         private DateTime _testCreatedDate;
         private DateTime _testModifiedDate;
+        private SubAccount _testAccount;
 
         [SetUp]
         public void SetUp()
         {
             _sut = new AnnonymousUser();
-            _testCreatedDate = new DateTime(2023, 1, 1, 12, 0, 0);
-            _testModifiedDate = new DateTime(2023, 1, 2, 12, 0, 0);
+            _testCreatedDate = DateTime.UtcNow.AddDays(-1);
+            _testModifiedDate = DateTime.UtcNow.AddHours(-1);
+            _testAccount = new SubAccount { Id = 123 };
         }
 
         [Test, Category("Models")]
