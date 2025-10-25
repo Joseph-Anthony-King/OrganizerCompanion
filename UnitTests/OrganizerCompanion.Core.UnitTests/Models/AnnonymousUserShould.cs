@@ -1479,7 +1479,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(result, Is.Not.Null);
                 Assert.That(result, Does.Contain($"Id:{int.MaxValue}"));
                 Assert.That(result, Does.Contain("UserName"));
-                Assert.That(result.Length, Is.GreaterThan(100)); // Should contain more than just username
+                Assert.That(result!.Length, Is.GreaterThan(100)); // Should contain more than just username
             });
         }
 
