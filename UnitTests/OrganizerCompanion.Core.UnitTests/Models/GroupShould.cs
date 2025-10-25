@@ -923,7 +923,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             Assert.That(_sut.ModifiedDate, Is.Not.Null);
             Assert.That(_sut.ModifiedDate, Is.Not.EqualTo(_testModifiedDate));
             Assert.That(_sut.ModifiedDate, Is.GreaterThanOrEqualTo(beforeSet));
-            Assert.That(_sut.ModifiedDate, Is.LessThan(afterSet));
+            Assert.That(_sut.ModifiedDate, Is.LessThanOrEqualTo(afterSet));
         }
 
         #endregion
