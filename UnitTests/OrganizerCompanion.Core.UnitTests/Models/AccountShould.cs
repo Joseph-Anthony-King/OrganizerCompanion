@@ -11,10 +11,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
     [TestFixture]
     internal class AccountShould
     {
-        private User _sut;
         private readonly DateTime _testCreatedDate = new(2023, 1, 1, 12, 0, 0);
         private readonly DateTime _testModifiedDate = new(2023, 1, 2, 12, 0, 0);
         private List<AccountFeature> _testFeatures;
+        private List<SubAccount> _testSubAccounts;
 
         // Helper method to perform validation
         private IList<ValidationResult> ValidateModel(object model)
@@ -28,19 +28,17 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [SetUp]
         public void SetUp()
         {
-            _sut = new User
-            {
-                // Set required properties on Person to make it valid
-                Id = 1,
-                FirstName = "John",
-                LastName = "Doe"
-            };
-
             var account = new Account { Id = 1, AccountName = "Test Account" };
             var feature = new Feature(1, "Test Feature", true, DateTime.Now, null);
             _testFeatures =
             [
-           new AccountFeature(account, feature) { Id = 1 }
+                new AccountFeature(account, feature) { Id = 1 }
+            ];
+
+            _testSubAccounts =
+            [
+                new SubAccount { Id = 1, AccountId = 1 },
+                new SubAccount { Id = 2, AccountId = 1 }
             ];
         }
 
@@ -396,7 +394,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         [Test, Category("Models")]
         public void JsonConstructor_WithNullFeatures_AcceptsNull()
         {
-            // Arrange & Act - The JSON constructor accepts null features and assigns them directly
             var account = new Account(
                 id: 1,
                 accountName: "testuser",
@@ -408,7 +405,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 modifiedDate: _testModifiedDate
             );
 
-            // Assert - The constructor should succeed and assign null to features
             Assert.Multiple(() =>
             {
                 Assert.That(account.Id, Is.EqualTo(1));
@@ -423,7 +419,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureDTOs = new List<FeatureDTO>
             {
-                new() { Id = 1, FeatureName = "Test Feature", IsEnabled = true, CreatedDate = _testCreatedDate, ModifiedDate = _testModifiedDate }
+                new()
+                {
+                    Id = 1,
+                    FeatureName = "Test Feature",
+                    IsEnabled = true,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = _testModifiedDate
+                }
             };
             var subAccountDTOs = new List<SubAccountDTO>
             {
@@ -469,7 +472,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureDTOs = new List<FeatureDTO>
             {
-                new() { Id = 2, FeatureName = "Another Feature", IsEnabled = false, CreatedDate = _testCreatedDate, ModifiedDate = null }
+                new()
+                {
+                    Id = 2,
+                    FeatureName = "Another Feature",
+                    IsEnabled = false,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = null
+                }
             };
             var accountDTO = new AccountDTO
             {
@@ -543,7 +553,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureDTOs = new List<FeatureDTO>
             {
-                new() { Id = 3, FeatureName = "Null Test Feature", IsEnabled = true, CreatedDate = _testCreatedDate, ModifiedDate = _testModifiedDate }
+                new()
+                {
+                    Id = 3,
+                    FeatureName = "Null Test Feature",
+                    IsEnabled = true,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = _testModifiedDate
+                }
             };
             var accountDTO = new AccountDTO
             {
@@ -582,9 +599,30 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureDTOs = new List<FeatureDTO>
             {
-                new() { Id = 10, FeatureName = "Feature 1", IsEnabled = true, CreatedDate = _testCreatedDate, ModifiedDate = _testModifiedDate },
-                new() { Id = 20, FeatureName = "Feature 2", IsEnabled = false, CreatedDate = _testCreatedDate, ModifiedDate = null },
-                new() { Id = 30, FeatureName = "Feature 3", IsEnabled = true, CreatedDate = _testCreatedDate, ModifiedDate = _testModifiedDate }
+                new()
+                {
+                    Id = 10,
+                    FeatureName = "Feature 1",
+                    IsEnabled = true,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = _testModifiedDate
+                },
+                new()
+                {
+                    Id = 20,
+                    FeatureName = "Feature 2",
+                    IsEnabled = false,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = null
+                },
+                new()
+                {
+                    Id = 30,
+                    FeatureName = "Feature 3",
+                    IsEnabled = true,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = _testModifiedDate
+                }
             };
             var subAccountDTOs = new List<SubAccountDTO>
             {
@@ -641,7 +679,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange
             var featureDTOs = new List<FeatureDTO>
             {
-                new() { Id = 1, FeatureName = "Zero ID Test", IsEnabled = true, CreatedDate = _testCreatedDate, ModifiedDate = _testModifiedDate }
+                new()
+                {
+                    Id = 1,
+                    FeatureName = "Zero ID Test",
+                    IsEnabled = true,
+                    CreatedDate = _testCreatedDate,
+                    ModifiedDate = _testModifiedDate
+                }
             };
             var accountDTO = new AccountDTO
             {
@@ -665,7 +710,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 Assert.That(account.AccountName, Is.EqualTo("Zero ID Account"));
                 Assert.That(account.Features, Is.Not.Null);
                 Assert.That(account.Features, Has.Count.EqualTo(1));
-                Assert.That(account.Features[0].AccountId, Is.EqualTo(0)); // Should use the DTO's Id
+                Assert.That(account.Features[0].AccountId, Is.EqualTo(0));
                 Assert.That(account.CreatedDate, Is.EqualTo(_testCreatedDate));
                 Assert.That(account.ModifiedDate, Is.EqualTo(_testModifiedDate));
             });
@@ -706,37 +751,9 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
                 var accountFeature = account.Features[0];
                 Assert.That(accountFeature, Is.TypeOf<AccountFeature>());
-                Assert.That(accountFeature.AccountId, Is.EqualTo(555)); // From accountDTO.Id
-                Assert.That(accountFeature.FeatureId, Is.EqualTo(42)); // From featureDTO.Id
+                Assert.That(accountFeature.AccountId, Is.EqualTo(555));
+                Assert.That(accountFeature.FeatureId, Is.EqualTo(42));
             });
-        }
-
-        [Test, Category("Models")]
-        public void Cast_Method_HasConstraintThatPreventsAccountDTOCasting()
-        {
-            // Arrange
-            var account = new Account(
-                id: 123,
-                accountName: "Test Account",
-                accountNumber: "ACC456",
-                license: Guid.NewGuid().ToString(),
-                features: [],
-                accounts: [],
-                createdDate: _testCreatedDate,
-                modifiedDate: _testModifiedDate
-            );
-
-            // Act & Assert
-            // This test documents that the Cast method cannot actually be called with AccountDTO
-            // due to the IDomainEntity constraint, even though the implementation checks for it
-
-            // The following would fail to compile:
-            account.Cast<AccountDTO>(); // Cannot compile due to constraint
-            account.Cast<IAccountDTO>(); // Cannot compile due to constraint
-
-            // This demonstrates a design inconsistency in the codebase where the Cast method
-            // implementation supports AccountDTO/IAccountDTO but the method signature prevents it
-            Assert.Pass("This test documents the design limitation where Cast<AccountDTO> cannot be called due to IDomainEntity constraint");
         }
 
         [Test, Category("Models")]
@@ -895,7 +912,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         public void Validation_ShouldFail_WhenRequiredStringIsNull()
         {
             // Arrange
-            var account = new Account { Id = 1, AccountName = null, AccountNumber = null, License = null };
+            var account = new Account
+            {
+                Id = 1,
+                AccountName = null,
+                AccountNumber = null,
+                License = null
+            };
 
             // Act
             var validationResults = ValidateModel(account);
@@ -931,8 +954,6 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
         #region Comprehensive Coverage Tests
 
-        // ...existing comprehensive tests...
-
         [Test, Category("Models")]
         public void ExplicitInterface_Comprehensive_AllScenarios()
         {
@@ -963,12 +984,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             iAccount.Accounts = [subAccount];
 
             Assert.Multiple(() =>
-                {
-                    Assert.That(account.Features, Has.Count.EqualTo(1));
-                    Assert.That(account.Accounts!, Has.Count.EqualTo(1));
-                    Assert.That(iAccount.Features, Has.Count.EqualTo(1));
-                    Assert.That(iAccount.Accounts!, Has.Count.EqualTo(1));
-                });
+            {
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Accounts!, Has.Count.EqualTo(1));
+                Assert.That(iAccount.Features, Has.Count.EqualTo(1));
+                Assert.That(iAccount.Accounts!, Has.Count.EqualTo(1));
+            });
         }
 
         [Test, Category("Models")]
@@ -1000,13 +1021,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-     {
-         Assert.That(dto.Id, Is.EqualTo(100));
-         Assert.That(dto.AccountName, Is.EqualTo("Test Account"));
-         Assert.That(dto.Features, Is.Not.Null);
-         Assert.That(dto.Features, Has.Count.EqualTo(1));
-         Assert.That(dto.Accounts, Is.Null); // Should be null since source was null
-     });
+            {
+                Assert.That(dto.Id, Is.EqualTo(100));
+                Assert.That(dto.AccountName, Is.EqualTo("Test Account"));
+                Assert.That(dto.Features, Is.Not.Null);
+                Assert.That(dto.Features, Has.Count.EqualTo(1));
+                Assert.That(dto.Accounts, Is.Null); // Should be null since source was null
+            });
         }
 
         [Test, Category("Models")]
@@ -1051,14 +1072,14 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange - Create account with null features using JSON constructor
             var account = new Account(
                 id: 400,
-               accountName: "Null Features",
-             accountNumber: "ACC400",
+                accountName: "Null Features",
+                accountNumber: "ACC400",
                 license: Guid.NewGuid().ToString(),
-                        features: null!, // Force null features
-                 accounts: [],
-                  createdDate: _testCreatedDate,
-         modifiedDate: _testModifiedDate
-           );
+                features: null!,
+                accounts: [],
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
+            );
 
             // Act & Assert - This will throw when trying to call ConvertAll on null Features
             Assert.Throws<NullReferenceException>(() =>
@@ -1130,10 +1151,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-   {
-       Assert.That(json, Is.Not.Null);
-       Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
-   });
+            {
+                Assert.That(json, Is.Not.Null);
+                Assert.That(() => JsonDocument.Parse(json), Throws.Nothing);
+            });
         }
 
         [Test, Category("Models")]
@@ -1150,12 +1171,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert - The setter uses: _subAccounts = value?.ConvertAll(account => account);
             Assert.Multiple(() =>
-  {
-      Assert.That(account.Accounts, Is.Not.Null);
-      Assert.That(account.Accounts, Has.Count.EqualTo(2));
-      Assert.That(account.Accounts![0].Id, Is.EqualTo(70));
-      Assert.That(account.Accounts[1].Id, Is.EqualTo(80));
-  });
+            {
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(2));
+                Assert.That(account.Accounts![0].Id, Is.EqualTo(70));
+                Assert.That(account.Accounts[1].Id, Is.EqualTo(80));
+            });
         }
 
         [Test, Category("Models")]
@@ -1172,11 +1193,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert - The setter has: _subAccounts ??= []; before assignment
             Assert.Multiple(() =>
-        {
-            Assert.That(account.Accounts, Is.Not.Null);
-            Assert.That(account.Accounts, Has.Count.EqualTo(1));
-            Assert.That(account.Accounts![0].Id, Is.EqualTo(90));
-        });
+            {
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Has.Count.EqualTo(1));
+                Assert.That(account.Accounts![0].Id, Is.EqualTo(90));
+            });
         }
 
         [Test, Category("Models")]
@@ -1213,12 +1234,12 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-       {
-           Assert.That(account.Accounts, Is.Not.Null);
-           Assert.That(account.Accounts, Is.Empty);
-           Assert.That(iAccount.Accounts, Is.Not.Null);
-           Assert.That(iAccount.Accounts, Is.Empty);
-       });
+            {
+                Assert.That(account.Accounts, Is.Not.Null);
+                Assert.That(account.Accounts, Is.Empty);
+                Assert.That(iAccount.Accounts, Is.Not.Null);
+                Assert.That(iAccount.Accounts, Is.Empty);
+            });
         }
 
         [Test, Category("Models")]
@@ -1226,21 +1247,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var account = new Account(
-             accountName: "Null Accounts Constructor",
-          accountNumber: "NACC100",
-           license: Guid.NewGuid().ToString(),
-                      features: _testFeatures,
-          accounts: null
-                  );
+                accountName: "Null Accounts Constructor",
+                accountNumber: "NACC100",
+                license: Guid.NewGuid().ToString(),
+                features: _testFeatures,
+                accounts: null
+            );
 
             // Assert
             Assert.Multiple(() =>
-              {
-                  Assert.That(account.AccountName, Is.EqualTo("Null Accounts Constructor"));
-                  Assert.That(account.Features, Is.Not.Null);
-                  Assert.That(account.Features, Has.Count.EqualTo(1));
-                  Assert.That(account.Accounts, Is.Null);
-              });
+            {
+                Assert.That(account.AccountName, Is.EqualTo("Null Accounts Constructor"));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Features, Has.Count.EqualTo(1));
+                Assert.That(account.Accounts, Is.Null);
+            });
         }
 
         [Test, Category("Models")]
@@ -1248,24 +1269,24 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         {
             // Arrange & Act
             var account = new Account(
-        id: 700,
-     accountName: "JSON Null Accounts",
-      accountNumber: "JNACC100",
-              license: Guid.NewGuid().ToString(),
-                   features: _testFeatures,
-                 accounts: null!,
-                   createdDate: _testCreatedDate,
-      modifiedDate: _testModifiedDate
-   );
+                id: 700,
+                accountName: "JSON Null Accounts",
+                accountNumber: "JNACC100",
+                license: Guid.NewGuid().ToString(),
+                features: _testFeatures,
+                accounts: null!,
+                createdDate: _testCreatedDate,
+                modifiedDate: _testModifiedDate
+            );
 
             // Assert
             Assert.Multiple(() =>
-    {
-        Assert.That(account.Id, Is.EqualTo(700));
-        Assert.That(account.AccountName, Is.EqualTo("JSON Null Accounts"));
-        Assert.That(account.Features, Is.Not.Null);
-        Assert.That(account.Accounts, Is.Null);
-    });
+            {
+                Assert.That(account.Id, Is.EqualTo(700));
+                Assert.That(account.AccountName, Is.EqualTo("JSON Null Accounts"));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Accounts, Is.Null);
+            });
         }
 
         [Test, Category("Models")]
@@ -1278,12 +1299,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Test parameterized constructor
             var beforeCreate = DateTime.UtcNow;
             var account2 = new Account(
-    accountName: "Test",
-     accountNumber: "ACC",
-              license: Guid.NewGuid().ToString(),
-    features: _testFeatures,
-        accounts: null
-    );
+                accountName: "Test",
+                accountNumber: "ACC",
+                license: Guid.NewGuid().ToString(),
+                features: _testFeatures,
+                accounts: null
+            );
+
             Assert.That(account2.CreatedDate, Is.GreaterThanOrEqualTo(beforeCreate));
 
             // Test JSON constructor with specific date
@@ -1291,13 +1313,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account3 = new Account(
                 id: 1,
                 accountName: "Test",
-              accountNumber: "ACC",
-               license: Guid.NewGuid().ToString(),
-             features: _testFeatures,
-           accounts: [],
-              createdDate: specificDate,
-                       modifiedDate: null
-              );
+                accountNumber: "ACC",
+                license: Guid.NewGuid().ToString(),
+                features: _testFeatures,
+                accounts: [],
+                createdDate: specificDate,
+                modifiedDate: null
+            );
             Assert.That(account3.CreatedDate, Is.EqualTo(specificDate));
 
             // Test DTO constructor
@@ -1412,10 +1434,10 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             var account3 = new Account { Id = int.MaxValue, AccountName = "MaxTest" };
             var result3 = account3.ToString();
             Assert.Multiple(() =>
-       {
-           Assert.That(result3, Does.Contain($"Id:{int.MaxValue}"));
-           Assert.That(result3, Does.Contain("AccountName:MaxTest"));
-       });
+            {
+                Assert.That(result3, Does.Contain($"Id:{int.MaxValue}"));
+                Assert.That(result3, Does.Contain("AccountName:MaxTest"));
+            });
         }
 
         [Test, Category("Models")]
@@ -1439,15 +1461,15 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert
             Assert.Multiple(() =>
-               {
-                   Assert.That(account.Id, Is.EqualTo(800));
-                   Assert.That(account.AccountName, Is.EqualTo("Interface DTO Test"));
-                   Assert.That(account.AccountNumber, Is.EqualTo("IDTO800"));
-                   Assert.That(account.Features, Is.Not.Null);
-                   Assert.That(account.Accounts, Is.Null);
-                   Assert.That(account.CreatedDate, Is.EqualTo(_testCreatedDate));
-                   Assert.That(account.ModifiedDate, Is.EqualTo(_testModifiedDate));
-               });
+            {
+                Assert.That(account.Id, Is.EqualTo(800));
+                Assert.That(account.AccountName, Is.EqualTo("Interface DTO Test"));
+                Assert.That(account.AccountNumber, Is.EqualTo("IDTO800"));
+                Assert.That(account.Features, Is.Not.Null);
+                Assert.That(account.Accounts, Is.Null);
+                Assert.That(account.CreatedDate, Is.EqualTo(_testCreatedDate));
+                Assert.That(account.ModifiedDate, Is.EqualTo(_testModifiedDate));
+            });
         }
 
         #endregion
