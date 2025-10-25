@@ -148,18 +148,15 @@ namespace OrganizerCompanion.Core.Models.Domain
 
             if (featureDTO == null)
                 throw new ArgumentNullException(nameof(featureDTO), "FeatureDTO cannot be null.");
-
-            // Create lightweight objects without cascading child object creation
-            // Feature has a constructor that takes IFeatureDTO
+                
             _feature = new Feature(featureDTO);
 
-            // Create Account using JsonConstructor with empty collections to avoid recursion
             _account = new Account(
                 id: accountDTO.Id,
                 accountName: accountDTO.AccountName,
                 accountNumber: accountDTO.AccountNumber,
                 license: accountDTO.License,
-                features: [], // Empty to avoid infinite recursion
+                features: [],
                 accounts: accountDTO.Accounts?.ConvertAll(sa => new SubAccount(sa)) ?? [],
                 createdDate: accountDTO.CreatedDate,
                 modifiedDate: accountDTO.ModifiedDate);
