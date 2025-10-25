@@ -35,7 +35,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Properties
         [Key]
         [Column("CAAddressId")]
-        [Required, JsonPropertyName("id"), Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
+        [Required, JsonPropertyName("id")]
+        [Range(0, int.MaxValue, ErrorMessage = "Id must be a non-negative number.")]
         public int Id
         {
             get => _id;
@@ -43,7 +44,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             {
                 if (value < 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(Id), "Id must be a non-negative number.");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(Id),
+                        "Id must be a non-negative number.");
                 }
 
                 _id = value;
@@ -163,7 +166,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [NotMapped]
-        [Required, JsonPropertyName("linkedEntityId"), Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
+        [Required]
+        [JsonPropertyName("linkedEntityId")]
+        [Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
         public int? LinkedEntityId => _linkedEntity?.Id ?? null;
 
         [NotMapped]

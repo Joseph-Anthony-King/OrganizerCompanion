@@ -403,7 +403,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
                 accountNumber: "ACC123",
                 license: Guid.NewGuid().ToString(),
                 features: null!,
-                accounts: null,
+                accounts: null!,
                 createdDate: _testCreatedDate,
                 modifiedDate: _testModifiedDate
             );
