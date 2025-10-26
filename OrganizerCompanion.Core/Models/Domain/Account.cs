@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -23,6 +24,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private string? _license = null;
         private List<AccountFeature> _features = [];
         private List<SubAccount>? _subAccounts = null;
+        [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>")]
         private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 

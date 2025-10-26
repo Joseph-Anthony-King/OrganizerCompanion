@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Interfaces.DataTransferObject;
@@ -19,6 +20,7 @@ namespace OrganizerCompanion.Core.Models.Domain
         private int _id = 0;
         private Account? _account = null;
         private Feature? _feature = null;
+        [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>")]
         private DateTime _createdDate = DateTime.UtcNow; // Remove readonly
         #endregion
 
@@ -80,6 +82,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _account;
             set
             {
+                if (value != null && value!.Id < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Account), "AccountId must be a non-negative number.");
+                }
                 _account = value;
                 ModifiedDate = DateTime.UtcNow;
             }
@@ -92,6 +98,10 @@ namespace OrganizerCompanion.Core.Models.Domain
             get => _feature;
             set
             {
+                if (value != null && value!.Id < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(Feature), "FeatureId must be a non-negative number.");
+                }
                 _feature = value;
                 ModifiedDate = DateTime.UtcNow;
             }
@@ -105,10 +115,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         #endregion
 
         #region Constructors
-        // Keep for EF Core
         public AccountFeature() { }
 
-        // For JSON deserialization only
         [JsonConstructor]
         public AccountFeature(
             int id,
