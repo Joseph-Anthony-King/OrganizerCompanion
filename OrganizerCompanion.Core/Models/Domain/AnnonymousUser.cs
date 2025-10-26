@@ -18,7 +18,7 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         private int _id = 0;
         private string _userName = string.Empty;
-        private int _accountId = 0;
+        private int? _accountId = null;
         private SubAccount? _account = null;
         private bool? _isCast = null;
         private int? _castId = null;
@@ -84,14 +84,9 @@ namespace OrganizerCompanion.Core.Models.Domain
 
         [Required, JsonPropertyName("accountId")]
         [Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
-        public int AccountId
+        public int? AccountId
         {
             get => _accountId;
-            set
-            {
-                _accountId = value;
-                ModifiedDate = DateTime.UtcNow;
-            }
         }
 
         [ForeignKey("AccountId")]
@@ -102,6 +97,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             set
             {
                 _account = value;
+                _accountId = value?.Id;
                 ModifiedDate = DateTime.UtcNow;
             }
         }
@@ -254,7 +250,7 @@ namespace OrganizerCompanion.Core.Models.Domain
                     {
                         Id = Id,
                         UserName = UserName,
-                        AccountId = AccountId,
+                        AccountId = AccountId ?? 0, // Convert nullable int to int with default value
                         CreatedDate = CreatedDate,
                         ModifiedDate = ModifiedDate
                     };

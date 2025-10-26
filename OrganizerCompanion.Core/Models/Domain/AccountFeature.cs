@@ -18,7 +18,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         };
 
         private int _id = 0;
+        private int? _accountId = null;
         private Account? _account = null;
+        private int? _featureId = null;
         private Feature? _feature = null;
         [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>")]
         private DateTime _createdDate = DateTime.UtcNow; // Remove readonly
@@ -27,20 +29,20 @@ namespace OrganizerCompanion.Core.Models.Domain
         #region Explicit Interface Implementations
         IAccount? IAccountFeature.Account
         {
-            get => Account;
+            get => _account;
             set
             {
-                Account = (Account?)value;
+                _account = (Account?)value;
                 ModifiedDate = DateTime.UtcNow;
             }
         }
 
         IFeature? IAccountFeature.Feature
         {
-            get => Feature;
+            get => _feature;
             set
             {
-                Feature = (Feature?)value;
+                _feature = (Feature?)value;
                 ModifiedDate = DateTime.UtcNow;
             }
         }
@@ -65,15 +67,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
         }
 
-        [NotMapped]
         [Required, JsonPropertyName("accountId")]
         [Range(0, int.MaxValue, ErrorMessage = "Account Id must be a non-negative number.")]
-        public int AccountId => Account?.Id ?? 0;
-
-        [NotMapped]
-        [Required, JsonPropertyName("featureId")]
-        [Range(0, int.MaxValue, ErrorMessage = "Feature Id must be a non-negative number.")]
-        public int FeatureId => Feature?.Id ?? 0;
+        public int? AccountId => _accountId ?? 0;
 
         [ForeignKey("AccountId")]
         [JsonIgnore] // Don't serialize the navigation property directly
@@ -90,6 +86,10 @@ namespace OrganizerCompanion.Core.Models.Domain
                 ModifiedDate = DateTime.UtcNow;
             }
         }
+
+        [Required, JsonPropertyName("featureId")]
+        [Range(0, int.MaxValue, ErrorMessage = "Feature Id must be a non-negative number.")]
+        public int? FeatureId => _featureId ?? 0;
 
         [ForeignKey("FeatureId")]
         [JsonIgnore]
@@ -127,7 +127,9 @@ namespace OrganizerCompanion.Core.Models.Domain
         {
             _id = id;
             _account = account;
+            _accountId = account?.Id;
             _feature = feature;
+            _featureId = feature?.Id;
             _createdDate = createdDate;
             ModifiedDate = modifiedDate;    
         }
@@ -147,7 +149,9 @@ namespace OrganizerCompanion.Core.Models.Domain
             }
 
             _account = (Account)account;
+            _accountId = _account.Id;
             _feature = (Feature)feature;
+            _featureId = _feature.Id;
         }
 
         public AccountFeature(
@@ -159,8 +163,6 @@ namespace OrganizerCompanion.Core.Models.Domain
 
             if (featureDTO == null)
                 throw new ArgumentNullException(nameof(featureDTO), "FeatureDTO cannot be null.");
-                
-            _feature = new Feature(featureDTO);
 
             _account = new Account(
                 id: accountDTO.Id,
@@ -171,6 +173,12 @@ namespace OrganizerCompanion.Core.Models.Domain
                 accounts: accountDTO.Accounts?.ConvertAll(sa => new SubAccount(sa)) ?? [],
                 createdDate: accountDTO.CreatedDate,
                 modifiedDate: accountDTO.ModifiedDate);
+
+            _accountId = _account.Id;
+
+            _feature = new Feature(featureDTO);
+
+            _featureId = _feature.Id;
         }
         #endregion
 

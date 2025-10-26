@@ -17,7 +17,7 @@ namespace OrganizerCompanion.Core.UnitTests.Models
         private List<SubAccount> _testSubAccounts;
 
         // Helper method to perform validation
-        private IList<ValidationResult> ValidateModel(object model)
+        private static IList<ValidationResult> ValidateModel(object model)
         {
             var validationResults = new List<ValidationResult>();
             var ctx = new ValidationContext(model, null, null);
