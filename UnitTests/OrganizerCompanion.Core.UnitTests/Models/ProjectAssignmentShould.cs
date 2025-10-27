@@ -717,10 +717,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _assignment.LocationId = locationId;
+            Assert.Multiple(() =>
+            {
 
-            // Assert - Domain entities auto-update ModifiedDate
-            Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
-            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+                // Assert - Domain entities auto-update ModifiedDate
+                Assert.That(_assignment.LocationId, Is.EqualTo(locationId));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            });
             Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
@@ -764,10 +767,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _assignment.LocationType = locationType;
+            Assert.Multiple(() =>
+            {
 
-            // Assert - Domain entities auto-update ModifiedDate
-            Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
-            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+                // Assert - Domain entities auto-update ModifiedDate
+                Assert.That(_assignment.LocationType, Is.EqualTo(locationType));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            });
             Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
@@ -804,10 +810,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _assignment.Location = location;
+            Assert.Multiple(() =>
+            {
 
-            // Assert - Domain entities auto-update ModifiedDate
-            Assert.That(_assignment.Location, Is.EqualTo(location));
-            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+                // Assert - Domain entities auto-update ModifiedDate
+                Assert.That(_assignment.Location, Is.EqualTo(location));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            });
             Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 
@@ -828,10 +837,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Act
             _assignment.Assignee = assignee;
+            Assert.Multiple(() =>
+            {
 
-            // Assert - Domain entities auto-update ModifiedDate
-            Assert.That(_assignment.Assignee, Is.EqualTo(assignee));
-            Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+                // Assert - Domain entities auto-update ModifiedDate
+                Assert.That(_assignment.Assignee, Is.EqualTo(assignee));
+                Assert.That(_assignment.ModifiedDate, Is.Not.EqualTo(initialModifiedDate));
+            });
             Assert.That(_assignment.ModifiedDate, Is.Not.Null);
         }
 

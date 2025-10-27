@@ -462,8 +462,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             {
                 Assert.That(_sut.UserName, Is.EqualTo("TestUser"));
             });
-            Assert.That(originalModifiedDate, Is.Null);
-            Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(originalModifiedDate, Is.Null);
+                Assert.That(_sut.ModifiedDate, Is.Not.Null);
+            });
         }
 
         [Test, Category("Models")]

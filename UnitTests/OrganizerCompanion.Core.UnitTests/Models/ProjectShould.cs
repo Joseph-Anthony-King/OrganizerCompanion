@@ -459,10 +459,13 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             // Arrange & Act
             _sut.IsCompleted = true;
             var completedDate = _sut.CompletedDate;
+            Assert.Multiple(() =>
+            {
 
-            // Assert
-            Assert.That(completedDate, Is.Not.Null);
-            Assert.That(_sut.CompletedDate, Is.EqualTo(completedDate));
+                // Assert
+                Assert.That(completedDate, Is.Not.Null);
+                Assert.That(_sut.CompletedDate, Is.EqualTo(completedDate));
+            });
         }
 
         [Test, Category("Models")]

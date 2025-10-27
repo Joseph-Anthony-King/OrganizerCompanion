@@ -802,15 +802,21 @@ namespace OrganizerCompanion.Core.UnitTests.Models
             _sut.IsPrimary = true;
             var jsonTrue = _sut.ToJson();
             var documentTrue = JsonDocument.Parse(jsonTrue);
-            Assert.That(documentTrue.RootElement.TryGetProperty("isPrimary", out var isPrimaryTrueProperty), Is.True);
-            Assert.That(isPrimaryTrueProperty.GetBoolean(), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(documentTrue.RootElement.TryGetProperty("isPrimary", out var isPrimaryTrueProperty), Is.True);
+                Assert.That(isPrimaryTrueProperty.GetBoolean(), Is.True);
+            });
 
             // Arrange, Act & Assert for false
             _sut.IsPrimary = false;
             var jsonFalse = _sut.ToJson();
             var documentFalse = JsonDocument.Parse(jsonFalse);
-            Assert.That(documentFalse.RootElement.TryGetProperty("isPrimary", out var isPrimaryFalseProperty), Is.True);
-            Assert.That(isPrimaryFalseProperty.GetBoolean(), Is.False);
+            Assert.Multiple(() =>
+            {
+                Assert.That(documentFalse.RootElement.TryGetProperty("isPrimary", out var isPrimaryFalseProperty), Is.True);
+                Assert.That(isPrimaryFalseProperty.GetBoolean(), Is.False);
+            });
         }
 
         [Test, Category("Models")]

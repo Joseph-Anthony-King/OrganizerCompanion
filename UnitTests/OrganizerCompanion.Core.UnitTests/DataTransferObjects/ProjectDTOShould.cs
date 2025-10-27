@@ -378,8 +378,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result!.Count, Is.EqualTo(_testGroups.Count));
-            Assert.That(result.All(g => g is IGroupDTO), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result!.Count, Is.EqualTo(_testGroups.Count));
+                Assert.That(result.All(g => g is IGroupDTO), Is.True);
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -394,8 +397,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Groups, Is.Not.Null);
-            Assert.That(_sut.Groups!.Count, Is.EqualTo(interfaceGroups.Count));
-            Assert.That(_sut.Groups.All(g => g is GroupDTO), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Groups!.Count, Is.EqualTo(interfaceGroups.Count));
+                Assert.That(_sut.Groups.All(g => g is GroupDTO), Is.True);
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -437,8 +443,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(result, Is.Not.Null);
-            Assert.That(result!.Count, Is.EqualTo(_testTasks.Count));
-            Assert.That(result.All(t => t is IProjectTaskDTO), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(result!.Count, Is.EqualTo(_testTasks.Count));
+                Assert.That(result.All(t => t is IProjectTaskDTO), Is.True);
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -453,8 +462,11 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Assert
             Assert.That(_sut.Tasks, Is.Not.Null);
-            Assert.That(_sut.Tasks!.Count, Is.EqualTo(interfaceTasks.Count));
-            Assert.That(_sut.Tasks.All(t => t is ProjectTaskDTO), Is.True);
+            Assert.Multiple(() =>
+            {
+                Assert.That(_sut.Tasks!.Count, Is.EqualTo(interfaceTasks.Count));
+                Assert.That(_sut.Tasks.All(t => t is ProjectTaskDTO), Is.True);
+            });
         }
 
         [Test, Category("DataTransferObjects")]
@@ -540,16 +552,19 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
         [Test, Category("DataTransferObjects")]
         public void Id_ShouldHaveRangeAttribute()
         {
-         // Arrange
-      var property = typeof(ProjectDTO).GetProperty(nameof(ProjectDTO.Id));
+            // Arrange
+            var property = typeof(ProjectDTO).GetProperty(nameof(ProjectDTO.Id));
 
             // Act
             var attribute = property!.GetCustomAttribute<System.ComponentModel.DataAnnotations.RangeAttribute>();
 
 // Assert
             Assert.That(attribute, Is.Not.Null);
-    Assert.That(attribute!.Minimum, Is.EqualTo(0));
-            Assert.That(attribute.Maximum, Is.EqualTo(int.MaxValue));
+            Assert.Multiple(() =>
+            {
+                Assert.That(attribute!.Minimum, Is.EqualTo(0));
+                Assert.That(attribute.Maximum, Is.EqualTo(int.MaxValue));
+            });
         }
 
         [Test, Category("DataTransferObjects")]

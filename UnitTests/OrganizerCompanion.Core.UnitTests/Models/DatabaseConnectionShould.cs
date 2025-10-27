@@ -295,8 +295,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             // Assert - Verify property is read-only by checking it has no setter
             var property = typeof(DatabaseConnection).GetProperty(nameof(DatabaseConnection.CreatedDate));
-            Assert.That(property?.CanWrite, Is.False);
-            Assert.That(createdDate, Is.TypeOf<DateTime>());
+            Assert.Multiple(() =>
+            {
+                Assert.That(property?.CanWrite, Is.False);
+                Assert.That(createdDate, Is.TypeOf<DateTime>());
+            });
         }
 
         [Test, Category("Models")]
@@ -708,8 +711,11 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 
             var newAccount = new Account { Id = 999, AccountName = "Interface Test" };
             interfaceConnection.Account = newAccount;
-            Assert.That(defaultConnection.Account, Is.EqualTo(newAccount));
-            Assert.That(defaultConnection.AccountId, Is.EqualTo(newAccount.Id));
+            Assert.Multiple(() =>
+            {
+                Assert.That(defaultConnection.Account, Is.EqualTo(newAccount));
+                Assert.That(defaultConnection.AccountId, Is.EqualTo(newAccount.Id));
+            });
         }
 
         [Test, Category("Models")]
@@ -823,18 +829,20 @@ namespace OrganizerCompanion.Core.UnitTests.Models
 Assert.That(connection.DatabaseType, Is.EqualTo(SupportedDatabases.PostgreSQL));
 
    connection.Account = _testAccount;
-        Assert.That(connection.Account, Is.EqualTo(_testAccount));
-            Assert.That(connection.AccountId, Is.EqualTo(_testAccount.Id));
-
-        connection.ModifiedDate = testDate;
+            Assert.Multiple(() =>
+            {
+                Assert.That(connection.Account, Is.EqualTo(_testAccount));
+                Assert.That(connection.AccountId, Is.EqualTo(_testAccount.Id));
+            });
+            connection.ModifiedDate = testDate;
  Assert.Multiple(() =>
 {
            Assert.That(connection.ModifiedDate, Is.EqualTo(testDate));
      Assert.That(connection.CreatedDate, Is.Not.EqualTo(default(DateTime)));
   });
-  }
+        }
 
-    [Test, Category("Models")]
+        [Test, Category("Models")]
    public void ToString_WithAllDatabaseTypes_FormatsCorrectly()
         {
             // Arrange & Act & Assert - Test with all supported database types

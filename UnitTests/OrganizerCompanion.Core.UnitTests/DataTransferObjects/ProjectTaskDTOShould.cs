@@ -924,12 +924,17 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
                 Assert.That(nameProperty, Is.Not.Null);
                 Assert.That(descriptionProperty, Is.Not.Null);
             });
-
-            // Verify the properties exist and are accessible
-            Assert.That(idProperty!.CanRead, Is.True);
-            Assert.That(idProperty.CanWrite, Is.True);
-            Assert.That(nameProperty!.CanRead, Is.True);
-            Assert.That(nameProperty.CanWrite, Is.True);
+            Assert.Multiple(() =>
+            {
+                // Verify the properties exist and are accessible
+                Assert.That(idProperty!.CanRead, Is.True);
+                Assert.Multiple(() =>
+                {
+                    Assert.That(idProperty.CanWrite, Is.True);
+                    Assert.That(nameProperty!.CanRead, Is.True);
+                    Assert.That(nameProperty.CanWrite, Is.True);
+                });
+            });
         }
 
         [Test, Category("String")]

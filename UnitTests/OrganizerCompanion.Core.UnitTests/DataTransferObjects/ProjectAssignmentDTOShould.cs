@@ -658,18 +658,27 @@ namespace OrganizerCompanion.Core.UnitTests.DataTransferObjects
 
             // Act & Assert for LocationId interface property
             iAssignmentDTO.LocationId = testLocationId;
-            Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
-            Assert.That(iAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
+                Assert.That(iAssignmentDTO.LocationId, Is.EqualTo(testLocationId));
+            });
 
             // Act & Assert for LocationType interface property
             iAssignmentDTO.LocationType = testLocationType;
-            Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
-            Assert.That(iAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
+                Assert.That(iAssignmentDTO.LocationType, Is.EqualTo(testLocationType));
+            });
 
             // Act & Assert for Location interface property
             iAssignmentDTO.Location = testLocation;
-            Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(testLocation));
-            Assert.That(iAssignmentDTO.Location, Is.EqualTo(testLocation));
+            Assert.Multiple(() =>
+            {
+                Assert.That(_projectAssignmentDTO.Location, Is.EqualTo(testLocation));
+                Assert.That(iAssignmentDTO.Location, Is.EqualTo(testLocation));
+            });
 
             // Test setting null values via interface
             iAssignmentDTO.LocationId = null;

@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using OrganizerCompanion.Core.Enums;
@@ -29,6 +30,8 @@ namespace OrganizerCompanion.Core.Models.Domain
         private Types? _type = null;
         private bool _isPrimary = false;
         private IDomainEntity? _linkedEntity = null;
+        private int? _linkedEntityId = null;
+        [SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>")]
         private DateTime _createdDate = DateTime.UtcNow;
         #endregion
 
@@ -154,32 +157,79 @@ namespace OrganizerCompanion.Core.Models.Domain
         }
 
         [NotMapped]
-        [Required, JsonPropertyName("linkedEntity")]
+        [JsonPropertyName("linkedEntity")]
         public IDomainEntity? LinkedEntity
         {
-            get => _linkedEntity;
+            get => User ?? Contact ?? Organization ?? (IDomainEntity?)SubAccount ?? _linkedEntity;
             set
             {
-                _linkedEntity = value;
+                // Clear all navigation properties first
+                User = null; UserId = null;
+                Contact = null; ContactId = null;
+                Organization = null; OrganizationId = null;
+                SubAccount = null; SubAccountId = null;
+                _linkedEntity = null;
+
+                // Set appropriate navigation property if it's a recognized type
+                switch (value)
+                {
+                    case User user:
+                        User = user; UserId = user.Id; break;
+                    case Contact contact:
+                        Contact = contact; ContactId = contact.Id; break;
+                    case Organization org:
+                        Organization = org; OrganizationId = org.Id; break;
+                    case SubAccount sub:
+                        SubAccount = sub; SubAccountId = sub.Id; break;
+                    default:
+                        // For any other IDomainEntity type, store in _linkedEntity field
+                        _linkedEntity = value;
+                        break;
+                }
+
+                _linkedEntityId = value?.Id;
                 ModifiedDate = DateTime.UtcNow;
             }
         }
 
-        [NotMapped]
-        [Required]
+        [Column("LinkedEntityId")]
         [JsonPropertyName("linkedEntityId")]
         [Range(0, int.MaxValue, ErrorMessage = "Linked Entity Id must be a non-negative number.")]
-        public int? LinkedEntityId => _linkedEntity?.Id ?? null;
+        public int? LinkedEntityId => _linkedEntityId;
 
         [NotMapped]
-        [Required, JsonPropertyName("linkedEntityType")]
-        public string? LinkedEntityType => _linkedEntity?.GetType().Name;
+        [JsonPropertyName("linkedEntityType")]
+        public string? LinkedEntityType => LinkedEntity?.GetType().Name;
 
         [Required, JsonPropertyName("createdDate")]
         public DateTime CreatedDate => _createdDate;
 
         [Required, JsonPropertyName("modifiedDate")]
         public DateTime? ModifiedDate { get; set; } = null;
+
+        [JsonIgnore]
+        public int? UserId { get; set; }
+
+        [JsonIgnore, ForeignKey(nameof(UserId))]
+        public User? User { get; set; }
+
+        [JsonIgnore]
+        public int? ContactId { get; set; }
+
+        [JsonIgnore, ForeignKey(nameof(ContactId))]
+        public Contact? Contact { get; set; }
+
+        [JsonIgnore]
+        public int? OrganizationId { get; set; }
+
+        [JsonIgnore, ForeignKey(nameof(OrganizationId))]
+        public Organization? Organization { get; set; }
+
+        [JsonIgnore]
+        public int? SubAccountId { get; set; }
+
+        [JsonIgnore, ForeignKey(nameof(SubAccountId))]
+        public SubAccount? SubAccount { get; set; }
         #endregion
 
         #region Constructors
@@ -210,6 +260,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = type;
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
+            _linkedEntityId = linkedEntity?.Id;
             _createdDate = createdDate;
             ModifiedDate = modifiedDate;
         }
@@ -234,6 +285,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = type;
             _isPrimary = isPrimary;
             _linkedEntity = linkedEntity;
+            _linkedEntityId = linkedEntity?.Id;
         }
 
         public CAAddress(ICAAddressDTO dto, IDomainEntity? linkedEntity = null)
@@ -248,6 +300,7 @@ namespace OrganizerCompanion.Core.Models.Domain
             _type = dto.Type;
             _isPrimary = dto.IsPrimary;
             _linkedEntity = linkedEntity;
+            _linkedEntityId = linkedEntity?.Id;
             _createdDate = dto.CreatedDate;
             ModifiedDate = dto.ModifiedDate;
         }
